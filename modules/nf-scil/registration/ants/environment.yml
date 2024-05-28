@@ -1,0 +1,6 @@
+name: "registration_ants"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "ANTS"

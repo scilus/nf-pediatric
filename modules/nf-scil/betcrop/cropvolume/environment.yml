@@ -1,0 +1,7 @@
+---
+name: "betcrop_cropvolume"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "Scilpy"

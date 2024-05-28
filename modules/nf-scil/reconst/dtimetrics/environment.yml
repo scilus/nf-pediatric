@@ -1,0 +1,7 @@
+---
+name: "reconst_dtimetrics"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "Scilpy"

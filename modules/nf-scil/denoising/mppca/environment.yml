@@ -1,0 +1,9 @@
+name: denoising_mppca
+
+channels:
+  - Docker
+  - Apptainer
+
+dependencies:
+  - FSL
+  - Mrtrix

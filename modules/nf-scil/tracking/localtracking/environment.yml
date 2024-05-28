@@ -1,0 +1,6 @@
+name: "tracking_localtracking"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "Scilpy"

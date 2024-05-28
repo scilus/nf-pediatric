@@ -1,0 +1,7 @@
+---
+name: "reconst_meanfrf"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "Scilpy"

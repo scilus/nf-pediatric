@@ -1,0 +1,660 @@
+{
+    "reconst - dtimetrics_with_b0mask": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "10": [
+                    
+                ],
+                "11": [
+                    
+                ],
+                "12": [
+                    
+                ],
+                "13": [
+                    
+                ],
+                "14": [
+                    
+                ],
+                "15": [
+                    
+                ],
+                "16": [
+                    
+                ],
+                "17": [
+                    
+                ],
+                "18": [
+                    
+                ],
+                "19": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "20": [
+                    
+                ],
+                "21": [
+                    
+                ],
+                "22": [
+                    
+                ],
+                "23": [
+                    
+                ],
+                "24": [
+                    
+                ],
+                "25": [
+                    
+                ],
+                "26": [
+                    "versions.yml:md5,f057a83131297624fb6d9db93df8d749"
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    
+                ],
+                "6": [
+                    
+                ],
+                "7": [
+                    
+                ],
+                "8": [
+                    
+                ],
+                "9": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__fa.nii.gz:md5,2faf9f0eb4fa3617611ffb26467dad46"
+                    ]
+                ],
+                "ad": [
+                    
+                ],
+                "evals": [
+                    
+                ],
+                "evals_e1": [
+                    
+                ],
+                "evals_e2": [
+                    
+                ],
+                "evals_e3": [
+                    
+                ],
+                "evecs": [
+                    
+                ],
+                "evecs_v1": [
+                    
+                ],
+                "evecs_v2": [
+                    
+                ],
+                "evecs_v3": [
+                    
+                ],
+                "fa": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__fa.nii.gz:md5,2faf9f0eb4fa3617611ffb26467dad46"
+                    ]
+                ],
+                "ga": [
+                    
+                ],
+                "md": [
+                    
+                ],
+                "mode": [
+                    
+                ],
+                "nonphysical": [
+                    
+                ],
+                "norm": [
+                    
+                ],
+                "pulsation_std_dwi": [
+                    
+                ],
+                "rd": [
+                    
+                ],
+                "residual": [
+                    
+                ],
+                "residual_iqr_residuals": [
+                    
+                ],
+                "residual_mean_residuals": [
+                    
+                ],
+                "residual_q1_residuals": [
+                    
+                ],
+                "residual_q3_residuals": [
+                    
+                ],
+                "residual_residuals_stats": [
+                    
+                ],
+                "residual_std_residuals": [
+                    
+                ],
+                "rgb": [
+                    
+                ],
+                "tensor": [
+                    
+                ],
+                "versions": [
+                    "versions.yml:md5,f057a83131297624fb6d9db93df8d749"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.8.4",
+            "nextflow": "23.10.1"
+        },
+        "timestamp": "2024-05-07T15:06:18.845384"
+    },
+    "reconst - dtimetrics": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__ad.nii.gz:md5,ece4e1d0fc03f4bafc882b63285984d3"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evecs.nii.gz:md5,12a42297c1c257336f1b5cb04cd18a45"
+                    ]
+                ],
+                "10": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__ga.nii.gz:md5,209ab956ff7e59217db0929c5dff08fa"
+                    ]
+                ],
+                "11": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__rgb.nii.gz:md5,601b67930e79dbf23dfaeb5aafe6f3e7"
+                    ]
+                ],
+                "12": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__md.nii.gz:md5,d9a6ca6d7ad205b8ec0a90f0db4c53d9"
+                    ]
+                ],
+                "13": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__mode.nii.gz:md5,015a1e5541e9fbb720e1c4110ebbcc46"
+                    ]
+                ],
+                "14": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__norm.nii.gz:md5,9b90f4e4af148a4d0395596fb48b5bef"
+                    ]
+                ],
+                "15": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__rd.nii.gz:md5,d33a7089844a53184c0548cdf8899efa"
+                    ]
+                ],
+                "16": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__tensor.nii.gz:md5,9eac2b7afe5db2d65650f1307e3b8166"
+                    ]
+                ],
+                "17": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__nonphysical.nii.gz:md5,7da6de5ad6e7c37518f9f3962f066f89"
+                    ]
+                ],
+                "18": [
+                    
+                ],
+                "19": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual.nii.gz:md5,4d91b617b09018cdc3feb07256665d1b"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evecs_v1.nii.gz:md5,b9b02ffa0ba41ec5e9e52f18c7741f18"
+                    ]
+                ],
+                "20": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_iqr_residuals.npy:md5,4a71d46303bb3ac67088fe5cdaa5694a"
+                    ]
+                ],
+                "21": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_mean_residuals.npy:md5,2247858eaf51c6e973649418f8721477"
+                    ]
+                ],
+                "22": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_q1_residuals.npy:md5,4a71d46303bb3ac67088fe5cdaa5694a"
+                    ]
+                ],
+                "23": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_q3_residuals.npy:md5,4a71d46303bb3ac67088fe5cdaa5694a"
+                    ]
+                ],
+                "24": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_residuals_stats.png:md5,18ce14e9e554c8f5fb1cf0c87af36f9f"
+                    ]
+                ],
+                "25": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_std_residuals.npy:md5,5e526c12b8a13b611bd1b2e00d4e1448"
+                    ]
+                ],
+                "26": [
+                    "versions.yml:md5,f057a83131297624fb6d9db93df8d749"
+                ],
+                "3": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evecs_v2.nii.gz:md5,2189cde6872fb140683a1cd6c5eb1e9e"
+                    ]
+                ],
+                "4": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evecs_v3.nii.gz:md5,af227812521827a9064e3a8596fffcda"
+                    ]
+                ],
+                "5": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evals.nii.gz:md5,464d861a0ddda845824b8a4c778d1b6b"
+                    ]
+                ],
+                "6": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evals_e1.nii.gz:md5,ece4e1d0fc03f4bafc882b63285984d3"
+                    ]
+                ],
+                "7": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evals_e2.nii.gz:md5,286b867f7ae908fad963a80c9ba74d30"
+                    ]
+                ],
+                "8": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evals_e3.nii.gz:md5,1b33203d97ec61d5fd6d1b1a579431ec"
+                    ]
+                ],
+                "9": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__fa.nii.gz:md5,9bb468c2186f77775d70ebb17ec33a07"
+                    ]
+                ],
+                "ad": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__ad.nii.gz:md5,ece4e1d0fc03f4bafc882b63285984d3"
+                    ]
+                ],
+                "evals": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evals.nii.gz:md5,464d861a0ddda845824b8a4c778d1b6b"
+                    ]
+                ],
+                "evals_e1": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evals_e1.nii.gz:md5,ece4e1d0fc03f4bafc882b63285984d3"
+                    ]
+                ],
+                "evals_e2": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evals_e2.nii.gz:md5,286b867f7ae908fad963a80c9ba74d30"
+                    ]
+                ],
+                "evals_e3": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evals_e3.nii.gz:md5,1b33203d97ec61d5fd6d1b1a579431ec"
+                    ]
+                ],
+                "evecs": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evecs.nii.gz:md5,12a42297c1c257336f1b5cb04cd18a45"
+                    ]
+                ],
+                "evecs_v1": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evecs_v1.nii.gz:md5,b9b02ffa0ba41ec5e9e52f18c7741f18"
+                    ]
+                ],
+                "evecs_v2": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evecs_v2.nii.gz:md5,2189cde6872fb140683a1cd6c5eb1e9e"
+                    ]
+                ],
+                "evecs_v3": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__evecs_v3.nii.gz:md5,af227812521827a9064e3a8596fffcda"
+                    ]
+                ],
+                "fa": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__fa.nii.gz:md5,9bb468c2186f77775d70ebb17ec33a07"
+                    ]
+                ],
+                "ga": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__ga.nii.gz:md5,209ab956ff7e59217db0929c5dff08fa"
+                    ]
+                ],
+                "md": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__md.nii.gz:md5,d9a6ca6d7ad205b8ec0a90f0db4c53d9"
+                    ]
+                ],
+                "mode": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__mode.nii.gz:md5,015a1e5541e9fbb720e1c4110ebbcc46"
+                    ]
+                ],
+                "nonphysical": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__nonphysical.nii.gz:md5,7da6de5ad6e7c37518f9f3962f066f89"
+                    ]
+                ],
+                "norm": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__norm.nii.gz:md5,9b90f4e4af148a4d0395596fb48b5bef"
+                    ]
+                ],
+                "pulsation_std_dwi": [
+                    
+                ],
+                "rd": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__rd.nii.gz:md5,d33a7089844a53184c0548cdf8899efa"
+                    ]
+                ],
+                "residual": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual.nii.gz:md5,4d91b617b09018cdc3feb07256665d1b"
+                    ]
+                ],
+                "residual_iqr_residuals": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_iqr_residuals.npy:md5,4a71d46303bb3ac67088fe5cdaa5694a"
+                    ]
+                ],
+                "residual_mean_residuals": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_mean_residuals.npy:md5,2247858eaf51c6e973649418f8721477"
+                    ]
+                ],
+                "residual_q1_residuals": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_q1_residuals.npy:md5,4a71d46303bb3ac67088fe5cdaa5694a"
+                    ]
+                ],
+                "residual_q3_residuals": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_q3_residuals.npy:md5,4a71d46303bb3ac67088fe5cdaa5694a"
+                    ]
+                ],
+                "residual_residuals_stats": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_residuals_stats.png:md5,18ce14e9e554c8f5fb1cf0c87af36f9f"
+                    ]
+                ],
+                "residual_std_residuals": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__residual_std_residuals.npy:md5,5e526c12b8a13b611bd1b2e00d4e1448"
+                    ]
+                ],
+                "rgb": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__rgb.nii.gz:md5,601b67930e79dbf23dfaeb5aafe6f3e7"
+                    ]
+                ],
+                "tensor": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test__tensor.nii.gz:md5,9eac2b7afe5db2d65650f1307e3b8166"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,f057a83131297624fb6d9db93df8d749"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.8.4",
+            "nextflow": "23.10.1"
+        },
+        "timestamp": "2024-05-01T19:11:59.341747"
+    }
+}

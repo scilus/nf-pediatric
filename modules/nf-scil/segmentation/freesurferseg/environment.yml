@@ -1,0 +1,8 @@
+---
+name: "segmentation_freesurferseg"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "MRtrix"
+  - "scilpy"

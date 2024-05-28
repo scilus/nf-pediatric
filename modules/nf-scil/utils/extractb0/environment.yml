@@ -1,0 +1,6 @@
+name: "utils_extractb0"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "Scilpy"

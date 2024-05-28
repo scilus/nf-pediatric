@@ -1,0 +1,8 @@
+name: image_resample
+
+channels:
+  - Docker
+  - Apptainer
+
+dependencies:
+  - Scilpy

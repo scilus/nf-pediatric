@@ -1,0 +1,7 @@
+---
+name: "io_readbids"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "Scilpy"

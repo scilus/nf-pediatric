@@ -1,0 +1,9 @@
+name: preproc_n4
+
+channels:
+  - Docker
+  - Apptainer
+
+dependencies:
+  - ANTs
+  - Scilpy

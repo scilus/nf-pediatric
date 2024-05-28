@@ -1,0 +1,7 @@
+name: "tracking_pfttracking"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "MRtrix"
+  - "Scilpy"

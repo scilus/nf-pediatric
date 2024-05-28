@@ -1,0 +1,10 @@
+name: betcrop_fslbetcrop
+
+channels:
+  - Docker
+  - Apptainer
+
+dependencies:
+  - FSL
+  - Mrtrix
+  - Scilpy

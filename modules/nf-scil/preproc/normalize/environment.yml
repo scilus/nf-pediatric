@@ -1,0 +1,9 @@
+name: preproc_normalize
+
+channels:
+  - Docker
+  - Apptainer
+
+dependencies:
+  - MRtrix
+  - Scilpy

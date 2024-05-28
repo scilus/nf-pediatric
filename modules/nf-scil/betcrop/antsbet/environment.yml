@@ -1,0 +1,9 @@
+---
+name: "betcrop_antsbet"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "ANTs"
+  - "Mrtrix"
+  - "Scilpy"

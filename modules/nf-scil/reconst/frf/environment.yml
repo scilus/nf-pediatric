@@ -1,0 +1,7 @@
+---
+name: "reconst_frf"
+channels:
+  - Docker
+  - Apptainer
+dependencies:
+  - "Scilpy"
