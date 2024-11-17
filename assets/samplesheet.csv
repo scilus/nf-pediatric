@@ -1,3 +1,2 @@
-sample,fastq_1,fastq_2
-SAMPLE_PAIRED_END,/path/to/fastq/files/AEG588A1_S1_L002_R1_001.fastq.gz,/path/to/fastq/files/AEG588A1_S1_L002_R2_001.fastq.gz
-SAMPLE_SINGLE_END,/path/to/fastq/files/AEG588A4_S4_L003_R1_001.fastq.gz,
+subject,t1,t2,dwi,bval,bvec,rev_b0,labels,wmparc,trk,peaks,fodf,mat,warp,metrics
+sub-1000,/input/sub-1000/t1.nii.gz,/input/sub-1000/t2.nii.gz,/input/sub-1000/dwi.nii.gz,/input/sub-1000/dwi.bval,/input/sub-1000/dwi.bvec,/input/sub-1000/rev_b0.nii.gz,/input/sub-1000/labels.nii.gz,/input/sub-1000/wmparc.nii.gz,/input/sub-1000/tractogram.trk,/input/sub-1000/peaks.nii.gz,/input/sub-1000/fodf.nii.gz,/input/sub-1000/0GenericAffine.mat,/input/sub-1000/output1Warp.nii.gz,/input/sub-1000/metrics/

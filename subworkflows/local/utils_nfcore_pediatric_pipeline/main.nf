@@ -70,20 +70,230 @@ workflow PIPELINE_INITIALISATION {
     Channel
         .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
         .map {
-            meta, fastq_1, fastq_2 ->
-                if (!fastq_2) {
-                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
-                } else {
-                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
+            meta, t1, t2, dwi, bval, bvec, rev_b0, labels, wmparc, trk, peaks, fodf, mat, warp, metrics ->
+
+                // ** Check if at least one anatomical image is provided, ** //
+                // ** regardless of the profile ** //
+                if (!t1 && !t2 ) {
+                    error("Please provide at least one anatomical image (T1w or T2w) for sample: ${meta.id}")
                 }
-        }
-        .groupTuple()
-        .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
-        }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
+
+                // ** Validate mandatory images for profile infant with only tracking. ** //
+                if ( params.infant && params.tracking && !params.connectomics ) {
+                    if (!t2) {
+                        error("Please provide a T2w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!rev_b0) {
+                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
+                    }
+                    if (!wmparc) {
+                        error("Please provide a wmparc image for sample: ${meta.id}")
+                    }
+                }
+
+                // ** Validate mandatory files for profile infant with connectomics. ** //
+                if ( params.infant && params.connectomics && !params.tracking ) {
+                    if (!t2) {
+                        error("Please provide a T2w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!labels) {
+                        error("Please provide a labels image for sample: ${meta.id}")
+                    }
+                    if (!trk) {
+                        error("Please provide a trk file for sample: ${meta.id}")
+                    }
+                    if (!peaks) {
+                        error("Please provide a peaks image for sample: ${meta.id}")
+                    }
+                    if (!fodf) {
+                        error("Please provide a fodf image for sample: ${meta.id}")
+                    }
+                    if (!mat) {
+                        error("Please provide a mat file for sample: ${meta.id}")
+                    }
+                    if (!warp) {
+                        error("Please provide a warp image for sample: ${meta.id}")
+                    }
+                    if (!metrics) {
+                        error("You did not provide metric file for sample: ${meta.id}")
+                    }
+                }
+
+                // ** Validate files for profile infant with tracking and connectomics. ** //
+                if ( params.infant && params.tracking && params.connectomics ) {
+                    if (!t2) {
+                        error("Please provide a T2w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!rev_b0) {
+                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
+                    }
+                    if (!wmparc) {
+                        error("Please provide a wmparc image for sample: ${meta.id}")
+                    }
+                    if (!labels) {
+                        error("Please provide a labels image for sample: ${meta.id}")
+                    }
+                }
+
+                // ** Validate files for profile children with only tracking. ** //
+                if ( params.tracking && !params.connectomics && !params.infant ) {
+                    if (!t1) {
+                        error("Please provide a T1w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!rev_b0) {
+                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
+                    }
+                }
+
+                // ** Validate files for profile children with connectomics. ** //
+                if ( params.connectomics && !params.tracking && !params.infant ) {
+                    if (!t1) {
+                        error("Please provide a T1w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!labels) {
+                        error("Please provide a labels image for sample: ${meta.id}")
+                    }
+                    if (!trk) {
+                        error("Please provide a trk file for sample: ${meta.id}")
+                    }
+                    if (!peaks) {
+                        error("Please provide a peaks image for sample: ${meta.id}")
+                    }
+                    if (!fodf) {
+                        error("Please provide a fodf image for sample: ${meta.id}")
+                    }
+                    if (!mat) {
+                        error("Please provide a mat file for sample: ${meta.id}")
+                    }
+                    if (!warp) {
+                        error("Please provide a warp image for sample: ${meta.id}")
+                    }
+                    if (!metrics) {
+                        error("You did not provide metric file for sample: ${meta.id}")
+                    }
+                }
+
+                // ** Validate files for profile children with tracking and connectomics. ** //
+                if ( params.tracking && params.connectomics && !params.infant ) {
+                    if (!t1) {
+                        error("Please provide a T1w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!rev_b0) {
+                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
+                    }
+                    if (!labels) {
+                        error("Please provide a labels image for sample: ${meta.id}")
+                    }
+                }
+
+                // ** Validate files for profile freesurfer with connectomics ** //
+                if ( params.connectomics && !params.tracking && params.freesurfer ) {
+                    if (!t1) {
+                        error("Please provide a T1w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!trk) {
+                        error("Please provide a trk file for sample: ${meta.id}")
+                    }
+                    if (!peaks) {
+                        error("Please provide a peaks image for sample: ${meta.id}")
+                    }
+                    if (!fodf) {
+                        error("Please provide a fodf image for sample: ${meta.id}")
+                    }
+                    if (!mat) {
+                        error("Please provide a mat file for sample: ${meta.id}")
+                    }
+                    if (!warp) {
+                        error("Please provide a warp image for sample: ${meta.id}")
+                    }
+                    if (!metrics) {
+                        error("You did not provide metric file for sample: ${meta.id}")
+                    }
+                }
+
+                // ** Validate files for profile freesurfer with tracking and connectomics ** //
+                if ( params.tracking && params.connectomics && params.freesurfer ) {
+                    if (!t1) {
+                        error("Please provide a T1w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!rev_b0) {
+                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
+                    }
+                }
+
+                return [ meta, t1, t2, dwi, bval, bvec, rev_b0, labels, wmparc, trk, peaks, fodf, mat, warp, metrics ]
         }
         .set { ch_samplesheet }
 
@@ -145,20 +355,6 @@ workflow PIPELINE_COMPLETION {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
-// Validate channels from input samplesheet
-//
-def validateInputSamplesheet(input) {
-    def (metas, fastqs) = input[1..2]
-
-    // Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
-    def endedness_ok = metas.collect{ meta -> meta.single_end }.unique().size == 1
-    if (!endedness_ok) {
-        error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
-    }
-
-    return [ metas[0], fastqs ]
-}
 //
 // Generate methods description for MultiQC
 //

@@ -1,4 +1,4 @@
-# nf/pediatric: Output
+# nf-pediatric: Output
 
 ## Introduction
 

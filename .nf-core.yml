@@ -26,7 +26,7 @@ repository_type: pipeline
 template:
   author: Anthony Gagnon
   description: nf-pediatric is a neuroimaging pipeline to process pediatric MRI data
-    (including fMRI, dMRI, and sMRI) ranging from 0-18 years old.
+    (dMRI, and sMRI) ranging from 0-18 years old.
   force: false
   is_nfcore: false
   name: pediatric

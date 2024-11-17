@@ -1,0 +1,213 @@
+nextflow_pipeline {
+
+    options "-stub-run"
+
+    name "Test nf-pediatric main.nf"
+    script "../main.nf"
+
+    test("Tracking profile - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+
+    }
+
+    test("Tracking profile no rev b0 - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+        }
+
+    }
+
+    test("Tracking profile no dwi - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_nodwi.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+        }
+
+    }
+
+    test("Tracking profile with infant data - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.infant = true
+
+                // ** Infant specific parameters ** //
+                params.dwi_run_synthstrip               = true
+                params.dwi_normalize_fa_mask_threshold  = 0.10
+                params.fodf_max_fa_threshold            = 0.01
+                params.fodf_min_md_threshold            = 0.00185
+                params.frf_manual_frf                   = "12,5,5"
+                params.run_pft_tracking                 = false
+                params.local_min_len                    = 15
+                params.local_fa_seeding_mask_threshold  = 0.10
+
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+
+    }
+
+    test("Tracking profile with infant data no wm mask - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_nowmmask.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.infant = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+        }
+
+    }
+
+    test("Tracking profile with infant data no rev b0 - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_norev.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.infant = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+        }
+
+    }
+
+    test("Tracking profile with infant data no t2 - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_not2.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.infant = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+        }
+
+    }
+
+    test("Connectomics profile with metrics - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testconn.csv"
+                params.outdir = "test_results/"
+
+                params.connectomics = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+
+    }
+
+    test("Connectomics profile without metrics - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testconn_nometrics.csv"
+                params.outdir = "test_results/"
+
+                params.connectomics = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+        }
+
+    }
+
+    test("Freesurfer profile - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "test_results/"
+
+                params.freesurfer = true
+                params.fs_license = "/Applications/freesurfer/7.4.1/license.txt"
+
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+
+    }
+
+}

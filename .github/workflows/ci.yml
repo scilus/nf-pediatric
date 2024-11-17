@@ -1,4 +1,4 @@
-name: nf-core CI
+name: nf-pediatric CI
 # This workflow runs the pipeline with the minimal test dataset to check that it completes without any syntax errors
 on:
   push:
@@ -22,15 +22,16 @@ jobs:
   test:
     name: "Run pipeline with test data (${{ matrix.NXF_VER }} | ${{ matrix.test_name }} | ${{ matrix.profile }})"
     # Only run on push if this is the nf-core dev branch (merged PRs)
-    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf/pediatric') }}"
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-pediatric') }}"
     runs-on: ubuntu-latest
     strategy:
       matrix:
         NXF_VER:
           - "24.04.2"
           - "latest-everything"
+        nf-test-version:
+          - "0.9.0"
         profile:
-          - "conda"
           - "docker"
           - "singularity"
         test_name:
@@ -52,6 +53,12 @@ jobs:
         with:
           version: "${{ matrix.NXF_VER }}"
 
+      - uses: AlexVCaron/setup-nf-test@2c5a31b90b34d97abf155b57ee0f79c7f5aa118a
+        # Used to make the action executable on our runners. Related to how the home
+        # and work directories are set up from ephemeral disks. See nf-core/setup-nf-test/issues/6
+        with:
+          version: ${{ matrix.nf_test_version }}
+
       - name: Set up Apptainer
         if: matrix.profile == 'singularity'
         uses: eWaterCycle/setup-apptainer@main
@@ -61,21 +68,6 @@ jobs:
         run: |
           mkdir -p $NXF_SINGULARITY_CACHEDIR
           mkdir -p $NXF_SINGULARITY_LIBRARYDIR
-
-      - name: Set up Miniconda
-        if: matrix.profile == 'conda'
-        uses: conda-incubator/setup-miniconda@a4260408e20b96e80095f42ff7f1a15b27dd94ca # v3
-        with:
-          miniconda-version: "latest"
-          auto-update-conda: true
-          conda-solver: libmamba
-          channels: conda-forge,bioconda
-
-      - name: Set up Conda
-        if: matrix.profile == 'conda'
-        run: |
-          echo $(realpath $CONDA)/condabin >> $GITHUB_PATH
-          echo $(realpath python) >> $GITHUB_PATH
 
       - name: Clean up Disk space
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1

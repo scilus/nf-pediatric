@@ -1,4 +1,4 @@
-# nf/pediatric: Documentation
+# nf-pediatric: Documentation
 
 The nf/pediatric documentation is split into the following pages:
 

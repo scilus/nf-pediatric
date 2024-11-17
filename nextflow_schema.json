@@ -43,6 +43,1089 @@
                 }
             }
         },
+        "freesurfer_options": {
+            "title": "FreeSurfer/FastSurfer Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for FreeSurfer and FastSurfer processing.",
+            "help_text": "These options are used to configure the FreeSurfer and FastSurfer processing steps in the pipeline. You can use these options to customise the behaviour of the FreeSurfer and FastSurfer steps.",
+            "properties": {
+                "use_fastsurfer": {
+                    "type": "boolean",
+                    "description": "Use FastSurfer instead of FreeSurfer.",
+                    "fa_icon": "fas fa-rocket",
+                    "default": false,
+                    "hidden": false
+                },
+                "fs_license": {
+                    "type": "string",
+                    "description": "Path to FreeSurfer license file.",
+                    "fa_icon": "fas fa-file-signature",
+                    "help_text": "Path to FreeSurfer license file. This is required to run FreeSurfer. You can obtain a FreeSurfer license from the FreeSurfer website.",
+                    "format": "file-path",
+                    "exists": true
+                },
+                "acq3T": {
+                    "type": "boolean",
+                    "description": "Use 3T acquisition parameters.",
+                    "fa_icon": "fas fa-magnet",
+                    "default": true,
+                    "hidden": true
+                }
+            }
+        },
+        "atlases_options": {
+            "title": "Atlases Options",
+            "type": "object",
+            "fa_icon": "fas fa-map-marked-alt",
+            "description": "Options for atlases used in the pipeline.",
+            "help_text": "These options are used to configure the atlases used in the pipeline. You can use these options to customise the behaviour of the atlases.",
+            "properties": {
+                "utils_folder": {
+                    "type": "string",
+                    "description": "Path to the utils folder.",
+                    "fa_icon": "fas fa-folder",
+                    "help_text": "Path to the utils folder. This folder contains the atlases used in the pipeline. You can download the utils folder from the nf-pediatric GitHub repository.",
+                    "format": "directory-path",
+                    "default": "${projectDir}/assets/FS_BN_GL_SF_utils/",
+                    "exists": true,
+                    "hidden": true
+                }
+            }
+        },
+        "t1_processing_options": {
+            "title": "T1 Processing Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for T1 processing.",
+            "help_text": "These options are used to configure the T1 processing steps in the pipeline. You can use these options to customise the behaviour of the T1 processing steps.",
+            "properties": {
+                "t1_denoise_number_of_coils": {
+                    "type": "integer",
+                    "description": "Number of coils used in the T1 denoising step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t1_bias_bspline_knot_per_voxel": {
+                    "type": "number",
+                    "description": "Number of B-spline knots per voxel used in the T1 bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t1_bias_shrink_factor": {
+                    "type": "integer",
+                    "description": "Shrink factor used in the T1 bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t1_resample_voxel_size": {
+                    "type": "integer",
+                    "description": "Voxel size used in the T1 resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t1_resample_interp": {
+                    "type": "string",
+                    "description": "Interpolation method used in the T1 resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "lin",
+                    "hidden": true
+                },
+                "t1_run_synthstrip": {
+                    "type": "boolean",
+                    "description": "Run SynthStrip for brain extraction rather than AntsBet.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "t1_synthstrip_border": {
+                    "type": "integer",
+                    "description": "Border used in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t1_synthstrip_nocsf": {
+                    "type": "boolean",
+                    "description": "Do not use CSF in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "t1_synthstrip_weights": {
+                    "type": "string",
+                    "description": "Alternative weights used in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": null,
+                    "hidden": false
+                },
+                "t1_bet_template": {
+                    "type": "string",
+                    "description": "Path to the template to use in antsBet",
+                    "fa_icon": "fas fa-brain",
+                    "default": "${projectDir}/assets/templates/t1_template.nii.gz",
+                    "hidden": true
+                },
+                "t1_bet_template_probability_map": {
+                    "type": "string",
+                    "description": "Path to the template probability map to use in antsBet",
+                    "fa_icon": "fas fa-brain",
+                    "default": "${projectDir}/assets/templates/t1_brain_probability_map.nii.gz",
+                    "hidden": true
+                }
+            }
+        },
+        "dwi_preprocessing_options": {
+            "title": "DWI Preprocessing Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for DWI preprocessing.",
+            "help_text": "These options are used to configure the DWI preprocessing steps in the pipeline. You can use these options to customise the behaviour of the DWI preprocessing steps.",
+            "properties": {
+                "dwi_denoise_patch_size": {
+                    "type": "integer",
+                    "description": "Patch size used in the DWI denoising step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 7,
+                    "hidden": true
+                },
+                "dwi_susceptibility_config_file": {
+                    "type": "string",
+                    "description": "Path to the susceptibility distortion correction config file.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "b02b0.cnf",
+                    "hidden": true
+                },
+                "dwi_susceptibility_output_prefix": {
+                    "type": "string",
+                    "description": "Prefix used in the susceptibility distortion correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "topup_results",
+                    "hidden": true
+                },
+                "dwi_susceptibility_readout": {
+                    "type": "number",
+                    "description": "Readout time used in the susceptibility distortion correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.040,
+                    "hidden": true
+                },
+                "dwi_susceptibility_b0_threshold": {
+                    "type": "integer",
+                    "description": "B0 threshold used in the susceptibility distortion correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "dwi_susceptibility_encoding_dir": {
+                    "type": "string",
+                    "description": "Encoding direction used in the susceptibility distortion correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "y",
+                    "hidden": true
+                },
+                "dwi_motion_and_eddy_command": {
+                    "type": "string",
+                    "description": "Command used in the motion and eddy correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "eddy_cpu",
+                    "hidden": true
+                },
+                "dwi_motion_and_eddy_bet_f_threshold": {
+                    "type": "number",
+                    "description": "Bet f threshold used in the motion and eddy correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.16,
+                    "hidden": true
+                },
+                "dwi_motion_and_eddy_restore_slices": {
+                    "type": "boolean",
+                    "description": "Restore slices in the motion and eddy correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": true
+                },
+                "dwi_pwdavg_shells": {
+                    "type": "string",
+                    "description": "Shells used in the PowderAverage step.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "dwi_pwdavg_shell_thr": {
+                    "type": "integer",
+                    "description": "Shell threshold used in the PowderAverage step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 50,
+                    "hidden": true
+                },
+                "dwi_pwdavg_b0_thr": {
+                    "type": "integer",
+                    "description": "B0 threshold used in the PowderAverage step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "dwi_run_synthstrip": {
+                    "type": "boolean",
+                    "description": "Run SynthStrip for brain extraction",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "dwi_synthstrip_border": {
+                    "type": "integer",
+                    "description": "Border used in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "dwi_synthstrip_nocsf": {
+                    "type": "boolean",
+                    "description": "Do not use CSF in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "dwi_synthstrip_weights": {
+                    "type": "string",
+                    "description": "Alternative weights used in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": null,
+                    "hidden": false
+                },
+                "dwi_bet_f_threshold": {
+                    "type": "number",
+                    "description": "Bet f threshold used in the brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.16,
+                    "hidden": true
+                },
+                "dwi_bet_b0_threshold": {
+                    "type": "integer",
+                    "description": "B0 threshold used in the brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "dwi_bias_bspline_knot_per_voxel": {
+                    "type": "number",
+                    "description": "Number of B-spline knots per voxel used in the DWI bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.25,
+                    "hidden": true
+                },
+                "dwi_bias_shrink_factor": {
+                    "type": "integer",
+                    "description": "Shrink factor used in the DWI bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 4,
+                    "hidden": true
+                },
+                "dwi_normalize_fa_mask_threshold": {
+                    "type": "number",
+                    "description": "FA mask threshold used in the normalization step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.4,
+                    "hidden": false
+                },
+                "dwi_normalize_shell_tolerance": {
+                    "type": "integer",
+                    "description": "Shell tolerance used in the normalization step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 50,
+                    "hidden": true
+                },
+                "dwi_resample_voxel_size": {
+                    "type": "integer",
+                    "description": "Voxel size used in the DWI resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "dwi_resample_interp": {
+                    "type": "string",
+                    "description": "Interpolation method used in the DWI resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "lin",
+                    "hidden": true
+                },
+                "dwi_resample_mask_voxel_size": {
+                    "type": "integer",
+                    "description": "Voxel size used in the DWI mask resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "dwi_resample_mask_interp": {
+                    "type": "string",
+                    "description": "Interpolation method used in the DWI mask resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "nn",
+                    "hidden": true
+                },
+                "dwi_extract_b0_threshold": {
+                    "type": "integer",
+                    "description": "B0 threshold used in the DWI extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                }
+            }
+        },
+        "dti_options": {
+            "title": "DTI Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for DTI processing.",
+            "help_text": "These options are used to configure the DTI processing steps in the pipeline. You can use these options to customise the behaviour of the DTI processing steps.",
+            "properties": {
+                "dti_shell_tolerance": {
+                    "type": "integer",
+                    "description": "Shell tolerance used in the DTI processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 50,
+                    "hidden": true
+                },
+                "dti_max_shell_value": {
+                    "type": "integer",
+                    "description": "Maximum shell value used in the DTI processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1500,
+                    "hidden": false
+                },
+                "dti_b0_threshold": {
+                    "type": "integer",
+                    "description": "B0 threshold used in the DTI processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                }
+            }
+        },
+        "frf_options": {
+            "title": "FRF Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for FRF processing.",
+            "help_text": "These options are used to configure the FRF processing steps in the pipeline. You can use these options to customise the behaviour of the FRF processing steps.",
+            "properties": {
+                "frf_fa": {
+                    "type": "number",
+                    "description": "Minimum FA threshold to use to compute the FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.7,
+                    "hidden": true
+                },
+                "frf_min_fa": {
+                    "type": "number",
+                    "description": "Minimum FA threshold to use to compute the FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "frf_nvox_min": {
+                    "type": "integer",
+                    "description": "Minimum number of voxels to include in the computation of the FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 300,
+                    "hidden": true
+                },
+                "frf_roi_radius": {
+                    "type": "integer",
+                    "description": "Radius of the ROI used to compute the FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "frf_dwi_shell_tolerance": {
+                    "type": "integer",
+                    "description": "Shell tolerance used in the DWI processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 50,
+                    "hidden": true
+                },
+                "frf_max_dti_shell_value": {
+                    "type": "integer",
+                    "description": "Maximum DTI shell value used.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1500,
+                    "hidden": false
+                },
+                "frf_min_fodf_shell_value": {
+                    "type": "integer",
+                    "description": "Minimum FODF shell value used.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 100,
+                    "hidden": false
+                },
+                "frf_b0_threshold": {
+                    "type": "integer",
+                    "description": "B0 threshold used in the FRF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "frf_set_method": {
+                    "type": "string",
+                    "description": "Method used to compute the FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "ssst",
+                    "choices": ["ssst", "msmt"],
+                    "hidden": false
+                },
+                "frf_set_frf": {
+                    "type": "boolean",
+                    "description": "Use a manually set FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "frf_manual_frf": {
+                    "type": "string",
+                    "description": "Manual FRF values.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "15,4,4",
+                    "hidden": false
+                },
+                "frf_mean_frf": {
+                    "type": "boolean",
+                    "description": "Use the mean FRF across subjects.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                }
+            }
+        },
+        "fodf_options": {
+            "title": "FODF Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for FODF processing.",
+            "help_text": "These options are used to configure the FODF processing steps in the pipeline. You can use these options to customise the behaviour of the FODF processing steps.",
+            "properties": {
+                "fodf_shell_tolerance": {
+                    "type": "integer",
+                    "description": "Shell tolerance used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 50,
+                    "hidden": true
+                },
+                "fodf_min_fodf_shell_value": {
+                    "type": "integer",
+                    "description": "Minimum FODF shell value used.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 100,
+                    "hidden": false
+                },
+                "fodf_b0_threshold": {
+                    "type": "integer",
+                    "description": "B0 threshold used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "fodf_sh_order": {
+                    "type": "integer",
+                    "description": "Spherical harmonics order used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 8,
+                    "hidden": false
+                },
+                "fodf_sh_basis": {
+                    "type": "string",
+                    "description": "Spherical harmonics basis used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "descoteaux07",
+                    "choices": ["descoteaux07", "tournier07"],
+                    "hidden": false
+                },
+                "fodf_set_method": {
+                    "type": "string",
+                    "description": "Method used to compute the FODF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "ssst",
+                    "choices": ["ssst", "msmt"],
+                    "hidden": false
+                },
+                "fodf_relative_threshold": {
+                    "type": "number",
+                    "description": "Relative threshold used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.1,
+                    "hidden": true
+                },
+                "fodf_a_factor": {
+                    "type": "number",
+                    "description": "FODF a factor used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 2.0,
+                    "hidden": true
+                },
+                "fodf_max_fa_threshold": {
+                    "type": "number",
+                    "description": "Maximum FA threshold used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.1,
+                    "hidden": true
+                },
+                "fodf_min_md_threshold": {
+                    "type": "number",
+                    "description": "Minimum MD threshold used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.003,
+                    "hidden": true
+                }
+            }
+        },
+        "registration_options": {
+            "title": "Registration Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for registration.",
+            "help_text": "These options are used to configure the registration steps in the pipeline. You can use these options to customise the behaviour of the registration steps.",
+            "properties": {
+                "reg_dimensionality": {
+                    "type": "integer",
+                    "description": "Dimensionality of the registered image.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 3,
+                    "hidden": true
+                },
+                "reg_interpolation": {
+                    "type": "string",
+                    "description": "Interpolation method used in the registration step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "NearestNeighbor",
+                    "choices": ["NearestNeighbor", "Linear", "BSpline"],
+                    "hidden": true
+                },
+                "reg_output_dtype": {
+                    "type": "string",
+                    "description": "Output data type used in the registration step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "int",
+                    "choices": ["float", "int"],
+                    "hidden": true
+                }
+            }
+        },
+        "pft_tracking_options": {
+            "title": "PFT Tracking Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for PFT tracking.",
+            "help_text": "These options are used to configure the PFT tracking steps in the pipeline. You can use these options to customise the behaviour of the PFT tracking steps.",
+            "properties": {
+                "run_pft_tracking": {
+                    "type": "boolean",
+                    "description": "Run PFT tracking.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "pft_fa_threshold": {
+                    "type": "number",
+                    "description": "FA threshold used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.2,
+                    "hidden": true
+                },
+                "pft_seeding_mask_type": {
+                    "type": "string",
+                    "description": "Seeding mask type used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "wm",
+                    "choices": ["wm", "fa", "interface"],
+                    "hidden": false
+                },
+                "pft_random_seed": {
+                    "type": "integer",
+                    "description": "Random seed used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1234,
+                    "hidden": true
+                },
+                "pft_compress": {
+                    "type": "boolean",
+                    "description": "If true, compress the streamlines.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": true
+                },
+                "pft_compress_value": {
+                    "type": "number",
+                    "description": "Compression value for the streamlines' compression.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.2,
+                    "hidden": true
+                },
+                "pft_algo": {
+                    "type": "string",
+                    "description": "Algorithm used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "prob",
+                    "choices": ["prob", "det"],
+                    "hidden": false
+                },
+                "pft_nbr_seeds": {
+                    "type": "integer",
+                    "description": "Number of seeds used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 10,
+                    "hidden": false
+                },
+                "pft_seeding_type": {
+                    "type": "string",
+                    "description": "Seeding type used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "npv",
+                    "choices": ["npv", "nt"],
+                    "hidden": false
+                },
+                "pft_step": {
+                    "type": "number",
+                    "description": "Step value used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "pft_theta": {
+                    "type": "number",
+                    "description": "Theta value used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "pft_sfthres": {
+                    "type": "number",
+                    "description": "SF threshold used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.1,
+                    "hidden": true
+                },
+                "pft_sfthres_init": {
+                    "type": "number",
+                    "description": "Initial SF threshold used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "pft_min_len": {
+                    "type": "number",
+                    "description": "Minimum length used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": false
+                },
+                "pft_max_len": {
+                    "type": "number",
+                    "description": "Maximum length used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 200,
+                    "hidden": false
+                },
+                "pft_particles": {
+                    "type": "integer",
+                    "description": "Number of particles used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 15,
+                    "hidden": true
+                },
+                "pft_back": {
+                    "type": "integer",
+                    "description": "Back value used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 2,
+                    "hidden": true
+                },
+                "pft_front": {
+                    "type": "integer",
+                    "description": "Front value used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "pft_sh_basis": {
+                    "type": "string",
+                    "description": "Spherical harmonics basis used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "descoteaux07",
+                    "choices": ["descoteaux07", "tournier07"],
+                    "hidden": false
+                }
+            }
+        },
+        "local_tracking_options": {
+            "title": "Local Tracking Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for local tracking.",
+            "help_text": "These options are used to configure the local tracking steps in the pipeline. You can use these options to customise the behaviour of the local tracking steps.",
+            "properties": {
+                "run_local_tracking": {
+                    "type": "boolean",
+                    "description": "Run local tracking.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "local_fa_tracking_mask_threshold": {
+                    "type": "number",
+                    "description": "FA threshold used for the tracking mask.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.4,
+                    "hidden": true
+                },
+                "local_fa_seeding_mask_threshold": {
+                    "type": "number",
+                    "description": "FA threshold used for the seeding mask.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.4,
+                    "hidden": true
+                },
+                "local_seeding_mask_type": {
+                    "type": "string",
+                    "description": "Seeding mask type used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "wm",
+                    "choices": ["wm", "fa", "interface"],
+                    "hidden": false
+                },
+                "local_tracking_mask_type": {
+                    "type": "string",
+                    "description": "Tracking mask type used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "wm",
+                    "choices": ["wm", "fa", "interface"],
+                    "hidden": false
+                },
+                "local_random_seed": {
+                    "type": "integer",
+                    "description": "Random seed used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1234,
+                    "hidden": true
+                },
+                "local_compress": {
+                    "type": "boolean",
+                    "description": "If true, compress the streamlines.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": true
+                },
+                "local_compress_value": {
+                    "type": "number",
+                    "description": "Compression value for the streamlines' compression.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.2,
+                    "hidden": true
+                },
+                "local_algo": {
+                    "type": "string",
+                    "description": "Algorithm used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "prob",
+                    "choices": ["prob", "det"],
+                    "hidden": false
+                },
+                "local_nbr_seeds": {
+                    "type": "integer",
+                    "description": "Number of seeds used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 10,
+                    "hidden": false
+                },
+                "local_seeding_type": {
+                    "type": "string",
+                    "description": "Seeding type used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "npv",
+                    "choices": ["npv", "nt"],
+                    "hidden": false
+                },
+                "local_step": {
+                    "type": "number",
+                    "description": "Step value used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "local_theta": {
+                    "type": "number",
+                    "description": "Theta value used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "local_sfthres": {
+                    "type": "number",
+                    "description": "SF threshold used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.1,
+                    "hidden": true
+                },
+                "local_min_len": {
+                    "type": "number",
+                    "description": "Minimum length used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": false
+                },
+                "local_max_len": {
+                    "type": "number",
+                    "description": "Maximum length used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 200,
+                    "hidden": false
+                },
+                "local_sh_basis": {
+                    "type": "string",
+                    "description": "Spherical harmonics basis used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "descoteaux07",
+                    "choices": ["descoteaux07", "tournier07"],
+                    "hidden": false
+                }
+            }
+        },
+        "transform_labels_options": {
+            "title": "Transform Labels Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for transforming labels.",
+            "help_text": "These options are used to configure the transformation of labels in the pipeline. You can use these options to customise the behaviour of the label transformation steps.",
+            "properties": {
+                "labels_transform_dimensionality": {
+                    "type": "integer",
+                    "description": "Dimensionality of the label file.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 3,
+                    "hidden": false
+                },
+                "labels_output_suffix": {
+                    "type": "string",
+                    "description": "Name to use as suffix in the output filename.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "_labels",
+                    "hidden": true
+                },
+                "labels_interpolation": {
+                    "type": "string",
+                    "description": "Interpolation method used in the label transformation step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "NearestNeighbor",
+                    "choices": ["NearestNeighbor", "Linear", "BSpline"],
+                    "hidden": true
+                },
+                "labels_output_dtype": {
+                    "type": "string",
+                    "description": "Output data type used in the label transformation step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "int",
+                    "choices": ["float", "int"],
+                    "hidden": true
+                }
+            }
+        },
+        "commit_options": {
+            "title": "COMMIT Options",
+            "type": "object",
+            "fa_icon": "fas fa-code-branch",
+            "description": "Options for COMMIT filtering.",
+            "help_text": "These options are used to configure the COMMIT filtering steps in the pipeline. You can use these options to customise the behaviour of the COMMIT filtering steps.",
+            "properties": {
+                "run_commit2": {
+                    "type": "boolean",
+                    "description": "Run COMMIT2 filtering.",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": true,
+                    "hidden": false
+                },
+                "commit2_lambda": {
+                    "type": "number",
+                    "description": "Lambda value used in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": 0.001,
+                    "hidden": true
+                },
+                "commit_para_diff": {
+                    "type": "number",
+                    "description": "Para diff value used in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "hidden": false
+                },
+                "commit_iso_diff": {
+                    "type": "number",
+                    "description": "Iso diff value used in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "hidden": false
+                },
+                "commit_perp_diff": {
+                    "type": "number",
+                    "description": "Perp diff value used in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "hidden": false
+                },
+                "commit_ball_stick": {
+                    "type": "boolean",
+                    "description": "Use the ball and stick model in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": false,
+                    "hidden": true
+                },
+                "commit_nbr_dir": {
+                    "type": "integer",
+                    "description": "Number of directions used in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": 500,
+                    "hidden": true
+                },
+                "commit_shell_tolerance": {
+                    "type": "integer",
+                    "description": "Shell tolerance used in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": 20,
+                    "hidden": true
+                }
+            }
+        },
+        "decompose_options": {
+            "title": "Decompose Tractogram Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for decomposing the tractogram.",
+            "help_text": "These options are used to configure the decomposition of the tractogram in the pipeline. You can use these options to customise the behaviour of the tractogram decomposition steps.",
+            "properties": {
+                "decompose_no_pruning": {
+                    "type": "boolean",
+                    "description": "Do not prune the tractogram.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "decompose_no_remove_loops": {
+                    "type": "boolean",
+                    "description": "Do not remove loops from the tractogram.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "decompose_no_remove_outliers": {
+                    "type": "boolean",
+                    "description": "Do not remove outliers from the tractogram.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "decompose_no_remove_curv": {
+                    "type": "boolean",
+                    "description": "Do not remove curvilinear structures from the tractogram.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "decompose_min_len": {
+                    "type": "number",
+                    "description": "Minimum length used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": false
+                },
+                "decompose_max_len": {
+                    "type": "number",
+                    "description": "Maximum length used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 200,
+                    "hidden": false
+                },
+                "decompose_outlier_threshold": {
+                    "type": "number",
+                    "description": "Outlier threshold used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.6,
+                    "hidden": true
+                },
+                "decompose_max_angle": {
+                    "type": "number",
+                    "description": "Maximum angle used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 330.0,
+                    "hidden": true
+                },
+                "decompose_max_curv": {
+                    "type": "number",
+                    "description": "Maximum curvature used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 10.0,
+                    "hidden": true
+                }
+            }
+        },
+        "afd_fixel_options": {
+            "title": "AFD Fixel Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for AFD fixel processing.",
+            "help_text": "These options are used to configure the AFD fixel processing steps in the pipeline. You can use these options to customise the behaviour of the AFD fixel processing steps.",
+            "properties": {
+                "afd_fixel_sh_basis": {
+                    "type": "string",
+                    "description": "Spherical harmonics basis used in the AFD fixel processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "descoteaux07",
+                    "choices": ["descoteaux07", "tournier07"],
+                    "hidden": true
+                },
+                "afd_fixel_length_weighting": {
+                    "type": "boolean",
+                    "description": "Use length weighting in the AFD fixel processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                }
+            }
+        },
+        "profiles": {
+            "title": "Pipeline profile",
+            "type": "object",
+            "fa_icon": "fas fa-cogs",
+            "description": "Pipeline profile options.",
+            "help_text": "These options are used to configure the pipeline profile. You can use these options to customise the behaviour of the pipeline.",
+            "properties": {
+                "infant": {
+                    "type": "boolean",
+                    "description": "Use infant pipeline profile.",
+                    "fa_icon": "fas fa-baby",
+                    "default": false,
+                    "hidden": true
+                },
+                "tracking": {
+                    "type": "boolean",
+                    "description": "Perform tracking pipeline.",
+                    "fa_icon": "fas fa-map-marker",
+                    "default": false,
+                    "hidden": true
+                },
+                "connectomics": {
+                    "type": "boolean",
+                    "description": "Perform connectomics pipeline.",
+                    "fa_icon": "fas fa-network-wired",
+                    "default": false,
+                    "hidden": true
+                },
+                "freesurfer": {
+                    "type": "boolean",
+                    "description": "Perform FreeSurfer processing.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                }
+            }
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -187,7 +1270,51 @@
         {
             "$ref": "#/$defs/input_output_options"
         },
-
+        {
+            "$ref": "#/$defs/freesurfer_options"
+        },
+        {
+            "$ref": "#/$defs/atlases_options"
+        },
+        {
+            "$ref": "#/$defs/t1_processing_options"
+        },
+        {
+            "$ref": "#/$defs/dwi_preprocessing_options"
+        },
+        {
+            "$ref": "#/$defs/dti_options"
+        },
+        {
+            "$ref": "#/$defs/frf_options"
+        },
+        {
+            "$ref": "#/$defs/fodf_options"
+        },
+        {
+            "$ref": "#/$defs/registration_options"
+        },
+        {
+            "$ref": "#/$defs/pft_tracking_options"
+        },
+        {
+            "$ref": "#/$defs/local_tracking_options"
+        },
+        {
+            "$ref": "#/$defs/transform_labels_options"
+        },
+        {
+            "$ref": "#/$defs/commit_options"
+        },
+        {
+            "$ref": "#/$defs/decompose_options"
+        },
+        {
+            "$ref": "#/$defs/afd_fixel_options"
+        },
+        {
+            "$ref": "#/$defs/profiles"
+        },
         {
             "$ref": "#/$defs/institutional_config_options"
         },
