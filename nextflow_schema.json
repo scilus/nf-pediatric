@@ -87,7 +87,6 @@
                     "fa_icon": "fas fa-folder",
                     "help_text": "Path to the utils folder. This folder contains the atlases used in the pipeline. You can download the utils folder from the nf-pediatric GitHub repository.",
                     "format": "directory-path",
-                    "default": "${projectDir}/assets/FS_BN_GL_SF_utils/",
                     "exists": true,
                     "hidden": true
                 }
@@ -167,14 +166,12 @@
                     "type": "string",
                     "description": "Path to the template to use in antsBet",
                     "fa_icon": "fas fa-brain",
-                    "default": "${projectDir}/assets/templates/t1_template.nii.gz",
                     "hidden": true
                 },
                 "t1_bet_template_probability_map": {
                     "type": "string",
                     "description": "Path to the template probability map to use in antsBet",
                     "fa_icon": "fas fa-brain",
-                    "default": "${projectDir}/assets/templates/t1_brain_probability_map.nii.gz",
                     "hidden": true
                 }
             }

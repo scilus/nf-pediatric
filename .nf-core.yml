@@ -9,6 +9,8 @@ lint:
     - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
     - conf/igenomes.config
+    - assets/FS_BN_GL_SF_utils/**
+    - assets/templates/**
   files_unchanged:
     - CODE_OF_CONDUCT.md
     - assets/nf-core-pediatric_logo_light.png

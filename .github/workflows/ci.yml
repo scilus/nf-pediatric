@@ -53,11 +53,11 @@ jobs:
         with:
           version: "${{ matrix.NXF_VER }}"
 
-      - uses: AlexVCaron/setup-nf-test@2c5a31b90b34d97abf155b57ee0f79c7f5aa118a
-        # Used to make the action executable on our runners. Related to how the home
-        # and work directories are set up from ephemeral disks. See nf-core/setup-nf-test/issues/6
+      - name: Setup nf-test
+        uses: nf-core/setup-nf-test@v1.3.1
         with:
-          version: ${{ matrix.nf_test_version }}
+          version: 0.9.2
+          install-pdiff: true
 
       - name: Set up Apptainer
         if: matrix.profile == 'singularity'
