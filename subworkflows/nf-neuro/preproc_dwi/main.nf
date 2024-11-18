@@ -4,6 +4,8 @@ include { IMAGE_POWDERAVERAGE } from '../../../modules/nf-neuro/image/powderaver
 include { IMAGE_APPLYMASK as BET_DWI } from '../../../modules/nf-neuro/image/applymask/main'
 include { BETCROP_SYNTHBET } from '../../../modules/nf-neuro/betcrop/synthbet/main'
 include { BETCROP_CROPVOLUME as CROPDWI } from '../../../modules/nf-neuro/betcrop/cropvolume/main'
+include { BETCROP_CROPVOLUME as CROPMASK } from '../../../modules/nf-neuro/betcrop/cropvolume/main'
+include { IMAGE_CONVERT as CONVERT } from '../../../modules/local/image/convert'
 include { BETCROP_FSLBETCROP } from '../../../modules/nf-neuro/betcrop/fslbetcrop/main'
 include { BETCROP_CROPVOLUME as CROPB0 } from '../../../modules/nf-neuro/betcrop/cropvolume/main'
 include { PREPROC_N4 as N4_DWI } from '../../../modules/nf-neuro/preproc/n4/main'
@@ -106,8 +108,16 @@ workflow PREPROC_DWI {
                 .map{ it + [[]] })
             ch_versions = ch_versions.mix(CROPDWI.out.versions.first())
 
+            ch_cropmask = BETCROP_SYNTHBET.out.brain_mask
+                .join(CROPDWI.out.bounding_box)
+            CROPMASK ( ch_cropmask )
+            ch_versions = ch_versions.mix(CROPMASK.out.versions.first())
+
+            CONVERT ( CROPMASK.out.image )
+            ch_versions = ch_versions.mix(CONVERT.out.versions.first())
+
             ch_dwi = CROPDWI.out.image
-            ch_mask = BETCROP_SYNTHBET.out.brain_mask
+            ch_mask = CONVERT.out.image
             ch_bbox = CROPDWI.out.bounding_box
 
         } else {

@@ -39,6 +39,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
+            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
         }
 
     }
@@ -58,6 +59,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
+            assert workflow.stdout.contains("Please provide a DWI image for sample: sub-test")
         }
 
     }
@@ -108,6 +110,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
+            assert workflow.stdout.contains("Please provide a wmparc image for sample: sub-test")
         }
 
     }
@@ -128,6 +131,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
+            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
         }
 
     }
@@ -148,6 +152,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
+            assert workflow.stdout.contains("Please provide at least one anatomical image (T1w or T2w) for sample: sub-test")
         }
 
     }
@@ -171,7 +176,7 @@ nextflow_pipeline {
 
     }
 
-    test("Connectomics profile without metrics - should fail") {
+    test("Connectomics profile without metrics - should run successfully") {
 
         when {
             params {
@@ -185,7 +190,47 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.failed
+            assert workflow.success
+        }
+
+    }
+
+    test("Connectomics profile without trk - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testconn_notrk.csv"
+                params.outdir = "test_results/"
+
+                params.connectomics = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.stdout.contains("Please provide a trk file for sample: sub-test")
+        }
+
+    }
+
+    test("Connectomics + infant profile - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testconn_infant.csv"
+                params.outdir = "test_results/"
+
+                params.connectomics = true
+                params.infant = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
         }
 
     }
@@ -199,7 +244,103 @@ nextflow_pipeline {
                 params.outdir = "test_results/"
 
                 params.freesurfer = true
-                params.fs_license = "/Applications/freesurfer/7.4.1/license.txt"
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+
+    }
+
+    test("Freesurfer + connectomics profiles - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testconn.csv"
+                params.outdir = "test_results/"
+
+                params.freesurfer = true
+                params.connectomics = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+
+    }
+
+    test("Freesurfer + connectomics + tracking profiles - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "test_results/"
+
+                params.freesurfer = true
+                params.connectomics = true
+                params.tracking = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+
+    }
+
+    test("Freesurfer + connectomics + tracking profiles with additional metrics - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_withmetrics.csv"
+                params.outdir = "test_results/"
+
+                params.freesurfer = true
+                params.connectomics = true
+                params.tracking = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+
+    }
+
+    test("Connectomics + tracking + infant profiles - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testall_infant.csv"
+                params.outdir = "test_results/"
+
+                params.connectomics = true
+                params.tracking = true
+                params.infant = true
+
+                // ** Infant specific parameters ** //
+                params.dwi_run_synthstrip               = true
+                params.dwi_normalize_fa_mask_threshold  = 0.10
+                params.fodf_max_fa_threshold            = 0.01
+                params.fodf_min_md_threshold            = 0.00185
+                params.frf_manual_frf                   = "12,5,5"
+                params.run_pft_tracking                 = false
+                params.local_min_len                    = 15
+                params.local_fa_seeding_mask_threshold  = 0.10
 
             }
         }

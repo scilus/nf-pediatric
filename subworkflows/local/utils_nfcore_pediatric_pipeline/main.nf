@@ -133,7 +133,7 @@ workflow PIPELINE_INITIALISATION {
                         error("Please provide a warp image for sample: ${meta.id}")
                     }
                     if (!metrics) {
-                        error("You did not provide metric file for sample: ${meta.id}")
+                        log.warn("You did not provide metric file for sample: ${meta.id}")
                     }
                 }
 
@@ -214,12 +214,12 @@ workflow PIPELINE_INITIALISATION {
                         error("Please provide a warp image for sample: ${meta.id}")
                     }
                     if (!metrics) {
-                        error("You did not provide metric file for sample: ${meta.id}")
+                        log.warn("You did not provide metric file for sample: ${meta.id}")
                     }
                 }
 
                 // ** Validate files for profile children with tracking and connectomics. ** //
-                if ( params.tracking && params.connectomics && !params.infant ) {
+                if ( params.tracking && params.connectomics && !params.infant && !params.freesurfer ) {
                     if (!t1) {
                         error("Please provide a T1w image for sample: ${meta.id}")
                     }
@@ -270,7 +270,7 @@ workflow PIPELINE_INITIALISATION {
                         error("Please provide a warp image for sample: ${meta.id}")
                     }
                     if (!metrics) {
-                        error("You did not provide metric file for sample: ${meta.id}")
+                        log.warn("You did not provide metric file for sample: ${meta.id}")
                     }
                 }
 

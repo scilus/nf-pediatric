@@ -19,46 +19,83 @@ process CONNECTIVITY_METRICS {
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
 
-    String metrics_list = metrics.join(", ").replace(',', '')
+    if ( metrics ) {
+        metrics_list = metrics.join(", ").replace(',', '')
 
-    """
-    metrics_args=""
+        """
+        metrics_args=""
 
-    for metric in $metrics_list; do
-        base_name=\$(basename \${metric})
-        metrics_args="\${metrics_args} --metrics \${metric} \$(basename \$base_name .nii.gz).npy"
-    done
+        for metric in $metrics_list; do
+            base_name=\$(basename \${metric})
+            metrics_args="\${metrics_args} --metrics \${metric} \$(basename \$base_name .nii.gz).npy"
+        done
 
-    scil_connectivity_compute_matrices.py $h5 $labels \
-        --processes $task.cpus \
-        --volume "${prefix}__vol.npy" \
-        --streamline_count "${prefix}__sc.npy" \
-        --length "${prefix}__len.npy" \
-        \$metrics_args \
-        --density_weighting \
-        --no_self_connection \
-        --include_dps ./ \
-        --force_labels_list $labels_list
+        scil_connectivity_compute_matrices.py $h5 $labels \
+            --processes $task.cpus \
+            --volume "${prefix}__vol.npy" \
+            --streamline_count "${prefix}__sc.npy" \
+            --length "${prefix}__len.npy" \
+            \$metrics_args \
+            --density_weighting \
+            --no_self_connection \
+            --include_dps ./ \
+            --force_labels_list $labels_list
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
-    END_VERSIONS
-    """
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        END_VERSIONS
+        """
+    } else {
+        """
+        scil_connectivity_compute_matrices.py $h5 $labels \
+            --processes $task.cpus \
+            --volume "${prefix}__vol.npy" \
+            --streamline_count "${prefix}__sc.npy" \
+            --length "${prefix}__len.npy" \
+            --density_weighting \
+            --no_self_connection \
+            --include_dps ./ \
+            --force_labels_list $labels_list
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        END_VERSIONS
+        """
+    }
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
 
-    """
-    touch ${prefix}__vol.npy
-    touch ${prefix}__sc.npy
-    touch ${prefix}__len.npy
+    if ( metrics ) {
+        metrics_list = metrics.join(", ").replace(',', '')
 
-    scil_connectivity_compute_matrices.py -h
+        """
+        for metric in $metrics_list; do
+            base_name=\$(basename "\${metric}" .nii.gz)
+            touch "\${base_name}.npy"
+        done
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
-    END_VERSIONS
-    """
+        scil_connectivity_compute_matrices.py -h
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        END_VERSIONS
+        """
+    } else {
+        """
+        touch ${prefix}__vol.npy
+        touch ${prefix}__sc.npy
+        touch ${prefix}__len.npy
+
+        scil_connectivity_compute_matrices.py -h
+
+        cat <<-END_VERSIONS > versions.yml
+        "${task.process}":
+            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        END_VERSIONS
+        """
+    }
 }

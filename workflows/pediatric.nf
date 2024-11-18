@@ -15,6 +15,10 @@ include { FREESURFERFLOW                    } from '../subworkflows/local/freesu
 
 // ** T1 Preprocessing ** //
 include { PREPROC_T1                        } from '../subworkflows/nf-neuro/preproc_t1/main'
+include { IMAGE_RESAMPLE as RESAMPLE_T2     } from '../modules/nf-neuro/image/resample/main'
+include { IMAGE_RESAMPLE as RESAMPLE_WMMASK } from '../modules/nf-neuro/image/resample/main'
+include { BETCROP_CROPVOLUME as CROPT2      } from '../modules/nf-neuro/betcrop/cropvolume/main'
+include { BETCROP_CROPVOLUME as CROPWMMASK  } from '../modules/nf-neuro/betcrop/cropvolume/main'
 
 // ** DWI Preprocessing ** //
 include { PREPROC_DWI                       } from '../subworkflows/nf-neuro/preproc_dwi/main'
@@ -223,9 +227,39 @@ workflow PEDIATRIC {
         //
         if ( params.infant ) {
 
+            // ** Apply resampling to input t2 and wmparc. ** //
+            ch_resample_t2 = ch_inputs.t2
+                .map{ it + [[]] }
+
+            RESAMPLE_T2 ( ch_resample_t2 )
+            ch_versions = ch_versions.mix(RESAMPLE_T2.out.versions.first())
+            // ch_multiqc_files = ch_multiqc_files.mix(RESAMPLE_T2.out.zip.collect{it[1]})
+
+            ch_resample_wmmask = ch_inputs.wmparc
+                .map{ it + [[]] }
+
+            RESAMPLE_WMMASK ( ch_resample_wmmask )
+            ch_versions = ch_versions.mix(RESAMPLE_WMMASK.out.versions.first())
+            // ch_multiqc_files = ch_multiqc_files.mix(RESAMPLE_WMMASK.out.zip.collect{it[1]})
+
+            // ** Crop T2 and wm mask. ** //
+            ch_crop_t2 = RESAMPLE_T2.out.image
+                .map{ it + [[]] }
+
+            CROPT2 ( ch_crop_t2 )
+            ch_versions = ch_versions.mix(CROPT2.out.versions.first())
+            // ch_multiqc_files = ch_multiqc_files.mix(CROPT2.out.zip.collect{it[1]})
+
+            ch_crop_wmmask = RESAMPLE_WMMASK.out.image
+                .join(CROPT2.out.bounding_box)
+
+            CROPWMMASK ( ch_crop_wmmask )
+            ch_versions = ch_versions.mix(CROPWMMASK.out.versions.first())
+            // ch_multiqc_files = ch_multiqc_files.mix(CROPWMMASK.out.zip.collect{it[1]})
+
             REGISTRATION(
-                ch_inputs.t2,
-                PREPROC_DWI.out.pwdavg,
+                CROPT2.out.image,
+                PREPROC_DWI.out.b0,
                 RECONST_DTIMETRICS.out.md,
                 Channel.empty(),
                 Channel.empty(),
@@ -235,8 +269,8 @@ workflow PEDIATRIC {
             // ch_multiqc_files = ch_multiqc_files.mix(REGISTRATION.out.zip.collect{it[1]})
 
             // ** Apply transforms to WM mask. ** //
-            ch_reg_wm_mask = ch_inputs.wmparc
-                .join(PREPROC_DWI.out.pwdavg)
+            ch_reg_wm_mask = CROPWMMASK.out.image
+                .join(REGISTRATION.out.image_warped)
                 .join(REGISTRATION.out.transfo_image)
 
             REGISTRATION_ANTSAPPLYTRANSFORMS ( ch_reg_wm_mask )
@@ -262,7 +296,7 @@ workflow PEDIATRIC {
         //
         if ( params.infant ) {
 
-            ch_seg = ch_inputs.wmparc
+            ch_seg = REGISTRATION_ANTSAPPLYTRANSFORMS.out.warped_image
                 .join(RECONST_DTIMETRICS.out.fa)
 
             MASK_COMBINE( ch_seg )
@@ -356,14 +390,15 @@ workflow PEDIATRIC {
 
                 ch_provided_metrics = ch_inputs.metrics
                     .map { meta, metrics ->
-                        def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') }
+                        def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') && it.name != '*.nii.gz' }
                         return [meta, metrics_files]
                     }
                     .filter { it[1] }
 
-                ch_metrics = ch_metrics.concat(
-                    ch_provided_metrics
-                    )
+                ch_metrics = ch_metrics
+                    .combine(ch_provided_metrics, by: 0)
+                    .map{ meta, defmet, provmet -> tuple(meta, defmet + provmet) }
+
             }
 
         } else {
@@ -383,7 +418,7 @@ workflow PEDIATRIC {
 
             ch_metrics = ch_inputs.metrics
                 .map { meta, metrics ->
-                    def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') }
+                    def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') && it.name != '*.nii.gz' }
                     return [meta, metrics_files]
                 }
                 .filter { it[1] }
@@ -457,10 +492,13 @@ workflow PEDIATRIC {
         //
         // MODULE: Run CONNECTIVITY_METRICS
         //
+        ch_metrics.view()
         ch_metrics = CONNECTIVITY_AFDFIXEL.out.hdf5
             .join(TRANSFORM_LABELS.out.warped_image)
             .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
             .combine(ch_metrics, by: 0)
+
+        ch_metrics.view()
 
         CONNECTIVITY_METRICS ( ch_metrics )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())
