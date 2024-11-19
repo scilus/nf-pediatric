@@ -2,8 +2,7 @@ process ATLASES_BRAINNETOMECHILD {
     tag "$meta.id"
     label 'process_medium'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?:
-        'gagnonanthony/nf-pediatric:0.1.0' }"
+    container "gagnonanthony/nf-pediatric:0.1.0"
 
     input:
     tuple val(meta), path(folder), path(utils), path(fs_license)

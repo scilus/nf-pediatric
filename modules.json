@@ -70,6 +70,11 @@
                         "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
                         "installed_by": ["preproc_dwi"]
                     },
+                    "image/convert": {
+                        "branch": "main",
+                        "git_sha": "b4be151bd68e7c6398c0167a60dc622c5297f198",
+                        "installed_by": ["preproc_dwi"]
+                    },
                     "image/powderaverage": {
                         "branch": "main",
                         "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",

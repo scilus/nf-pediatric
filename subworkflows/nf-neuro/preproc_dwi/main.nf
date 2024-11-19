@@ -5,7 +5,7 @@ include { IMAGE_APPLYMASK as BET_DWI } from '../../../modules/nf-neuro/image/app
 include { BETCROP_SYNTHBET } from '../../../modules/nf-neuro/betcrop/synthbet/main'
 include { BETCROP_CROPVOLUME as CROPDWI } from '../../../modules/nf-neuro/betcrop/cropvolume/main'
 include { BETCROP_CROPVOLUME as CROPMASK } from '../../../modules/nf-neuro/betcrop/cropvolume/main'
-include { IMAGE_CONVERT as CONVERT } from '../../../modules/local/image/convert'
+include { IMAGE_CONVERT as CONVERT } from '../../../modules/nf-neuro/image/convert'
 include { BETCROP_FSLBETCROP } from '../../../modules/nf-neuro/betcrop/fslbetcrop/main'
 include { BETCROP_CROPVOLUME as CROPB0 } from '../../../modules/nf-neuro/betcrop/cropvolume/main'
 include { PREPROC_N4 as N4_DWI } from '../../../modules/nf-neuro/preproc/n4/main'

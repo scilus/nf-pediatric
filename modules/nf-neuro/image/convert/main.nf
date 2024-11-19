@@ -10,8 +10,8 @@ process IMAGE_CONVERT {
     tuple val(meta), path(image)
 
     output:
-    tuple val(meta), path("*_converted.nii.gz")     , emit: image
-    path "versions.yml"                             , emit: versions
+    tuple val(meta), path("*_converted.nii.gz") , emit: image
+    path "versions.yml"                         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -19,7 +19,7 @@ process IMAGE_CONVERT {
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
 
-    def datatype = task.ext.datatype ? "--data_type ${task.ext.datatype}" : "--data_type uint8"
+    def datatype = task.ext.datatype ? "--data_type ${task.ext.datatype}" : '' // REQUIRED.
     def suffix = task.ext.first_suffix ? "${task.ext.first_suffix}_${task.ext.datatype}_converted" : "${task.ext.datatype}_converted"
 
     """
@@ -38,8 +38,6 @@ process IMAGE_CONVERT {
 
     """
     touch ${prefix}_${suffix}.nii.gz
-
-    scil_volume_math.py -h
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
