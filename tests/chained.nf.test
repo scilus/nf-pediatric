@@ -5,29 +5,29 @@ nextflow_pipeline {
     name "Test nf-pediatric all profiles chained"
     script "../main.nf"
 
-// ** COMMENTED OUT FOR NOW, UNTIL WE HAVE ACCESS TO THE SCIL'S RUNNERS. ** //
-//    test("Freesurfer + connectomics profiles - should run successfully") {
+/* ** COMMENTED OUT FOR NOW, UNTIL WE HAVE ACCESS TO THE SCIL'S RUNNERS. ** //
+    test("Freesurfer + connectomics profiles - should run successfully") {
 
-//        when {
-//            params {
+        when {
+            params {
 
-//                params.input = "$projectDir/tests/data/samplesheet_testconn.csv"
-//                params.outdir = "test_results/"
+                params.input = "$projectDir/tests/data/samplesheet_testconn.csv"
+                params.outdir = "test_results/"
 
-//                params.connectomics = true
-//                params.freesurfer = true
-//                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+                params.connectomics = true
+                params.freesurfer = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
-//            }
-//        }
+            }
+        }
 
-//        then {
-//            assert workflow.success
-//            assert workflow.trace.tasks().size() == 9
-//        }
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 9
+        }
 
-//    }
-
+    }
+*/
     test("Connectomics + tracking profiles - should run successfully") {
 
         when {
@@ -70,6 +70,7 @@ nextflow_pipeline {
 
     }
 
+/* UNTIL WE HAVE SCIL'S RUNNERS, WE CAN'T RUN THIS TEST. ** //
     test("Connectomics + tracking + infant profiles - should run successfully") {
 
         when {
@@ -101,5 +102,6 @@ nextflow_pipeline {
         }
 
     }
+*/
 
 }
