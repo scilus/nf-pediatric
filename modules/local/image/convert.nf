@@ -34,7 +34,7 @@ process IMAGE_CONVERT {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
 
-    def suffix = task.ext.first_suffix ? "${task.ext.first_suffix}_${task.ext.datatype}" : "${task.ext.datatype}"
+    def suffix = task.ext.first_suffix ? "${task.ext.first_suffix}_${task.ext.datatype}_converted" : "${task.ext.datatype}_converted"
 
     """
     touch ${prefix}_${suffix}.nii.gz

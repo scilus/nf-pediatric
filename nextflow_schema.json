@@ -950,19 +950,19 @@
                     "hidden": true
                 },
                 "commit_para_diff": {
-                    "type": "number",
+                    "type": "string",
                     "description": "Para diff value used in the COMMIT filtering step.",
                     "fa_icon": "fas fa-code-branch",
                     "hidden": false
                 },
                 "commit_iso_diff": {
-                    "type": "number",
+                    "type": "string",
                     "description": "Iso diff value used in the COMMIT filtering step.",
                     "fa_icon": "fas fa-code-branch",
                     "hidden": false
                 },
                 "commit_perp_diff": {
-                    "type": "number",
+                    "type": "string",
                     "description": "Perp diff value used in the COMMIT filtering step.",
                     "fa_icon": "fas fa-code-branch",
                     "hidden": false

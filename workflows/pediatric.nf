@@ -386,14 +386,15 @@ workflow PEDIATRIC {
                 .map{ meta, fa, md, ad, rd, mode, afd_total, nufo ->
                     tuple(meta, [ fa, md, ad, rd, mode, afd_total, nufo ])}
 
-            if ( ch_inputs.metrics ) {
+            ch_provided_metrics = ch_inputs.metrics
+                .map { meta, metrics ->
+                    def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') && it.name != '*.nii.gz' }
+                    return [meta, metrics_files]
+                }
+                .filter { it[1] }
+                .ifEmpty( false )
 
-                ch_provided_metrics = ch_inputs.metrics
-                    .map { meta, metrics ->
-                        def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') && it.name != '*.nii.gz' }
-                        return [meta, metrics_files]
-                    }
-                    .filter { it[1] }
+            if ( ch_provided_metrics != false ) {
 
                 ch_metrics = ch_metrics
                     .combine(ch_provided_metrics, by: 0)
@@ -422,9 +423,9 @@ workflow PEDIATRIC {
                     return [meta, metrics_files]
                 }
                 .filter { it[1] }
+                .ifEmpty( false )
 
         }
-
         //
         // MODULE : Run AntsApplyTransforms.
         //
@@ -492,15 +493,23 @@ workflow PEDIATRIC {
         //
         // MODULE: Run CONNECTIVITY_METRICS
         //
-        ch_metrics.view()
-        ch_metrics = CONNECTIVITY_AFDFIXEL.out.hdf5
-            .join(TRANSFORM_LABELS.out.warped_image)
-            .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
-            .combine(ch_metrics, by: 0)
+        if ( ch_metrics == false ) {
 
-        ch_metrics.view()
+            ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
+                .join(TRANSFORM_LABELS.out.warped_image)
+                .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
+                .combine(ch_metrics, by: 0)
 
-        CONNECTIVITY_METRICS ( ch_metrics )
+        } else {
+
+            ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
+                .join(TRANSFORM_LABELS.out.warped_image)
+                .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
+                .map { it + [[]] }
+
+        }
+
+        CONNECTIVITY_METRICS ( ch_metrics_conn )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(CONNECTIVITY_METRICS.out.zip.collect{it[1]})
 

@@ -43,7 +43,7 @@ process FILTERING_COMMIT {
     elif [ -f "${prefix}__results_bzs/commit_1/decompose_commit.h5" ]; then
         mv "${prefix}__results_bzs/commit_1/decompose_commit.h5" "./${prefix}__decompose_commit.h5"
     else
-        mv "${prefix}__results_bzs/commit_1/essential.trk" "./${prefix}__commit.trk"
+        mv "${prefix}__results_bzs/commit_1/essential_tractogram.trk" "./${prefix}__commit.trk"
     fi
 
     cat <<-END_VERSIONS > versions.yml

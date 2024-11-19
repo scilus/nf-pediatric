@@ -20,6 +20,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 26
         }
 
     }
@@ -84,12 +85,14 @@ nextflow_pipeline {
                 params.run_pft_tracking                 = false
                 params.local_min_len                    = 15
                 params.local_fa_seeding_mask_threshold  = 0.10
+                params.run_local_tracking               = true
 
             }
         }
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 29
         }
 
     }
@@ -104,6 +107,16 @@ nextflow_pipeline {
 
                 params.tracking = true
                 params.infant = true
+
+                // ** Infant specific parameters ** //
+                params.dwi_run_synthstrip               = true
+                params.dwi_normalize_fa_mask_threshold  = 0.10
+                params.fodf_max_fa_threshold            = 0.01
+                params.fodf_min_md_threshold            = 0.00185
+                params.frf_manual_frf                   = "12,5,5"
+                params.run_pft_tracking                 = false
+                params.local_min_len                    = 15
+                params.local_fa_seeding_mask_threshold  = 0.10
 
             }
         }
@@ -126,6 +139,16 @@ nextflow_pipeline {
                 params.tracking = true
                 params.infant = true
 
+                // ** Infant specific parameters ** //
+                params.dwi_run_synthstrip               = true
+                params.dwi_normalize_fa_mask_threshold  = 0.10
+                params.fodf_max_fa_threshold            = 0.01
+                params.fodf_min_md_threshold            = 0.00185
+                params.frf_manual_frf                   = "12,5,5"
+                params.run_pft_tracking                 = false
+                params.local_min_len                    = 15
+                params.local_fa_seeding_mask_threshold  = 0.10
+
             }
         }
 
@@ -146,6 +169,16 @@ nextflow_pipeline {
 
                 params.tracking = true
                 params.infant = true
+
+                // ** Infant specific parameters ** //
+                params.dwi_run_synthstrip               = true
+                params.dwi_normalize_fa_mask_threshold  = 0.10
+                params.fodf_max_fa_threshold            = 0.01
+                params.fodf_min_md_threshold            = 0.00185
+                params.frf_manual_frf                   = "12,5,5"
+                params.run_pft_tracking                 = false
+                params.local_min_len                    = 15
+                params.local_fa_seeding_mask_threshold  = 0.10
 
             }
         }
@@ -172,6 +205,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 7
         }
 
     }
@@ -191,6 +225,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 7
         }
 
     }
@@ -209,7 +244,7 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
+            assert workflow.failed
             assert workflow.stdout.contains("Please provide a trk file for sample: sub-test")
         }
 
@@ -231,6 +266,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 7
         }
 
     }
@@ -251,6 +287,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 3
         }
 
     }
@@ -272,6 +309,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 9
         }
 
     }
@@ -294,6 +332,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 34
         }
 
     }
@@ -316,6 +355,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 34
         }
 
     }
@@ -347,6 +387,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 35
         }
 
     }
