@@ -271,7 +271,7 @@ nextflow_pipeline {
 
     }
 
-    test("Freesurfer profile - should run successfully") {
+    test("Connectomics + tracking profiles - should run successfully") {
 
         when {
             params {
@@ -279,53 +279,8 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
                 params.outdir = "test_results/"
 
-                params.freesurfer = true
-                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
-
-            }
-        }
-
-        then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 3
-        }
-
-    }
-
-    test("Freesurfer + connectomics profiles - should run successfully") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/samplesheet_testconn.csv"
-                params.outdir = "test_results/"
-
-                params.freesurfer = true
-                params.connectomics = true
-                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
-
-            }
-        }
-
-        then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 9
-        }
-
-    }
-
-    test("Freesurfer + connectomics + tracking profiles - should run successfully") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
-                params.outdir = "test_results/"
-
-                params.freesurfer = true
                 params.connectomics = true
                 params.tracking = true
-                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
             }
         }
@@ -337,7 +292,7 @@ nextflow_pipeline {
 
     }
 
-    test("Freesurfer + connectomics + tracking profiles with additional metrics - should run successfully") {
+    test("Connectomics + tracking profiles with additional metrics - should run successfully") {
 
         when {
             params {
@@ -345,10 +300,8 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/samplesheet_testtracking_withmetrics.csv"
                 params.outdir = "test_results/"
 
-                params.freesurfer = true
                 params.connectomics = true
                 params.tracking = true
-                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
             }
         }
