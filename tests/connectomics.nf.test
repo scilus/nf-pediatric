@@ -1,0 +1,89 @@
+nextflow_pipeline {
+
+    options "-stub-run"
+
+    name "Test nf-pediatric profile connectomics"
+    script "../main.nf"
+
+    test("Connectomics profile with metrics - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testconn.csv"
+                params.outdir = "test_results/"
+
+                params.connectomics = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 7
+        }
+
+    }
+
+    test("Connectomics profile without metrics - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testconn_nometrics.csv"
+                params.outdir = "test_results/"
+
+                params.connectomics = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 7
+        }
+
+    }
+
+    test("Connectomics profile without trk - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testconn_notrk.csv"
+                params.outdir = "test_results/"
+
+                params.connectomics = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a trk file for sample: sub-test")
+        }
+
+    }
+
+    test("Connectomics + infant profile - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testconn_infant.csv"
+                params.outdir = "test_results/"
+
+                params.connectomics = true
+                params.infant = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 7
+        }
+
+    }
+
+}

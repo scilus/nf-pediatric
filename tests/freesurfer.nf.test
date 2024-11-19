@@ -2,7 +2,7 @@ nextflow_pipeline {
 
     options "-stub-run"
 
-    name "Test nf-pediatric freesurfer workflows main.nf"
+    name "Test nf-pediatric profile freesurfer"
     script "../main.nf"
 
     test("Freesurfer profile - should run successfully") {
@@ -22,28 +22,6 @@ nextflow_pipeline {
         then {
             assert workflow.success
             assert workflow.trace.tasks().size() == 3
-        }
-
-    }
-
-    test("Freesurfer + connectomics profiles - should run successfully") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/samplesheet_testconn.csv"
-                params.outdir = "test_results/"
-
-                params.connectomics = true
-                params.freesurfer = true
-                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
-
-            }
-        }
-
-        then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 9
         }
 
     }
