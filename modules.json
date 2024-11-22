@@ -16,7 +16,7 @@
                 "nf-core": {
                     "utils_nextflow_pipeline": {
                         "branch": "master",
-                        "git_sha": "3aa0aec1d52d492fe241919f0c6100ebf0074082",
+                        "git_sha": "56372688d8979092cafbe0c5c3895b491166ca1c",
                         "installed_by": ["subworkflows"]
                     },
                     "utils_nfcore_pipeline": {
@@ -26,7 +26,7 @@
                     },
                     "utils_nfschema_plugin": {
                         "branch": "master",
-                        "git_sha": "bbd5a41f4535a8defafe6080e00ea74c45f4f96c",
+                        "git_sha": "2fd2cd6d0e7b273747f32e465fdc6bcc3ae0814e",
                         "installed_by": ["subworkflows"]
                     }
                 }
@@ -42,7 +42,7 @@
                     },
                     "betcrop/cropvolume": {
                         "branch": "main",
-                        "git_sha": "bf73ead697091e53a468149e389245c1ec1d12ee",
+                        "git_sha": "793ff1b7877d1ffb5cdae69c5f6568d485aeb0e3",
                         "installed_by": ["preproc_dwi", "preproc_t1"]
                     },
                     "betcrop/fslbetcrop": {
@@ -92,7 +92,7 @@
                     },
                     "preproc/n4": {
                         "branch": "main",
-                        "git_sha": "d367837de6a230f133549831b7199789b592d33e",
+                        "git_sha": "18273a2cef9ffdaf7088e305b9c4ebf4dd439079",
                         "installed_by": ["preproc_dwi", "preproc_t1"]
                     },
                     "preproc/normalize": {
@@ -112,7 +112,7 @@
                     },
                     "reconst/fodf": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "c2980ddb3d3d0be27b36f06282360728fbb63d42",
                         "installed_by": ["modules"]
                     },
                     "reconst/frf": {
@@ -122,7 +122,7 @@
                     },
                     "reconst/meanfrf": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "d22a074b33a7672ba7aa473fe93db07468fb50b5",
                         "installed_by": ["modules"]
                     },
                     "registration/anattodwi": {

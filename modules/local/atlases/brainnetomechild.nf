@@ -44,7 +44,9 @@ process ATLASES_BRAINNETOMECHILD {
     touch ${prefix}__brainnetome_child_v1_dilated.nii.gz
     touch ${prefix}__brainnetome_child_v1.txt
     touch ${prefix}__brainnetome_child_v1.json
-    touch ${prefix}__brainnetome_child_v1.stats
+    touch BN_Child_subcortical.stats
+    touch lh.BN_Child.stats
+    touch rh.BN_Child.stats
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -42,7 +42,11 @@ process BETCROP_CROPVOLUME {
     scil_volume_crop.py -h
 
     touch ${prefix}_${suffix}.nii.gz
-    touch bounding_box.pkl
+
+    if $task.ext.output_bbox;
+    then
+        touch ${prefix}_${suffix}_bbox.pkl
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -8,13 +8,13 @@ lint:
     - .github/ISSUE_TEMPLATE/config.yml
     - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
-    - conf/igenomes.config
   files_unchanged:
     - CODE_OF_CONDUCT.md
     - assets/nf-core-pediatric_logo_light.png
     - docs/images/nf-core-pediatric_logo_light.png
     - docs/images/nf-core-pediatric_logo_dark.png
     - .github/ISSUE_TEMPLATE/bug_report.yml
+    - .github/PULL_REQUEST_TEMPLATE.md
     - docs/README.md
     - .github/CONTRIBUTING.md
     - .gitignore
@@ -33,10 +33,7 @@ template:
     (dMRI, and sMRI) ranging from 0-18 years old.
   force: false
   is_nfcore: false
-  name: pediatric
-  org: nf
+  name: nf-pediatric
+  org: nf-neuro
   outdir: .
-  skip_features:
-    - igenomes
-  version: 1.0dev
 update: null

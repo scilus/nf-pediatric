@@ -1193,6 +1193,12 @@
                     "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
                     "hidden": true
                 },
+                "lean_output": {
+                    "type": "boolean",
+                    "description": "Do not copy intermediate files to output directory.",
+                    "fa_icon": "fas fa-file-import",
+                    "hidden": false
+                },
                 "email_on_fail": {
                     "type": "string",
                     "description": "Email address for completion summary, only when pipeline fails.",

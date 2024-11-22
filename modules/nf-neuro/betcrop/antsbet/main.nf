@@ -48,8 +48,8 @@ process BETCROP_ANTSBET {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
-        """
-    #antsBrainExtraction.sh -h
+    """
+    #antsBrainExtraction.sh &> stdout.log
     scil_volume_math.py -h
     mrcalc -h
 
