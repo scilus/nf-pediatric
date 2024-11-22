@@ -14,6 +14,8 @@
 
 ![nf-pediatric-schema](/assets/nf-pediatric-schema.svg)
 
+A detailed description of the minimal outputs can be found [here](/docs/output.md).
+
 ## Usage
 
 > [!NOTE]
