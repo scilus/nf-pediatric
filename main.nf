@@ -1,13 +1,11 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf/pediatricflow
+    nf/pediatric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf/pediatricflow
+    Github : https://github.com/nf/pediatric
 ----------------------------------------------------------------------------------------
 */
-
-nextflow.enable.dsl = 2
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -15,10 +13,9 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { PEDIATRICFLOW  } from './workflows/pediatricflow'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_pediatricflow_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_pediatricflow_pipeline'
-
+include { PEDIATRIC  } from './workflows/pediatric'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_pediatric_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_pediatric_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -28,7 +25,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_pedi
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NF_PEDIATRICFLOW {
+workflow NF_PEDIATRIC {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -38,13 +35,11 @@ workflow NF_PEDIATRICFLOW {
     //
     // WORKFLOW: Run pipeline
     //
-    PEDIATRICFLOW (
+    PEDIATRIC (
         samplesheet
     )
-
     emit:
-    multiqc_report = PEDIATRICFLOW.out.multiqc_report // channel: /path/to/multiqc_report.html
-
+    multiqc_report = PEDIATRIC.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,13 +50,11 @@ workflow NF_PEDIATRICFLOW {
 workflow {
 
     main:
-
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
     PIPELINE_INITIALISATION (
         params.version,
-        params.help,
         params.validate_params,
         params.monochrome_logs,
         args,
@@ -72,10 +65,9 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NF_PEDIATRICFLOW (
+    NF_PEDIATRIC (
         PIPELINE_INITIALISATION.out.samplesheet
     )
-
     //
     // SUBWORKFLOW: Run completion tasks
     //
@@ -86,7 +78,7 @@ workflow {
         params.outdir,
         params.monochrome_logs,
         params.hook_url,
-        NF_PEDIATRICFLOW.out.multiqc_report
+        NF_PEDIATRIC.out.multiqc_report
     )
 }
 

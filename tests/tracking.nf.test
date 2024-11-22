@@ -1,0 +1,193 @@
+nextflow_pipeline {
+
+    options "-stub-run"
+
+    name "Test nf-pediatric profile tracking"
+    script "../main.nf"
+
+    test("Tracking profile - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 26
+        }
+
+    }
+
+    test("Tracking profile no rev b0 - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
+        }
+
+    }
+
+    test("Tracking profile no dwi - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_nodwi.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a DWI image for sample: sub-test")
+        }
+
+    }
+
+    test("Tracking profile with infant data - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.infant = true
+
+                // ** Infant specific parameters ** //
+                params.dwi_run_synthstrip               = true
+                params.dwi_normalize_fa_mask_threshold  = 0.10
+                params.fodf_max_fa_threshold            = 0.01
+                params.fodf_min_md_threshold            = 0.00185
+                params.frf_manual_frf                   = "12,5,5"
+                params.run_pft_tracking                 = false
+                params.local_min_len                    = 15
+                params.local_fa_seeding_mask_threshold  = 0.10
+                params.run_local_tracking               = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 29
+        }
+
+    }
+
+    test("Tracking profile with infant data no wm mask - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_nowmmask.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.infant = true
+
+                // ** Infant specific parameters ** //
+                params.dwi_run_synthstrip               = true
+                params.dwi_normalize_fa_mask_threshold  = 0.10
+                params.fodf_max_fa_threshold            = 0.01
+                params.fodf_min_md_threshold            = 0.00185
+                params.frf_manual_frf                   = "12,5,5"
+                params.run_pft_tracking                 = false
+                params.local_min_len                    = 15
+                params.local_fa_seeding_mask_threshold  = 0.10
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a wmparc image for sample: sub-test")
+        }
+
+    }
+
+    test("Tracking profile with infant data no rev b0 - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_norev.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.infant = true
+
+                // ** Infant specific parameters ** //
+                params.dwi_run_synthstrip               = true
+                params.dwi_normalize_fa_mask_threshold  = 0.10
+                params.fodf_max_fa_threshold            = 0.01
+                params.fodf_min_md_threshold            = 0.00185
+                params.frf_manual_frf                   = "12,5,5"
+                params.run_pft_tracking                 = false
+                params.local_min_len                    = 15
+                params.local_fa_seeding_mask_threshold  = 0.10
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
+        }
+
+    }
+
+    test("Tracking profile with infant data no t2 - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_not2.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.infant = true
+
+                // ** Infant specific parameters ** //
+                params.dwi_run_synthstrip               = true
+                params.dwi_normalize_fa_mask_threshold  = 0.10
+                params.fodf_max_fa_threshold            = 0.01
+                params.fodf_min_md_threshold            = 0.00185
+                params.frf_manual_frf                   = "12,5,5"
+                params.run_pft_tracking                 = false
+                params.local_min_len                    = 15
+                params.local_fa_seeding_mask_threshold  = 0.10
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide at least one anatomical image (T1w or T2w) for sample: sub-test")
+        }
+
+    }
+
+}
