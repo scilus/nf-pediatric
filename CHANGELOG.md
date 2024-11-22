@@ -7,5 +7,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
-* Complete test suites for the pipeline using stub-runs.
-* Complete port of [Infant-DWI](https://github.com/scilus/Infant-DWI/) modules and workflows into the nf-core template.
+- Complete test suites for the pipeline using stub-runs.
+- Complete port of [Infant-DWI](https://github.com/scilus/Infant-DWI/) modules and workflows into the nf-core template.

@@ -6,10 +6,10 @@
 
 `nf-pediatric` process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. A specific and unique profile pertains to `infant` data (<2 years old) and sets specific parameters tailored to infant data preprocessing. Here is a list of the available profiles:
 
-* `tracking`: Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
-* `freesurfer`: Run FreeSurfer or FastSurfer for T1w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) is mapped to the subject space. **Not available with the `infant` profile.**
-* `connectomics`: Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
-* `infant`: This profile adapt some processing steps to infant data, but also requires more input files. See below for a list of the required files.
+- `tracking`: Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
+- `freesurfer`: Run FreeSurfer or FastSurfer for T1w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) is mapped to the subject space. **Not available with the `infant` profile.**
+- `connectomics`: Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
+- `infant`: This profile adapt some processing steps to infant data, but also requires more input files. See below for a list of the required files.
 
 ## Samplesheet input for the `tracking` profile.
 
@@ -44,80 +44,80 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 
 #### **`-profile freesurfer`**
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject`  | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`). |
-| `t1` | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
+| Column    | Description                                                                                   |
+| --------- | --------------------------------------------------------------------------------------------- |
+| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`). |
+| `t1`      | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).     |
 
 #### **`-profile tracking,freesurfer`** or **`-profile tracking,freesurfer,connectomics`**
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject`  | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`). |
-| `t1` | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `dwi` | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `bval` | Full path to the file containing the b-values.
-| `bvec` | Full path to the file containing the b-vectors.
-| `rev_b0` | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `metrics` | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional, can only be supplied if `-profile connectomics` is selected.**
+| Column    | Description                                                                                                                                                                                                              |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                                                                                                                            |
+| `t1`      | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                                                                                |
+| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                                                                                |
+| `bval`    | Full path to the file containing the b-values.                                                                                                                                                                           |
+| `bvec`    | Full path to the file containing the b-vectors.                                                                                                                                                                          |
+| `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                                                          |
+| `metrics` | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional, can only be supplied if `-profile connectomics` is selected.** |
 
 #### **`-profile connectomics,freesurfer`**
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject`  | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`). |
-| `t1` | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `dwi` | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `bval` | Full path to the file containing the b-values.
-| `bvec` | Full path to the file containing the b-vectors.
-| `trk` | Full path to the whole-brain tractogram. File has to be in the `.trk` file format.
-| `peaks` | Full path to the file containing the fODF peaks. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `fodf` | Full path to the fODF file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `mat` | Full path to the affine transform required to register your anatomical image to the diffusion space.
-| `warp` | Full path to the warp transform required to register your anatomical image to the diffusion space.
-| `metrics` | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional**
+| Column    | Description                                                                                                                                                |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                                                              |
+| `t1`      | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                  |
+| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                  |
+| `bval`    | Full path to the file containing the b-values.                                                                                                             |
+| `bvec`    | Full path to the file containing the b-vectors.                                                                                                            |
+| `trk`     | Full path to the whole-brain tractogram. File has to be in the `.trk` file format.                                                                         |
+| `peaks`   | Full path to the file containing the fODF peaks. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                            |
+| `fodf`    | Full path to the fODF file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                 |
+| `mat`     | Full path to the affine transform required to register your anatomical image to the diffusion space.                                                       |
+| `warp`    | Full path to the warp transform required to register your anatomical image to the diffusion space.                                                         |
+| `metrics` | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional** |
 
 #### **`-profile connectomics`** or **`-profile connectomics,infant`**
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject`  | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`). |
-| `t1` or `t2` | Full path to the T1w/T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `dwi` | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `bval` | Full path to the file containing the b-values.
-| `bvec` | Full path to the file containing the b-vectors.
-| `labels` | Full path to the file containing your labels to use in the segmentation. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `trk` | Full path to the whole-brain tractogram. File has to be in the `.trk` file format.
-| `peaks` | Full path to the file containing the fODF peaks. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `fodf` | Full path to the fODF file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `mat` | Full path to the affine transform required to register your anatomical image to the diffusion space.
-| `warp` | Full path to the warp transform required to register your anatomical image to the diffusion space.
-| `metrics` | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional**
+| Column       | Description                                                                                                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `subject`    | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                                                              |
+| `t1` or `t2` | Full path to the T1w/T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                              |
+| `dwi`        | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                  |
+| `bval`       | Full path to the file containing the b-values.                                                                                                             |
+| `bvec`       | Full path to the file containing the b-vectors.                                                                                                            |
+| `labels`     | Full path to the file containing your labels to use in the segmentation. File has to be in the nifti file format (`.nii` or `.nii.gz`).                    |
+| `trk`        | Full path to the whole-brain tractogram. File has to be in the `.trk` file format.                                                                         |
+| `peaks`      | Full path to the file containing the fODF peaks. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                            |
+| `fodf`       | Full path to the fODF file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                 |
+| `mat`        | Full path to the affine transform required to register your anatomical image to the diffusion space.                                                       |
+| `warp`       | Full path to the warp transform required to register your anatomical image to the diffusion space.                                                         |
+| `metrics`    | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional** |
 
 #### **`-profile tracking,infant`**
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject`  | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`). |
-| `t2` | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `dwi` | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `bval` | Full path to the file containing the b-values.
-| `bvec` | Full path to the file containing the b-vectors.
-| `rev_b0` | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `wmparc` | Full path to the WM mask file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
+| Column    | Description                                                                                                     |
+| --------- | --------------------------------------------------------------------------------------------------------------- |
+| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                   |
+| `t2`      | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
+| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
+| `bval`    | Full path to the file containing the b-values.                                                                  |
+| `bvec`    | Full path to the file containing the b-vectors.                                                                 |
+| `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`). |
+| `wmparc`  | Full path to the WM mask file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                   |
 
 #### **`-profile tracking,connectomics,infant`**
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject`  | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`). |
-| `t2` | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `dwi` | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `bval` | Full path to the file containing the b-values.
-| `bvec` | Full path to the file containing the b-vectors.
-| `rev_b0` | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `labels` | Full path to the file containing your labels to use in the segmentation. File has to be in the nifti file format (`.nii` or `.nii.gz`).
-| `wmparc` | Full path to the WM mask file. File has to be in the nifti file format (`.nii` or `.nii.gz`).
+| Column    | Description                                                                                                                             |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                                           |
+| `t2`      | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                               |
+| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                               |
+| `bval`    | Full path to the file containing the b-values.                                                                                          |
+| `bvec`    | Full path to the file containing the b-vectors.                                                                                         |
+| `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                         |
+| `labels`  | Full path to the file containing your labels to use in the segmentation. File has to be in the nifti file format (`.nii` or `.nii.gz`). |
+| `wmparc`  | Full path to the WM mask file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                           |
 
 ## Running the pipeline
 

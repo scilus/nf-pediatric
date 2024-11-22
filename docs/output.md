@@ -134,6 +134,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/`
+
   - `*_space-diff_desc-filtered_tracking.{trk,h5}`: Filtered whole-brain tractogram.
   - `*_space-orig_desc-preproc_tracking.h5`: Final preprocessed decomposed whole-brain tractogram.
   - `*.npy`: Connectivity matrices for all supplied metrics.
@@ -145,6 +146,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 </details>
 
 ### FreeSurfer
+
 <details markdown="1">
 <summary>Output files</summary>
 
