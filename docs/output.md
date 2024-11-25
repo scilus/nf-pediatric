@@ -97,8 +97,6 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 
 ### Segmentation
 
-### Registration
-
 <details markdown="1">
 <summary>Output files</summary>
 
