@@ -3,7 +3,6 @@ name: nf-pediatric CI
 on:
   push:
     branches:
-      - dev
       - main
   pull_request:
   release:
