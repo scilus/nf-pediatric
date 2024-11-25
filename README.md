@@ -1,4 +1,5 @@
 # nf-pediatric
+
 [![nf-pediatric CI](https://github.com/scilus/nf-pediatric/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/scilus/nf-pediatric/actions/workflows/ci.yml)[![nf-core linting](https://github.com/scilus/nf-pediatric/actions/workflows/linting.yml/badge.svg?branch=main)](https://github.com/scilus/nf-pediatric/actions/workflows/linting.yml)[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.04.2-23aa62.svg)](https://www.nextflow.io/)
