@@ -1,9 +1,8 @@
 process SEGMENTATION_FASTSURFER {
     tag "$meta.id"
-    label 'process_single'
+    label 'process_high'
 
-    container "${ 'deepmi/fastsurfer:cpu-v2.2.0' }"
-
+    container "${ 'gagnonanthony/nf-pediatric-fastsurfer:v2.3.3' }"
     containerOptions '--entrypoint ""'
 
     input:
@@ -11,16 +10,20 @@ process SEGMENTATION_FASTSURFER {
 
     output:
         tuple val(meta), path("*_fastsurfer")    , emit: fastsurferdirectory
-        path "versions.yml"                 , emit: versions
+        path "versions.yml"                      , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-        def prefix = task.ext.prefix ?: "${meta.id}"
-        def acq3T = task.ext.acq3T ? "--3T" : ""
-        def FASTSURFER_HOME = "/fastsurfer"
-        def SUBJECTS_DIR = "${prefix}_fastsurfer"
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    def acq3T = task.ext.acq3T ? "--3T" : ""
+    def FASTSURFER_HOME = "/fastsurfer"
+    def SUBJECTS_DIR = "${prefix}_fastsurfer"
+
+    // ** Adding a registration to .gca atlas to generate the talairach.m3z file (subcortical atlas segmentation ** //
+    // ** wont work without it). A little time consuming but necessary. For FreeSurfer 7.3.2, RB_all_2020-01-02.gca ** //
+    // ** is the default atlas. Update when bumping FreeSurfer version. ** //
     """
     mkdir ${prefix}_fastsurfer/
     $FASTSURFER_HOME/run_fastsurfer.sh  --allow_root \
@@ -28,8 +31,15 @@ process SEGMENTATION_FASTSURFER {
                                         --fs_license \$(realpath $fs_license) \
                                         --t1 \$(realpath ${anat}) \
                                         --sid ${prefix} \
-                                        --seg_only --py python3 \
+                                        --parallel \
+                                        --threads $task.cpus \
+                                        --py python3 \
                                         ${acq3T}
+
+    mri_ca_register -align-after -nobigventricles -mask ${prefix}_fastsurfer/mri/brainmask.mgz \
+        -T ${prefix}_fastsurfer/mri/transforms/talairach.lta -threads $task.cpus \
+        ${prefix}_fastsurfer/mri/norm.mgz \${FREESURFER_HOME}/average/RB_all_2020-01-02.gca \
+        ${prefix}_fastsurfer/mri/talairach.m3z
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -41,11 +51,11 @@ process SEGMENTATION_FASTSURFER {
         def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    $FASTSURFER_HOME/run_fastsurfer.sh --version
+    \$FASTSURFER_HOME/run_fastsurfer.sh --version
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        fastersurfer: 2.2.0+9f37d02
+        fastersurfer: \$($FASTSURFER_HOME/run_fastsurfer.sh --version)
     END_VERSIONS
     """
 }
