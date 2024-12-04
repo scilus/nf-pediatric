@@ -1,0 +1,21 @@
+Changes in module 'nf-neuro/preproc/topup'
+'modules/nf-neuro/preproc/topup/environment.yml' is unchanged
+'modules/nf-neuro/preproc/topup/meta.yml' is unchanged
+Changes in 'preproc/topup/main.nf':
+--- modules/nf-neuro/preproc/topup/main.nf
++++ modules/nf-neuro/preproc/topup/main.nf
+@@ -80,7 +80,7 @@
+     """
+     scil_volume_math.py -h
+     scil_dwi_extract_b0.py -h
+-    antsRegistrationSyNQuick.sh -h
++    #antsRegistrationSyNQuick.sh
+     scil_dwi_prepare_topup_command.py -h
+ 
+     touch ${prefix}__corrected_b0s.nii.gz
+
+'modules/nf-neuro/preproc/topup/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/preproc/topup/tests/tags.yml' is unchanged
+'modules/nf-neuro/preproc/topup/tests/nextflow.config' is unchanged
+'modules/nf-neuro/preproc/topup/tests/main.nf.test' is unchanged
+************************************************************

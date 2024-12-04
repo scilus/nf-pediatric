@@ -1,6 +1,6 @@
 process SEGMENTATION_FSRECONALL {
     tag "$meta.id"
-    label 'process_medium'
+    label 'process_single'
 
     // Note. Freesurfer is already on Docker. See documentation on
     // https://hub.docker.com/r/freesurfer/freesurfer
@@ -36,7 +36,7 @@ process SEGMENTATION_FSRECONALL {
     then
         # Run the main script
         export SUBJECTS_DIR=`pwd`
-        recon-all -i $anat -s ${prefix}__recon_all -all -threads $task.cpus
+        recon-all -i $anat -s ${prefix}__recon_all -all
     else
         # (for developers: unit tests: skip the long processing. help only.)
         export SUBJECTS_DIR=`pwd`
@@ -59,7 +59,7 @@ process SEGMENTATION_FSRECONALL {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    #recon-all --help
+    recon-all --help
 
     mkdir ${prefix}__recon_all
 

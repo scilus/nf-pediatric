@@ -1,0 +1,42 @@
+Changes in module 'nf-neuro/utils/extractb0'
+'modules/nf-neuro/utils/extractb0/environment.yml' is unchanged
+'modules/nf-neuro/utils/extractb0/meta.yml' is unchanged
+Changes in 'utils/extractb0/main.nf':
+--- modules/nf-neuro/utils/extractb0/main.nf
++++ modules/nf-neuro/utils/extractb0/main.nf
+@@ -31,7 +31,7 @@
+ 
+     cat <<-END_VERSIONS > versions.yml
+     "${task.process}":
+-        scilpy: 2.0.1
++        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+     END_VERSIONS
+     """
+ 
+@@ -40,13 +40,13 @@
+     def prefix = task.ext.prefix ?: "${meta.id}"
+ 
+     """
+-    scil_dwi_extract_b0.py - h
++    scil_dwi_extract_b0.py -h
+ 
+     touch ${prefix}_b0.nii.gz
+ 
+     cat <<-END_VERSIONS > versions.yml
+     "${task.process}":
+-        scilpy: 2.0.1
++        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+     END_VERSIONS
+     """
+ }
+
+'modules/nf-neuro/utils/extractb0/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/utils/extractb0/tests/nextflow_clustermean.config' is unchanged
+'modules/nf-neuro/utils/extractb0/tests/tags.yml' is unchanged
+'modules/nf-neuro/utils/extractb0/tests/nextflow_all4d.config' is unchanged
+'modules/nf-neuro/utils/extractb0/tests/nextflow_mean.config' is unchanged
+'modules/nf-neuro/utils/extractb0/tests/nextflow_allseries.config' is unchanged
+'modules/nf-neuro/utils/extractb0/tests/nextflow.config' is unchanged
+'modules/nf-neuro/utils/extractb0/tests/main.nf.test' is unchanged
+'modules/nf-neuro/utils/extractb0/tests/nextflow_clusterfirst.config' is unchanged
+************************************************************
