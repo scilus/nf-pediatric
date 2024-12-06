@@ -100,7 +100,7 @@ function run_parallel ()
 # get FreeSurfer and unpack (some of it)
 echo "Downloading FS and unpacking portions ..."
 wget --no-check-certificate -qO- $fslink  | tar zxv --no-same-owner -C $where \
-      #--exclude='freesurfer/average/*.gca' \
+      --exclude='freesurfer/average/*.gca' \
       --exclude='freesurfer/average/Buckner_JNeurophysiol11_MNI152' \
       --exclude='freesurfer/average/Choi_JNeurophysiol12_MNI152' \
       --exclude='freesurfer/average/mult-comp-cor' \
@@ -126,7 +126,7 @@ wget --no-check-certificate -qO- $fslink  | tar zxv --no-same-owner -C $where \
       --exclude='freesurfer/lib/images' \
       --exclude='freesurfer/lib/qt' \
       --exclude='freesurfer/lib/tcl' \
-      --exclude='freesurfer/lib/tktools' \
+      #--exclude='freesurfer/lib/tktools' \
       --exclude='freesurfer/lib/vtk' \
       --exclude='freesurfer/matlab' \
       --exclude='freesurfer/mni-1.4' \
@@ -159,6 +159,7 @@ mkdir -p $fsd/average
 mkdir -p $fsd/bin
 mkdir -p $fsd/etc
 mkdir -p $fsd/lib/bem
+mkdir -p $fsd/lib/tktools
 mkdir -p $fsd/python/scripts
 mkdir -p $fsd/python/packages/fsbindings
 mkdir -p $fsd/subjects/fsaverage/label
@@ -177,7 +178,6 @@ copy_files="
   sources.csh
   SubCorticalMassLUT.txt
   WMParcStatsLUT.txt
-  average/RB_all_2020-01-02.gca
   average/3T18yoSchwartzReactN32_as_orig.4dfp.hdr
   average/3T18yoSchwartzReactN32_as_orig.4dfp.ifh
   average/3T18yoSchwartzReactN32_as_orig.4dfp.img
@@ -231,6 +231,7 @@ copy_files="
   bin/mri_binarize
   bin/mri_brainvol_stats
   bin/mri_ca_register
+  bin/mri_ca_label
   bin/mri_cc
   bin/mri_concat
   bin/mri_concatenate_lta
@@ -291,11 +292,15 @@ copy_files="
   bin/rca-config2csh
   bin/recon-all
   bin/talairach_avi
+  bin/tkregister2
   bin/UpdateNeeded
   bin/vertexvol
   etc/recon-config.yaml
   lib/bem/ic4.tri
   lib/bem/ic7.tri
+  lib/tktools/libtix8.1.8.4.so
+  lib/tktools/libtk8.4.so
+  lib/tktools/libtcl8.4.so
   python/packages/fsbindings/legacy.py
   python/scripts/asegstats2table
   python/scripts/aparcstats2table
@@ -421,7 +426,6 @@ done
 link_files="
   bin/mri_and
   bin/mri_aparc2aseg
-  bin/mri_ca_label
   bin/mri_ca_normalize
   bin/mri_compute_overlap
   bin/mri_compute_seg_overlap
@@ -444,8 +448,7 @@ link_files="
   bin/mris_surface_stats
   bin/mris_thickness
   bin/mris_thickness_diff
-  bin/nu_correct
-  bin/tkregister2_cmdl"
+  bin/nu_correct"
 
 # create target for link with ERROR message if called
 ltrg=$fsd/bin/not-here.sh
@@ -472,9 +475,9 @@ p3=$(which python3)
 if [ "$p3" == "" ]; then
   echo "No python3 found, please install first!"
   echo
-  exit 1
+#  exit 1
 fi
-ln -s $p3 $fsd/bin/fspython
+#ln -s $p3 $fsd/bin/fspython
 
 #cleanup
 rm -rf $fss

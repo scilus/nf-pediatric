@@ -3,7 +3,9 @@ process SEGMENTATION_FASTSURFER {
     label 'process_high'
 
     container "${ 'gagnonanthony/nf-pediatric-fastsurfer:v2.3.3' }"
-    containerOptions '--entrypoint ""'
+    containerOptions {
+        (workflow.containerEngine == 'docker') ? '--entrypoint ""': ''
+    }
 
     input:
         tuple val(meta), path(anat), path(fs_license)
@@ -19,18 +21,20 @@ process SEGMENTATION_FASTSURFER {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def acq3T = task.ext.acq3T ? "--3T" : ""
     def FASTSURFER_HOME = "/fastsurfer"
-    def SUBJECTS_DIR = "${prefix}_fastsurfer"
+    //def SUBJECTS_DIR = "${prefix}_fastsurfer"
 
     // ** Adding a registration to .gca atlas to generate the talairach.m3z file (subcortical atlas segmentation ** //
     // ** wont work without it). A little time consuming but necessary. For FreeSurfer 7.3.2, RB_all_2020-01-02.gca ** //
     // ** is the default atlas. Update when bumping FreeSurfer version. ** //
     """
-    mkdir ${prefix}_fastsurfer/
+    export FS_LICENSE=\$(realpath $fs_license)
+
+    #mkdir ${prefix}_fastsurfer/
     $FASTSURFER_HOME/run_fastsurfer.sh  --allow_root \
-                                        --sd \$(realpath ${SUBJECTS_DIR}) \
+                                        --sd \$(pwd) \
                                         --fs_license \$(realpath $fs_license) \
                                         --t1 \$(realpath ${anat}) \
-                                        --sid ${prefix} \
+                                        --sid ${prefix}__fastsurfer \
                                         --parallel \
                                         --threads $task.cpus \
                                         --py python3 \
@@ -48,14 +52,15 @@ process SEGMENTATION_FASTSURFER {
     """
 
     stub:
-        def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    def FASTSURFER_HOME = "/fastsurfer"
 
     """
-    \$FASTSURFER_HOME/run_fastsurfer.sh --version
+    $FASTSURFER_HOME/run_fastsurfer.sh --version
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        fastersurfer: \$($FASTSURFER_HOME/run_fastsurfer.sh --version)
+        fastsurfer: \$($FASTSURFER_HOME/run_fastsurfer.sh --version)
     END_VERSIONS
     """
 }

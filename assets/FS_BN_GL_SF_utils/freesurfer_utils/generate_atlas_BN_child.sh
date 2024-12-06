@@ -96,47 +96,47 @@ echo "Rename the BN Child cortical ROIs to a simple ids convention"
 echo -e "${BLUE}Rename the BN subcortical ROIs to a simple ids convention${NC}"
 # Split subcortical ids and mix them with the cortical
 mkdir ${FS_ID_FOLDER}/BN_child_atlas/subcortical/
-scil_split_volume_by_ids.py ${FS_ID_FOLDER}/BN_child_atlas/BN_atlas_subcortex.nii.gz --out_dir ${FS_ID_FOLDER}/BN_child_atlas/subcortical/
+scil_labels_split_volume_by_ids.py ${FS_ID_FOLDER}/BN_child_atlas/BN_atlas_subcortex.nii.gz --out_dir ${FS_ID_FOLDER}/BN_child_atlas/subcortical/
 for i in ${FS_ID_FOLDER}/BN_child_atlas/subcortical/*.nii.gz;
     do base_name=$(basename $i .nii.gz); add_name=$((${base_name}-22));
-    scil_image_math.py --data_type uint16 --exclude_background subtraction ${i} 22 ${FS_ID_FOLDER}/BN_child_atlas/split_rename/${add_name}.nii.gz
+    scil_volume_math.py --data_type uint16 --exclude_background subtraction ${i} 22 ${FS_ID_FOLDER}/BN_child_atlas/split_rename/${add_name}.nii.gz
 done
 rm -r ${FS_ID_FOLDER}/BN_child_atlas/subcortical/
 
 # ==================================================================================
 echo -e "${BLUE}Rename the FS wmparc ROIs to a simple ids convention${NC}"
 mri_convert ${FS_ID_FOLDER}/mri/wmparc.mgz ${FS_ID_FOLDER}/mri/wmparc.nii.gz
-scil_image_math.py convert ${FS_ID_FOLDER}/mri/wmparc.nii.gz ${FS_ID_FOLDER}/mri/wmparc.nii.gz --data_type uint16 -f
+scil_volume_math.py convert ${FS_ID_FOLDER}/mri/wmparc.nii.gz ${FS_ID_FOLDER}/mri/wmparc.nii.gz --data_type uint16 -f
 mkdir ${FS_ID_FOLDER}/FS_atlas/split_rename/
-scil_split_volume_by_ids.py ${FS_ID_FOLDER}/mri/wmparc.nii.gz --out_dir ${FS_ID_FOLDER}/FS_atlas/split_rename/
+scil_labels_split_volume_by_ids.py ${FS_ID_FOLDER}/mri/wmparc.nii.gz --out_dir ${FS_ID_FOLDER}/FS_atlas/split_rename/
 
 # ==================================================================================
 echo "Transfert the FS brainstem and cerebellum to BN Child"
 # Add the brainstem to BN (225)
 for i in ${FS_ID_FOLDER}/FS_atlas/split_rename/16.nii.gz;
-    do base_name=$(basename $i .nii.gz); add_name=$((${base_name}+209)); scil_image_math.py --data_type uint16 --exclude_background addition ${i} 209 ${FS_ID_FOLDER}/BN_child_atlas/split_rename/${add_name}.nii.gz
+    do base_name=$(basename $i .nii.gz); add_name=$((${base_name}+209)); scil_volume_math.py --data_type uint16 --exclude_background addition ${i} 209 ${FS_ID_FOLDER}/BN_child_atlas/split_rename/${add_name}.nii.gz
 done
 
 # Add the cerebellum to BN (226,227)
-scil_image_math.py --data_type uint16 --exclude_background addition ${FS_ID_FOLDER}/FS_atlas/split_rename/8.nii.gz 218 ${FS_ID_FOLDER}/BN_child_atlas/split_rename/226.nii.gz
-scil_image_math.py --data_type uint16 --exclude_background addition ${FS_ID_FOLDER}/FS_atlas/split_rename/47.nii.gz 180 ${FS_ID_FOLDER}/BN_child_atlas/split_rename/227.nii.gz
+scil_volume_math.py --data_type uint16 --exclude_background addition ${FS_ID_FOLDER}/FS_atlas/split_rename/8.nii.gz 218 ${FS_ID_FOLDER}/BN_child_atlas/split_rename/226.nii.gz
+scil_volume_math.py --data_type uint16 --exclude_background addition ${FS_ID_FOLDER}/FS_atlas/split_rename/47.nii.gz 180 ${FS_ID_FOLDER}/BN_child_atlas/split_rename/227.nii.gz
 
 # ==================================================================================
 echo -e "${BLUE}Combine the labels into a clean Brainnetome atlas${NC}"
 a=''
-for i in ${FS_ID_FOLDER}/BN_child_atlas/split_rename/*.nii.gz; do a="${a} --volume_ids ${i} $(basename ${i} .nii.gz)"; scil_image_math.py convert ${i} ${i} --data_type uint16 -f; done
-scil_combine_labels.py ${FS_ID_FOLDER}/BN_child_atlas/atlas_brainnetome_child.nii.gz ${a}
+for i in ${FS_ID_FOLDER}/BN_child_atlas/split_rename/*.nii.gz; do a="${a} --volume_ids ${i} $(basename ${i} .nii.gz)"; scil_volume_math.py convert ${i} ${i} --data_type uint16 -f; done
+scil_labels_combine.py ${FS_ID_FOLDER}/BN_child_atlas/atlas_brainnetome_child.nii.gz ${a}
 
 # ==================================================================================
 # Since Freesurfer is all in 1x1x1mm and a 256x256x256 array, our atlases must be resampled/reshaped
 echo -e "${BLUE}Reshape as the original input and convert the final atlases into uint16${NC}"
 mri_convert ${FS_ID_FOLDER}/mri/rawavg.mgz ${FS_ID_FOLDER}/mri/rawavg.nii.gz
-scil_reshape_to_reference.py ${FS_ID_FOLDER}/BN_child_atlas/atlas_brainnetome_child.nii.gz ${FS_ID_FOLDER}/mri/rawavg.nii.gz ${FS_ID_FOLDER}/atlas_brainnetome_child.nii.gz --interpolation nearest
+scil_volume_reslice_to_reference.py ${FS_ID_FOLDER}/BN_child_atlas/atlas_brainnetome_child.nii.gz ${FS_ID_FOLDER}/mri/rawavg.nii.gz ${FS_ID_FOLDER}/atlas_brainnetome_child.nii.gz --interpolation nearest
 
 # ==================================================================================
 # Safer for most script, thats our label data type
 echo -e "${BLUE}Finished creating the atlas by dilating the label${NC}"
-scil_image_math.py convert ${FS_ID_FOLDER}/atlas_brainnetome_child.nii.gz ${FS_ID_FOLDER}/${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz --data_type uint16 -f
+scil_volume_math.py convert ${FS_ID_FOLDER}/atlas_brainnetome_child.nii.gz ${FS_ID_FOLDER}/${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz --data_type uint16 -f
 rm ${FS_ID_FOLDER}/atlas_*.nii.gz
 cp ${UTILS_DIR}/atlas_brainnetome_child_v1_*.* ${FS_ID_FOLDER}/${OUT_DIR}/
 
@@ -147,11 +147,11 @@ mri_segstats --seg ${FS_ID_FOLDER}/${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz 
 
 # Dilating the atlas
 mri_convert ${FS_ID_FOLDER}/mri/brainmask.mgz ${FS_ID_FOLDER}/mri/brain_mask.nii.gz
-scil_image_math.py lower_threshold ${FS_ID_FOLDER}/mri/brain_mask.nii.gz 0.001 ${FS_ID_FOLDER}/mri/brain_mask.nii.gz --data_type uint8 -f
-scil_image_math.py dilation ${FS_ID_FOLDER}/mri/brain_mask.nii.gz 1 ${FS_ID_FOLDER}/mri/brain_mask.nii.gz -f
-scil_reshape_to_reference.py ${FS_ID_FOLDER}/mri/brain_mask.nii.gz ${FS_ID_FOLDER}/mri/rawavg.nii.gz ${FS_ID_FOLDER}/mri/brain_mask.nii.gz --interpolation nearest -f
-scil_image_math.py convert ${FS_ID_FOLDER}/mri/brain_mask.nii.gz ${FS_ID_FOLDER}/mri/brain_mask.nii.gz --data_type uint8 -f
+scil_volume_math.py lower_threshold ${FS_ID_FOLDER}/mri/brain_mask.nii.gz 0.001 ${FS_ID_FOLDER}/mri/brain_mask.nii.gz --data_type uint8 -f
+scil_volume_math.py dilation ${FS_ID_FOLDER}/mri/brain_mask.nii.gz 1 ${FS_ID_FOLDER}/mri/brain_mask.nii.gz -f
+scil_volume_reslice_to_reference.py ${FS_ID_FOLDER}/mri/brain_mask.nii.gz ${FS_ID_FOLDER}/mri/rawavg.nii.gz ${FS_ID_FOLDER}/mri/brain_mask.nii.gz --interpolation nearest -f
+scil_volume_math.py convert ${FS_ID_FOLDER}/mri/brain_mask.nii.gz ${FS_ID_FOLDER}/mri/brain_mask.nii.gz --data_type uint8 -f
 
-scil_dilate_labels.py ${FS_ID_FOLDER}/${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz ${FS_ID_FOLDER}/${OUT_DIR}/atlas_brainnetome_child_v1_dilated.nii.gz --distance 2 --labels_to_dilate {1..188} {225..227} --mask ${FS_ID_FOLDER}/mri/brain_mask.nii.gz
+scil_labels_dilate.py ${FS_ID_FOLDER}/${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz ${FS_ID_FOLDER}/${OUT_DIR}/atlas_brainnetome_child_v1_dilated.nii.gz --distance 2 --labels_to_dilate {1..188} {225..227} --mask ${FS_ID_FOLDER}/mri/brain_mask.nii.gz
 
 echo -e "${BLUE}Finished creating the atlas.${NC}"
