@@ -5,7 +5,7 @@ nextflow_pipeline {
     name "Test nf-pediatric profile freesurfer"
     script "../main.nf"
 
-    test("Freesurfer profile - should run successfully") {
+    test("Freesurfer profile - freesurfer - should run successfully") {
 
         when {
             params {
@@ -14,6 +14,28 @@ nextflow_pipeline {
                 params.outdir = "test_results/"
 
                 params.freesurfer = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 3
+        }
+
+    }
+
+    test("Freesurfer profile - fastsurfer - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "test_results/"
+
+                params.freesurfer = true
+                params.use_fastsurfer = true
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
             }

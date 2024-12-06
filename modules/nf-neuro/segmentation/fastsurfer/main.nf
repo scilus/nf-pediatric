@@ -43,7 +43,7 @@ process SEGMENTATION_FASTSURFER {
     mri_ca_register -align-after -nobigventricles -mask ${prefix}__fastsurfer/mri/brainmask.mgz \
         -T ${prefix}__fastsurfer/mri/transforms/talairach.lta -threads $task.cpus \
         ${prefix}__fastsurfer/mri/norm.mgz \${FREESURFER_HOME}/average/RB_all_2020-01-02.gca \
-        ${prefix}__fastsurfer/mri/talairach.m3z
+        ${prefix}__fastsurfer/mri/transforms/talairach.m3z
 
     mri_convert ${prefix}__fastsurfer/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
 
@@ -59,6 +59,9 @@ process SEGMENTATION_FASTSURFER {
 
     """
     $FASTSURFER_HOME/run_fastsurfer.sh --version
+
+    mkdir ${prefix}__fastsurfer
+    touch ${prefix}__final_t1.nii.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

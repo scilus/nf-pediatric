@@ -61,9 +61,10 @@ process SEGMENTATION_FSRECONALL {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    recon-all --help
+    #recon-all --help
 
     mkdir ${prefix}__recon_all
+    touch ${prefix}__final_t1.nii.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
