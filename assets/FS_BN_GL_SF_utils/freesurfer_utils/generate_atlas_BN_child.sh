@@ -90,7 +90,7 @@ parallel --will-cite -P ${NBR_PROCESSES} < ${FS_ID_FOLDER}/cmd.sh; rm ${FS_ID_FO
 # ==================================================================================
 # Rename and multiply all binary masks so they follow the same convention as split_label_by_ids
 echo "Rename the BN Child cortical ROIs to a simple ids convention"
-/usr/bin/python ${UTILS_DIR}/utils_rename_parcellation.py ${FS_ID_FOLDER}/BN_child_atlas/*h.*.nii.gz ${UTILS_DIR}/parcellation_names_BN_child.json ${FS_ID_FOLDER}/BN_child_atlas/split_rename/
+python3 ${UTILS_DIR}/utils_rename_parcellation.py ${FS_ID_FOLDER}/BN_child_atlas/*h.*.nii.gz ${UTILS_DIR}/parcellation_names_BN_child.json ${FS_ID_FOLDER}/BN_child_atlas/split_rename/
 
 # ==================================================================================
 echo -e "${BLUE}Rename the BN subcortical ROIs to a simple ids convention${NC}"
