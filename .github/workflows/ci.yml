@@ -39,7 +39,7 @@ jobs:
           - "chained.nf.test"
           - "connectomics.nf.test"
           - "tracking.nf.test"
-          #- "freesurfer.nf.test" # Commented out until we have access to scil's runners.
+          - "freesurfer.nf.test"
         isMaster:
           - ${{ github.base_ref == 'master' }}
         # Exclude conda and singularity on dev

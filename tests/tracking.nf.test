@@ -25,6 +25,27 @@ nextflow_pipeline {
 
     }
 
+    test("Tracking profile no dwi preprocessing - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.skip_dwi_preprocessing = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 17
+        }
+
+    }
+
     test("Tracking profile no rev b0 - should fail") {
 
         when {

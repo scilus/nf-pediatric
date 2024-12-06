@@ -183,6 +183,13 @@
             "description": "Options for DWI preprocessing.",
             "help_text": "These options are used to configure the DWI preprocessing steps in the pipeline. You can use these options to customise the behaviour of the DWI preprocessing steps.",
             "properties": {
+                "skip_dwi_preprocessing": {
+                    "type": "boolean",
+                    "description": "Skip the DWI preprocessing steps.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
                 "dwi_denoise_patch_size": {
                     "type": "integer",
                     "description": "Patch size used in the DWI denoising step.",
@@ -208,7 +215,7 @@
                     "type": "number",
                     "description": "Readout time used in the susceptibility distortion correction step.",
                     "fa_icon": "fas fa-brain",
-                    "default": 0.04,
+                    "default": 0.040,
                     "hidden": true
                 },
                 "dwi_susceptibility_b0_threshold": {
@@ -1263,7 +1270,8 @@
                     "type": "string",
                     "fa_icon": "far fa-check-circle",
                     "description": "Base URL or local path to location of pipeline test dataset files",
-                    "hidden": true
+                    "hidden": true,
+                    "default": null
                 }
             }
         }

@@ -1,5 +1,5 @@
 ARG FREESURFER_BUILD_IMAGE=ubuntu:22.04
-ARG SCILPY_BASE_IMAGE=scilus/scilpy:dev
+ARG SCILPY_BASE_IMAGE=scilus/scilpy:1.6.0
 
 # Create a stage to build the freesurfer image (only essential scripts).
 FROM $FREESURFER_BUILD_IMAGE AS build_freesurfer
@@ -48,6 +48,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libxmu6 \
       libgl1 \
       freeglut3-dev \
+      python3.10 \
       wget \
       curl \
       time \

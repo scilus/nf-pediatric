@@ -126,7 +126,6 @@ wget --no-check-certificate -qO- $fslink  | tar zxv --no-same-owner -C $where \
       --exclude='freesurfer/lib/images' \
       --exclude='freesurfer/lib/qt' \
       --exclude='freesurfer/lib/tcl' \
-      #--exclude='freesurfer/lib/tktools' \
       --exclude='freesurfer/lib/vtk' \
       --exclude='freesurfer/matlab' \
       --exclude='freesurfer/mni-1.4' \
@@ -147,7 +146,6 @@ wget --no-check-certificate -qO- $fslink  | tar zxv --no-same-owner -C $where \
       --exclude='freesurfer/subjects/lh.EC_average' \
       --exclude='freesurfer/subjects/rh.EC_average' \
       --exclude='freesurfer/subjects/V1_average' \
-      --exclude='freesurfer/tktools' \
       --exclude='freesurfer/trctrain'
 
 
@@ -160,6 +158,7 @@ mkdir -p $fsd/bin
 mkdir -p $fsd/etc
 mkdir -p $fsd/lib/bem
 mkdir -p $fsd/lib/tktools
+mkdir -p $fsd/tktools
 mkdir -p $fsd/python/scripts
 mkdir -p $fsd/python/packages/fsbindings
 mkdir -p $fsd/subjects/fsaverage/label
@@ -301,6 +300,7 @@ copy_files="
   lib/tktools/libtix8.1.8.4.so
   lib/tktools/libtk8.4.so
   lib/tktools/libtcl8.4.so
+  tktools/tkregister2.tcl
   python/packages/fsbindings/legacy.py
   python/scripts/asegstats2table
   python/scripts/aparcstats2table
