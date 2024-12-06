@@ -10,8 +10,9 @@ process SEGMENTATION_FSRECONALL {
         tuple val(meta), path(anat), path(fs_license) /* optional, value = [] */
 
     output:
-        tuple val(meta), path("*__recon_all")   , emit: recon_all_out_folder
-        path "versions.yml"                     , emit: versions
+        tuple val(meta), path("*__recon_all")       , emit: recon_all_out_folder
+        tuple val(meta), path("*__final_t1.nii.gz") , emit: final_t1
+        path "versions.yml"                         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -48,6 +49,7 @@ process SEGMENTATION_FSRECONALL {
         rm .license
     fi
 
+    mri_convert ${prefix}__recon_all/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
 
     # Finish
     cat <<-END_VERSIONS > versions.yml

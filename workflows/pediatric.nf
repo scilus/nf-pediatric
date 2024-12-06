@@ -113,7 +113,7 @@ workflow PEDIATRIC {
     //
     // SUBWORKFLOW: Run PREPROC_T1
     //
-    if ( !params.infant && params.tracking ) {
+    if ( !params.infant && params.tracking && !params.freesurfer ) {
 
         ch_template = Channel.fromPath(params.t1_bet_template, checkIfExists: true)
         ch_probability_map = Channel.fromPath(params.t1_bet_template_probability_map, checkIfExists: true)
@@ -280,7 +280,7 @@ workflow PEDIATRIC {
         } else {
 
             REGISTRATION(
-                PREPROC_T1.out.t1_final,
+                params.freesurfer ? FREESURFERFLOW.out.t1 : PREPROC_T1.out.t1_final,
                 PREPROC_DWI.out.b0,
                 RECONST_DTIMETRICS.out.fa,
                 Channel.empty(),

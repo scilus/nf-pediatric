@@ -22,10 +22,12 @@ workflow FREESURFERFLOW {
         FASTSURFER (ch_freesurfer)
         ch_versions = ch_versions.mix(FASTSURFER.out.versions.first())
         ch_folder = FASTSURFER.out.fastsurferdirectory
+        ch_t1 = FASTSURFER.out.final_t1
     } else {
         RECONALL (ch_freesurfer)
         ch_versions = ch_versions.mix(RECONALL.out.versions.first())
         ch_folder = RECONALL.out.recon_all_out_folder
+        ch_t1 = RECONALL.out.final_t1
     }
 
     //
@@ -37,6 +39,7 @@ workflow FREESURFERFLOW {
     ch_versions = ch_versions.mix(BRAINNETOMECHILD.out.versions.first())
 
     emit:
+    t1       = ch_t1                           // channel: [ val(meta), [ t1 ] ]
     labels   = BRAINNETOMECHILD.out.labels     // channel: [ val(meta), [ labels ] ]
 
     versions = ch_versions                     // channel: [ versions.yml ]

@@ -11,8 +11,9 @@ process SEGMENTATION_FASTSURFER {
         tuple val(meta), path(anat), path(fs_license)
 
     output:
-        tuple val(meta), path("*_fastsurfer")    , emit: fastsurferdirectory
-        path "versions.yml"                      , emit: versions
+        tuple val(meta), path("*_fastsurfer")       , emit: fastsurferdirectory
+        tuple val(meta), path("*__final_t1.nii.gz") , emit: final_t1
+        path "versions.yml"                         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -29,7 +30,6 @@ process SEGMENTATION_FASTSURFER {
     """
     export FS_LICENSE=\$(realpath $fs_license)
 
-    #mkdir ${prefix}_fastsurfer/
     $FASTSURFER_HOME/run_fastsurfer.sh  --allow_root \
                                         --sd \$(pwd) \
                                         --fs_license \$(realpath $fs_license) \
@@ -40,10 +40,12 @@ process SEGMENTATION_FASTSURFER {
                                         --py python3 \
                                         ${acq3T}
 
-    mri_ca_register -align-after -nobigventricles -mask ${prefix}_fastsurfer/mri/brainmask.mgz \
-        -T ${prefix}_fastsurfer/mri/transforms/talairach.lta -threads $task.cpus \
-        ${prefix}_fastsurfer/mri/norm.mgz \${FREESURFER_HOME}/average/RB_all_2020-01-02.gca \
-        ${prefix}_fastsurfer/mri/talairach.m3z
+    mri_ca_register -align-after -nobigventricles -mask ${prefix}__fastsurfer/mri/brainmask.mgz \
+        -T ${prefix}__fastsurfer/mri/transforms/talairach.lta -threads $task.cpus \
+        ${prefix}__fastsurfer/mri/norm.mgz \${FREESURFER_HOME}/average/RB_all_2020-01-02.gca \
+        ${prefix}__fastsurfer/mri/talairach.m3z
+
+    mri_convert ${prefix}__fastsurfer/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
