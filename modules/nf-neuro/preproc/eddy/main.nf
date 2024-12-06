@@ -119,8 +119,8 @@ process PREPROC_EDDY {
 
     """
     scil_volume_math.py -h
-    maskfilter -h
-    bet -h
+    #maskfilter -h
+    #bet -h
     scil_dwi_extract_b0.py -h
     scil_gradients_validate_correct_eddy.py -h
     scil_dwi_concatenate.py -h

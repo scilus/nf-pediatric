@@ -43,12 +43,14 @@ workflow PREPROC_T1 {
         ch_versions = ch_versions.mix(PREPROC_N4.out.versions.first())
 
         // ** Resampling ** //
-        ch_resampling = PREPROC_N4.out.image.join(ch_ref_resample)
+        ch_resampling = PREPROC_N4.out.image
+            .join(ch_ref_resample, remainder: true)
+            .map{ it[0..1] + [it[2] ?: []] }
         IMAGE_RESAMPLE ( ch_resampling )
         ch_versions = ch_versions.mix(IMAGE_RESAMPLE.out.versions.first())
 
         // ** Brain extraction ** //
-        if ( params.run_synthbet) {
+        if ( params.t1_run_synthstrip ) {
             ch_bet = IMAGE_RESAMPLE.out.image.join(ch_weights)
             BETCROP_SYNTHBET ( ch_bet )
             ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions.first())
@@ -59,7 +61,11 @@ workflow PREPROC_T1 {
         }
 
         else {
-            ch_bet = IMAGE_RESAMPLE.out.image.join(ch_template).join(ch_probability_map)
+            ch_bet = IMAGE_RESAMPLE.out.image
+                .join(ch_template)
+                .join(ch_probability_map, remainder: true)
+                .map{ it[0..3] + [it[4] ?: []] }
+                .map{ it[0..4] + [it[5] ?: []] }
             BETCROP_ANTSBET ( ch_bet )
             ch_versions = ch_versions.mix(BETCROP_ANTSBET.out.versions.first())
 

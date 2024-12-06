@@ -40,7 +40,7 @@ process BETCROP_SYNTHBET {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    mri_synthstrip -h
+    #mri_synthstrip -h
 
     touch ${prefix}__bet_image.nii.gz
     touch ${prefix}__brain_mask.nii.gz

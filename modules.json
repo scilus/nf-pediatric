@@ -72,7 +72,8 @@
                         "installed_by": [
                             "preproc_dwi",
                             "preproc_t1"
-                        ]
+                        ],
+                        "patch": "modules/nf-neuro/betcrop/synthbet/betcrop-synthbet.diff"
                     },
                     "denoising/mppca": {
                         "branch": "main",

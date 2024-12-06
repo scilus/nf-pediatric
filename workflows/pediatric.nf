@@ -160,8 +160,8 @@ workflow PEDIATRIC {
 
         PREPROC_DWI(
             ch_inputs.dwi_bval_bvec,
-            [],
-            [],
+            Channel.empty(),
+            Channel.empty(),
             ch_inputs.rev_b0,
             ch_topup_config,
             ch_dwi_weights
