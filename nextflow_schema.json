@@ -215,7 +215,7 @@
                     "type": "number",
                     "description": "Readout time used in the susceptibility distortion correction step.",
                     "fa_icon": "fas fa-brain",
-                    "default": 0.040,
+                    "default": 0.04,
                     "hidden": true
                 },
                 "dwi_susceptibility_b0_threshold": {
