@@ -44,12 +44,12 @@ process SEGMENTATION_FSRECONALL {
         recon-all -i $anat -s ${prefix}__recon_all -autorecon1 -dontrun
     fi
 
+    mri_convert ${prefix}__recon_all/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
+
     # Remove the license
     if [ ! $fs_license = [] ]; then
         rm .license
     fi
-
-    mri_convert ${prefix}__recon_all/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
 
     # Finish
     cat <<-END_VERSIONS > versions.yml

@@ -440,16 +440,13 @@ workflow PEDIATRIC {
                     def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') && it.name != '*.nii.gz' }
                     return [meta, metrics_files]
                 }
-                .filter { it[1] }
-                .ifEmpty( false )
+                .filter { it[1].size() > 0 }
 
-            if ( ch_provided_metrics != false ) {
-
-                ch_metrics = ch_metrics
-                    .combine(ch_provided_metrics, by: 0)
-                    .map{ meta, defmet, provmet -> tuple(meta, defmet + provmet) }
-
-            }
+            ch_metrics = ch_metrics.join(ch_provided_metrics, remainder: true)
+                .map { meta, defmet, provmet ->
+                    def met = provmet ? tuple(meta, defmet + provmet) : tuple(meta, defmet)
+                    return met
+                }
 
         } else {
 
@@ -472,7 +469,6 @@ workflow PEDIATRIC {
                     return [meta, metrics_files]
                 }
                 .filter { it[1] }
-                .ifEmpty( false )
 
         }
         //
@@ -542,21 +538,11 @@ workflow PEDIATRIC {
         //
         // MODULE: Run CONNECTIVITY_METRICS
         //
-        if ( ch_metrics == false ) {
-
-            ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
-                .join(TRANSFORM_LABELS.out.warped_image)
-                .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
-                .combine(ch_metrics, by: 0)
-
-        } else {
-
-            ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
-                .join(TRANSFORM_LABELS.out.warped_image)
-                .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
-                .map { it + [[]] }
-
-        }
+        ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
+            .join(TRANSFORM_LABELS.out.warped_image)
+            .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
+            .join(ch_metrics, remainder: true)
+            .map{ it[0..3] + [it[4] ?: []] }
 
         CONNECTIVITY_METRICS ( ch_metrics_conn )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())

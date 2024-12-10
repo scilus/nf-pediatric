@@ -5,7 +5,7 @@ nextflow_pipeline {
     name "Test nf-pediatric all profiles chained"
     script "../main.nf"
 
-//** COMMENTED OUT FOR NOW, UNTIL WE HAVE ACCESS TO THE SCIL'S RUNNERS.
+/** COMMENTED OUT FOR NOW, UNTIL WE HAVE ACCESS TO THE SCIL'S RUNNERS.
     test("Freesurfer + connectomics profiles - should run successfully") {
 
         when {
@@ -26,7 +26,7 @@ nextflow_pipeline {
             assert workflow.trace.tasks().size() == 9
         }
 
-    }
+    } */
 
     test("Connectomics + tracking profiles - should run successfully") {
 
