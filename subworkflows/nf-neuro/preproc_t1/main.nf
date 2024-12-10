@@ -61,12 +61,11 @@ workflow PREPROC_T1 {
         }
 
         else {
-            //ch_template = ch_template.ifEmpty( log.error "Template is required for ANTS registration" )
-            //ch_probability_map = ch_probability_map.ifEmpty( log.error "Probability map is required for ANTS registration" )
             ch_bet = IMAGE_RESAMPLE.out.image
                 .join(ch_template)
-                .join(ch_probability_map)
-                .map{ it + [[], []]}
+                .join(ch_probability_map, remainder: true)
+                .map{ it[0..3] + [it[4] ?: []] }
+                .map{ it[0..4] + [it[5] ?: []] }
             BETCROP_ANTSBET ( ch_bet )
             ch_versions = ch_versions.mix(BETCROP_ANTSBET.out.versions.first())
 

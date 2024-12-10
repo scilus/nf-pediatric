@@ -22,6 +22,9 @@ include { BETCROP_CROPVOLUME as CROPWMMASK  } from '../modules/nf-neuro/betcrop/
 
 // ** DWI Preprocessing ** //
 include { PREPROC_DWI                       } from '../subworkflows/nf-neuro/preproc_dwi/main'
+include { IMAGE_RESAMPLE as RESAMPLE_DWI    } from '../modules/nf-neuro/image/resample/main'
+include { BETCROP_CROPVOLUME as CROPDWI     } from '../modules/nf-neuro/betcrop/cropvolume/main'
+include { UTILS_EXTRACTB0 as EXTRACTB0      } from '../modules/nf-neuro/utils/extractb0/main'
 
 // ** DTI Metrics ** //
 include { RECONST_DTIMETRICS                } from '../modules/nf-neuro/reconst/dtimetrics/main'
@@ -113,7 +116,7 @@ workflow PEDIATRIC {
     //
     // SUBWORKFLOW: Run PREPROC_T1
     //
-    if ( !params.infant && params.tracking ) {
+    if ( !params.infant && params.tracking && !params.freesurfer ) {
 
         ch_template = Channel.fromPath(params.t1_bet_template, checkIfExists: true)
         ch_probability_map = Channel.fromPath(params.t1_bet_template_probability_map, checkIfExists: true)
@@ -158,24 +161,70 @@ workflow PEDIATRIC {
             ch_dwi_weights = Channel.empty()
         }
 
-        PREPROC_DWI(
-            ch_inputs.dwi_bval_bvec,
-            [],
-            [],
-            ch_inputs.rev_b0,
-            ch_topup_config,
-            ch_dwi_weights
-        )
-        ch_versions = ch_versions.mix(PREPROC_DWI.out.versions.first())
-        // ch_multiqc_files = ch_multiqc_files.mix(PREPROC_DWI.out.zip.collect{it[1]})
+        /* Run DWI preprocessing if the data isn't already preprocessed */
+        /* else, just resample and crop the data                        */
+        if ( !params.skip_dwi_preprocessing ) {
+
+            PREPROC_DWI(
+                ch_inputs.dwi_bval_bvec,
+                Channel.empty(),
+                Channel.empty(),
+                ch_inputs.rev_b0,
+                ch_topup_config,
+                ch_dwi_weights
+            )
+            ch_versions = ch_versions.mix(PREPROC_DWI.out.versions.first())
+            // ch_multiqc_files = ch_multiqc_files.mix(PREPROC_DWI.out.zip.collect{it[1]})
+
+            // ** Setting outputs ** //
+            ch_processed_dwi = PREPROC_DWI.out.dwi_resample
+            ch_processed_bval = PREPROC_DWI.out.bval
+            ch_processed_bvec = PREPROC_DWI.out.bvec
+            ch_processed_b0 = PREPROC_DWI.out.b0
+            ch_processed_b0_mask = PREPROC_DWI.out.b0_mask
+
+        } else {
+
+            ch_resample_dwi = ch_inputs.dwi_bval_bvec
+                .map{ it[0..1] + [[]] }
+
+            // ** Resample the already preprocessed DWI ** //
+            RESAMPLE_DWI ( ch_resample_dwi )
+            ch_versions = ch_versions.mix(RESAMPLE_DWI.out.versions.first())
+            // ch_multiqc_files = ch_multiqc_files.mix(RESAMPLE_DWI.out.zip.collect{it[1]})
+
+            ch_crop_dwi = RESAMPLE_DWI.out.image
+                .map{ it + [[]] }
+
+            // ** Crop the already resampled DWI ** //
+            CROPDWI ( ch_crop_dwi )
+            ch_versions = ch_versions.mix(CROPDWI.out.versions.first())
+            // ch_multiqc_files = ch_multiqc_files.mix(CROPDWI.out.zip.collect{it[1]})
+
+            ch_extract_b0 = CROPDWI.out.image
+                .join(ch_inputs.dwi_bval_bvec)
+                .map{ it[0..1] + it [3..4] }
+
+            // ** Extract the b0 from the already cropped DWI ** //
+            EXTRACTB0 ( ch_extract_b0 )
+            ch_versions = ch_versions.mix(EXTRACTB0.out.versions.first())
+            // ch_multiqc_files = ch_multiqc_files.mix(EXTRACTB0.out.zip.collect{it[1]})
+
+            // ** Setting outputs ** //
+            ch_processed_dwi = CROPDWI.out.image
+            ch_processed_bval = ch_inputs.dwi_bval_bvec.map{ [it[0], it [2]] }
+            ch_processed_bvec = ch_inputs.dwi_bval_bvec.map{ [it[0], it [3]] }
+            ch_processed_b0 = EXTRACTB0.out.b0
+            ch_processed_b0_mask = EXTRACTB0.out.b0_mask
+        }
 
         //
         // MODULE: Run DTI_METRICS
         //
-        ch_reconst_dti = PREPROC_DWI.out.dwi_resample
-            .join(PREPROC_DWI.out.bval)
-            .join(PREPROC_DWI.out.bvec)
-            .join(PREPROC_DWI.out.b0_mask)
+        ch_reconst_dti = ch_processed_dwi
+            .join(ch_processed_bval)
+            .join(ch_processed_bvec)
+            .join(ch_processed_b0_mask)
 
         RECONST_DTIMETRICS ( ch_reconst_dti )
         ch_versions = ch_versions.mix(RECONST_DTIMETRICS.out.versions.first())
@@ -184,10 +233,10 @@ workflow PEDIATRIC {
         //
         // MODULE: Run FRF
         //
-        ch_reconst_frf = PREPROC_DWI.out.dwi_resample
-            .join(PREPROC_DWI.out.bval)
-            .join(PREPROC_DWI.out.bvec)
-            .join(PREPROC_DWI.out.b0_mask)
+        ch_reconst_frf = ch_processed_dwi
+            .join(ch_processed_bval)
+            .join(ch_processed_bvec)
+            .join(ch_processed_b0_mask)
             .map{ it + [[], [], []] }
 
         RECONST_FRF ( ch_reconst_frf )
@@ -209,10 +258,10 @@ workflow PEDIATRIC {
         //
         // MODULE: Run MEANFRF
         //
-        ch_reconst_fodf = PREPROC_DWI.out.dwi_resample
-            .join(PREPROC_DWI.out.bval)
-            .join(PREPROC_DWI.out.bvec)
-            .join(PREPROC_DWI.out.b0_mask)
+        ch_reconst_fodf = ch_processed_dwi
+            .join(ch_processed_bval)
+            .join(ch_processed_bvec)
+            .join(ch_processed_b0_mask)
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
             .join(ch_frf)
@@ -259,7 +308,7 @@ workflow PEDIATRIC {
 
             REGISTRATION(
                 CROPT2.out.image,
-                PREPROC_DWI.out.b0,
+                ch_processed_b0,
                 RECONST_DTIMETRICS.out.md,
                 Channel.empty(),
                 Channel.empty(),
@@ -280,8 +329,8 @@ workflow PEDIATRIC {
         } else {
 
             REGISTRATION(
-                PREPROC_T1.out.t1_final,
-                PREPROC_DWI.out.b0,
+                params.freesurfer ? FREESURFERFLOW.out.t1 : PREPROC_T1.out.t1_final,
+                ch_processed_b0,
                 RECONST_DTIMETRICS.out.fa,
                 Channel.empty(),
                 Channel.empty(),
@@ -372,9 +421,9 @@ workflow PEDIATRIC {
             ch_transforms = REGISTRATION.out.transfo_image
             ch_peaks = RECONST_FODF.out.peaks
             ch_fodf = RECONST_FODF.out.fodf
-            ch_dwi_bval_bvec = PREPROC_DWI.out.dwi_resample
-                .join(PREPROC_DWI.out.bval)
-                .join(PREPROC_DWI.out.bvec)
+            ch_dwi_bval_bvec = ch_processed_dwi
+                .join(ch_processed_bval)
+                .join(ch_processed_bvec)
             ch_anat = REGISTRATION.out.image_warped
             ch_metrics = RECONST_DTIMETRICS.out.fa
                 .join(RECONST_DTIMETRICS.out.md)
@@ -391,16 +440,13 @@ workflow PEDIATRIC {
                     def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') && it.name != '*.nii.gz' }
                     return [meta, metrics_files]
                 }
-                .filter { it[1] }
-                .ifEmpty( false )
+                .filter { it[1].size() > 0 }
 
-            if ( ch_provided_metrics != false ) {
-
-                ch_metrics = ch_metrics
-                    .combine(ch_provided_metrics, by: 0)
-                    .map{ meta, defmet, provmet -> tuple(meta, defmet + provmet) }
-
-            }
+            ch_metrics = ch_metrics.join(ch_provided_metrics, remainder: true)
+                .map { meta, defmet, provmet ->
+                    def met = provmet ? tuple(meta, defmet + provmet) : tuple(meta, defmet)
+                    return met
+                }
 
         } else {
 
@@ -423,7 +469,6 @@ workflow PEDIATRIC {
                     return [meta, metrics_files]
                 }
                 .filter { it[1] }
-                .ifEmpty( false )
 
         }
         //
@@ -493,21 +538,11 @@ workflow PEDIATRIC {
         //
         // MODULE: Run CONNECTIVITY_METRICS
         //
-        if ( ch_metrics == false ) {
-
-            ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
-                .join(TRANSFORM_LABELS.out.warped_image)
-                .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
-                .combine(ch_metrics, by: 0)
-
-        } else {
-
-            ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
-                .join(TRANSFORM_LABELS.out.warped_image)
-                .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
-                .map { it + [[]] }
-
-        }
+        ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
+            .join(TRANSFORM_LABELS.out.warped_image)
+            .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
+            .join(ch_metrics, remainder: true)
+            .map{ it[0..3] + [it[4] ?: []] }
 
         CONNECTIVITY_METRICS ( ch_metrics_conn )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())

@@ -20,7 +20,28 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() == 26
+            assert workflow.trace.tasks().size() == 25
+        }
+
+    }
+
+    test("Tracking profile no dwi preprocessing - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "test_results/"
+
+                params.tracking = true
+                params.skip_dwi_preprocessing = true
+
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 17
         }
 
     }
@@ -92,7 +113,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() == 29
+            assert workflow.trace.tasks().size() == 28
         }
 
     }

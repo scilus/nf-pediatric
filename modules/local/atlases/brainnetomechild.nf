@@ -2,7 +2,7 @@ process ATLASES_BRAINNETOMECHILD {
     tag "$meta.id"
     label 'process_medium'
 
-    container "gagnonanthony/nf-pediatric:0.1.0"
+    container "gagnonanthony/nf-pediatric-atlases:1.0.0"
 
     input:
     tuple val(meta), path(folder), path(utils), path(fs_license)
@@ -26,8 +26,8 @@ process ATLASES_BRAINNETOMECHILD {
 
     ln -s $utils/fsaverage \$(dirname ${folder})/
     bash $utils/freesurfer_utils/generate_atlas_BN_child.sh \$(dirname ${folder}) \
-        ${prefix}__recon_all ${task.cpus} Brainnetome_Child/
-    cp ${prefix}__recon_all/Brainnetome_Child/* ./
+        ${prefix}__* ${task.cpus} Brainnetome_Child/
+    cp ${prefix}__*/Brainnetome_Child/* ./
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
