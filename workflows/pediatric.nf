@@ -581,7 +581,7 @@ workflow PEDIATRIC {
         params.tracking ? REGISTRATION.out.image_warped : params.freesurfer ? FREESURFERFLOW.out.t1 : params.infant ? ch_inputs.t2 : ch_inputs.t1,
         ch_tissueseg,
         params.connectomics ? TRANSFORM_LABELS.out.warped_image : params.freesurfer ? FREESURFERFLOW.out.labels : Channel.empty(),
-        params.connectomcis ? FILTERING_COMMIT.out.trk : params.tracking ? ch_trk : Channel.empty(),
+        params.connectomics ? FILTERING_COMMIT.out.trk : params.tracking ? ch_trk : Channel.empty(),
         params.tracking || params.connectomics ? ch_inputs.dwi_bval_bvec : Channel.empty(),
         params.tracking ? RECONST_DTIMETRICS.out.fa : Channel.empty(),
         params.tracking ? RECONST_DTIMETRICS.out.md : Channel.empty(),
