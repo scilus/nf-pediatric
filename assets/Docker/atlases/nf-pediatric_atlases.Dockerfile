@@ -60,6 +60,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Installing dependencies.
 RUN (wget -O - pi.dk/3 || curl pi.dk/3/) | bash
 RUN echo 'will cite' | parallel --citation 1> /dev/null 2> /dev/null &
+RUN rm parallel*.tar.bz2*
 
 # Add FreeSurfer and python Environment variables
 # DO_NOT_SEARCH_FS_LICENSE_IN_FREESURFER_HOME=true deactivates the search for FS_LICENSE in FREESURFER_HOME
@@ -72,6 +73,7 @@ ENV OS=Linux \
     PYTHONUNBUFFERED=0 \
     MPLCONFIGDIR=/tmp \
     PATH=/venv/bin:/opt/freesurfer/bin:$PATH \
+    PYTHONPATH=opt/freesurfer/python/packages:$PYTHONPATH \
     MPLCONFIGDIR=/tmp/matplotlib-config \
     DO_NOT_SEARCH_FS_LICENSE_IN_FREESURFER_HOME="true"
 

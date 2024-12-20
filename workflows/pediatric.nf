@@ -656,6 +656,15 @@ workflow PEDIATRIC {
 
     ch_multiqc_files_global = ch_multiqc_files.mix(QC.out.dice_stats.map{ it[1] }.flatten())
     ch_multiqc_files_global = ch_multiqc_files_global.mix(QC.out.sc_values.map{ it[1] }.flatten())
+    if ( params.freesurfer ) {
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(FREESURFERFLOW.out.volume_lh)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(FREESURFERFLOW.out.volume_rh)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(FREESURFERFLOW.out.area_lh)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(FREESURFERFLOW.out.area_rh)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(FREESURFERFLOW.out.thickness_lh)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(FREESURFERFLOW.out.thickness_rh)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(FREESURFERFLOW.out.subcortical)
+    }
 
     MULTIQC_GLOBAL (
         Channel.of([meta:[id:"global"], qc_images:[]]),

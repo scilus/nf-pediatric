@@ -65,10 +65,18 @@ parallel --will-cite -P ${NBR_PROCESSES} < cmd.sh; rm -r cmd.sh BN_child_atlas/t
 # Merge it into a single .annot file for statistics (the LUT file has to be copied in the tmp folder each time, since freesurfer is modifying it).
 cp ${UTILS_DIR}/atlas_brainnetome_child_v1_LUT.txt ${FS_ID_FOLDER}/tmp/
 mris_label2annot --s ${SUBJID} --h lh --ctab ${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/
-mris_anatomical_stats -mgz -cortex ${FS_ID_FOLDER}/label/lh.cortex.label -f ${OUT_DIR}/lh.BN_Child.stats -b -a ${FS_ID_FOLDER}/label/lh.BN_Child.annot -c ${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt ${SUBJID} lh white
+mris_anatomical_stats -mgz -cortex ${FS_ID_FOLDER}/label/lh.cortex.label -f ${FS_ID_FOLDER}/stats/lh.BN_Child.stats -b -a ${FS_ID_FOLDER}/label/lh.BN_Child.annot -c ${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt ${SUBJID} lh white
 cp ${UTILS_DIR}/atlas_brainnetome_child_v1_LUT.txt ${FS_ID_FOLDER}/tmp/
 mris_label2annot --s ${SUBJID} --h rh --ctab ${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/
-mris_anatomical_stats -mgz -cortex ${FS_ID_FOLDER}/label/rh.cortex.label -f ${OUT_DIR}/rh.BN_Child.stats -b -a ${FS_ID_FOLDER}/label/rh.BN_Child.annot -c ${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt ${SUBJID} rh white
+mris_anatomical_stats -mgz -cortex ${FS_ID_FOLDER}/label/rh.cortex.label -f ${FS_ID_FOLDER}/stats/rh.BN_Child.stats -b -a ${FS_ID_FOLDER}/label/rh.BN_Child.annot -c ${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt ${SUBJID} rh white
+
+# Extracting the stats into a tsv file.
+python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects ${SUBJID} --hemi lh --meas volume -p BN_Child --tablefile ${OUT_DIR}/${SUBJID}__volume_lh.BN_Child.tsv
+python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects ${SUBJID} --hemi rh --meas volume -p BN_Child --tablefile ${OUT_DIR}/${SUBJID}__volume_rh.BN_Child.tsv
+python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects ${SUBJID} --hemi lh --meas thickness -p BN_Child --tablefile ${OUT_DIR}/${SUBJID}__thickness_lh.BN_Child.tsv
+python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects ${SUBJID} --hemi rh --meas thickness -p BN_Child --tablefile ${OUT_DIR}/${SUBJID}__thickness_rh.BN_Child.tsv
+python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects ${SUBJID} --hemi lh --meas area -p BN_Child --tablefile ${OUT_DIR}/${SUBJID}__area_lh.BN_Child.tsv
+python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects ${SUBJID} --hemi rh --meas area -p BN_Child --tablefile ${OUT_DIR}/${SUBJID}__area_rh.BN_Child.tsv
 
 # ==================================================================================
 # Create the Brainnetomme subcortical parcellation from Freesurfer data
@@ -142,8 +150,10 @@ cp ${UTILS_DIR}/atlas_brainnetome_child_v1_*.* ${OUT_DIR}/
 
 # Compute statistics on subcortical regions.
 mri_segstats --seg ${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz --ctab ${OUT_DIR}/atlas_brainnetome_child_v1_LUT.txt --excludeid 0 \
-    --o ${OUT_DIR}/BN_Child_subcortical.stats --pv ${FS_ID_FOLDER}/mri/norm.mgz \
+    --o ${FS_ID_FOLDER}/stats/BN_Child_subcortical.stats --pv ${FS_ID_FOLDER}/mri/norm.mgz \
     --id 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227
+python3 /opt/freesurfer/python/scripts/asegstats2table --subjects ${SUBJID} --meas volume \
+    --tablefile ${OUT_DIR}/${SUBJID}__volume_BN_Child_subcortical.tsv --all-segs --stats=BN_Child_subcortical.stats
 
 # Dilating the atlas
 mri_convert ${FS_ID_FOLDER}/mri/brainmask.mgz ${FS_ID_FOLDER}/mri/brain_mask.nii.gz

@@ -5,6 +5,20 @@ report_comment: >
 report_section_order:
   "nf-pediatric-summary":
     order: -600
+  "subcortical_volumes":
+    order: -700
+  "cortical_volume_lh":
+    order: -705
+  "cortical_volume_rh":
+    order: -710
+  "cortical_thickness_lh":
+    order: -715
+  "cortical_thickness_rh":
+    order: -720
+  "cortical_surface_area_lh":
+    order: -725
+  "cortical_surface_area_rh":
+    order: -730
   "sc_values":
     order: -750
   "dice_values":
@@ -39,8 +53,106 @@ custom_data:
       ylab: 'Dice Score'
       colors: '#00BFFF'
 
+  subcortical_volumes:
+    file_format: 'tsv'
+    section_name: 'Subcortical Volumes'
+    description: 'This section contains subcortical volumes for all subjects.'
+    plot_type: 'boxplot'
+    data_format: 'long'
+    pconfig:
+      id: 'subcortical_volume_plot'
+      title: 'Subcortical Volumes Distribution'
+      ylab: 'Subcortical Volume'
+      colors: '#00BFFF'
+
+  cortical_volume_lh:
+    file_format: 'tsv'
+    section_name: 'Cortical Volumes (Left Hemisphere)'
+    description: 'This section contains cortical volumes for the left hemisphere for all subjects.'
+    plot_type: 'boxplot'
+    data_format: 'long'
+    pconfig:
+      id: 'cortical_volume_lh_plot'
+      title: 'Cortical Volumes (Left Hemisphere) Distribution'
+      ylab: 'Cortical Volume'
+      colors: '#00BFFF'
+
+  cortical_volume_rh:
+    file_format: 'tsv'
+    section_name: 'Cortical Volumes (Right Hemisphere)'
+    description: 'This section contains cortical volumes for the right hemisphere for all subjects.'
+    plot_type: 'boxplot'
+    data_format: 'long'
+    pconfig:
+      id: 'cortical_volume_rh_plot'
+      title: 'Cortical Volumes (Right Hemisphere) Distribution'
+      ylab: 'Cortical Volume'
+      colors: '#00BFFF'
+
+  cortical_thickness_lh:
+    file_format: 'tsv'
+    section_name: 'Cortical Thickness (Left Hemisphere)'
+    description: 'This section contains cortical thickness for the left hemisphere for all subjects.'
+    plot_type: 'boxplot'
+    data_format: 'long'
+    pconfig:
+      id: 'cortical_thickness_lh_plot'
+      title: 'Cortical Thickness (Left Hemisphere) Distribution'
+      ylab: 'Cortical Thickness'
+      colors: '#00BFFF'
+
+  cortical_thickness_rh:
+    file_format: 'tsv'
+    section_name: 'Cortical Thickness (Right Hemisphere)'
+    description: 'This section contains cortical thickness for the right hemisphere for all subjects.'
+    plot_type: 'boxplot'
+    data_format: 'long'
+    pconfig:
+      id: 'cortical_thickness_rh_plot'
+      title: 'Cortical Thickness (Right Hemisphere) Distribution'
+      ylab: 'Cortical Thickness'
+      colors: '#00BFFF'
+
+  cortical_surface_area_lh:
+    file_format: 'tsv'
+    section_name: 'Cortical Surface Area (Left Hemisphere)'
+    description: 'This section contains cortical surface area for the left hemisphere for all subjects.'
+    plot_type: 'boxplot'
+    data_format: 'long'
+    pconfig:
+      id: 'cortical_surface_area_lh_plot'
+      title: 'Cortical Surface Area (Left Hemisphere) Distribution'
+      ylab: 'Cortical Surface Area'
+      colors: '#00BFFF'
+
+  cortical_surface_area_rh:
+    file_format: 'tsv'
+    section_name: 'Cortical Surface Area (Right Hemisphere)'
+    description: 'This section contains cortical surface area for the right hemisphere for all subjects.'
+    plot_type: 'boxplot'
+    data_format: 'long'
+    pconfig:
+      id: 'cortical_surface_area_rh_plot'
+      title: 'Cortical Surface Area (Right Hemisphere) Distribution'
+      ylab: 'Cortical Surface Area'
+      colors: '#00BFFF'
+
 sp:
   sc_values:
     fn: 'sc_values.txt'
   dice_values:
     fn: 'dice_values.txt'
+  subcortical_volumes:
+    fn: 'subcortical_volumes.tsv'
+  cortical_volume_lh:
+    fn: 'cortical_volume_lh.tsv'
+  cortical_volume_rh:
+    fn: 'cortical_volume_rh.tsv'
+  cortical_thickness_lh:
+    fn: 'cortical_thickness_lh.tsv'
+  cortical_thickness_rh:
+    fn: 'cortical_thickness_rh.tsv'
+  cortical_surface_area_lh:
+    fn: 'cortical_surface_area_lh.tsv'
+  cortical_surface_area_rh:
+    fn: 'cortical_surface_area_rh.tsv'
