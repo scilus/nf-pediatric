@@ -4,21 +4,21 @@ report_comment: >
 
 report_section_order:
   "nf-pediatric-summary":
-    order: -600
+    order: -1001
   "shell_qc":
-    order: -650
+    order: -850
   "tissue_segmentation_qc":
-    order: -700
+    order: -600
   "metrics_qc":
-    order: -725
+    order: -625
   "tracking_qc":
-    order: -750
+    order: -650
   "labels_qc":
-    order: -800
+    order: -500
   "nf-pediatric-methods-description":
     order: -900
   software_versions:
-    order: -500
+    order: -1000
 
 custom_content:
   order:

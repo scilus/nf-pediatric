@@ -615,7 +615,7 @@ workflow PEDIATRIC {
     // MODULE: MultiQC
     //
     ch_multiqc_config_subject = Channel.fromPath(
-        "$projectDir/assets/multiqc_config_subject.yml", checkIfExists: true)
+        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
     ch_multiqc_config_global = Channel.fromPath(
         "$projectDir/assets/multiqc_config_global.yml", checkIfExists: true)
     ch_multiqc_custom_config = params.multiqc_config ?
