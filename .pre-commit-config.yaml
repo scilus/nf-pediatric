@@ -1,4 +1,8 @@
-exclude: "assets/.*"
+exclude: |
+  (?x)^(
+    assets/.*|
+    .*\.diff
+  )$
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: "v3.1.0"

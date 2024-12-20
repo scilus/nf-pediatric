@@ -2,7 +2,7 @@ process ATLASES_BRAINNETOMECHILD {
     tag "$meta.id"
     label 'process_medium'
 
-    container "gagnonanthony/nf-pediatric:0.1.0"
+    container "gagnonanthony/nf-pediatric-atlases:1.0.0"
 
     input:
     tuple val(meta), path(folder), path(utils), path(fs_license)
@@ -12,7 +12,7 @@ process ATLASES_BRAINNETOMECHILD {
     tuple val(meta), path("*brainnetome_child_v1_dilated.nii.gz")       , emit: labels_dilate
     tuple val(meta), path("*[brainnetome_child]*.txt")                  , emit: labels_txt
     tuple val(meta), path("*[brainnetome_child]*.json")                 , emit: labels_json
-    tuple val(meta), path("*.stats")                                    , emit: stats
+    path("*.tsv")                                                       , emit: stats
     path "versions.yml"                                                 , emit: versions
 
     when:
@@ -23,11 +23,16 @@ process ATLASES_BRAINNETOMECHILD {
 
     """
     export FS_LICENSE=./license.txt
+    export PYTHONPATH=/opt/freesurfer/python/packages:\$PYTHONPATH
 
-    ln -s $utils/fsaverage \$(dirname ${folder})/
-    bash $utils/freesurfer_utils/generate_atlas_BN_child.sh \$(dirname ${folder}) \
-        ${prefix}__recon_all ${task.cpus} Brainnetome_Child/
-    cp ${prefix}__recon_all/Brainnetome_Child/* ./
+    # If there already is an annot file in the label folder, remove it.
+    rm -f ${folder}/${prefix}/label/lh.BN_Child.annot ${folder}/${prefix}/label/rh.BN_Child.annot
+
+    ln -s \$(readlink -e $utils/fsaverage) ${folder}/
+    bash $utils/freesurfer_utils/generate_atlas_BN_child.sh $folder \
+        ${prefix} $task.cpus Brainnetome_Child/
+    cp Brainnetome_Child/* ./
+    rm ${folder}/fsaverage
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -44,9 +49,13 @@ process ATLASES_BRAINNETOMECHILD {
     touch ${prefix}__brainnetome_child_v1_dilated.nii.gz
     touch ${prefix}__brainnetome_child_v1.txt
     touch ${prefix}__brainnetome_child_v1.json
-    touch BN_Child_subcortical.stats
-    touch lh.BN_Child.stats
-    touch rh.BN_Child.stats
+    touch ${prefix}__volume_BN_Child_subcortical.tsv
+    touch ${prefix}__volume_lh.BN_Child.tsv
+    touch ${prefix}__volume_rh.BN_Child.tsv
+    touch ${prefix}__area_lh.BN_Child.tsv
+    touch ${prefix}__area_rh.BN_Child.tsv
+    touch ${prefix}__thickness_lh.BN_Child.tsv
+    touch ${prefix}__thickness_rh.BN_Child.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

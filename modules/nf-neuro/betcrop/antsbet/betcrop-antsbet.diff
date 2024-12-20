@@ -1,0 +1,23 @@
+Changes in module 'nf-neuro/betcrop/antsbet'
+'modules/nf-neuro/betcrop/antsbet/environment.yml' is unchanged
+'modules/nf-neuro/betcrop/antsbet/meta.yml' is unchanged
+Changes in 'betcrop/antsbet/main.nf':
+--- modules/nf-neuro/betcrop/antsbet/main.nf
++++ modules/nf-neuro/betcrop/antsbet/main.nf
+@@ -48,8 +48,8 @@
+     def args = task.ext.args ?: ''
+     def prefix = task.ext.prefix ?: "${meta.id}"
+ 
+-        """
+-    antsBrainExtraction.sh -h
++    """
++    #antsBrainExtraction.sh &> stdout.log
+     scil_volume_math.py -h
+     mrcalc -h
+ 
+
+'modules/nf-neuro/betcrop/antsbet/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/betcrop/antsbet/tests/tags.yml' is unchanged
+'modules/nf-neuro/betcrop/antsbet/tests/nextflow.config' is unchanged
+'modules/nf-neuro/betcrop/antsbet/tests/main.nf.test' is unchanged
+************************************************************

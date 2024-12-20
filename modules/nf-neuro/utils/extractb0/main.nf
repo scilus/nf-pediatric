@@ -10,8 +10,9 @@ process UTILS_EXTRACTB0 {
     tuple val(meta), path(dwi), path(bval), path(bvec)
 
     output:
-    tuple val(meta), path("*_b0*.nii.gz"), emit: b0
-    path "versions.yml"                  , emit: versions
+    tuple val(meta), path("*_b0.nii.gz")        , emit: b0
+    tuple val(meta), path("*_b0_mask.nii.gz")   , emit: b0_mask
+    path "versions.yml"                         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -29,24 +30,30 @@ process UTILS_EXTRACTB0 {
     scil_dwi_extract_b0.py $dwi $bval $bvec ${prefix}_b0.nii.gz \
         $output_series $extraction_strategy $b0_threshold --skip_b0_check
 
+    mrthreshold ${prefix}_b0.nii.gz ${prefix}_b0_mask.nii.gz -abs 0.0001 \
+        -nthreads $task.cpus
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        mrtrix: \$(mrthreshold -version 2>&1 | sed -n 's/== mrthreshold \\([0-9.]\\+\\).*/\\1/p')
     END_VERSIONS
     """
 
     stub:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
     scil_dwi_extract_b0.py -h
+    mrthreshold -h
 
     touch ${prefix}_b0.nii.gz
+    touch ${prefix}_b0_mask.nii.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        mrtrix: \$(mrthreshold -version 2>&1 | sed -n 's/== mrthreshold \\([0-9.]\\+\\).*/\\1/p')
     END_VERSIONS
     """
 }
