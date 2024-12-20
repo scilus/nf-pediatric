@@ -571,7 +571,7 @@ workflow PEDIATRIC {
         ch_tissueseg = ANATOMICAL_SEGMENTATION.out.wm_mask
             .join(ANATOMICAL_SEGMENTATION.out.gm_mask)
             .join(ANATOMICAL_SEGMENTATION.out.csf_mask)
-    } else if ( params.infant ) {
+    } else if ( params.infant && params.tracking ) {
         ch_tissueseg = MASK_COMBINE.out.wm_mask
     } else {
         ch_tissueseg = Channel.empty()
@@ -582,7 +582,7 @@ workflow PEDIATRIC {
         ch_tissueseg,
         params.connectomics ? TRANSFORM_LABELS.out.warped_image : params.freesurfer ? FREESURFERFLOW.out.labels : Channel.empty(),
         params.connectomcis ? FILTERING_COMMIT.out.trk : params.tracking ? ch_trk : Channel.empty(),
-        ch_inputs.dwi_bval_bvec,
+        params.tracking || params.connectomics ? ch_inputs.dwi_bval_bvec : Channel.empty(),
         params.tracking ? RECONST_DTIMETRICS.out.fa : Channel.empty(),
         params.tracking ? RECONST_DTIMETRICS.out.md : Channel.empty(),
         params.tracking ? RECONST_FODF.out.nufo : Channel.empty(),
@@ -590,18 +590,14 @@ workflow PEDIATRIC {
     )
 
     qc_files = QC.out.tissueseg_png
-        .join(QC.out.tracking_png, remainder: true)
-        .join(QC.out.shell_png, remainder: true)
-        .join(QC.out.metrics_png, remainder: true)
-        .join(QC.out.labels_png, remainder: true)
-        .map { subject_id, tissueseg_png, tracking_png, shell_png, metrics_png, labels_png ->
-            def images = []
-            if (shell_png) images << shell_png
-            if (tissueseg_png) images << tissueseg_png
-            if (tracking_png) images << tracking_png
-            if (metrics_png) images << metrics_png
-            if (labels_png) images << labels_png
-            return tuple(subject_id, images.flatten())
+        .mix(QC.out.tracking_png)
+        .mix(QC.out.shell_png)
+        .mix(QC.out.metrics_png)
+        .mix(QC.out.labels_png)
+        .groupTuple()
+        .map { meta, png_list ->
+            def images = png_list.flatten().findAll { it != null }
+            return tuple(meta, images)
         }
 
     //

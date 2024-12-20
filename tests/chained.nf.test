@@ -26,7 +26,7 @@ nextflow_pipeline {
             assert workflow.trace.tasks().size() == 9
         }
 
-    }
+    } */
 
     test("Connectomics + tracking profiles - should run successfully") {
 
@@ -92,7 +92,7 @@ nextflow_pipeline {
             assert workflow.trace.tasks().size() == 37
         }
 
-    }*/
+    }
 
 //* UNTIL WE HAVE SCIL'S RUNNERS, WE CAN'T RUN THIS TEST. ** //
     test("Connectomics + tracking + infant profiles - should run successfully") {
@@ -122,7 +122,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() == 34
+            assert workflow.trace.tasks().size() == 39
         }
 
     }

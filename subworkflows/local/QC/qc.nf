@@ -35,12 +35,14 @@ workflow QC {
     //
     ch_tissueseg_qc = ch_anat
         .join(ch_maps, remainder: true)
-        .map { meta, anat_path, maps_path ->
-            def maps = maps_path ?: [[], [], []]
-            [ meta, anat_path, maps, [] ]
+        .branch {
+            withmaps: it.size() > 2 && it[3] != null
+                return [ it[0], it[1], it[2], it[3], it[4], [] ]
+            withoutmaps: true
+                return [ it[0], it[1], [], [], [], [] ]
         }
 
-    QC_TISSUES ( ch_tissueseg_qc )
+    QC_TISSUES ( ch_tissueseg_qc.withmaps )
     ch_versions = ch_versions.mix(QC_TISSUES.out.versions.first())
 
     //
@@ -78,13 +80,13 @@ workflow QC {
     ch_versions = ch_versions.mix(QC_TRACKING.out.versions.first())
 
     emit:
-    tissueseg_png      = QC_TISSUES.out.tissue_seg           // channel: [ val(meta), [ png ] ]
-    labels_png         = QC_LABELS.out.labels                // channel: [ val(meta), [ png ] ]
-    tracking_png       = QC_TRACKING.out.png                 // channel: [ val(meta), [ png ] ]
-    dice_stats         = QC_TRACKING.out.dice                // channel: [ val(meta), [ dice ] ]
-    sc_values          = QC_TRACKING.out.sc                  // channel: [ val(meta), [ sc ] ]
-    shell_png          = QC_SHELL.out.shell                  // channel: [ val(meta), [ png ] ]
-    metrics_png        = QC_METRICS.out.png                  // channel: [ val(meta), [ png ] ]
+    tissueseg_png      = QC_TISSUES.out.tissue_seg ?: Channel.empty()   // channel: [ val(meta), [ png ] ]
+    labels_png         = QC_LABELS.out.labels ?: Channel.empty()        // channel: [ val(meta), [ png ] ]
+    tracking_png       = QC_TRACKING.out.png ?: Channel.empty()         // channel: [ val(meta), [ png ] ]
+    dice_stats         = QC_TRACKING.out.dice ?: Channel.empty()        // channel: [ val(meta), [ dice ] ]
+    sc_values          = QC_TRACKING.out.sc ?: Channel.empty()          // channel: [ val(meta), [ sc ] ]
+    shell_png          = QC_SHELL.out.shell ?: Channel.empty()          // channel: [ val(meta), [ png ] ]
+    metrics_png        = QC_METRICS.out.png ?: Channel.empty()          // channel: [ val(meta), [ png ] ]
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }

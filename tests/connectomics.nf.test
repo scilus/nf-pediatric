@@ -20,7 +20,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() == 7
+            assert workflow.trace.tasks().size() == 10
         }
 
     }
@@ -40,7 +40,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() == 7
+            assert workflow.trace.tasks().size() == 10
         }
 
     }
@@ -81,7 +81,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() == 7
+            assert workflow.trace.tasks().size() == 10
         }
 
     }
