@@ -24,10 +24,14 @@ process ATLASES_BRAINNETOMECHILD {
     """
     export FS_LICENSE=./license.txt
 
-    ln -s $utils/fsaverage \$(dirname ${folder})/
-    bash $utils/freesurfer_utils/generate_atlas_BN_child.sh \$(dirname ${folder}) \
+    # If there already is an annot file in the label folder, remove it.
+    rm -f ${folder}/${prefix}/label/lh.BN_Child.annot ${folder}/${prefix}/label/rh.BN_Child.annot
+
+    ln -s \$(readlink -e $utils/fsaverage) ${folder}/
+    bash $utils/freesurfer_utils/generate_atlas_BN_child.sh $folder \
         ${prefix} $task.cpus Brainnetome_Child/
     cp Brainnetome_Child/* ./
+    rm ${folder}/fsaverage
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

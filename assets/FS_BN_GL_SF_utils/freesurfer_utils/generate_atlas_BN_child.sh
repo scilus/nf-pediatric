@@ -57,7 +57,7 @@ rm BN_child_atlas/tmp/*\?*
 # Then do a surface-based registration to move it to the subject space.
 for i in BN_child_atlas/tmp/l*.*.label;
     do echo mri_label2label --srcsubject fsaverage --srclabel ${i} --trgsubject ${SUBJID} --regmethod surface --hemi lh --trglabel BN_child_atlas/$(basename ${i}) ' >> logfile.txt' >> cmd.sh; done
-for i in ${FS_ID_FOLDER}/BN_child_atlas/tmp/r*.*.label;
+for i in BN_child_atlas/tmp/r*.*.label;
     do echo mri_label2label --srcsubject fsaverage --srclabel ${i} --trgsubject ${SUBJID} --regmethod surface --hemi rh --trglabel BN_child_atlas/$(basename ${i}) ' >> logfile.txt' >> cmd.sh; done
 # Slow operation, multiprocessing it!
 parallel --will-cite -P ${NBR_PROCESSES} < cmd.sh; rm -r cmd.sh BN_child_atlas/tmp/
@@ -79,10 +79,10 @@ mri_ca_label ${FS_ID_FOLDER}/mri/brain.mgz ${FS_ID_FOLDER}/mri/transforms/talair
 # Convert the *.label to *.nii.gz, very slow because of the cortical ribbon (filling)
 echo -e "${BLUE}Creating the Brainnetome Child parcellation ROIs by filling up the cortical ribbon (very slow)${NC}"
 for i in BN_child_atlas/lh*.label;
-    do echo mri_label2vol --label ${i} --temp ${FS_ID_FOLDER}/mri/brain.mgz --o ${i/.label/.nii.gz} --subject ${SUBJID} --hemi lh --proj frac 0 1 .1 --fillthresh .3 --reg BN_child_atlas/register.dat --fill-ribbon ' >> /logfile.txt' >> cmd.sh
+    do echo mri_label2vol --label ${i} --temp ${FS_ID_FOLDER}/mri/brain.mgz --o ${i/.label/.nii.gz} --subject ${SUBJID} --hemi lh --proj frac 0 1 .1 --fillthresh .3 --reg BN_child_atlas/register.dat --fill-ribbon ' >> logfile.txt' >> cmd.sh
 done
 for i in BN_child_atlas/rh*.label;
-    do echo mri_label2vol --label ${i} --temp ${FS_ID_FOLDER}/mri/brain.mgz --o ${i/.label/.nii.gz} --subject ${SUBJID} --hemi rh --proj frac 0 1 .1 --fillthresh .3 --reg BN_child_atlas/register.dat --fill-ribbon ' >> /logfile.txt' >> cmd.sh
+    do echo mri_label2vol --label ${i} --temp ${FS_ID_FOLDER}/mri/brain.mgz --o ${i/.label/.nii.gz} --subject ${SUBJID} --hemi rh --proj frac 0 1 .1 --fillthresh .3 --reg BN_child_atlas/register.dat --fill-ribbon ' >> logfile.txt' >> cmd.sh
 done
 # Slow operation, multiprocessing it !
 parallel --will-cite -P ${NBR_PROCESSES} < cmd.sh; rm cmd.sh
@@ -136,7 +136,7 @@ scil_reshape_to_reference.py BN_child_atlas/atlas_brainnetome_child.nii.gz ${FS_
 # ==================================================================================
 # Safer for most script, thats our label data type
 echo -e "${BLUE}Finished creating the atlas by dilating the label${NC}"
-scil_image_math.py convert ${FS_ID_FOLDER}/atlas_brainnetome_child.nii.gz ${FS_ID_FOLDER}/${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz --data_type uint16 -f
+scil_image_math.py convert BN_child_atlas/atlas_brainnetome_child.nii.gz ${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz --data_type uint16 -f
 rm ${FS_ID_FOLDER}/atlas_*.nii.gz
 cp ${UTILS_DIR}/atlas_brainnetome_child_v1_*.* ${OUT_DIR}/
 
