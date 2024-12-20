@@ -3,6 +3,9 @@ process BETCROP_SYNTHBET {
     label 'process_single'
 
     container "freesurfer/synthstrip:1.5"
+    containerOptions {
+        (workflow.containerEngine == 'docker') ? '--entrypoint ""': ''
+    }
 
     input:
     tuple val(meta), path(image), path(weights) /* optional, input = [] */
