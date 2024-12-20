@@ -36,15 +36,17 @@ process SEGMENTATION_FSRECONALL {
     if [ -z $dev_debug_test ]
     then
         # Run the main script
-        export SUBJECTS_DIR=`pwd`
-        recon-all -i $anat -s ${prefix}__recon_all -all
+        export SUBJECTS_DIR=\$(pwd)/${prefix}__recon_all
+        mkdir ${prefix}__recon_all
+        recon-all -i $anat -s ${prefix} -all
     else
         # (for developers: unit tests: skip the long processing. help only.)
-        export SUBJECTS_DIR=`pwd`
-        recon-all -i $anat -s ${prefix}__recon_all -autorecon1 -dontrun
+        export SUBJECTS_DIR=\$(pwd)/${prefix}__recon_all
+        mkdir ${prefix}__recon_all
+        recon-all -i $anat -s ${prefix} -autorecon1 -dontrun
     fi
 
-    mri_convert ${prefix}__recon_all/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
+    mri_convert ${prefix}__recon_all/${prefix}/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
 
     # Remove the license
     if [ ! $fs_license = [] ]; then

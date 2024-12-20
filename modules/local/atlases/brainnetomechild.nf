@@ -26,8 +26,8 @@ process ATLASES_BRAINNETOMECHILD {
 
     ln -s $utils/fsaverage \$(dirname ${folder})/
     bash $utils/freesurfer_utils/generate_atlas_BN_child.sh \$(dirname ${folder}) \
-        ${prefix}__* ${task.cpus} Brainnetome_Child/
-    cp ${prefix}__*/Brainnetome_Child/* ./
+        ${prefix} $task.cpus Brainnetome_Child/
+    cp Brainnetome_Child/* ./
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

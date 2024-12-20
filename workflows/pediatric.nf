@@ -4,7 +4,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 // ** Core modules ** //
-include { MULTIQC                           } from '../modules/nf-core/multiqc/main'
+include { MULTIQC as MULTIQC_SUBJECT        } from '../modules/nf-core/multiqc/main'
+include { MULTIQC as MULTIQC_GLOBAL         } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap                  } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc              } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML            } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -55,6 +56,9 @@ include { TRACTOGRAM_DECOMPOSE              } from '../modules/local/tractogram/
 include { CONNECTIVITY_AFDFIXEL             } from '../modules/local/connectivity/afdfixel.nf'
 include { CONNECTIVITY_METRICS              } from '../modules/local/connectivity/metrics.nf'
 include { CONNECTIVITY_VISUALIZE            } from '../modules/local/connectivity/visualize.nf'
+
+// ** QC ** //
+include { QC } from '../subworkflows/local/QC/qc.nf'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -561,6 +565,46 @@ workflow PEDIATRIC {
     }
 
     //
+    // SUBWORKFLOW: RUN QC
+    //
+    if ( params.tracking && !params.infant ) {
+        ch_tissueseg = ANATOMICAL_SEGMENTATION.out.wm_mask
+            .join(ANATOMICAL_SEGMENTATION.out.gm_mask)
+            .join(ANATOMICAL_SEGMENTATION.out.csf_mask)
+    } else if ( params.infant ) {
+        ch_tissueseg = MASK_COMBINE.out.wm_mask
+    } else {
+        ch_tissueseg = Channel.empty()
+    }
+
+    QC (
+        params.tracking ? REGISTRATION.out.image_warped : params.freesurfer ? FREESURFERFLOW.out.t1 : params.infant ? ch_inputs.t2 : ch_inputs.t1,
+        ch_tissueseg,
+        params.connectomics ? TRANSFORM_LABELS.out.warped_image : params.freesurfer ? FREESURFERFLOW.out.labels : Channel.empty(),
+        params.connectomcis ? FILTERING_COMMIT.out.trk : params.tracking ? ch_trk : Channel.empty(),
+        ch_inputs.dwi_bval_bvec,
+        params.tracking ? RECONST_DTIMETRICS.out.fa : Channel.empty(),
+        params.tracking ? RECONST_DTIMETRICS.out.md : Channel.empty(),
+        params.tracking ? RECONST_FODF.out.nufo : Channel.empty(),
+        params.tracking ? RECONST_DTIMETRICS.out.rgb : Channel.empty()
+    )
+
+    qc_files = QC.out.tissueseg_png
+        .join(QC.out.tracking_png, remainder: true)
+        .join(QC.out.shell_png, remainder: true)
+        .join(QC.out.metrics_png, remainder: true)
+        .join(QC.out.labels_png, remainder: true)
+        .map { subject_id, tissueseg_png, tracking_png, shell_png, metrics_png, labels_png ->
+            def images = []
+            if (shell_png) images << shell_png
+            if (tissueseg_png) images << tissueseg_png
+            if (tracking_png) images << tracking_png
+            if (metrics_png) images << metrics_png
+            if (labels_png) images << labels_png
+            return tuple(subject_id, images.flatten())
+        }
+
+    //
     // Collate and save software versions
     //
     softwareVersionsToYAML(ch_versions)
@@ -574,14 +618,16 @@ workflow PEDIATRIC {
     //
     // MODULE: MultiQC
     //
-    ch_multiqc_config        = Channel.fromPath(
-        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_config_subject = Channel.fromPath(
+        "$projectDir/assets/multiqc_config_subject.yml", checkIfExists: true)
+    ch_multiqc_config_global = Channel.fromPath(
+        "$projectDir/assets/multiqc_config_global.yml", checkIfExists: true)
     ch_multiqc_custom_config = params.multiqc_config ?
         Channel.fromPath(params.multiqc_config, checkIfExists: true) :
         Channel.empty()
     ch_multiqc_logo          = params.multiqc_logo ?
         Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.empty()
+        Channel.fromPath("$projectDir/assets/nf-pediatric-logo.png", checkIfExists: true)
 
     summary_params      = paramsSummaryMap(
         workflow, parameters_schema: "nextflow_schema.json")
@@ -602,16 +648,30 @@ workflow PEDIATRIC {
         )
     )
 
-    MULTIQC (
+    MULTIQC_SUBJECT (
+        qc_files,
         ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
+        ch_multiqc_config_subject.toList(),
         ch_multiqc_custom_config.toList(),
         ch_multiqc_logo.toList(),
         [],
         []
     )
 
-    emit:multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    ch_multiqc_files_global = ch_multiqc_files.mix(QC.out.dice_stats.map{ it[1] }.flatten())
+    ch_multiqc_files_global = ch_multiqc_files_global.mix(QC.out.sc_values.map{ it[1] }.flatten())
+
+    MULTIQC_GLOBAL (
+        Channel.of([meta:[id:"global"], qc_images:[]]),
+        ch_multiqc_files_global.collect(),
+        ch_multiqc_config_global.toList(),
+        ch_multiqc_custom_config.toList(),
+        ch_multiqc_logo.toList(),
+        [],
+        []
+    )
+
+    emit:multiqc_report = MULTIQC_SUBJECT.out.report.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 
 }
