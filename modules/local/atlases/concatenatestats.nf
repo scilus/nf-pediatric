@@ -21,31 +21,7 @@ process ATLASES_CONCATENATESTATS {
     task.ext.when == null || task.ext.when
 
     script:
-    """
-    #!/bin/python
-
-    import pandas as pd
-    import glob
-
-    for stat in ['volume', 'area', 'thickness', 'subcortical']:
-        if stat == 'subcortical':
-            files = glob.glob("*subcortical*")
-            df = pd.concat([pd.read_csv(f, sep='\\t') for f in files], ignore_index=True)
-            df.rename(columns={df.columns[0]: "Sample"}, inplace=True)
-            df.to_csv(f"{stat}_volumes.tsv", sep='\\t', index=False)
-        else:
-            for hemi in ['lh', 'rh']:
-                files = glob.glob(f"*{stat}_{hemi}*")
-                df = pd.concat([pd.read_csv(f, sep='\\t') for f in files], ignore_index=True)
-                df.rename(columns={df.columns[0]: "Sample"}, inplace=True)
-                df.to_csv(f"cortical_{stat}_{hemi}.tsv", sep='\\t', index=False)
-    """
-    """
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        neurostatx: 0.1.0
-    END_VERSIONS
-    """
+    template 'concatenatestats.py'
 
     stub:
     """
@@ -59,7 +35,8 @@ process ATLASES_CONCATENATESTATS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        neurostatx: 0.1.0
+        python: \$(python3 -c 'import platform; print(platform.python_version())')
+        pandas: \$(python3 -c 'import pandas; print(pandas.__version__)')
     END_VERSIONS
     """
 }
