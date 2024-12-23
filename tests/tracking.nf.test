@@ -11,7 +11,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.tracking = true
 
@@ -19,10 +19,20 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 31
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
-
     }
 
     test("Tracking profile no dwi preprocessing - should run successfully") {
@@ -31,7 +41,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.tracking = true
                 params.skip_dwi_preprocessing = true
@@ -40,10 +50,20 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 23
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
-
     }
 
     test("Tracking profile no rev b0 - should fail") {
@@ -52,7 +72,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.tracking = true
 
@@ -60,10 +80,13 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
+            assertAll {
+                assert workflow.failed
+                assert snapshot(
+                    workflow.stdout
+                ).match()
+            }
         }
-
     }
 
     test("Tracking profile no dwi - should fail") {
@@ -72,7 +95,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking_nodwi.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.tracking = true
 
@@ -80,10 +103,13 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide a DWI image for sample: sub-test")
+            assertAll {
+                assert workflow.failed
+                assert snapshot(
+                    workflow.stdout
+                ).match()
+            }
         }
-
     }
 
     test("Tracking profile with infant data - should run successfully") {
@@ -92,7 +118,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking_infant.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.tracking = true
                 params.infant = true
@@ -112,10 +138,20 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 33
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
-
     }
 
     test("Tracking profile with infant data no wm mask - should fail") {
@@ -124,7 +160,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_nowmmask.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.tracking = true
                 params.infant = true
@@ -143,10 +179,13 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide a wmparc image for sample: sub-test")
+            assertAll {
+                assert workflow.failed
+                assert snapshot(
+                    workflow.stdout
+                ).match()
+            }
         }
-
     }
 
     test("Tracking profile with infant data no rev b0 - should fail") {
@@ -155,7 +194,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_norev.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.tracking = true
                 params.infant = true
@@ -174,10 +213,13 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
+            assertAll {
+                assert workflow.failed
+                assert snapshot(
+                    workflow.stdout
+                ).match()
+            }
         }
-
     }
 
     test("Tracking profile with infant data no t2 - should fail") {
@@ -186,7 +228,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_not2.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.tracking = true
                 params.infant = true
@@ -205,10 +247,12 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide at least one anatomical image (T1w or T2w) for sample: sub-test")
+            assertAll {
+                assert workflow.failed
+                assert snapshot(
+                    workflow.stdout
+                ).match()
+            }
         }
-
     }
-
 }

@@ -80,4 +80,4 @@ jobs:
 
       - name: "Run pipeline with test data ${{ matrix.NXF_VER }} | ${{ matrix.test_name }} | ${{ matrix.profile }}"
         run: |
-          nf-test test ${GITHUB_WORKSPACE}/tests/${{ matrix.test_name }} --profile ${{ matrix.profile }}
+          nf-test test ${GITHUB_WORKSPACE}/tests/${{ matrix.test_name }} --ci --profile ${{ matrix.profile }}

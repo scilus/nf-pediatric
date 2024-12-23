@@ -64,6 +64,10 @@ With this command, you will run the `tracking` profile for non-infant data. Ther
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
+## Outputs of `nf-pediatric`
+
+By default, `nf-pediatric` outputs only the final preprocessed files and leave out all the intermediate steps to avoid generating too many files, which can become a problem on some clusters. The output folder consists of per subject BIDS-like directories, containing the `anat`, `dwi`, `multiqc`, and `figures` subfolders. For a detailed description of the output structure, please see [the documentation](/docs/output.md).
+
 ## Using `nf-pediatric` on computer nodes without internet access.
 
 Some computing nodes does not have access to internet at runtime. Since the pipeline interacts with the containers repository and pull during execution, it won't work if the nodes do not have access to the internet. Fortunately, containers can be downloaded prior to the pipeline execution, and fetch locally during runtime. Using `nf-core` tools (for a detailed installation guide, see the [nf-core documentation](https://nf-co.re/docs/nf-core-tools/installation)), we can use the `nf-core pipelines download` command. To view the options before the download, you can use `nf-core pipelines download -h`. To use the prompts, simply run `nf-core pipelines download` as follows (_downloading all containers takes ~15 minutes_):
