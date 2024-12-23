@@ -59,7 +59,7 @@
                     "type": "boolean",
                     "description": "Use FastSurfer instead of FreeSurfer.",
                     "fa_icon": "fas fa-rocket",
-                    "default": false,
+                    "default": true,
                     "hidden": false
                 },
                 "fs_license": {

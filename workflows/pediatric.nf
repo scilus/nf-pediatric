@@ -101,7 +101,9 @@ workflow PEDIATRIC {
     if ( params.freesurfer ) {
 
         // ** Fetch license file ** //
-        ch_fs_license = Channel.fromPath(params.fs_license, checkIfExists: true)
+        ch_fs_license = params.fs_license
+            ? Channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
+            : Channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
 
         // ** Fetch utils folder ** //
         ch_utils_folder = Channel.fromPath(params.utils_folder, checkIfExists: true)

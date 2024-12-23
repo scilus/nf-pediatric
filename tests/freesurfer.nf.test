@@ -48,4 +48,46 @@ nextflow_pipeline {
 
     }
 
+    test("Freesurfer profile - without license - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "test_results/"
+
+                params.freesurfer = true
+                params.use_fastsurfer = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("No license file path provided. Please specify the path using --fs_license parameter.")
+        }
+
+    }
+
+    test("Freesurfer profile - wrong license path - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "test_results/"
+
+                params.freesurfer = true
+                params.use_fastsurfer = true
+
+                params.fs_license = "./not/a/valid/path/license.txt"
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stderr.contains("* --fs_license (./not/a/valid/path/license.txt): the file or directory './not/a/valid/path/license.txt' does not exist")
+        }
+    }
 }
