@@ -53,48 +53,6 @@
         },
         "timestamp": "2024-12-23T14:31:09.632787"
     },
-    "Freesurfer profile - wrong license path - should fail": {
-        "content": [
-            [
-                "shell-init: error retrieving current directory: getcwd: cannot access parent directories: Undefined error: 0",
-                "\u001b[33mNextflow 24.10.3 is available - Please consider updating your version to it\u001b(B\u001b[m",
-                "\u001b[0;31mThe following invalid input values have been detected:",
-                "",
-                "* --fs_license (./not/a/valid/path/license.txt): the file or directory './not/a/valid/path/license.txt' does not exist",
-                "\u001b[0m",
-                " -- Check script '/Users/anthonygagnon/code/nf-pediatric/./workflows/../subworkflows/local/utils_nfcore_pediatric_pipeline/../../nf-core/utils_nfschema_plugin/main.nf' at line: 39 or see '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/bac2174d8d2cc120ef1083ec84d38080/meta/nextflow.log' file for more details"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
-        },
-        "timestamp": "2024-12-23T14:31:34.293862"
-    },
-    "Freesurfer profile - without license - should fail": {
-        "content": [
-            [
-                "No license file path provided. Please specify the path using --fs_license parameter.",
-                "ERROR ~ Pipeline failed. Please refer to troubleshooting docs: https://nf-co.re/docs/usage/troubleshooting",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/a1aace55560beaf8b389c5f9020d6e9b/meta/nextflow.log' file for details",
-                "ERROR ~ Unexpected error [ClosedByInterruptException]",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/a1aace55560beaf8b389c5f9020d6e9b/meta/nextflow.log' file for details",
-                "ERROR ~ Unexpected error [ClosedByInterruptException]",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/a1aace55560beaf8b389c5f9020d6e9b/meta/nextflow.log' file for details",
-                "ERROR ~ Unexpected error [ClosedByInterruptException]",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/a1aace55560beaf8b389c5f9020d6e9b/meta/nextflow.log' file for details"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
-        },
-        "timestamp": "2024-12-23T14:31:24.709372"
-    },
     "Freesurfer profile - freesurfer - should run successfully": {
         "content": [
             6,

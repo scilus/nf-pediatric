@@ -80,12 +80,8 @@ nextflow_pipeline {
         }
 
         then {
-            assertAll {
-                assert workflow.failed
-                assert snapshot(
-                    workflow.stdout
-                ).match()
-            }
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
         }
     }
 
@@ -103,12 +99,8 @@ nextflow_pipeline {
         }
 
         then {
-            assertAll {
-                assert workflow.failed
-                assert snapshot(
-                    workflow.stdout
-                ).match()
-            }
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a DWI image for sample: sub-test")
         }
     }
 
@@ -179,12 +171,8 @@ nextflow_pipeline {
         }
 
         then {
-            assertAll {
-                assert workflow.failed
-                assert snapshot(
-                    workflow.stdout
-                ).match()
-            }
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a wmparc image for sample: sub-test")
         }
     }
 
@@ -213,12 +201,8 @@ nextflow_pipeline {
         }
 
         then {
-            assertAll {
-                assert workflow.failed
-                assert snapshot(
-                    workflow.stdout
-                ).match()
-            }
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
         }
     }
 
@@ -247,12 +231,8 @@ nextflow_pipeline {
         }
 
         then {
-            assertAll {
-                assert workflow.failed
-                assert snapshot(
-                    workflow.stdout
-                ).match()
-            }
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide at least one anatomical image (T1w or T2w) for sample: sub-test")
         }
     }
 }

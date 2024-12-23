@@ -79,12 +79,8 @@ nextflow_pipeline {
         }
 
         then {
-            assertAll {
-                assert workflow.failed
-                assert snapshot(
-                    workflow.stdout
-                ).match()
-            }
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide a trk file for sample: sub-test")
         }
     }
 

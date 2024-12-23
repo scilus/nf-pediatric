@@ -59,21 +59,6 @@
         },
         "timestamp": "2024-12-23T14:34:18.939645"
     },
-    "Connectomics profile without trk - should fail": {
-        "content": [
-            [
-                "Please provide a trk file for sample: sub-test",
-                "ERROR ~ Pipeline failed. Please refer to troubleshooting docs: https://nf-co.re/docs/usage/troubleshooting",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/c85dc273c6552c8d72a3e00c510fe9eb/meta/nextflow.log' file for details"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
-        },
-        "timestamp": "2024-12-23T15:39:51.80656"
-    },
     "Connectomics profile without metrics - should run successfully": {
         "content": [
             10,

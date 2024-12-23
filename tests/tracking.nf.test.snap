@@ -104,51 +104,6 @@
         },
         "timestamp": "2024-12-23T15:26:48.671942"
     },
-    "Tracking profile no dwi - should fail": {
-        "content": [
-            [
-                "Please provide a DWI image for sample: sub-test",
-                "ERROR ~ Pipeline failed. Please refer to troubleshooting docs: https://nf-co.re/docs/usage/troubleshooting",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/35dbe4e542f539fa65074b1fab50f7ec/meta/nextflow.log' file for details"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
-        },
-        "timestamp": "2024-12-23T15:29:02.462432"
-    },
-    "Tracking profile with infant data no wm mask - should fail": {
-        "content": [
-            [
-                "Please provide a wmparc image for sample: sub-test",
-                "ERROR ~ Pipeline failed. Please refer to troubleshooting docs: https://nf-co.re/docs/usage/troubleshooting",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/d5ae0698c72a794801c1937ab385075f/meta/nextflow.log' file for details"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
-        },
-        "timestamp": "2024-12-23T15:32:36.673241"
-    },
-    "Tracking profile with infant data no rev b0 - should fail": {
-        "content": [
-            [
-                "Please provide a reverse phase encoded B0 image for sample: sub-test",
-                "ERROR ~ Pipeline failed. Please refer to troubleshooting docs: https://nf-co.re/docs/usage/troubleshooting",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/6f358be214f712761256b8b6a744b312/meta/nextflow.log' file for details"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
-        },
-        "timestamp": "2024-12-23T15:32:50.977856"
-    },
     "Tracking profile with infant data - should run successfully": {
         "content": [
             33,
@@ -255,21 +210,6 @@
             "nextflow": "24.10.1"
         },
         "timestamp": "2024-12-23T15:32:19.893732"
-    },
-    "Tracking profile no rev b0 - should fail": {
-        "content": [
-            [
-                "Please provide a reverse phase encoded B0 image for sample: sub-test",
-                "ERROR ~ Pipeline failed. Please refer to troubleshooting docs: https://nf-co.re/docs/usage/troubleshooting",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/bfc13eaacad4dfb9768e905d46c0892/meta/nextflow.log' file for details"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
-        },
-        "timestamp": "2024-12-23T15:28:46.968272"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
@@ -378,20 +318,5 @@
             "nextflow": "24.10.1"
         },
         "timestamp": "2024-12-23T15:28:32.880881"
-    },
-    "Tracking profile with infant data no t2 - should fail": {
-        "content": [
-            [
-                "Please provide at least one anatomical image (T1w or T2w) for sample: sub-test",
-                "ERROR ~ Pipeline failed. Please refer to troubleshooting docs: https://nf-co.re/docs/usage/troubleshooting",
-                "",
-                " -- Check '/Users/anthonygagnon/code/nf-pediatric/.nf-test/tests/ca88f3a8eebf5e573a05c2afb9c99012/meta/nextflow.log' file for details"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
-        },
-        "timestamp": "2024-12-23T15:33:05.110058"
     }
 }

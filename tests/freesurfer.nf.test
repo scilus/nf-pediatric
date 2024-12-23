@@ -83,12 +83,8 @@ nextflow_pipeline {
         }
 
         then {
-            assertAll {
-                assert workflow.failed
-                assert snapshot(
-                    workflow.stdout
-                ).match()
-            }
+            assert workflow.failed
+            assert workflow.stdout.contains("No license file path provided. Please specify the path using --fs_license parameter.")
         }
     }
 
@@ -109,12 +105,8 @@ nextflow_pipeline {
         }
 
         then {
-            assertAll {
-                assert workflow.failed
-                assert snapshot(
-                    workflow.stderr
-                ).match()
-            }
+            assert workflow.failed
+            assert workflow.stderr.contains("* --fs_license (./not/a/valid/path/license.txt): the file or directory './not/a/valid/path/license.txt' does not exist")
         }
     }
 }
