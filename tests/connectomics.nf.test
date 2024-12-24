@@ -11,7 +11,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testconn.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.connectomics = true
 
@@ -19,10 +19,20 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 7
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
-
     }
 
     test("Connectomics profile without metrics - should run successfully") {
@@ -31,7 +41,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testconn_nometrics.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.connectomics = true
 
@@ -39,10 +49,20 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 7
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
-
     }
 
     test("Connectomics profile without trk - should fail") {
@@ -51,7 +71,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testconn_notrk.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.connectomics = true
 
@@ -62,7 +82,6 @@ nextflow_pipeline {
             assert workflow.failed
             assert workflow.stdout.contains("Please provide a trk file for sample: sub-test")
         }
-
     }
 
     test("Connectomics + infant profile - should run successfully") {
@@ -71,7 +90,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testconn_infant.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.connectomics = true
                 params.infant = true
@@ -80,10 +99,19 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 7
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
-
     }
-
 }

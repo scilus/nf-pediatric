@@ -5,14 +5,13 @@ nextflow_pipeline {
     name "Test nf-pediatric all profiles chained"
     script "../main.nf"
 
-/* ** COMMENTED OUT FOR NOW, UNTIL WE HAVE ACCESS TO THE SCIL'S RUNNERS. ** //
     test("Freesurfer + connectomics profiles - should run successfully") {
 
         when {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testconn.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.connectomics = true
                 params.freesurfer = true
@@ -22,19 +21,29 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 9
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
-
     }
-*/
+
     test("Connectomics + tracking profiles - should run successfully") {
 
         when {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.connectomics = true
                 params.tracking = true
@@ -43,10 +52,54 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 32
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
+        }
+    }
+
+    test("Connectomics + tracking + freesurfer profiles - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "$outputDir"
+
+                params.connectomics = true
+                params.tracking = true
+                params.freesurfer = true
+
+                params.use_fastsurfer = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+            }
         }
 
+        then {
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
+        }
     }
 
     test("Connectomics + tracking profiles with additional metrics - should run successfully") {
@@ -55,7 +108,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking_withmetrics.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.connectomics = true
                 params.tracking = true
@@ -64,20 +117,29 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 32
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
-
     }
 
-/* UNTIL WE HAVE SCIL'S RUNNERS, WE CAN'T RUN THIS TEST. ** //
     test("Connectomics + tracking + infant profiles - should run successfully") {
 
         when {
             params {
 
                 params.input = "$projectDir/tests/data/samplesheet_testall_infant.csv"
-                params.outdir = "test_results/"
+                params.outdir = "$outputDir"
 
                 params.connectomics = true
                 params.tracking = true
@@ -97,11 +159,19 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.success
-            assert workflow.trace.tasks().size() == 35
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
-
     }
-*/
-
 }
