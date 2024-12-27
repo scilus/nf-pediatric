@@ -13,8 +13,7 @@
                     "scilpy": "2.0.2"
                 },
                 "DENOISE_DWI": {
-                    "mrtrix": "3.0.4",
-                    "scilpy": "2.0.2"
+                    "mrtrix": "3.0.4"
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
@@ -138,7 +137,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2024-12-23T14:47:22.698543"
+        "timestamp": "2024-12-27T15:57:56.602667"
     },
     "Connectomics + tracking + infant profiles - should run successfully": {
         "content": [
@@ -160,8 +159,7 @@
                     "scilpy": "2.0.2"
                 },
                 "DENOISE_DWI": {
-                    "mrtrix": "3.0.4",
-                    "scilpy": "2.0.2"
+                    "mrtrix": "3.0.4"
                 },
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
@@ -280,7 +278,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2024-12-23T14:50:19.967721"
+        "timestamp": "2024-12-27T16:00:43.430316"
     },
     "Connectomics + tracking + freesurfer profiles - should run successfully": {
         "content": [
@@ -296,8 +294,7 @@
                     "scilpy": "2.0.2"
                 },
                 "DENOISE_DWI": {
-                    "mrtrix": "3.0.4",
-                    "scilpy": "2.0.2"
+                    "mrtrix": "3.0.4"
                 },
                 "FASTSURFER": {
                     "fastsurfer": "2.3.3+0000000"
@@ -438,7 +435,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2024-12-23T15:17:57.66946"
+        "timestamp": "2024-12-27T15:46:29.377638"
     },
     "Freesurfer + connectomics profiles - should run successfully": {
         "content": [
@@ -537,8 +534,7 @@
                     "scilpy": "2.0.2"
                 },
                 "DENOISE_DWI": {
-                    "mrtrix": "3.0.4",
-                    "scilpy": "2.0.2"
+                    "mrtrix": "3.0.4"
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
@@ -662,6 +658,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2024-12-23T14:43:54.287884"
+        "timestamp": "2024-12-27T15:52:47.27021"
     }
 }

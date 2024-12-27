@@ -89,7 +89,8 @@ FROM build_base AS build_common
 # get install scripts into docker
 RUN git clone --branch v2.3.3 https://github.com/Deep-MI/FastSurfer.git /fastsurfer && \
     mkdir /install
-RUN cp /fastsurfer/env/fastsurfer.yml /fastsurfer/Docker/conda_pack.sh /fastsurfer/Docker/install_env.py /install/
+RUN cp /fastsurfer/Docker/conda_pack.sh /fastsurfer/Docker/install_env.py /install/
+COPY ./fastsurfer.yml /install/
 
 # SHELL ["/bin/bash", "--login", "-c"]
 # Install conda for gpu
@@ -225,7 +226,7 @@ RUN cd /fastsurfer ; python3 FastSurferCNN/download_checkpoints.py --all && \
 
 # Set FastSurfer workdir and entrypoint
 #  the script entrypoint ensures that our conda env is active
-USER nonroot
+# USER nonroot
 WORKDIR "/fastsurfer"
 ENTRYPOINT ["/fastsurfer/Docker/entrypoint.sh","/fastsurfer/run_fastsurfer.sh"]
 CMD ["--help"]
