@@ -1,0 +1,25 @@
+Changes in component 'nf-neuro/preproc_t1'
+'subworkflows/nf-neuro/preproc_t1/meta.yml' is unchanged
+Changes in 'preproc_t1/main.nf':
+--- subworkflows/nf-neuro/preproc_t1/main.nf
++++ subworkflows/nf-neuro/preproc_t1/main.nf
+@@ -88,9 +88,10 @@
+             // The template and probability maps are mandatory if running antsBET. Since the
+             // error message from nextflow when they are absent is either non-informative or
+             // missing, we use ifEmpty to provide a more informative one.
++            // Remove this error message for now, as it is buggy.
+             ch_bet = IMAGE_RESAMPLE.out.image
+-                .join(ch_template.ifEmpty{ error("ANTS BET needs a template") })
+-                .join(ch_probability_map.ifEmpty{ error("ANTS BET needs a tissue probability map") })
++                .join(ch_template)
++                .join(ch_probability_map)
+ 
+             BETCROP_ANTSBET ( ch_bet )
+             ch_versions = ch_versions.mix(BETCROP_ANTSBET.out.versions.first())
+
+'subworkflows/nf-neuro/preproc_t1/tests/main.nf.test.snap' is unchanged
+'subworkflows/nf-neuro/preproc_t1/tests/nextflow_synthbet.config' is unchanged
+'subworkflows/nf-neuro/preproc_t1/tests/tags.yml' is unchanged
+'subworkflows/nf-neuro/preproc_t1/tests/nextflow.config' is unchanged
+'subworkflows/nf-neuro/preproc_t1/tests/main.nf.test' is unchanged
+************************************************************

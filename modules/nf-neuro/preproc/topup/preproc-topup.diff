@@ -1,18 +1,25 @@
-Changes in module 'nf-neuro/preproc/topup'
+Changes in component 'nf-neuro/preproc/topup'
 'modules/nf-neuro/preproc/topup/environment.yml' is unchanged
 'modules/nf-neuro/preproc/topup/meta.yml' is unchanged
 Changes in 'preproc/topup/main.nf':
 --- modules/nf-neuro/preproc/topup/main.nf
 +++ modules/nf-neuro/preproc/topup/main.nf
-@@ -80,7 +80,7 @@
-     """
-     scil_volume_math.py -h
-     scil_dwi_extract_b0.py -h
--    antsRegistrationSyNQuick.sh -h
-+    #antsRegistrationSyNQuick.sh
-     scil_dwi_prepare_topup_command.py -h
+@@ -3,12 +3,12 @@
+     label 'process_single'
  
-     touch ${prefix}__corrected_b0s.nii.gz
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        "https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif":
+-        "scilus/scilus:2.0.2"}"
++        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
++        'scilus/scilus:2.0.2' }"
+ 
+     input:
+         tuple val(meta), path(dwi), path(bval), path(bvec), path(b0), path(rev_dwi), path(rev_bval), path(rev_bvec), path(rev_b0)
+-        val(config_topup)
++        each config_topup
+ 
+     output:
+         tuple val(meta), path("*__corrected_b0s.nii.gz"), emit: topup_corrected_b0s
 
 'modules/nf-neuro/preproc/topup/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/preproc/topup/tests/tags.yml' is unchanged

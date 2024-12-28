@@ -18,28 +18,25 @@ Changes in 'preproc_dwi/main.nf':
  include { PREPROC_N4 as N4_DWI } from '../../../modules/nf-neuro/preproc/n4/main'
  include { PREPROC_NORMALIZE as NORMALIZE_DWI } from '../../../modules/nf-neuro/preproc/normalize/main'
  include { IMAGE_RESAMPLE as RESAMPLE_DWI } from '../../../modules/nf-neuro/image/resample/main'
-@@ -9,6 +15,7 @@
- include { UTILS_EXTRACTB0 as EXTRACTB0_RESAMPLE } from '../../../modules/nf-neuro/utils/extractb0/main'
- include { UTILS_EXTRACTB0 as EXTRACTB0_TOPUP } from '../../../modules/nf-neuro/utils/extractb0/main'
- include { TOPUP_EDDY } from '../topup_eddy/main'
-+include { BETCROP_ANTSBET } from '../../../modules/nf-neuro/betcrop/antsbet/main.nf'
- 
- 
- workflow PREPROC_DWI {
-@@ -19,6 +26,7 @@
-         ch_b0            // Channel: [ val(meta), [ b0 ] ], optional
-         ch_rev_b0        // channel: [ val(meta), [ reverse b0 ] ], optional
-         ch_config_topup  // channel: [ 'config_topup' ], optional
+@@ -19,6 +25,7 @@
+         ch_b0            // Channel: [ val(meta), b0 ], optional
+         ch_rev_b0        // channel: [ val(meta), rev-b0 ], optional
+         ch_config_topup  // channel: [ 'topup.cnf' ], optional
 +        ch_weights       // channel: [ 'weights' ], optional
  
      main:
  
-@@ -73,22 +81,72 @@
+@@ -67,24 +74,71 @@
          ch_versions = ch_versions.mix(TOPUP_EDDY.out.versions.first())
  
          // ** Bet-crop DWI ** //
+-        ch_betcrop_dwi = TOPUP_EDDY.out.dwi
+-            .join(TOPUP_EDDY.out.bval)
+-            .join(TOPUP_EDDY.out.bvec)
 +        if ( params.dwi_run_synthstrip ) {
-+
+ 
+-        BETCROP_FSLBETCROP ( ch_betcrop_dwi )
+-        ch_versions = ch_versions.mix(BETCROP_FSLBETCROP.out.versions.first())
 +            ch_pwd_avg = TOPUP_EDDY.out.dwi
 +                .join(TOPUP_EDDY.out.bval)
 +                .map{ it + [[]] }
@@ -79,24 +76,24 @@ Changes in 'preproc_dwi/main.nf':
 +
 +        } else {
 +
-+        ch_pwdavg = Channel.empty()
++            ch_pwdavg = Channel.empty()
++            ch_betcrop_dwi = TOPUP_EDDY.out.dwi
++                .join(TOPUP_EDDY.out.bval)
++                .join(TOPUP_EDDY.out.bvec)
 +
-         ch_betcrop_dwi = TOPUP_EDDY.out.dwi
-             .join(TOPUP_EDDY.out.bval)
-             .join(TOPUP_EDDY.out.bvec)
++            BETCROP_FSLBETCROP ( ch_betcrop_dwi )
++            ch_versions = ch_versions.mix(BETCROP_FSLBETCROP.out.versions.first())
 +
-         BETCROP_FSLBETCROP ( ch_betcrop_dwi )
-         ch_versions = ch_versions.mix(BETCROP_FSLBETCROP.out.versions.first())
- 
-+        ch_dwi = BETCROP_FSLBETCROP.out.image
-+        ch_mask = BETCROP_FSLBETCROP.out.mask
-+        ch_bbox = BETCROP_FSLBETCROP.out.bbox
++            ch_dwi = BETCROP_FSLBETCROP.out.image
++            ch_mask = BETCROP_FSLBETCROP.out.mask
++            ch_bbox = BETCROP_FSLBETCROP.out.bbox
 +
 +        }
-+
+ 
          // ** Crop b0 ** //
          ch_crop_b0 = TOPUP_EDDY.out.b0
 -            .join(BETCROP_FSLBETCROP.out.bbox)
+-
 -        BETCROP_CROPVOLUME ( ch_crop_b0 )
 -        ch_versions = ch_versions.mix(BETCROP_CROPVOLUME.out.versions.first())
 +            .join(ch_bbox)
@@ -110,39 +107,40 @@ Changes in 'preproc_dwi/main.nf':
 +        ch_N4 = ch_dwi
 +            .join(CROPB0.out.image)
 +            .join(ch_mask)
+ 
          N4_DWI ( ch_N4 )
          ch_versions = ch_versions.mix(N4_DWI.out.versions.first())
- 
-@@ -96,7 +154,7 @@
+@@ -93,7 +147,7 @@
          ch_normalize = N4_DWI.out.image
              .join(TOPUP_EDDY.out.bval)
              .join(TOPUP_EDDY.out.bvec)
 -            .join(BETCROP_FSLBETCROP.out.mask)
 +            .join(ch_mask)
+ 
          NORMALIZE_DWI ( ch_normalize )
          ch_versions = ch_versions.mix(NORMALIZE_DWI.out.versions.first())
- 
-@@ -114,7 +172,7 @@
+@@ -114,8 +168,7 @@
          ch_versions = ch_versions.mix(EXTRACTB0_RESAMPLE.out.versions.first())
  
          // ** Resample mask ** //
--        ch_resample_mask = BETCROP_FSLBETCROP.out.mask.map{ it + [[]] }
+-        ch_resample_mask = BETCROP_FSLBETCROP.out.mask
+-            .map{ it + [[]] }
 +        ch_resample_mask = ch_mask.map{ it + [[]] }
+ 
          RESAMPLE_MASK ( ch_resample_mask )
          ch_versions = ch_versions.mix(RESAMPLE_MASK.out.versions.first())
- 
-@@ -122,9 +180,10 @@
-         dwi_resample        = RESAMPLE_DWI.out.image            // channel: [ val(meta), [ dwi_resample ] ]
-         bval                = TOPUP_EDDY.out.bval     // channel: [ val(meta), [ bval_corrected ] ]
-         bvec                = TOPUP_EDDY.out.bvec     // channel: [ val(meta), [ bvec_corrected ] ]
-+        pwdavg              = ch_pwdavg               // channel: [ val(meta), [ pwdavg ] ]
-         b0                  = EXTRACTB0_RESAMPLE.out.b0                 // channel: [ val(meta), [ b0 ] ]
-         b0_mask             = RESAMPLE_MASK.out.image            // channel: [ val(meta), [ b0_mask ] ]
--        dwi_bounding_box    = BETCROP_FSLBETCROP.out.bbox       // channel: [ val(meta), [ dwi_bounding_box ] ]
-+        dwi_bounding_box    = ch_bbox       // channel: [ val(meta), [ dwi_bounding_box ] ]
-         dwi_topup_eddy      = TOPUP_EDDY.out.dwi      // channel: [ val(meta), [ dwi_topup_eddy ] ]
-         dwi_n4              = N4_DWI.out.image                  // channel: [ val(meta), [ dwi_n4 ] ]
-         versions            = ch_versions                       // channel: [ versions.yml ]
+@@ -124,9 +177,10 @@
+         dwi_resample        = RESAMPLE_DWI.out.image        // channel: [ val(meta), dwi-resampled ]
+         bval                = TOPUP_EDDY.out.bval           // channel: [ val(meta), bval-corrected ]
+         bvec                = TOPUP_EDDY.out.bvec           // channel: [ val(meta), bvec-corrected ]
++        pwdavg              = ch_pwdavg                     // channel: [ val(meta), [ pwdavg ] ]
+         b0                  = EXTRACTB0_RESAMPLE.out.b0     // channel: [ val(meta), b0-resampled ]
+         b0_mask             = RESAMPLE_MASK.out.image       // channel: [ val(meta), b0-mask ]
+-        dwi_bounding_box    = BETCROP_FSLBETCROP.out.bbox   // channel: [ val(meta), dwi-bounding-box ]
++        dwi_bounding_box    = ch_bbox                       // channel: [ val(meta), [ dwi_bounding_box ] ]
+         dwi_topup_eddy      = TOPUP_EDDY.out.dwi            // channel: [ val(meta), dwi-after-topup-eddy ]
+         dwi_n4              = N4_DWI.out.image              // channel: [ val(meta), dwi-after-n4 ]
+         versions            = ch_versions                   // channel: [ versions.yml ]
 
 'subworkflows/nf-neuro/preproc_dwi/tests/main.nf.test.snap' is unchanged
 'subworkflows/nf-neuro/preproc_dwi/tests/tags.yml' is unchanged

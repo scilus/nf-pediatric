@@ -1,0 +1,442 @@
+{
+    "All profiles with multiple subjects - infant - should run successfully": {
+        "content": [
+            77,
+            {
+                "CONNECTIVITY_AFDFIXEL": {
+                    "scilpy": 1.6
+                },
+                "CONNECTIVITY_METRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_VISUALIZE": {
+                    "scilpy": "2.0.2"
+                },
+                "CROPT2": {
+                    "scilpy": "2.0.2"
+                },
+                "CROPWMMASK": {
+                    "scilpy": "2.0.2"
+                },
+                "DENOISE_DWI": {
+                    "mrtrix": "3.0.4"
+                },
+                "FILTERING_COMMIT": {
+                    "scilpy": 1.6
+                },
+                "MASK_COMBINE": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "== mrthreshold 3.0.4 ==",
+                    "fsl": 6.0
+                },
+                "RECONST_DTIMETRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FODF": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FRF": {
+                    "scilpy": "2.0.2"
+                },
+                "REGISTRATION_ANATTODWI": {
+                    "ants": "2.4.3"
+                },
+                "REGISTRATION_ANTSAPPLYTRANSFORMS": {
+                    "ants": "2.4.3"
+                },
+                "RESAMPLE_T2": {
+                    "scilpy": "2.0.2"
+                },
+                "RESAMPLE_WMMASK": {
+                    "scilpy": "2.0.2"
+                },
+                "TRACKING_LOCALTRACKING": {
+                    "scilpy": "2.0.2"
+                },
+                "TRACTOGRAM_DECOMPOSE": {
+                    "scilpy": "2.0.2"
+                },
+                "TRANSFORM_LABELS": {
+                    "ants": "2.4.3"
+                },
+                "Workflow": {
+                    "nf/pediatric": "v1.0dev"
+                }
+            },
+            [
+                "multiqc",
+                "multiqc/global_multiqc_data",
+                "multiqc/global_multiqc_plots",
+                "multiqc/global_multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/pipeline_software_mqc_versions.yml",
+                "sub-test1",
+                "sub-test1/anat",
+                "sub-test1/anat/sub-test1_from-T2w_to-dwi_affine.mat",
+                "sub-test1/anat/sub-test1_from-T2w_to-dwi_warp.nii.gz",
+                "sub-test1/anat/sub-test1_from-dwi_to-T2w_warp.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_desc-preproc_T2w.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_label-WM_desc-seeding_mask.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test1/anat/sub-test1_space-orig_desc-T2w_boundingbox.pkl",
+                "sub-test1/anat/sub-test1_space-orig_desc-preproc_T2w.nii.gz",
+                "sub-test1/anat/sub-test1_space-orig_label-WM_desc-seeding_mask.nii.gz",
+                "sub-test1/anat/sub-test1_space-orig_label-WM_mask.nii.gz",
+                "sub-test1/dwi",
+                "sub-test1/dwi/sub-test1__ad.npy",
+                "sub-test1/dwi/sub-test1__ad.npy.png",
+                "sub-test1/dwi/sub-test1__afd_total.npy",
+                "sub-test1/dwi/sub-test1__afd_total.npy.png",
+                "sub-test1/dwi/sub-test1__fa.npy",
+                "sub-test1/dwi/sub-test1__fa.npy.png",
+                "sub-test1/dwi/sub-test1__md.npy",
+                "sub-test1/dwi/sub-test1__md.npy.png",
+                "sub-test1/dwi/sub-test1__mode.npy",
+                "sub-test1/dwi/sub-test1__mode.npy.png",
+                "sub-test1/dwi/sub-test1__nufo.npy",
+                "sub-test1/dwi/sub-test1__nufo.npy.png",
+                "sub-test1/dwi/sub-test1__rd.npy",
+                "sub-test1/dwi/sub-test1__rd.npy.png",
+                "sub-test1/dwi/sub-test1_frf.txt",
+                "sub-test1/dwi/sub-test1_space-diff_desc-local_tracking.trk",
+                "sub-test1/dwi/sub-test1_space-diff_label-seeding_desc-local_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_space-diff_label-tracking_desc-local_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_ad.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_afd_max.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_afd_sum.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_afd_total.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_desc-brain_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_desc-filtered_tracking.trk",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_b0.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_dwi.bval",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_dwi.bvec",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_dwi.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_tracking.h5",
+                "sub-test1/dwi/sub-test1_space-orig_desc-pwdavg_dwi.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_fa.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_fodf.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_ga.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_md.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_mode.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_nufo.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_peaks.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_rd.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_rgb.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_tensor.nii.gz",
+                "sub-test1/figures",
+                "sub-test1/figures/sub-test1__coverage_overlay_mqc.png",
+                "sub-test1/figures/sub-test1_gradients_mqc.png",
+                "sub-test1/figures/sub-test1_labels_mqc.png",
+                "sub-test1/figures/sub-test1_metrics_mqc.png",
+                "sub-test1/multiqc",
+                "sub-test1/multiqc/sub-test1_multiqc_data",
+                "sub-test1/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/multiqc/sub-test1_multiqc_report.html",
+                "sub-test2",
+                "sub-test2/anat",
+                "sub-test2/anat/sub-test2_from-T2w_to-dwi_affine.mat",
+                "sub-test2/anat/sub-test2_from-T2w_to-dwi_warp.nii.gz",
+                "sub-test2/anat/sub-test2_from-dwi_to-T2w_warp.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_desc-preproc_T2w.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_label-WM_desc-seeding_mask.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test2/anat/sub-test2_space-orig_desc-T2w_boundingbox.pkl",
+                "sub-test2/anat/sub-test2_space-orig_desc-preproc_T2w.nii.gz",
+                "sub-test2/anat/sub-test2_space-orig_label-WM_desc-seeding_mask.nii.gz",
+                "sub-test2/anat/sub-test2_space-orig_label-WM_mask.nii.gz",
+                "sub-test2/dwi",
+                "sub-test2/dwi/sub-test2__ad.npy",
+                "sub-test2/dwi/sub-test2__ad.npy.png",
+                "sub-test2/dwi/sub-test2__afd_total.npy",
+                "sub-test2/dwi/sub-test2__afd_total.npy.png",
+                "sub-test2/dwi/sub-test2__fa.npy",
+                "sub-test2/dwi/sub-test2__fa.npy.png",
+                "sub-test2/dwi/sub-test2__md.npy",
+                "sub-test2/dwi/sub-test2__md.npy.png",
+                "sub-test2/dwi/sub-test2__mode.npy",
+                "sub-test2/dwi/sub-test2__mode.npy.png",
+                "sub-test2/dwi/sub-test2__nufo.npy",
+                "sub-test2/dwi/sub-test2__nufo.npy.png",
+                "sub-test2/dwi/sub-test2__rd.npy",
+                "sub-test2/dwi/sub-test2__rd.npy.png",
+                "sub-test2/dwi/sub-test2_frf.txt",
+                "sub-test2/dwi/sub-test2_space-diff_desc-local_tracking.trk",
+                "sub-test2/dwi/sub-test2_space-diff_label-seeding_desc-local_mask.nii.gz",
+                "sub-test2/dwi/sub-test2_space-diff_label-tracking_desc-local_mask.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_ad.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_afd_max.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_afd_sum.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_afd_total.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_desc-brain_mask.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_desc-filtered_tracking.trk",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_b0.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_dwi.bval",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_dwi.bvec",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_dwi.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_tracking.h5",
+                "sub-test2/dwi/sub-test2_space-orig_desc-pwdavg_dwi.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_fa.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_fodf.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_ga.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_md.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_mode.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_nufo.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_peaks.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_rd.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_rgb.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_tensor.nii.gz",
+                "sub-test2/figures",
+                "sub-test2/figures/sub-test2__coverage_overlay_mqc.png",
+                "sub-test2/figures/sub-test2_gradients_mqc.png",
+                "sub-test2/figures/sub-test2_labels_mqc.png",
+                "sub-test2/figures/sub-test2_metrics_mqc.png",
+                "sub-test2/multiqc",
+                "sub-test2/multiqc/sub-test2_multiqc_data",
+                "sub-test2/multiqc/sub-test2_multiqc_plots",
+                "sub-test2/multiqc/sub-test2_multiqc_report.html"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.1"
+        },
+        "timestamp": "2024-12-27T21:31:12.360693"
+    },
+    "All profiles with multiple subjects - should run successfully": {
+        "content": [
+            66,
+            {
+                "CONNECTIVITY_AFDFIXEL": {
+                    "scilpy": 1.6
+                },
+                "CONNECTIVITY_METRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_VISUALIZE": {
+                    "scilpy": "2.0.2"
+                },
+                "DENOISE_DWI": {
+                    "mrtrix": "3.0.4"
+                },
+                "FASTSURFER": {
+                    "fastsurfer": "2.3.3+0000000"
+                },
+                "FILTERING_COMMIT": {
+                    "scilpy": 1.6
+                },
+                "RECONST_DTIMETRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FODF": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FRF": {
+                    "scilpy": "2.0.2"
+                },
+                "REGISTRATION_ANATTODWI": {
+                    "ants": "2.4.3"
+                },
+                "SEGMENTATION_FASTSEG": {
+                    "scilpy": "2.0.0",
+                    "fsl": 6.0
+                },
+                "TRACKING_LOCALTRACKING": {
+                    "scilpy": "2.0.2"
+                },
+                "TRACKING_PFTTRACKING": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "TRACTOGRAM_DECOMPOSE": {
+                    "scilpy": "2.0.2"
+                },
+                "TRANSFORM_LABELS": {
+                    "ants": "2.4.3"
+                },
+                "Workflow": {
+                    "nf/pediatric": "v1.0dev"
+                }
+            },
+            [
+                "cortical_area_lh.tsv",
+                "cortical_area_rh.tsv",
+                "cortical_thickness_lh.tsv",
+                "cortical_thickness_rh.tsv",
+                "cortical_volume_lh.tsv",
+                "cortical_volume_rh.tsv",
+                "multiqc",
+                "multiqc/global_multiqc_data",
+                "multiqc/global_multiqc_plots",
+                "multiqc/global_multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/pipeline_software_mqc_versions.yml",
+                "sub-test1",
+                "sub-test1/anat",
+                "sub-test1/anat/sub-test1_fastsurfer",
+                "sub-test1/anat/sub-test1_from-T1w_to-dwi_affine.mat",
+                "sub-test1/anat/sub-test1_from-T1w_to-dwi_warp.nii.gz",
+                "sub-test1/anat/sub-test1_from-dwi_to-T1w_warp.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_desc-preproc_T1w.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_label-CSF_mask.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_label-CSF_probseg.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_label-GM_mask.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_label-GM_probseg.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_label-WM_mask.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_label-WM_probseg.nii.gz",
+                "sub-test1/anat/sub-test1_space-diff_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test1/anat/sub-test1_space-orig_desc-preproc_T1w.nii.gz",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_desc-labels.json",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_desc-labels.txt",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_dseg_dilated.nii.gz",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_stat-lh_area.tsv",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_stat-lh_thickness.tsv",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_stat-lh_volume.tsv",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_stat-rh_area.tsv",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_stat-rh_thickness.tsv",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_stat-rh_volume.tsv",
+                "sub-test1/anat/sub-test1_space-orig_seg-BrainnetomeChild_stat-subcortical.tsv",
+                "sub-test1/dwi",
+                "sub-test1/dwi/sub-test1__ad.npy",
+                "sub-test1/dwi/sub-test1__ad.npy.png",
+                "sub-test1/dwi/sub-test1__afd_total.npy",
+                "sub-test1/dwi/sub-test1__afd_total.npy.png",
+                "sub-test1/dwi/sub-test1__fa.npy",
+                "sub-test1/dwi/sub-test1__fa.npy.png",
+                "sub-test1/dwi/sub-test1__md.npy",
+                "sub-test1/dwi/sub-test1__md.npy.png",
+                "sub-test1/dwi/sub-test1__mode.npy",
+                "sub-test1/dwi/sub-test1__mode.npy.png",
+                "sub-test1/dwi/sub-test1__nufo.npy",
+                "sub-test1/dwi/sub-test1__nufo.npy.png",
+                "sub-test1/dwi/sub-test1__rd.npy",
+                "sub-test1/dwi/sub-test1__rd.npy.png",
+                "sub-test1/dwi/sub-test1_frf.txt",
+                "sub-test1/dwi/sub-test1_space-diff_desc-local_tracking.trk",
+                "sub-test1/dwi/sub-test1_space-diff_label-exclude_desc-pft_probseg.nii.gz",
+                "sub-test1/dwi/sub-test1_space-diff_label-include_desc-pft_probseg.nii.gz",
+                "sub-test1/dwi/sub-test1_space-diff_label-seeding_desc-local_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_space-diff_label-seeding_desc-pft_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_space-diff_label-tracking_desc-local_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_ad.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_afd_max.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_afd_sum.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_afd_total.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_desc-brain_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_desc-filtered_tracking.trk",
+                "sub-test1/dwi/sub-test1_space-orig_desc-pft_tracking.trk",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_b0.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_dwi.bval",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_dwi.bvec",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_dwi.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_desc-preproc_tracking.h5",
+                "sub-test1/dwi/sub-test1_space-orig_fa.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_fodf.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_ga.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_md.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_mode.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_nufo.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_peaks.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_rd.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_rgb.nii.gz",
+                "sub-test1/dwi/sub-test1_space-orig_tensor.nii.gz",
+                "sub-test1/figures",
+                "sub-test1/figures/sub-test1__coverage_overlay_mqc.png",
+                "sub-test1/figures/sub-test1_gradients_mqc.png",
+                "sub-test1/figures/sub-test1_labels_mqc.png",
+                "sub-test1/figures/sub-test1_metrics_mqc.png",
+                "sub-test1/figures/sub-test1_tissue_segmentation_mqc.png",
+                "sub-test1/multiqc",
+                "sub-test1/multiqc/sub-test1_multiqc_data",
+                "sub-test1/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/multiqc/sub-test1_multiqc_report.html",
+                "sub-test2",
+                "sub-test2/anat",
+                "sub-test2/anat/sub-test2_fastsurfer",
+                "sub-test2/anat/sub-test2_from-T1w_to-dwi_affine.mat",
+                "sub-test2/anat/sub-test2_from-T1w_to-dwi_warp.nii.gz",
+                "sub-test2/anat/sub-test2_from-dwi_to-T1w_warp.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_desc-preproc_T1w.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_label-CSF_mask.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_label-CSF_probseg.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_label-GM_mask.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_label-GM_probseg.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_label-WM_mask.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_label-WM_probseg.nii.gz",
+                "sub-test2/anat/sub-test2_space-diff_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test2/anat/sub-test2_space-orig_desc-preproc_T1w.nii.gz",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_desc-labels.json",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_desc-labels.txt",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_dseg_dilated.nii.gz",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_stat-lh_area.tsv",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_stat-lh_thickness.tsv",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_stat-lh_volume.tsv",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_stat-rh_area.tsv",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_stat-rh_thickness.tsv",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_stat-rh_volume.tsv",
+                "sub-test2/anat/sub-test2_space-orig_seg-BrainnetomeChild_stat-subcortical.tsv",
+                "sub-test2/dwi",
+                "sub-test2/dwi/sub-test2__ad.npy",
+                "sub-test2/dwi/sub-test2__ad.npy.png",
+                "sub-test2/dwi/sub-test2__afd_total.npy",
+                "sub-test2/dwi/sub-test2__afd_total.npy.png",
+                "sub-test2/dwi/sub-test2__fa.npy",
+                "sub-test2/dwi/sub-test2__fa.npy.png",
+                "sub-test2/dwi/sub-test2__md.npy",
+                "sub-test2/dwi/sub-test2__md.npy.png",
+                "sub-test2/dwi/sub-test2__mode.npy",
+                "sub-test2/dwi/sub-test2__mode.npy.png",
+                "sub-test2/dwi/sub-test2__nufo.npy",
+                "sub-test2/dwi/sub-test2__nufo.npy.png",
+                "sub-test2/dwi/sub-test2__rd.npy",
+                "sub-test2/dwi/sub-test2__rd.npy.png",
+                "sub-test2/dwi/sub-test2_frf.txt",
+                "sub-test2/dwi/sub-test2_space-diff_desc-local_tracking.trk",
+                "sub-test2/dwi/sub-test2_space-diff_label-exclude_desc-pft_probseg.nii.gz",
+                "sub-test2/dwi/sub-test2_space-diff_label-include_desc-pft_probseg.nii.gz",
+                "sub-test2/dwi/sub-test2_space-diff_label-seeding_desc-local_mask.nii.gz",
+                "sub-test2/dwi/sub-test2_space-diff_label-seeding_desc-pft_mask.nii.gz",
+                "sub-test2/dwi/sub-test2_space-diff_label-tracking_desc-local_mask.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_ad.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_afd_max.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_afd_sum.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_afd_total.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_desc-brain_mask.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_desc-filtered_tracking.trk",
+                "sub-test2/dwi/sub-test2_space-orig_desc-pft_tracking.trk",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_b0.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_dwi.bval",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_dwi.bvec",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_dwi.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_desc-preproc_tracking.h5",
+                "sub-test2/dwi/sub-test2_space-orig_fa.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_fodf.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_ga.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_md.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_mode.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_nufo.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_peaks.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_rd.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_rgb.nii.gz",
+                "sub-test2/dwi/sub-test2_space-orig_tensor.nii.gz",
+                "sub-test2/figures",
+                "sub-test2/figures/sub-test2__coverage_overlay_mqc.png",
+                "sub-test2/figures/sub-test2_gradients_mqc.png",
+                "sub-test2/figures/sub-test2_labels_mqc.png",
+                "sub-test2/figures/sub-test2_metrics_mqc.png",
+                "sub-test2/figures/sub-test2_tissue_segmentation_mqc.png",
+                "sub-test2/multiqc",
+                "sub-test2/multiqc/sub-test2_multiqc_data",
+                "sub-test2/multiqc/sub-test2_multiqc_plots",
+                "sub-test2/multiqc/sub-test2_multiqc_report.html",
+                "subcortical_volumes.tsv"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.1"
+        },
+        "timestamp": "2024-12-27T21:05:13.694372"
+    }
+}
