@@ -49,7 +49,7 @@ subject,t1,t2,dwi,bval,bvec,rev_b0,labels,wmparc,trk,peaks,fodf,mat,warp,metrics
 sub-1000,/input/sub-1000/t1.nii.gz,/input/sub-1000/dwi.nii.gz,/input/sub-1000/dwi.bval,/input/sub-1000/dwi.bvec,/input/sub-1000/rev_b0.nii.gz
 ```
 
-Each row represents a subject, and each column represent a specific file that can be passed as an input. The pipeline has only two required parameters that need to be supplied at runtime: `--outdir` and `--input`. Now, you can run the pipeline using:
+Each row represents a subject, and each column represent a specific file that can be passed as an input. **It is mandatory that the samplesheet has all the headers, even if some files are not provided as inputs.** To avoid creating this samplesheet by hand, you can script it using a simple bash script that matches your input folder structure. For an example, see the [`assemble_samplesheet.sh`](/assets/assemble_samplesheet.sh) example (modify it according to your needs). Once this is done, the pipeline has only two required parameters that need to be supplied at runtime: `--outdir` and `--input`. Now, you can run the pipeline using:
 
 ```bash
 nextflow run scilus/nf-pediatric \
@@ -70,7 +70,7 @@ By default, `nf-pediatric` outputs only the final preprocessed files and leave o
 
 ## Using `nf-pediatric` on computer nodes without internet access.
 
-Some computing nodes does not have access to internet at runtime. Since the pipeline interacts with the containers repository and pull during execution, it won't work if the nodes do not have access to the internet. Fortunately, containers can be downloaded prior to the pipeline execution, and fetch locally during runtime. Using `nf-core` tools (for a detailed installation guide, see the [nf-core documentation](https://nf-co.re/docs/nf-core-tools/installation)), we can use the `nf-core pipelines download` command. To view the options before the download, you can use `nf-core pipelines download -h`. To use the prompts, simply run `nf-core pipelines download` as follows (_downloading all containers takes ~15 minutes_):
+Some computing nodes does not have access to internet at runtime. Since the pipeline interacts with the containers repository and pull during execution, it won't work if the nodes do not have access to the internet. Fortunately, containers can be downloaded prior to the pipeline execution, and fetch locally during runtime. Using `nf-core` tools (for a detailed installation guide, see the [nf-core documentation](https://nf-co.re/docs/nf-core-tools/installation)), we can use the [`nf-core pipelines download`](https://nf-co.re/docs/nf-core-tools/pipelines/download#downloading-apptainer-containers) command. To view the options before the download, you can use `nf-core pipelines download -h`. To use the prompts, simply run `nf-core pipelines download` as follows (_downloading all containers takes ~15 minutes_):
 
 ```bash
 $ nf-core pipelines download -l docker.io

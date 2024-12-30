@@ -65,7 +65,7 @@ process ATLASES_BRAINNETOMECHILD {
     mkdir BN_child_atlas/tmp/
     mri_annotation2label --subject fsaverage --hemi lh --outdir BN_child_atlas/tmp/ --annotation \${UTILS_DIR}/lh.BN_child_fsaverage.annot >> logfile.txt &>> logfile.txt
     mri_annotation2label --subject fsaverage --hemi rh --outdir BN_child_atlas/tmp/ --annotation \${UTILS_DIR}/rh.BN_child_fsaverage.annot >> logfile.txt &>> logfile.txt
-    rm BN_child_atlas/tmp/*\?*
+    rm BN_child_atlas/tmp/*\\?*
 
     # Then do a surface-based registration to move it to the subject space.
     for i in BN_child_atlas/tmp/l*.*.label;
@@ -75,21 +75,23 @@ process ATLASES_BRAINNETOMECHILD {
     # Slow operation, multiprocessing it!
     parallel --will-cite -P \${NBR_PROCESSES} < cmd.sh; rm -r cmd.sh BN_child_atlas/tmp/
 
+    # ==================================================================================
     # Merge it into a single .annot file for statistics (the LUT file has to be copied in the tmp folder each time, since freesurfer is modifying it).
+    echo -e "\${BLUE}Exporting cortical statistics from the Brainnetome Child atlas\${NC}"
     cp \${UTILS_DIR}/atlas_brainnetome_child_v1_LUT.txt \${FS_ID_FOLDER}/tmp/
-    mris_label2annot --s \${SUBJID} --h lh --ctab \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/
-    mris_anatomical_stats -mgz -cortex \${FS_ID_FOLDER}/label/lh.cortex.label -f \${FS_ID_FOLDER}/stats/lh.BN_Child.stats -b -a \${FS_ID_FOLDER}/label/lh.BN_Child.annot -c \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt \${SUBJID} lh white
+    mris_label2annot --s \${SUBJID} --h lh --ctab \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/ >> logfile.txt &>> logfile.txt
+    mris_anatomical_stats -mgz -cortex \${FS_ID_FOLDER}/label/lh.cortex.label -f \${FS_ID_FOLDER}/stats/lh.BN_Child.stats -b -a \${FS_ID_FOLDER}/label/lh.BN_Child.annot -c \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt \${SUBJID} lh white >> logfile.txt &>> logfile.txt
     cp \${UTILS_DIR}/atlas_brainnetome_child_v1_LUT.txt \${FS_ID_FOLDER}/tmp/
-    mris_label2annot --s \${SUBJID} --h rh --ctab \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/
-    mris_anatomical_stats -mgz -cortex \${FS_ID_FOLDER}/label/rh.cortex.label -f \${FS_ID_FOLDER}/stats/rh.BN_Child.stats -b -a \${FS_ID_FOLDER}/label/rh.BN_Child.annot -c \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt \${SUBJID} rh white
+    mris_label2annot --s \${SUBJID} --h rh --ctab \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/ >> logfile.txt &>> logfile.txt
+    mris_anatomical_stats -mgz -cortex \${FS_ID_FOLDER}/label/rh.cortex.label -f \${FS_ID_FOLDER}/stats/rh.BN_Child.stats -b -a \${FS_ID_FOLDER}/label/rh.BN_Child.annot -c \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt \${SUBJID} rh white >> logfile.txt &>> logfile.txt
 
     # Extracting the stats into a tsv file.
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi lh --meas volume -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__volume_lh.BN_Child.tsv
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi rh --meas volume -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__volume_rh.BN_Child.tsv
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi lh --meas thickness -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__thickness_lh.BN_Child.tsv
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi rh --meas thickness -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__thickness_rh.BN_Child.tsv
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi lh --meas area -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__area_lh.BN_Child.tsv
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi rh --meas area -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__area_rh.BN_Child.tsv
+    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi lh --meas volume -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__volume_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi rh --meas volume -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__volume_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi lh --meas thickness -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__thickness_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi rh --meas thickness -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__thickness_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi lh --meas area -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__area_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi rh --meas area -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__area_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
 
     # ==================================================================================
     # Create the Brainnetomme subcortical parcellation from Freesurfer data
