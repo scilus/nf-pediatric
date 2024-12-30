@@ -26,8 +26,12 @@ process CONNECTIVITY_METRICS {
         metrics_args=""
 
         for metric in $metrics_list; do
-            base_name=\$(basename \${metric})
-            metrics_args="\${metrics_args} --metrics \${metric} \$(basename \$base_name .nii.gz).npy"
+            base_name=\$(basename \${metric} .nii.gz)
+
+            # Fetch metric tag.
+            stat=\$(echo "\$base_name" | cut -d'_' -f2)
+
+            metrics_args="\${metrics_args} --metrics \${metric} ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-\${stat}.npy"
         done
 
         scil_connectivity_compute_matrices.py $h5 $labels \
@@ -50,9 +54,9 @@ process CONNECTIVITY_METRICS {
         """
         scil_connectivity_compute_matrices.py $h5 $labels \
             --processes $task.cpus \
-            --volume "${prefix}__vol.npy" \
-            --streamline_count "${prefix}__sc.npy" \
-            --length "${prefix}__len.npy" \
+            --volume "${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-vol.npy" \
+            --streamline_count "${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-sc.npy" \
+            --length "${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-len.npy" \
             --density_weighting \
             --no_self_connection \
             --include_dps ./ \
@@ -73,8 +77,12 @@ process CONNECTIVITY_METRICS {
 
         """
         for metric in $metrics_list; do
-            base_name=\$(basename "\${metric}" .nii.gz)
-            touch "\${base_name}.npy"
+            base_name=\$(basename \${metric} .nii.gz)
+
+            # Fetch metric tag.
+            stat=\$(echo "\$base_name" | cut -d'_' -f2)
+
+            touch ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-\${stat}.npy
         done
 
         scil_connectivity_compute_matrices.py -h
@@ -86,9 +94,9 @@ process CONNECTIVITY_METRICS {
         """
     } else {
         """
-        touch ${prefix}__vol.npy
-        touch ${prefix}__sc.npy
-        touch ${prefix}__len.npy
+        touch ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-vol.npy
+        touch ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-sc.npy
+        touch ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-len.npy
 
         scil_connectivity_compute_matrices.py -h
 

@@ -180,7 +180,6 @@ To further assist in reproducbility, you can use share and re-use [parameter fil
 > [!TIP]
 > If you wish to share such profile (such as upload as supplementary material for academic publications), make sure to NOT include cluster specific paths to files, nor institutional specific profiles.
 
-
 ## Core Nextflow arguments
 
 > [!NOTE]
