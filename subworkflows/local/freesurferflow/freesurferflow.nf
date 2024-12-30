@@ -42,7 +42,6 @@ workflow FREESURFERFLOW {
     //
     // MODULE: Concatenate stats
     //
-    BRAINNETOMECHILD.out.stats.collect().view()
     CONCATENATESTATS ( BRAINNETOMECHILD.out.stats.collect() )
 
     emit:
