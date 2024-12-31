@@ -490,52 +490,30 @@ workflow PEDIATRIC {
         // ch_multiqc_files = ch_multiqc_files.mix(TRANSFORM_LABELS.out.zip.collect{it[1]})
 
         //
-        // MODULE: Run COMMIT and DECOMPOSE.
+        // MODULE: Run DECOMPOSE.
         //
-        if ( params.infant ) {
+        ch_decompose = ch_trk
+            .join(TRANSFORM_LABELS.out.warped_image)
 
-            ch_commit = ch_trk
-                .join(ch_dwi_bval_bvec)
-                .join(ch_peaks)
+        TRACTOGRAM_DECOMPOSE ( ch_decompose )
+        ch_versions = ch_versions.mix(TRACTOGRAM_DECOMPOSE.out.versions.first())
+        // ch_multiqc_files = ch_multiqc_files.mix(TRACTOGRAM_DECOMPOSE.out.zip.collect{it[1]})
 
-            FILTERING_COMMIT ( ch_commit )
-            ch_versions = ch_versions.mix(FILTERING_COMMIT.out.versions.first())
-            // ch_multiqc_files = ch_multiqc_files.mix(FILTERING_COMMIT.out.zip.collect{it[1]})
+        //
+        // MODULE: Run FILTERING_COMMIT
+        //
+        ch_commit = TRACTOGRAM_DECOMPOSE.out.hdf5
+            .join(ch_dwi_bval_bvec)
+            .join(ch_peaks)
 
-            ch_decompose = FILTERING_COMMIT.out.trk
-                .join(TRANSFORM_LABELS.out.warped_image)
-
-            TRACTOGRAM_DECOMPOSE ( ch_decompose )
-            ch_versions = ch_versions.mix(TRACTOGRAM_DECOMPOSE.out.versions.first())
-            // ch_multiqc_files = ch_multiqc_files.mix(TRACTOGRAM_DECOMPOSE.out.zip.collect{it[1]})
-
-            ch_hdf5 = TRACTOGRAM_DECOMPOSE.out.hdf5
-
-        } else {
-
-            ch_decompose = ch_trk
-                .join(TRANSFORM_LABELS.out.warped_image)
-
-            TRACTOGRAM_DECOMPOSE ( ch_decompose )
-            ch_versions = ch_versions.mix(TRACTOGRAM_DECOMPOSE.out.versions.first())
-            // ch_multiqc_files = ch_multiqc_files.mix(TRACTOGRAM_DECOMPOSE.out.zip.collect{it[1]})
-
-            ch_commit = TRACTOGRAM_DECOMPOSE.out.hdf5
-                .join(ch_dwi_bval_bvec)
-                .join(ch_peaks)
-
-            FILTERING_COMMIT ( ch_commit )
-            ch_versions = ch_versions.mix(FILTERING_COMMIT.out.versions.first())
-            // ch_multiqc_files = ch_multiqc_files.mix(FILTERING_COMMIT.out.zip.collect{it[1]})
-
-            ch_hdf5 = FILTERING_COMMIT.out.trk
-
-        }
+        FILTERING_COMMIT ( ch_commit )
+        ch_versions = ch_versions.mix(FILTERING_COMMIT.out.versions.first())
+        // ch_multiqc_files = ch_multiqc_files.mix(FILTERING_COMMIT.out.zip.collect{it[1]})
 
         //
         // MODULE: Run AFDFIXEL
         //
-        ch_afdfixel = ch_hdf5
+        ch_afdfixel = FILTERING_COMMIT.out.trk
             .join(ch_fodf)
 
         CONNECTIVITY_AFDFIXEL ( ch_afdfixel )
