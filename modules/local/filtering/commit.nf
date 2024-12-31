@@ -7,11 +7,12 @@ process FILTERING_COMMIT {
         'scilus/scilpy:1.6.0' }"
 
     input:
-    tuple val(meta), path(trk), path(dwi), path(bval), path(bvec), path(peaks)
+    tuple val(meta), path(hdf5), path(dwi), path(bval), path(bvec), path(peaks)
 
     output:
     tuple val(meta), path("*results_bzs")   , emit: results
-    tuple val(meta), path("*commit*")       , emit: trk
+    tuple val(meta), path("*commit*")       , emit: hdf5
+    tuple val(meta), path("*essential*")    , emit: trk
 
     path "versions.yml"           , emit: versions
 
@@ -34,16 +35,20 @@ process FILTERING_COMMIT {
     """
     export DIPY_HOME="./"
 
-    scil_run_commit.py $trk $dwi $bval $bvec "${prefix}__results_bzs/" \
+    scil_run_commit.py $hdf5 $dwi $bval $bvec "${prefix}__results_bzs/" \
         --processes $task.cpus $para_diff $iso_diff $perp_diff $ball_stick \
         $commit2 $commit2_lambda $nbr_dir $peaks_arg
 
     if [ -f "${prefix}__results_bzs/commit_2/decompose_commit.h5" ]; then
         mv "${prefix}__results_bzs/commit_2/decompose_commit.h5" "./${prefix}__decompose_commit.h5"
-    elif [ -f "${prefix}__results_bzs/commit_1/decompose_commit.h5" ]; then
-        mv "${prefix}__results_bzs/commit_1/decompose_commit.h5" "./${prefix}__decompose_commit.h5"
     else
-        mv "${prefix}__results_bzs/commit_1/essential_tractogram.trk" "./${prefix}__commit.trk"
+        mv "${prefix}__results_bzs/commit_1/decompose_commit.h5" "./${prefix}__decompose_commit.h5"
+    fi
+
+    if [ -f "${prefix}__results_bzs/commit_2/essential_tractogram.trk" ]; then
+        mv "${prefix}__results_bzs/commit_2/essential_tractogram.trk" "./${prefix}__essential.trk"
+    else
+        mv "${prefix}__results_bzs/commit_1/essential_tractogram.trk" "./${prefix}__essential.trk"
     fi
 
     cat <<-END_VERSIONS > versions.yml
@@ -56,7 +61,8 @@ process FILTERING_COMMIT {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    touch ${prefix}__commit.trk
+    touch ${prefix}__commit.h5
+    touch ${prefix}__essential.trk
     mkdir ${prefix}__results_bzs
 
     scil_run_commit.py -h

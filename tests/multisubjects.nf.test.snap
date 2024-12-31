@@ -94,7 +94,7 @@
                 "sub-test1/dwi/sub-test1_space-orig_afd_sum.nii.gz",
                 "sub-test1/dwi/sub-test1_space-orig_afd_total.nii.gz",
                 "sub-test1/dwi/sub-test1_space-orig_desc-brain_mask.nii.gz",
-                "sub-test1/dwi/sub-test1_space-orig_desc-filtered_tracking.trk",
+                "sub-test1/dwi/sub-test1_space-orig_desc-filtered_tracking.h5",
                 "sub-test1/dwi/sub-test1_space-orig_desc-preproc_b0.nii.gz",
                 "sub-test1/dwi/sub-test1_space-orig_desc-preproc_dwi.bval",
                 "sub-test1/dwi/sub-test1_space-orig_desc-preproc_dwi.bvec",
@@ -144,7 +144,7 @@
                 "sub-test2/dwi/sub-test2_space-orig_afd_sum.nii.gz",
                 "sub-test2/dwi/sub-test2_space-orig_afd_total.nii.gz",
                 "sub-test2/dwi/sub-test2_space-orig_desc-brain_mask.nii.gz",
-                "sub-test2/dwi/sub-test2_space-orig_desc-filtered_tracking.trk",
+                "sub-test2/dwi/sub-test2_space-orig_desc-filtered_tracking.h5",
                 "sub-test2/dwi/sub-test2_space-orig_desc-preproc_b0.nii.gz",
                 "sub-test2/dwi/sub-test2_space-orig_desc-preproc_dwi.bval",
                 "sub-test2/dwi/sub-test2_space-orig_desc-preproc_dwi.bvec",
@@ -176,7 +176,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2024-12-30T12:49:14.05649"
+        "timestamp": "2024-12-31T15:09:07.167014"
     },
     "All profiles with multiple subjects - should run successfully": {
         "content": [
@@ -287,7 +287,7 @@
                 "sub-test1/dwi/sub-test1_space-orig_afd_sum.nii.gz",
                 "sub-test1/dwi/sub-test1_space-orig_afd_total.nii.gz",
                 "sub-test1/dwi/sub-test1_space-orig_desc-brain_mask.nii.gz",
-                "sub-test1/dwi/sub-test1_space-orig_desc-filtered_tracking.trk",
+                "sub-test1/dwi/sub-test1_space-orig_desc-filtered_tracking.h5",
                 "sub-test1/dwi/sub-test1_space-orig_desc-pft_tracking.trk",
                 "sub-test1/dwi/sub-test1_space-orig_desc-preproc_b0.nii.gz",
                 "sub-test1/dwi/sub-test1_space-orig_desc-preproc_dwi.bval",
@@ -355,7 +355,7 @@
                 "sub-test2/dwi/sub-test2_space-orig_afd_sum.nii.gz",
                 "sub-test2/dwi/sub-test2_space-orig_afd_total.nii.gz",
                 "sub-test2/dwi/sub-test2_space-orig_desc-brain_mask.nii.gz",
-                "sub-test2/dwi/sub-test2_space-orig_desc-filtered_tracking.trk",
+                "sub-test2/dwi/sub-test2_space-orig_desc-filtered_tracking.h5",
                 "sub-test2/dwi/sub-test2_space-orig_desc-pft_tracking.trk",
                 "sub-test2/dwi/sub-test2_space-orig_desc-preproc_b0.nii.gz",
                 "sub-test2/dwi/sub-test2_space-orig_desc-preproc_dwi.bval",
@@ -389,6 +389,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2024-12-30T12:46:00.157441"
+        "timestamp": "2024-12-31T15:06:13.046546"
     }
 }

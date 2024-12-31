@@ -513,7 +513,7 @@ workflow PEDIATRIC {
         //
         // MODULE: Run AFDFIXEL
         //
-        ch_afdfixel = FILTERING_COMMIT.out.trk
+        ch_afdfixel = FILTERING_COMMIT.out.hdf5
             .join(ch_fodf)
 
         CONNECTIVITY_AFDFIXEL ( ch_afdfixel )
