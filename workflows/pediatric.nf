@@ -165,7 +165,7 @@ workflow PEDIATRIC {
         if ( params.dwi_synthstrip_weights ) {
             ch_dwi_weights = Channel.fromPath(params.dwi_synthstrip_weights, checkIfExists: false)
         } else {
-            ch_dwi_weights = Channel.empty()
+            ch_dwi_weights = Channel.value([])
         }
 
         /* Run DWI preprocessing if the data isn't already preprocessed */

@@ -85,8 +85,12 @@ workflow PREPROC_DWI {
             ch_pwdavg = IMAGE_POWDERAVERAGE.out.pwd_avg
 
             ch_synthstrip = IMAGE_POWDERAVERAGE.out.pwd_avg
-                .combine(ch_weights.mix(Channel.of([])))
-                .map { it[0..1] + [it.size() > 2 ? it[2] : []] }
+                .combine(ch_weights)
+                .map { it ->
+                    def pwd_avg = it[0..1]
+                    def weights = it.size() > 2 ? it[2] : []
+                    pwd_avg + [weights]
+                }
 
             BETCROP_SYNTHBET ( ch_synthstrip )
             ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions.first())
