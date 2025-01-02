@@ -182,7 +182,8 @@
                     "tracking/localtracking": {
                         "branch": "main",
                         "git_sha": "162124f316f48c93ca2c2649c756da382c73a806",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/tracking/localtracking/tracking-localtracking.diff"
                     },
                     "tracking/pfttracking": {
                         "branch": "main",
