@@ -55,6 +55,10 @@ process CONNECTIVITY_METRICS {
             mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
         fi
 
+        if [ -f tot_commit*.npy ]; then
+            mv tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
+        fi
+
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
             scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
@@ -79,6 +83,10 @@ process CONNECTIVITY_METRICS {
 
         if [ -f commit*.npy ]; then
             mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
+        fi
+
+        if [ -f tot_commit*.npy ]; then
+            mv tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
         fi
 
         cat <<-END_VERSIONS > versions.yml
