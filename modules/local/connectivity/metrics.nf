@@ -18,6 +18,7 @@ process CONNECTIVITY_METRICS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def atlas = task.ext.atlas
 
     if ( metrics ) {
         metrics_list = metrics.join(", ").replace(',', '')
@@ -29,21 +30,30 @@ process CONNECTIVITY_METRICS {
             base_name=\$(basename \${metric} .nii.gz)
 
             # Fetch metric tag.
-            stat=\$(echo "\$base_name" | cut -d'_' -f2)
+            stat=\$(echo "\$base_name" | cut -d'_' -f3)
 
-            metrics_args="\${metrics_args} --metrics \${metric} ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-\${stat}.npy"
+            metrics_args="\${metrics_args} --metrics \${metric} ${prefix}_seg-${atlas}_stat-\${stat}.npy"
         done
 
         scil_connectivity_compute_matrices.py $h5 $labels \
             --processes $task.cpus \
-            --volume "${prefix}__vol.npy" \
-            --streamline_count "${prefix}__sc.npy" \
-            --length "${prefix}__len.npy" \
+            --volume "${prefix}_seg-${atlas}_stat-vol.npy" \
+            --streamline_count "${prefix}_seg-${atlas}_stat-sc.npy" \
+            --length "${prefix}_seg-${atlas}_stat-len.npy" \
             \$metrics_args \
             --density_weighting \
             --no_self_connection \
             --include_dps ./ \
             --force_labels_list $labels_list
+
+        # Rename commit or afd_fixel files if they exist.
+        if [ -f afd_fixel.npy ]; then
+            mv afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
+        fi
+
+        if [ -f commit*.npy ]; then
+            mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
+        fi
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
@@ -54,13 +64,22 @@ process CONNECTIVITY_METRICS {
         """
         scil_connectivity_compute_matrices.py $h5 $labels \
             --processes $task.cpus \
-            --volume "${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-vol.npy" \
-            --streamline_count "${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-sc.npy" \
-            --length "${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-len.npy" \
+            --volume "${prefix}_seg-${atlas}_stat-vol.npy" \
+            --streamline_count "${prefix}_seg-${atlas}_stat-sc.npy" \
+            --length "${prefix}_seg-${atlas}_stat-len.npy" \
             --density_weighting \
             --no_self_connection \
             --include_dps ./ \
             --force_labels_list $labels_list
+
+        # Rename commit or afd_fixel files if they exist.
+        if [ -f afd_fixel.npy ]; then
+            mv afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
+        fi
+
+        if [ -f commit*.npy ]; then
+            mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
+        fi
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
@@ -71,6 +90,7 @@ process CONNECTIVITY_METRICS {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def atlas = task.ext.atlas
 
     if ( metrics ) {
         metrics_list = metrics.join(", ").replace(',', '')
@@ -80,9 +100,9 @@ process CONNECTIVITY_METRICS {
             base_name=\$(basename \${metric} .nii.gz)
 
             # Fetch metric tag.
-            stat=\$(echo "\$base_name" | cut -d'_' -f2)
+            stat=\$(echo "\$base_name" | cut -d'_' -f3)
 
-            touch ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-\${stat}.npy
+            touch ${prefix}_seg-${atlas}_stat-\${stat}.npy
         done
 
         scil_connectivity_compute_matrices.py -h
@@ -94,9 +114,9 @@ process CONNECTIVITY_METRICS {
         """
     } else {
         """
-        touch ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-vol.npy
-        touch ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-sc.npy
-        touch ${prefix}_ses-baseline_space-diff_seg-BrainnetomeChild_stat-len.npy
+        touch ${prefix}_seg-${atlas}_stat-vol.npy
+        touch ${prefix}_seg-${atlas}_stat-sc.npy
+        touch ${prefix}_seg-${atlas}_stat-len.npy
 
         scil_connectivity_compute_matrices.py -h
 

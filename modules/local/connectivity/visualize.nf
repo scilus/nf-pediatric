@@ -40,7 +40,7 @@ process CONNECTIVITY_VISUALIZE {
     metrics_list = npy.join(", ").replace(',', '')
     """
     for metric in $metrics_list; do
-        base_name=\$(basename "\${metric}" .nii.gz)
+        base_name=\$(basename "\${metric}" .npy)
         touch "\${base_name}.png"
     done
 
