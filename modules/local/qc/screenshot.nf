@@ -95,7 +95,7 @@ process QC_SCREENSHOT {
         --labelmap_opacity $opacity
 
     # Merge images using ImageMagick.
-    convert ${prefix}_*.png ${prefix}_*.png ${prefix}_*.png +append ${prefix}_labels_mqc.png
+    convert ${prefix}_ax*.png ${prefix}_cor*.png ${prefix}_sag*.png +append ${prefix}_labels_mqc.png
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

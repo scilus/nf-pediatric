@@ -39,7 +39,7 @@ process MULTIQC {
         for sc in *__sc.txt; do
             sample_name=\$(basename \$sc __sc.txt)
             sc_value=\$(cat \$sc)
-            echo -e "\${sample_name}\t\${sc_value}" >> sc_values.txt
+            echo -e "\${sample_name}\\t\${sc_value}" >> sc_values.txt
         done
     fi
 
@@ -49,7 +49,7 @@ process MULTIQC {
         for dice in *__dice.txt; do
             sample_name=\$(basename \$dice __dice.txt)
             dice_value=\$(cat \$dice)
-            echo -e "\${sample_name}\t\${dice_value}" >> dice_values.txt
+            echo -e "\${sample_name}\\t\${dice_value}" >> dice_values.txt
         done
     fi
 
