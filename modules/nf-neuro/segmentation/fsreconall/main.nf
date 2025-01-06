@@ -1,6 +1,6 @@
 process SEGMENTATION_FSRECONALL {
     tag "$meta.id"
-    label 'process_medium'
+    label 'process_single'
 
     // Note. Freesurfer is already on Docker. See documentation on
     // https://hub.docker.com/r/freesurfer/freesurfer
@@ -10,8 +10,9 @@ process SEGMENTATION_FSRECONALL {
         tuple val(meta), path(anat), path(fs_license) /* optional, value = [] */
 
     output:
-        tuple val(meta), path("*__recon_all")   , emit: recon_all_out_folder
-        path "versions.yml"                     , emit: versions
+        tuple val(meta), path("*__recon_all")       , emit: recon_all_out_folder
+        tuple val(meta), path("*__final_t1.nii.gz") , emit: final_t1
+        path "versions.yml"                         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -35,19 +36,22 @@ process SEGMENTATION_FSRECONALL {
     if [ -z $dev_debug_test ]
     then
         # Run the main script
-        export SUBJECTS_DIR=`pwd`
-        recon-all -i $anat -s ${prefix}__recon_all -all -threads $task.cpus
+        export SUBJECTS_DIR=\$(pwd)/${prefix}__recon_all
+        mkdir ${prefix}__recon_all
+        recon-all -i $anat -s ${prefix} -all
     else
         # (for developers: unit tests: skip the long processing. help only.)
-        export SUBJECTS_DIR=`pwd`
-        recon-all -i $anat -s ${prefix}__recon_all -autorecon1 -dontrun
+        export SUBJECTS_DIR=\$(pwd)/${prefix}__recon_all
+        mkdir ${prefix}__recon_all
+        recon-all -i $anat -s ${prefix} -autorecon1 -dontrun
     fi
+
+    mri_convert ${prefix}__recon_all/${prefix}/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
 
     # Remove the license
     if [ ! $fs_license = [] ]; then
         rm .license
     fi
-
 
     # Finish
     cat <<-END_VERSIONS > versions.yml
@@ -62,6 +66,7 @@ process SEGMENTATION_FSRECONALL {
     #recon-all --help
 
     mkdir ${prefix}__recon_all
+    touch ${prefix}__final_t1.nii.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

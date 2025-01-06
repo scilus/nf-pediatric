@@ -2,8 +2,10 @@ process BETCROP_SYNTHBET {
     tag "$meta.id"
     label 'process_single'
 
-    container "freesurfer/freesurfer:7.4.1"
-    containerOptions "--entrypoint ''"
+    container "freesurfer/synthstrip:1.5"
+    containerOptions {
+        (workflow.containerEngine == 'docker') ? '--entrypoint ""': ''
+    }
 
     input:
     tuple val(meta), path(image), path(weights) /* optional, input = [] */
@@ -33,7 +35,7 @@ process BETCROP_SYNTHBET {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        freesurfer: 7.4
+        synthstrip: 1.5
     END_VERSIONS
     """
 
@@ -41,14 +43,21 @@ process BETCROP_SYNTHBET {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    #mri_synthstrip -h
-
     touch ${prefix}__bet_image.nii.gz
     touch ${prefix}__brain_mask.nii.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        freesurfer: 7.4
+        synthstrip: 1.5
     END_VERSIONS
+
+    function handle_code () {
+    local code=\$?
+    ignore=( 1 )
+    exit \$([[ " \${ignore[@]} " =~ " \$code " ]] && echo 0 || echo \$code)
+    }
+    trap 'handle_code' ERR
+
+    mri_synthstrip -h
     """
 }

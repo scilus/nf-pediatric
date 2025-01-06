@@ -1,6 +1,6 @@
 process TRACTOGRAM_DECOMPOSE {
     tag "$meta.id"
-    label 'process_medium'
+    label 'process_high'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'scil.usherbrooke.ca/containers/scilus_2.0.2.sif':

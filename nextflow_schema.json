@@ -36,9 +36,14 @@
                     "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
                 },
-                "multiqc_title": {
+                "multiqc_title_subject": {
                     "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "description": "MultiQC report title for subject report. Printed as page header, used for filename if not otherwise specified.",
+                    "fa_icon": "fas fa-file-signature"
+                },
+                "multiqc_title_global": {
+                    "type": "string",
+                    "description": "MultiQC report title for global report. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
                 }
             }
@@ -54,7 +59,7 @@
                     "type": "boolean",
                     "description": "Use FastSurfer instead of FreeSurfer.",
                     "fa_icon": "fas fa-rocket",
-                    "default": false,
+                    "default": true,
                     "hidden": false
                 },
                 "fs_license": {
@@ -89,6 +94,13 @@
                     "format": "directory-path",
                     "exists": true,
                     "hidden": true
+                },
+                "atlas_name": {
+                    "type": "string",
+                    "description": "Name of the atlas used in the pipeline, will be used for naming output files.",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "BrainnetomeChild",
+                    "hidden": false
                 }
             }
         },
@@ -183,6 +195,13 @@
             "description": "Options for DWI preprocessing.",
             "help_text": "These options are used to configure the DWI preprocessing steps in the pipeline. You can use these options to customise the behaviour of the DWI preprocessing steps.",
             "properties": {
+                "skip_dwi_preprocessing": {
+                    "type": "boolean",
+                    "description": "Skip the DWI preprocessing steps.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
                 "dwi_denoise_patch_size": {
                     "type": "integer",
                     "description": "Patch size used in the DWI denoising step.",
@@ -1263,7 +1282,8 @@
                     "type": "string",
                     "fa_icon": "far fa-check-circle",
                     "description": "Base URL or local path to location of pipeline test dataset files",
-                    "hidden": true
+                    "hidden": true,
+                    "default": null
                 }
             }
         }

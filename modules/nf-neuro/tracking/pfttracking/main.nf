@@ -1,6 +1,6 @@
 process TRACKING_PFTTRACKING {
     tag "$meta.id"
-    label 'process_high_memory'
+    label 'process_tracking'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
@@ -13,8 +13,8 @@ process TRACKING_PFTTRACKING {
 
         tuple val(meta), path("*__pft_tracking.trk")            , emit: trk
         tuple val(meta), path("*__pft_tracking_config.json")    , emit: config
-        tuple val(meta), path("*__map_include.nii.gz")          , emit: include
-        tuple val(meta), path("*__map_exclude.nii.gz")          , emit: exclude
+        tuple val(meta), path("*__map_include.nii.gz")          , emit: map_include
+        tuple val(meta), path("*__map_exclude.nii.gz")          , emit: map_exclude
         tuple val(meta), path("*__pft_seeding_mask.nii.gz")     , emit: seeding
         path "versions.yml"                                     , emit: versions
 

@@ -8,7 +8,8 @@
                     "multiqc": {
                         "branch": "master",
                         "git_sha": "cf17ca47590cc578dfb47db1c2a44ef86f89976d",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/multiqc/multiqc.diff"
                     }
                 }
             },
@@ -16,12 +17,12 @@
                 "nf-core": {
                     "utils_nextflow_pipeline": {
                         "branch": "master",
-                        "git_sha": "56372688d8979092cafbe0c5c3895b491166ca1c",
+                        "git_sha": "c2b22d85f30a706a3073387f30380704fcae013b",
                         "installed_by": ["subworkflows"]
                     },
                     "utils_nfcore_pipeline": {
                         "branch": "master",
-                        "git_sha": "1b6b9a3338d011367137808b49b923515080e3ba",
+                        "git_sha": "51ae5406a030d4da1e49e4dab49756844fdd6c7a",
                         "installed_by": ["subworkflows"]
                     },
                     "utils_nfschema_plugin": {
@@ -37,27 +38,30 @@
                 "nf-neuro": {
                     "betcrop/antsbet": {
                         "branch": "main",
-                        "git_sha": "5964164bb3f3b537c11b08f610558bf2660e9443",
-                        "installed_by": ["preproc_t1", "preproc_dwi"]
+                        "git_sha": "e97572d08357c6b3eb22e96b5adbb660d64f18e3",
+                        "installed_by": ["preproc_dwi", "preproc_t1"],
+                        "patch": "modules/nf-neuro/betcrop/antsbet/betcrop-antsbet.diff"
                     },
                     "betcrop/cropvolume": {
                         "branch": "main",
-                        "git_sha": "793ff1b7877d1ffb5cdae69c5f6568d485aeb0e3",
+                        "git_sha": "9f12f6cb6245d1cb633ccdc11593524a5befc0dc",
                         "installed_by": ["preproc_dwi", "preproc_t1"]
                     },
                     "betcrop/fslbetcrop": {
                         "branch": "main",
-                        "git_sha": "bf73ead697091e53a468149e389245c1ec1d12ee",
-                        "installed_by": ["preproc_dwi"]
+                        "git_sha": "d51aa53995a45009b8e077cfc41c7335a87ae1db",
+                        "installed_by": ["preproc_dwi"],
+                        "patch": "modules/nf-neuro/betcrop/fslbetcrop/betcrop-fslbetcrop.diff"
                     },
                     "betcrop/synthbet": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["preproc_t1", "preproc_dwi"]
+                        "git_sha": "dca20370d97a69c6a91c80843f417206212568e6",
+                        "installed_by": ["preproc_dwi", "preproc_t1"],
+                        "patch": "modules/nf-neuro/betcrop/synthbet/betcrop-synthbet.diff"
                     },
                     "denoising/mppca": {
                         "branch": "main",
-                        "git_sha": "b4d1c5cc27a391d144cf898cef4bf5b5261552e7",
+                        "git_sha": "2e222d18c89e5547a6bf5c0c74673baeb63bcd52",
                         "installed_by": ["preproc_dwi"]
                     },
                     "denoising/nlmeans": {
@@ -67,28 +71,29 @@
                     },
                     "image/applymask": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "384d444c001f9cfb23432cb03d94fa03cdc2c24a",
                         "installed_by": ["preproc_dwi"]
                     },
                     "image/convert": {
                         "branch": "main",
-                        "git_sha": "b4be151bd68e7c6398c0167a60dc622c5297f198",
+                        "git_sha": "b610d377e095aa88ab73d1ceaa90e94162cea153",
                         "installed_by": ["preproc_dwi"]
                     },
                     "image/powderaverage": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "9146c628d9a47e36deb507ae026c96877b9db436",
                         "installed_by": ["preproc_dwi"]
                     },
                     "image/resample": {
                         "branch": "main",
-                        "git_sha": "39a2703eabb5b56ef5e2712366cf7140f1465cf3",
+                        "git_sha": "36e010a236a0bd86334ab99b0cac4f7c4ff51532",
                         "installed_by": ["preproc_dwi", "preproc_t1"]
                     },
                     "preproc/eddy": {
                         "branch": "main",
-                        "git_sha": "d367837de6a230f133549831b7199789b592d33e",
-                        "installed_by": ["topup_eddy"]
+                        "git_sha": "7b8fb95e764e220967c4ae2414184c4f9dad5aaa",
+                        "installed_by": ["topup_eddy"],
+                        "patch": "modules/nf-neuro/preproc/eddy/preproc-eddy.diff"
                     },
                     "preproc/n4": {
                         "branch": "main",
@@ -102,8 +107,9 @@
                     },
                     "preproc/topup": {
                         "branch": "main",
-                        "git_sha": "d367837de6a230f133549831b7199789b592d33e",
-                        "installed_by": ["topup_eddy"]
+                        "git_sha": "7b8fb95e764e220967c4ae2414184c4f9dad5aaa",
+                        "installed_by": ["topup_eddy"],
+                        "patch": "modules/nf-neuro/preproc/topup/preproc-topup.diff"
                     },
                     "reconst/dtimetrics": {
                         "branch": "main",
@@ -117,7 +123,7 @@
                     },
                     "reconst/frf": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "0bf60b4365fa8e0605436114caf380dac9ee38b8",
                         "installed_by": ["modules"]
                     },
                     "reconst/meanfrf": {
@@ -127,7 +133,7 @@
                     },
                     "registration/anattodwi": {
                         "branch": "main",
-                        "git_sha": "43ec7aa8c9b19bcb2fde3999e9bb71e674130d5d",
+                        "git_sha": "18b6dda83876e34717c48a60ff87249357c49a06",
                         "installed_by": ["registration"]
                     },
                     "registration/ants": {
@@ -137,7 +143,7 @@
                     },
                     "registration/antsapplytransforms": {
                         "branch": "main",
-                        "git_sha": "43ec7aa8c9b19bcb2fde3999e9bb71e674130d5d",
+                        "git_sha": "89c21b369e7e48b4ae1549e68c7977d405cf837b",
                         "installed_by": ["modules"]
                     },
                     "registration/easyreg": {
@@ -148,22 +154,25 @@
                     "segmentation/fastseg": {
                         "branch": "main",
                         "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["anatomical_segmentation"]
+                        "installed_by": ["anatomical_segmentation"],
+                        "patch": "modules/nf-neuro/segmentation/fastseg/segmentation-fastseg.diff"
                     },
                     "segmentation/fastsurfer": {
                         "branch": "main",
                         "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/segmentation/fastsurfer/segmentation-fastsurfer.diff"
                     },
                     "segmentation/freesurferseg": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "72c629dd20bf72ae4c580717123ff57516d24f3d",
                         "installed_by": ["anatomical_segmentation"]
                     },
                     "segmentation/fsreconall": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["modules"]
+                        "git_sha": "72c629dd20bf72ae4c580717123ff57516d24f3d",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/segmentation/fsreconall/segmentation-fsreconall.diff"
                     },
                     "segmentation/synthseg": {
                         "branch": "main",
@@ -173,17 +182,20 @@
                     "tracking/localtracking": {
                         "branch": "main",
                         "git_sha": "162124f316f48c93ca2c2649c756da382c73a806",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/tracking/localtracking/tracking-localtracking.diff"
                     },
                     "tracking/pfttracking": {
                         "branch": "main",
                         "git_sha": "162124f316f48c93ca2c2649c756da382c73a806",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/tracking/pfttracking/tracking-pfttracking.diff"
                     },
                     "utils/extractb0": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["preproc_dwi", "topup_eddy"]
+                        "git_sha": "baf69f6658ab3874264d2081aeb5a2388f861bb2",
+                        "installed_by": ["preproc_dwi", "topup_eddy"],
+                        "patch": "modules/nf-neuro/utils/extractb0/utils-extractb0.diff"
                     }
                 }
             },
@@ -191,27 +203,29 @@
                 "nf-neuro": {
                     "anatomical_segmentation": {
                         "branch": "main",
-                        "git_sha": "b041bd20d966f5e87bb528f500ccd3cfb1245f3d",
+                        "git_sha": "72c629dd20bf72ae4c580717123ff57516d24f3d",
                         "installed_by": ["subworkflows"]
                     },
                     "preproc_dwi": {
                         "branch": "main",
-                        "git_sha": "d367837de6a230f133549831b7199789b592d33e",
-                        "installed_by": ["subworkflows"]
+                        "git_sha": "2e222d18c89e5547a6bf5c0c74673baeb63bcd52",
+                        "installed_by": ["subworkflows"],
+                        "patch": "subworkflows/nf-neuro/preproc_dwi/preproc_dwi.diff"
                     },
                     "preproc_t1": {
                         "branch": "main",
-                        "git_sha": "261a7e0606645eeaf863e401cb9fc99c130b3a19",
-                        "installed_by": ["subworkflows"]
+                        "git_sha": "e373a0b34ed9ee306b91a618a4dc75df7c226cc3",
+                        "installed_by": ["subworkflows"],
+                        "patch": "subworkflows/nf-neuro/preproc_t1/preproc_t1.diff"
                     },
                     "registration": {
                         "branch": "main",
-                        "git_sha": "43ec7aa8c9b19bcb2fde3999e9bb71e674130d5d",
+                        "git_sha": "f03a3543def8882203ae21c96cb64fa0176a8161",
                         "installed_by": ["subworkflows"]
                     },
                     "topup_eddy": {
                         "branch": "main",
-                        "git_sha": "d367837de6a230f133549831b7199789b592d33e",
+                        "git_sha": "e088076166c27704c22be0c45f03bc727d1f1d7d",
                         "installed_by": ["preproc_dwi"]
                     }
                 }

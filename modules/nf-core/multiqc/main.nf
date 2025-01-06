@@ -1,13 +1,14 @@
 process MULTIQC {
+    tag "$meta.id"
     label 'process_single'
 
-    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/multiqc:1.25.1--pyhdfd78af_0' :
-        'staphb/multiqc:1.25' }"
+        'https://depot.galaxyproject.org/singularity/multiqc:1.26--pyhdfd78af_0' :
+        'multiqc/multiqc:v1.26' }"
 
     input:
-    path  multiqc_files, stageAs: "?/*"
+    tuple val(meta), path(qc_images)
+    path  multiqc_files
     path(multiqc_config)
     path(extra_multiqc_config)
     path(multiqc_logo)
@@ -15,7 +16,7 @@ process MULTIQC {
     path(sample_names)
 
     output:
-    path "*multiqc_report.html", emit: report
+    path "*.html"              , emit: report
     path "*_data"              , emit: data
     path "*_plots"             , optional:true, emit: plots
     path "versions.yml"        , emit: versions
@@ -25,23 +26,43 @@ process MULTIQC {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ? "--filename ${task.ext.prefix}.html" : ''
+    def prefix = "${meta.id}"
     def config = multiqc_config ? "--config $multiqc_config" : ''
     def extra_config = extra_multiqc_config ? "--config $extra_multiqc_config" : ''
     def logo = multiqc_logo ? "--cl-config 'custom_logo: \"${multiqc_logo}\"'" : ''
     def replace = replace_names ? "--replace-names ${replace_names}" : ''
     def samples = sample_names ? "--sample-names ${sample_names}" : ''
     """
-    multiqc \\
-        --force \\
-        $args \\
-        $config \\
-        $prefix \\
-        $extra_config \\
-        $logo \\
-        $replace \\
-        $samples \\
-        .
+    # Process SC txt files if they exist
+    if ls *__sc.txt 1> /dev/null 2>&1; then
+        echo -e "Sample Name,SC_Value" > sc_values.csv
+        for sc in *__sc.txt; do
+            sample_name=\$(basename \$sc __sc.txt)
+            sc_value=\$(cat \$sc)
+            echo -e "\${sample_name},\${sc_value}" >> sc_values.csv
+        done
+    fi
+
+    # Process Dice score txt files if they exist
+    if ls *__dice.txt 1> /dev/null 2>&1; then
+        echo -e "Sample Name,Dice_Score" > dice_values.csv
+        for dice in *__dice.txt; do
+            sample_name=\$(basename \$dice __dice.txt)
+            dice_value=\$(cat \$dice)
+            echo -e "\${sample_name},\${dice_value}" >> dice_values.csv
+        done
+    fi
+
+    multiqc . -v \
+        --force \
+        $args \
+        $config \
+        --filename ${prefix}.html \
+        $extra_config \
+        $logo \
+        $replace \
+        $samples \
+        --comment "This report contains QC images for subject ${prefix}"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -50,10 +71,11 @@ process MULTIQC {
     """
 
     stub:
+    def prefix = "${meta.id}"
     """
-    mkdir multiqc_data
-    mkdir multiqc_plots
-    touch multiqc_report.html
+    mkdir ${prefix}_multiqc_data
+    mkdir ${prefix}_multiqc_plots
+    touch ${prefix}_multiqc_report.html
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

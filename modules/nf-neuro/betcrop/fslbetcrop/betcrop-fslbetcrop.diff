@@ -1,0 +1,23 @@
+Changes in module 'nf-neuro/betcrop/fslbetcrop'
+'modules/nf-neuro/betcrop/fslbetcrop/environment.yml' is unchanged
+'modules/nf-neuro/betcrop/fslbetcrop/meta.yml' is unchanged
+Changes in 'betcrop/fslbetcrop/main.nf':
+--- modules/nf-neuro/betcrop/fslbetcrop/main.nf
++++ modules/nf-neuro/betcrop/fslbetcrop/main.nf
+@@ -74,7 +74,7 @@
+ 
+     """
+     scil_dwi_extract_b0.py -h
+-    bet -h
++    #bet -h
+     scil_volume_math.py -h
+     mrcalc -h
+     scil_volume_crop.py -h
+
+'modules/nf-neuro/betcrop/fslbetcrop/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/betcrop/fslbetcrop/tests/nextflow_t1_dilate.config' is unchanged
+'modules/nf-neuro/betcrop/fslbetcrop/tests/tags.yml' is unchanged
+'modules/nf-neuro/betcrop/fslbetcrop/tests/nextflow.config' is unchanged
+'modules/nf-neuro/betcrop/fslbetcrop/tests/main.nf.test' is unchanged
+'modules/nf-neuro/betcrop/fslbetcrop/tests/nextflow_t1.config' is unchanged
+************************************************************

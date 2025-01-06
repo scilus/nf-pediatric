@@ -15,67 +15,60 @@ include { IMAGE_RESAMPLE as RESAMPLE_MASK } from '../../../modules/nf-neuro/imag
 include { UTILS_EXTRACTB0 as EXTRACTB0_RESAMPLE } from '../../../modules/nf-neuro/utils/extractb0/main'
 include { UTILS_EXTRACTB0 as EXTRACTB0_TOPUP } from '../../../modules/nf-neuro/utils/extractb0/main'
 include { TOPUP_EDDY } from '../topup_eddy/main'
-include { BETCROP_ANTSBET } from '../../../modules/nf-neuro/betcrop/antsbet/main.nf'
 
 
 workflow PREPROC_DWI {
 
     take:
-        ch_dwi           // channel: [ val(meta), [ dwi, bval, bvec ] ]
-        ch_rev_dwi       // channel: [ val(meta), [ rev_dwi, bval, bvec ] ], optional
-        ch_b0            // Channel: [ val(meta), [ b0 ] ], optional
-        ch_rev_b0        // channel: [ val(meta), [ reverse b0 ] ], optional
-        ch_config_topup  // channel: [ 'config_topup' ], optional
+        ch_dwi           // channel: [ val(meta), dwi, bval, bvec ]
+        ch_rev_dwi       // channel: [ val(meta), rev-dwi, bval, bvec ], optional
+        ch_b0            // Channel: [ val(meta), b0 ], optional
+        ch_rev_b0        // channel: [ val(meta), rev-b0 ], optional
+        ch_config_topup  // channel: [ 'topup.cnf' ], optional
         ch_weights       // channel: [ 'weights' ], optional
 
     main:
 
         ch_versions = Channel.empty()
 
-        ch_denoise_dwi = ch_dwi
+        ch_dwi_bvalbvec = ch_dwi
             .multiMap { meta, dwi, bval, bvec ->
                 dwi:    [ meta, dwi ]
                 bvs_files: [ meta, bval, bvec ]
             }
 
-        // ** Denoised DWI ** //
-        DENOISE_DWI (
-            ch_denoise_dwi.dwi
-                .map{ it + [[]] }
-        )
+        ch_rev_dwi_bvalbvec = ch_rev_dwi
+            .multiMap { meta, dwi, bval, bvec ->
+                rev_dwi:    [ meta, dwi ]
+                rev_bvs_files: [ meta, bval, bvec ]
+            }
+
+        // ** Denoise DWI ** //
+        ch_denoise_dwi = ch_dwi_bvalbvec.dwi
+            .map{ it + [[]] }
+
+        DENOISE_DWI ( ch_denoise_dwi )
         ch_versions = ch_versions.mix(DENOISE_DWI.out.versions.first())
 
-        if ( ch_rev_dwi )
-        {
-            ch_denoise_rev_dwi = ch_rev_dwi
-                .multiMap { meta, dwi, bval, bvec ->
-                    rev_dwi:    [ [id: "${meta.id}_rev", cache: meta], dwi ]
-                    rev_bvs_files: [ meta, bval, bvec ]
-                }
-            // ** Denoised reverse DWI ** //
-            DENOISE_REVDWI (
-                ch_denoise_rev_dwi.rev_dwi
-                    .map{ it + [[]] }
-            )
-            ch_versions = ch_versions.mix(DENOISE_REVDWI.out.versions.first())
+        // ** Denoise REV-DWI ** //
+        // Need to append "rev" to the ID, to ensure output filenames
+        // are different from the DWI and prevent file collisions
+        //  - "cache: meta" is used to save the "real" metadata with valid ID for
+        //           join operations, so it can be recovered after execution
+        ch_denoise_rev_dwi = ch_rev_dwi_bvalbvec.rev_dwi
+            .map{ meta, dwi -> [ [id: "${meta.id}_rev", cache: meta], dwi, [] ] }
 
-            ch_topup_eddy_rev_dwi = DENOISE_REVDWI.out.image
-                .map{ meta, dwi -> [ meta.cache, dwi ] }
-                .join(ch_denoise_rev_dwi.rev_bvs_files)
-        }
-        else
-        {
-            ch_topup_eddy_rev_dwi = []    // or Channel.empty()
-        }
+        DENOISE_REVDWI ( ch_denoise_rev_dwi )
+        ch_versions = ch_versions.mix(DENOISE_REVDWI.out.versions.first())
 
         // ** Eddy Topup ** //
-        ch_topup_eddy_dwi = DENOISE_DWI.out.image.join(ch_denoise_dwi.bvs_files)
+        ch_topup_eddy_dwi = DENOISE_DWI.out.image
+            .join(ch_dwi_bvalbvec.bvs_files)
 
-        if ( ! ch_b0 ) {
-            EXTRACTB0_TOPUP { ch_topup_eddy_dwi }
-            ch_versions = ch_versions.mix(EXTRACTB0_TOPUP.out.versions.first())
-            ch_b0 = EXTRACTB0_TOPUP.out.b0
-        }
+        // Recover the "real" ID from "meta[cache]" (see above), to join with the bval/bvec
+        ch_topup_eddy_rev_dwi = DENOISE_REVDWI.out.image
+            .map{ meta, dwi -> [ meta.cache, dwi ] }
+            .join(ch_rev_dwi_bvalbvec.rev_bvs_files)
 
         TOPUP_EDDY ( ch_topup_eddy_dwi, ch_b0, ch_topup_eddy_rev_dwi, ch_rev_b0, ch_config_topup )
         ch_versions = ch_versions.mix(TOPUP_EDDY.out.versions.first())
@@ -92,8 +85,12 @@ workflow PREPROC_DWI {
             ch_pwdavg = IMAGE_POWDERAVERAGE.out.pwd_avg
 
             ch_synthstrip = IMAGE_POWDERAVERAGE.out.pwd_avg
-                .join(ch_weights, remainder: true)
-                .map{ it[0..1] + [it[2] ?: []] }
+                .combine(ch_weights)
+                .map { it ->
+                    def pwd_avg = it[0..1]
+                    def weights = it.size() > 2 ? it[2] : []
+                    pwd_avg + [weights]
+                }
 
             BETCROP_SYNTHBET ( ch_synthstrip )
             ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions.first())
@@ -122,18 +119,17 @@ workflow PREPROC_DWI {
 
         } else {
 
-        ch_pwdavg = Channel.empty()
+            ch_pwdavg = Channel.empty()
+            ch_betcrop_dwi = TOPUP_EDDY.out.dwi
+                .join(TOPUP_EDDY.out.bval)
+                .join(TOPUP_EDDY.out.bvec)
 
-        ch_betcrop_dwi = TOPUP_EDDY.out.dwi
-            .join(TOPUP_EDDY.out.bval)
-            .join(TOPUP_EDDY.out.bvec)
+            BETCROP_FSLBETCROP ( ch_betcrop_dwi )
+            ch_versions = ch_versions.mix(BETCROP_FSLBETCROP.out.versions.first())
 
-        BETCROP_FSLBETCROP ( ch_betcrop_dwi )
-        ch_versions = ch_versions.mix(BETCROP_FSLBETCROP.out.versions.first())
-
-        ch_dwi = BETCROP_FSLBETCROP.out.image
-        ch_mask = BETCROP_FSLBETCROP.out.mask
-        ch_bbox = BETCROP_FSLBETCROP.out.bbox
+            ch_dwi = BETCROP_FSLBETCROP.out.image
+            ch_mask = BETCROP_FSLBETCROP.out.mask
+            ch_bbox = BETCROP_FSLBETCROP.out.bbox
 
         }
 
@@ -147,6 +143,7 @@ workflow PREPROC_DWI {
         ch_N4 = ch_dwi
             .join(CROPB0.out.image)
             .join(ch_mask)
+
         N4_DWI ( ch_N4 )
         ch_versions = ch_versions.mix(N4_DWI.out.versions.first())
 
@@ -155,11 +152,14 @@ workflow PREPROC_DWI {
             .join(TOPUP_EDDY.out.bval)
             .join(TOPUP_EDDY.out.bvec)
             .join(ch_mask)
+
         NORMALIZE_DWI ( ch_normalize )
         ch_versions = ch_versions.mix(NORMALIZE_DWI.out.versions.first())
 
         // ** Resample DWI ** //
-        ch_resample_dwi = NORMALIZE_DWI.out.dwi.map{ it + [[]] }
+        ch_resample_dwi = NORMALIZE_DWI.out.dwi
+            .map{ it + [[]] }
+
         RESAMPLE_DWI ( ch_resample_dwi )
         ch_versions = ch_versions.mix(RESAMPLE_DWI.out.versions.first())
 
@@ -173,18 +173,19 @@ workflow PREPROC_DWI {
 
         // ** Resample mask ** //
         ch_resample_mask = ch_mask.map{ it + [[]] }
+
         RESAMPLE_MASK ( ch_resample_mask )
         ch_versions = ch_versions.mix(RESAMPLE_MASK.out.versions.first())
 
     emit:
-        dwi_resample        = RESAMPLE_DWI.out.image            // channel: [ val(meta), [ dwi_resample ] ]
-        bval                = TOPUP_EDDY.out.bval     // channel: [ val(meta), [ bval_corrected ] ]
-        bvec                = TOPUP_EDDY.out.bvec     // channel: [ val(meta), [ bvec_corrected ] ]
-        pwdavg              = ch_pwdavg               // channel: [ val(meta), [ pwdavg ] ]
-        b0                  = EXTRACTB0_RESAMPLE.out.b0                 // channel: [ val(meta), [ b0 ] ]
-        b0_mask             = RESAMPLE_MASK.out.image            // channel: [ val(meta), [ b0_mask ] ]
-        dwi_bounding_box    = ch_bbox       // channel: [ val(meta), [ dwi_bounding_box ] ]
-        dwi_topup_eddy      = TOPUP_EDDY.out.dwi      // channel: [ val(meta), [ dwi_topup_eddy ] ]
-        dwi_n4              = N4_DWI.out.image                  // channel: [ val(meta), [ dwi_n4 ] ]
-        versions            = ch_versions                       // channel: [ versions.yml ]
+        dwi_resample        = RESAMPLE_DWI.out.image        // channel: [ val(meta), dwi-resampled ]
+        bval                = TOPUP_EDDY.out.bval           // channel: [ val(meta), bval-corrected ]
+        bvec                = TOPUP_EDDY.out.bvec           // channel: [ val(meta), bvec-corrected ]
+        pwdavg              = ch_pwdavg                     // channel: [ val(meta), [ pwdavg ] ]
+        b0                  = EXTRACTB0_RESAMPLE.out.b0     // channel: [ val(meta), b0-resampled ]
+        b0_mask             = RESAMPLE_MASK.out.image       // channel: [ val(meta), b0-mask ]
+        dwi_bounding_box    = ch_bbox                       // channel: [ val(meta), [ dwi_bounding_box ] ]
+        dwi_topup_eddy      = TOPUP_EDDY.out.dwi            // channel: [ val(meta), dwi-after-topup-eddy ]
+        dwi_n4              = N4_DWI.out.image              // channel: [ val(meta), dwi-after-n4 ]
+        versions            = ch_versions                   // channel: [ versions.yml ]
 }

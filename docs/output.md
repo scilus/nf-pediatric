@@ -8,12 +8,17 @@ The directories listed below will be created in the results directory after the 
 
 ```bash
 <outdir>
+  |-- multiqc
   |-- sub-0001
   |     |-- anat
-  |     └-- dwi
+  |     |-- dwi
+  |     |-- figures
+  |     └-- multiqc
   |-- sub-0002
   |     |-- anat
-  |     └-- dwi
+  |     |-- dwi
+  |     |-- figures
+  |     └-- multiqc
   <...>
 ```
 
@@ -172,9 +177,11 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 
 </details>
 
-[MultiQC](http://multiqc.info) is a visualization tool that generates a single HTML report summarising all samples in your project. Most of the pipeline QC results are visualised in the report and further statistics are available in the report data directory.
+**Still under construction, report is experimental for now.**
 
-The pipeline has special steps which also allow the software versions to be reported in the MultiQC output for future traceability. For more information about how to use MultiQC reports, see <http://multiqc.info>.
+[MultiQC](http://multiqc.info) is a visualization tool that generates HTML reports on the subject-level and reports on population-level statistics. In your output folder, you will find a global MultiQC report (located next to your `sub-XXXX` folders). This is the population level report, containing statistics allowing the evaluation of outliers in terms of white matter coverage, number of streamlines, and volume, thickness, and surface area for each regions of the Brainnetome Child Atlas.
+
+Within each subject folder, you will find subject-specific HTML reports. Those will display visual QC of some of the key processing steps performed during the pipeline execution. Those figures (for now) comprise: sphere sampling, tissue segmentation, white matter coverage, labels overlay on anatomical image, and metrics maps visualization. You can refer to those subject-specific reports to obtain a quick overview of the quality of the processing.
 
 ### Pipeline information
 

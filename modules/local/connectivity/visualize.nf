@@ -37,10 +37,12 @@ process CONNECTIVITY_VISUALIZE {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-
+    metrics_list = npy.join(", ").replace(',', '')
     """
-    touch ${prefix}__ad.png
-    touch ${prefix}__rd.png
+    for metric in $metrics_list; do
+        base_name=\$(basename "\${metric}" .npy)
+        touch "\${base_name}.png"
+    done
 
     scil_viz_connectivity.py -h
 
