@@ -35,7 +35,7 @@ process MULTIQC {
     """
     # Process SC txt files if they exist
     if ls *__sc.txt 1> /dev/null 2>&1; then
-        echo -e "Sample Name,SC_Value" > sc_values.txt
+        echo -e "Sample Name,SC_Value" > sc_values.csv
         for sc in *__sc.txt; do
             sample_name=\$(basename \$sc __sc.txt)
             sc_value=\$(cat \$sc)
@@ -45,7 +45,7 @@ process MULTIQC {
 
     # Process Dice score txt files if they exist
     if ls *__dice.txt 1> /dev/null 2>&1; then
-        echo -e "Sample Name,Dice_Score" > dice_values.txt
+        echo -e "Sample Name,Dice_Score" > dice_values.csv
         for dice in *__dice.txt; do
             sample_name=\$(basename \$dice __dice.txt)
             dice_value=\$(cat \$dice)
