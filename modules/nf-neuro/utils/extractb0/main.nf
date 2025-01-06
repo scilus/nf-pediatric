@@ -12,6 +12,8 @@ process UTILS_EXTRACTB0 {
     output:
     tuple val(meta), path("*_b0.nii.gz")        , emit: b0
     tuple val(meta), path("*_b0_mask.nii.gz")   , emit: b0_mask
+    tuple val(meta), path("final.bval")         , emit: bval
+    tuple val(meta), path("final.bvec")         , emit: bvec
     path "versions.yml"                         , emit: versions
 
     when:
@@ -33,6 +35,10 @@ process UTILS_EXTRACTB0 {
     mrthreshold ${prefix}_b0.nii.gz ${prefix}_b0_mask.nii.gz -abs 0.0001 \
         -nthreads $task.cpus
 
+    # Simple copy to ensure filename is catched by Nextflow.
+    cp $bval final.bval
+    cp $bvec final.bvec
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
@@ -49,6 +55,8 @@ process UTILS_EXTRACTB0 {
 
     touch ${prefix}_b0.nii.gz
     touch ${prefix}_b0_mask.nii.gz
+    touch final.bval
+    touch final.bvec
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
