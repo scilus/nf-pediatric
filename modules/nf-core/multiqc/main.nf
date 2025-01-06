@@ -3,8 +3,8 @@ process MULTIQC {
     label 'process_single'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/multiqc:1.25.2--pyhdfd78af_0' :
-        'multiqc/multiqc:v1.25.2' }"
+        'https://depot.galaxyproject.org/singularity/multiqc:1.26--pyhdfd78af_0' :
+        'multiqc/multiqc:v1.26' }"
 
     input:
     tuple val(meta), path(qc_images)
@@ -31,15 +31,14 @@ process MULTIQC {
     def extra_config = extra_multiqc_config ? "--config $extra_multiqc_config" : ''
     def logo = multiqc_logo ? "--cl-config 'custom_logo: \"${multiqc_logo}\"'" : ''
     def replace = replace_names ? "--replace-names ${replace_names}" : ''
+    def samples = sample_names ? "--sample-names ${sample_names}" : ''
     """
     # Process SC txt files if they exist
     if ls *__sc.txt 1> /dev/null 2>&1; then
         echo -e "Sample Name,SC_Value" > sc_values.csv
-        echo -e "Sample Name" > sample_names.csv
         for sc in *__sc.txt; do
             sample_name=\$(basename \$sc __sc.txt)
             sc_value=\$(cat \$sc)
-            echo -e "\${sample_name}" >> sample_names.csv
             echo -e "\${sample_name},\${sc_value}" >> sc_values.csv
         done
     fi
@@ -54,12 +53,6 @@ process MULTIQC {
         done
     fi
 
-    # Create sample name list from cortical volume files.
-    if [ -f cortical_volume_lh.tsv ]; then
-        # Fetch only the first column of the file.
-        cut -f1 cortical_volume_lh.tsv > sample_names.csv
-    fi
-
     multiqc . -v \
         --force \
         $args \
@@ -68,7 +61,7 @@ process MULTIQC {
         $extra_config \
         $logo \
         $replace \
-        --sample-names sample_names.csv \
+        $samples \
         --comment "This report contains QC images for subject ${prefix}"
 
     cat <<-END_VERSIONS > versions.yml
