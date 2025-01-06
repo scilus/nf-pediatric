@@ -35,21 +35,21 @@ process MULTIQC {
     """
     # Process SC txt files if they exist
     if ls *__sc.txt 1> /dev/null 2>&1; then
-        echo -e "Sample\tSC_Value" > sc_values.txt
+        echo -e "Sample Name,SC_Value" > sc_values.txt
         for sc in *__sc.txt; do
             sample_name=\$(basename \$sc __sc.txt)
             sc_value=\$(cat \$sc)
-            echo -e "\${sample_name}\\t\${sc_value}" >> sc_values.txt
+            echo -e "\${sample_name},\${sc_value}" >> sc_values.csv
         done
     fi
 
     # Process Dice score txt files if they exist
     if ls *__dice.txt 1> /dev/null 2>&1; then
-        echo -e "Sample\tDice_Score" > dice_values.txt
+        echo -e "Sample Name,Dice_Score" > dice_values.txt
         for dice in *__dice.txt; do
             sample_name=\$(basename \$dice __dice.txt)
             dice_value=\$(cat \$dice)
-            echo -e "\${sample_name}\\t\${dice_value}" >> dice_values.txt
+            echo -e "\${sample_name},\${dice_value}" >> dice_values.csv
         done
     fi
 

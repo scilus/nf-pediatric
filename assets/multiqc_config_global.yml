@@ -30,7 +30,7 @@ report_section_order:
 
 custom_data:
   sc_values:
-    file_format: "tsv"
+    file_format: "csv"
     section_name: "Whole-brain Streamline Counts"
     description: |
       This section contains whole-brain streamline counts for all subjects. If you ran the tracking only profile, the streamline count reflects the unfiltered number of streamline
@@ -46,7 +46,7 @@ custom_data:
       colors: "#00ff8c"
 
   dice_values:
-    file_format: "tsv"
+    file_format: "csv"
     section_name: "Quality Assessment of the Tractogram's White Matter Coverage (DICE Score)"
     description: |
       This section contains the DICE score for all subjects. The DICE score is a measure of the overlap between two segmentations or masks. In the context of this pipeline, the DICE
@@ -55,7 +55,7 @@ custom_data:
       a lower coverage. Usually, a DICE score above 0.8 is considered acceptable. Subjects with lower DICE score may have had some issues during processing or filtering. Refer to the
       individual subject reports for more details (found in the subject's output directory).
     plot_type: "boxplot"
-    data_format: "long"
+    #data_format: "long"
     pconfig:
       id: "dice_values_plot"
       title: "Dice Scores Distribution"
@@ -176,9 +176,9 @@ custom_data:
 
 sp:
   sc_values:
-    fn: "sc_values.txt"
+    fn: "sc_values.csv"
   dice_values:
-    fn: "dice_values.txt"
+    fn: "dice_values.csv"
   subcortical_volumes:
     fn: "subcortical_volumes.tsv"
   cortical_volume_lh:

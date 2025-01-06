@@ -8,12 +8,17 @@ The directories listed below will be created in the results directory after the 
 
 ```bash
 <outdir>
+  |-- multiqc
   |-- sub-0001
   |     |-- anat
-  |     └-- dwi
+  |     |-- dwi
+  |     |-- figures
+  |     └-- multiqc
   |-- sub-0002
   |     |-- anat
-  |     └-- dwi
+  |     |-- dwi
+  |     |-- figures
+  |     └-- multiqc
   <...>
 ```
 
@@ -171,6 +176,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
   - `multiqc_plots/`: directory containing static images from the report in various formats.
 
 </details>
+
+**Still under construction, report is experimental for now.**
 
 [MultiQC](http://multiqc.info) is a visualization tool that generates HTML reports on the subject-level and reports on population-level statistics. In your output folder, you will find a global MultiQC report (located next to your `sub-XXXX` folders). This is the population level report, containing statistics allowing the evaluation of outliers in terms of white matter coverage, number of streamlines, and volume, thickness, and surface area for each regions of the Brainnetome Child Atlas.
 
