@@ -273,7 +273,6 @@
                 "sub-test1",
                 "sub-test1/anat",
                 "sub-test1/anat/sub-test1_desc-preproc_T1w.nii.gz",
-                "sub-test1/anat/sub-test1_fastsurfer",
                 "sub-test1/anat/sub-test1_from-T1w_to-dwi_affine.mat",
                 "sub-test1/anat/sub-test1_from-T1w_to-dwi_warp.nii.gz",
                 "sub-test1/anat/sub-test1_from-dwi_to-T1w_warp.nii.gz",
@@ -353,7 +352,6 @@
                 "sub-test2",
                 "sub-test2/anat",
                 "sub-test2/anat/sub-test2_desc-preproc_T1w.nii.gz",
-                "sub-test2/anat/sub-test2_fastsurfer",
                 "sub-test2/anat/sub-test2_from-T1w_to-dwi_affine.mat",
                 "sub-test2/anat/sub-test2_from-T1w_to-dwi_warp.nii.gz",
                 "sub-test2/anat/sub-test2_from-dwi_to-T1w_warp.nii.gz",
@@ -431,12 +429,17 @@
                 "sub-test2/multiqc/sub-test2_multiqc_plots",
                 "sub-test2/multiqc/sub-test2_multiqc_report.html",
                 "subcortical_volumes.tsv"
+            ],
+            [
+                "",
+                "sub-test1",
+                "sub-test2"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2025-01-03T09:38:36.893058"
+        "timestamp": "2025-01-08T13:42:46.737348"
     }
 }
