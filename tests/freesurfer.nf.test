@@ -48,6 +48,7 @@ nextflow_pipeline {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
                 params.outdir = "$outputDir"
+                params.fs_output_dir = "$outputDir/../onedirdown/fastsurfer-v2.3.3"
 
                 params.freesurfer = true
                 params.use_fastsurfer = true
@@ -60,7 +61,7 @@ nextflow_pipeline {
             // stable name: All files + folders in ${params.outdir}/ with a stable name.
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
             // All fastsurfer output.
-            def fastsurfer_output = getAllFilesFromDir("$outputDir/../fastsurfer-v2.3.3/", relative: true, includeDir: true)
+            def fastsurfer_output = getAllFilesFromDir(params.fs_output_dir, relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
                 assert snapshot(
