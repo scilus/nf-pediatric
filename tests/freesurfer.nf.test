@@ -13,6 +13,7 @@ nextflow_pipeline {
                 input = "$projectDir/tests/data/samplesheet_testtracking.csv"
                 outdir = "$outputDir"
 
+                use_fastsurfer = false
                 freesurfer = true
                 fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
@@ -22,6 +23,8 @@ nextflow_pipeline {
         then {
             // stable name: All files + folders in ${params.outdir}/ with a stable name.
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            // All freesurfer output.
+            def freesurfer_output = getAllFilesFromDir("$outputDir/../freesurfer-7.4.1/", relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
                 assert snapshot(
@@ -30,7 +33,9 @@ nextflow_pipeline {
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
                     removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
                     // All stable name.
-                    stable_name
+                    stable_name,
+                    // All freesurfer output.
+                    freesurfer_output
                 ).match()
             }
         }
@@ -54,6 +59,8 @@ nextflow_pipeline {
         then {
             // stable name: All files + folders in ${params.outdir}/ with a stable name.
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            // All fastsurfer output.
+            def fastsurfer_output = getAllFilesFromDir("$outputDir/../fastsurfer-v2.3.3/", relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
                 assert snapshot(
@@ -62,7 +69,9 @@ nextflow_pipeline {
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
                     removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
                     // All stable name.
-                    stable_name
+                    stable_name,
+                    // All fastsurfer output.
+                    fastsurfer_output
                 ).match()
             }
         }

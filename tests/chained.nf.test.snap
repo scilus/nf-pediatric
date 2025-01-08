@@ -351,7 +351,6 @@
                 "sub-test",
                 "sub-test/anat",
                 "sub-test/anat/sub-test_desc-preproc_T1w.nii.gz",
-                "sub-test/anat/sub-test_fastsurfer",
                 "sub-test/anat/sub-test_from-T1w_to-dwi_affine.mat",
                 "sub-test/anat/sub-test_from-T1w_to-dwi_warp.nii.gz",
                 "sub-test/anat/sub-test_from-dwi_to-T1w_warp.nii.gz",
@@ -429,13 +428,17 @@
                 "sub-test/multiqc/sub-test_multiqc_plots",
                 "sub-test/multiqc/sub-test_multiqc_report.html",
                 "subcortical_volumes.tsv"
+            ],
+            [
+                "",
+                "sub-test"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2025-01-03T09:26:58.519601"
+        "timestamp": "2025-01-08T10:10:09.573439"
     },
     "Freesurfer + connectomics profiles - should run successfully": {
         "content": [
@@ -482,7 +485,6 @@
                 "sub-test",
                 "sub-test/anat",
                 "sub-test/anat/sub-test_desc-preproc_T1w.nii.gz",
-                "sub-test/anat/sub-test_fastsurfer",
                 "sub-test/anat/sub-test_seg-BrainnetomeChild_desc-labels.json",
                 "sub-test/anat/sub-test_seg-BrainnetomeChild_desc-labels.txt",
                 "sub-test/anat/sub-test_seg-BrainnetomeChild_dseg.nii.gz",
@@ -512,13 +514,17 @@
                 "sub-test/multiqc/sub-test_multiqc_plots",
                 "sub-test/multiqc/sub-test_multiqc_report.html",
                 "subcortical_volumes.tsv"
+            ],
+            [
+                "",
+                "sub-test"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2025-01-03T09:22:33.330752"
+        "timestamp": "2025-01-08T10:05:54.243678"
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
