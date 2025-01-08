@@ -76,6 +76,14 @@
                     "fa_icon": "fas fa-magnet",
                     "default": true,
                     "hidden": true
+                },
+                "fs_output_dir": {
+                    "type": "string",
+                    "description": "Path to FreeSurfer output directory.",
+                    "fa_icon": "fas fa-folder-open",
+                    "help_text": "Path to FreeSurfer output directory. This is where FreeSurfer will save its output files.",
+                    "format": "directory-path",
+                    "hidden": false
                 }
             }
         },

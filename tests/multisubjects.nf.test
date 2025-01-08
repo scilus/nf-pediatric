@@ -12,6 +12,7 @@ nextflow_pipeline {
 
                 params.input = "$projectDir/tests/data/samplesheet_multisubject.csv"
                 params.outdir = "$outputDir"
+                params.use_fastsurfer = true
 
                 params.connectomics = true
                 params.tracking = true
@@ -24,6 +25,8 @@ nextflow_pipeline {
         then {
             // stable name: All files + folders in ${params.outdir}/ with a stable name.
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            // All fastsurfer output.
+            def fastsurfer_output = getAllFilesFromDir("$outputDir/../fastsurfer-v2.3.3/", relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
                 assert snapshot(
@@ -32,7 +35,9 @@ nextflow_pipeline {
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
                     removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
                     // All stable name.
-                    stable_name
+                    stable_name,
+                    // All fastsurfer output.
+                    fastsurfer_output
                 ).match()
             }
         }

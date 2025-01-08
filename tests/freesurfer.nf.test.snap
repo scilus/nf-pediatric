@@ -26,7 +26,6 @@
                 "sub-test",
                 "sub-test/anat",
                 "sub-test/anat/sub-test_desc-preproc_T1w.nii.gz",
-                "sub-test/anat/sub-test_fastsurfer",
                 "sub-test/anat/sub-test_seg-BrainnetomeChild_desc-labels.json",
                 "sub-test/anat/sub-test_seg-BrainnetomeChild_desc-labels.txt",
                 "sub-test/anat/sub-test_seg-BrainnetomeChild_dseg.nii.gz",
@@ -45,20 +44,24 @@
                 "sub-test/multiqc/sub-test_multiqc_plots",
                 "sub-test/multiqc/sub-test_multiqc_report.html",
                 "subcortical_volumes.tsv"
+            ],
+            [
+                "",
+                "sub-test"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2025-01-02T23:01:18.627052"
+        "timestamp": "2025-01-08T09:57:43.80135"
     },
     "Freesurfer profile - freesurfer - should run successfully": {
         "content": [
             6,
             {
-                "FASTSURFER": {
-                    "fastsurfer": "2.3.3+0000000"
+                "RECONALL": {
+                    "freesurfer": "7.4.1"
                 },
                 "Workflow": {
                     "nf/pediatric": "v1.0dev"
@@ -80,7 +83,6 @@
                 "sub-test",
                 "sub-test/anat",
                 "sub-test/anat/sub-test_desc-preproc_T1w.nii.gz",
-                "sub-test/anat/sub-test_fastsurfer",
                 "sub-test/anat/sub-test_seg-BrainnetomeChild_desc-labels.json",
                 "sub-test/anat/sub-test_seg-BrainnetomeChild_desc-labels.txt",
                 "sub-test/anat/sub-test_seg-BrainnetomeChild_dseg.nii.gz",
@@ -99,12 +101,16 @@
                 "sub-test/multiqc/sub-test_multiqc_plots",
                 "sub-test/multiqc/sub-test_multiqc_report.html",
                 "subcortical_volumes.tsv"
+            ],
+            [
+                "",
+                "sub-test"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.1"
         },
-        "timestamp": "2025-01-02T22:41:26.12873"
+        "timestamp": "2025-01-08T10:01:23.448734"
     }
 }
