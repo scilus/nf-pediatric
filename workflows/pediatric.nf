@@ -126,7 +126,7 @@ workflow PEDIATRIC {
 
         ch_template = Channel.fromPath(params.t1_bet_template, checkIfExists: true)
         ch_probability_map = Channel.fromPath(params.t1_bet_template_probability_map, checkIfExists: true)
-            .map{ it + [[], []] }
+
         if ( params.t1_synthstrip_weights ) {
             ch_t1_weights = Channel.fromPath(params.t1_synthstrip_weights, checkIfExists: false)
         } else {

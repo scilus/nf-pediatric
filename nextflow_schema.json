@@ -406,6 +406,7 @@
             "fa_icon": "fas fa-brain",
             "description": "Options for DTI processing.",
             "help_text": "These options are used to configure the DTI processing steps in the pipeline. You can use these options to customise the behaviour of the DTI processing steps.",
+            "required": ["dti_shells"],
             "properties": {
                 "dti_shell_tolerance": {
                     "type": "integer",
@@ -419,7 +420,7 @@
                     "description": "Maximum shell value used in the DTI processing step.",
                     "fa_icon": "fas fa-brain",
                     "default": 1500,
-                    "hidden": false
+                    "hidden": true
                 },
                 "dti_b0_threshold": {
                     "type": "integer",
@@ -427,6 +428,12 @@
                     "fa_icon": "fas fa-brain",
                     "default": 20,
                     "hidden": true
+                },
+                "dti_shells": {
+                    "type": "string",
+                    "description": "Shells used in the DTI processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
                 }
             }
         },
@@ -477,14 +484,14 @@
                     "description": "Maximum DTI shell value used.",
                     "fa_icon": "fas fa-brain",
                     "default": 1500,
-                    "hidden": false
+                    "hidden": true
                 },
                 "frf_min_fodf_shell_value": {
                     "type": "integer",
                     "description": "Minimum FODF shell value used.",
                     "fa_icon": "fas fa-brain",
                     "default": 100,
-                    "hidden": false
+                    "hidden": true
                 },
                 "frf_b0_threshold": {
                     "type": "integer",
@@ -530,6 +537,7 @@
             "fa_icon": "fas fa-brain",
             "description": "Options for FODF processing.",
             "help_text": "These options are used to configure the FODF processing steps in the pipeline. You can use these options to customise the behaviour of the FODF processing steps.",
+            "required": ["fodf_shells"],
             "properties": {
                 "fodf_shell_tolerance": {
                     "type": "integer",
@@ -543,6 +551,12 @@
                     "description": "Minimum FODF shell value used.",
                     "fa_icon": "fas fa-brain",
                     "default": 100,
+                    "hidden": true
+                },
+                "fodf_shells": {
+                    "type": "string",
+                    "description": "Shells used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
                     "hidden": false
                 },
                 "fodf_b0_threshold": {
