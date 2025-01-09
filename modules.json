@@ -226,7 +226,8 @@
                     "topup_eddy": {
                         "branch": "main",
                         "git_sha": "e088076166c27704c22be0c45f03bc727d1f1d7d",
-                        "installed_by": ["preproc_dwi"]
+                        "installed_by": ["preproc_dwi"],
+                        "patch": "subworkflows/nf-neuro/topup_eddy/topup_eddy.diff"
                     }
                 }
             }

@@ -37,9 +37,10 @@ workflow TOPUP_EDDY {
             .join(ch_rev_b0, remainder: true)
             .map{ it[0..7] + [it[8] ?: []] }
             .filter{ it[5] || it[8] }
+            .combine(ch_config_topup)
 
         // ** RUN TOPUP ** //
-        PREPROC_TOPUP ( ch_topup, ch_config_topup )
+        PREPROC_TOPUP ( ch_topup )
         ch_versions = ch_versions.mix(PREPROC_TOPUP.out.versions.first())
 
         // ** Create channel for EDDY ** //

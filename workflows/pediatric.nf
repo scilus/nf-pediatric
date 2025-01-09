@@ -158,7 +158,7 @@ workflow PEDIATRIC {
                 ch_topup_config = Channel.fromPath(params.dwi_susceptibility_config_file, checkIfExists: true)
             }
             else {
-                ch_topup_config = Channel.from( params.dwi_susceptibility_config_file )
+                ch_topup_config = Channel.fromPath( params.dwi_susceptibility_config_file )
             }
         }
 

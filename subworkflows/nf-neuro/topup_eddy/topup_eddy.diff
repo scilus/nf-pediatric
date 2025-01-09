@@ -1,0 +1,23 @@
+Changes in component 'nf-neuro/topup_eddy'
+'subworkflows/nf-neuro/topup_eddy/meta.yml' is unchanged
+Changes in 'topup_eddy/main.nf':
+--- subworkflows/nf-neuro/topup_eddy/main.nf
++++ subworkflows/nf-neuro/topup_eddy/main.nf
+@@ -37,9 +37,10 @@
+             .join(ch_rev_b0, remainder: true)
+             .map{ it[0..7] + [it[8] ?: []] }
+             .filter{ it[5] || it[8] }
++            .combine(ch_config_topup)
+ 
+         // ** RUN TOPUP ** //
+-        PREPROC_TOPUP ( ch_topup, ch_config_topup )
++        PREPROC_TOPUP ( ch_topup )
+         ch_versions = ch_versions.mix(PREPROC_TOPUP.out.versions.first())
+ 
+         // ** Create channel for EDDY ** //
+
+'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test.snap' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/tags.yml' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/nextflow.config' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test' is unchanged
+************************************************************

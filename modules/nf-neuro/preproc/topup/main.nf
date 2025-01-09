@@ -7,8 +7,8 @@ process PREPROC_TOPUP {
         'scilus/scilus:2.0.2' }"
 
     input:
-        tuple val(meta), path(dwi), path(bval), path(bvec), path(b0), path(rev_dwi), path(rev_bval), path(rev_bvec), path(rev_b0)
-        each config_topup
+        tuple val(meta), path(dwi), path(bval), path(bvec), path(b0), path(rev_dwi), path(rev_bval), path(rev_bvec), path(rev_b0),
+        path(config_topup)
 
     output:
         tuple val(meta), path("*__corrected_b0s.nii.gz"), emit: topup_corrected_b0s
