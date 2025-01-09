@@ -14,6 +14,9 @@ nextflow_pipeline {
                 params.outdir = "$outputDir"
                 params.use_fastsurfer = true
 
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
+
                 params.connectomics = true
                 params.tracking = true
                 params.freesurfer = true
@@ -54,6 +57,9 @@ nextflow_pipeline {
                 params.connectomics = true
                 params.tracking = true
                 params.infant = true
+
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
 
                 // ** Infant specific parameters ** //
                 params.dwi_run_synthstrip               = true

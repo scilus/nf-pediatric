@@ -152,6 +152,9 @@ workflow PEDIATRIC {
     //
     if ( params.tracking ) {
 
+        if ( !params.dti_shells ) { error "Please provide the DTI shells using --dti_shells parameter" }
+        if ( !params.fodf_shells ) { error "Please provide the FODF shells using --fodf_shells parameter" }
+
         /* Load topup config if provided */
         if ( params.dwi_susceptibility_config_file ) {
             if ( file(params.dwi_susceptibility_config_file).exists() ) {

@@ -406,7 +406,6 @@
             "fa_icon": "fas fa-brain",
             "description": "Options for DTI processing.",
             "help_text": "These options are used to configure the DTI processing steps in the pipeline. You can use these options to customise the behaviour of the DTI processing steps.",
-            "required": ["dti_shells"],
             "properties": {
                 "dti_shell_tolerance": {
                     "type": "integer",
@@ -537,7 +536,6 @@
             "fa_icon": "fas fa-brain",
             "description": "Options for FODF processing.",
             "help_text": "These options are used to configure the FODF processing steps in the pipeline. You can use these options to customise the behaviour of the FODF processing steps.",
-            "required": ["fodf_shells"],
             "properties": {
                 "fodf_shell_tolerance": {
                     "type": "integer",
