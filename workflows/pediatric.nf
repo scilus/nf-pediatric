@@ -126,7 +126,7 @@ workflow PEDIATRIC {
 
         ch_template = Channel.fromPath(params.t1_bet_template, checkIfExists: true)
         ch_probability_map = Channel.fromPath(params.t1_bet_template_probability_map, checkIfExists: true)
-            .map{ it + [[], []] }
+
         if ( params.t1_synthstrip_weights ) {
             ch_t1_weights = Channel.fromPath(params.t1_synthstrip_weights, checkIfExists: false)
         } else {
@@ -151,6 +151,9 @@ workflow PEDIATRIC {
     // SUBWORKFLOW: Run PREPROC_DWI
     //
     if ( params.tracking ) {
+
+        if ( !params.dti_shells ) { error "Please provide the DTI shells using --dti_shells parameter" }
+        if ( !params.fodf_shells ) { error "Please provide the FODF shells using --fodf_shells parameter" }
 
         /* Load topup config if provided */
         if ( params.dwi_susceptibility_config_file ) {

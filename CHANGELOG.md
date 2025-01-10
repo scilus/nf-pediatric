@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - [2025-01-08]
 
+### `Added`
+
+- Required --dti_shells and --fodf_shells parameters.
+
 ### `Changed`
 
 - Fastsurfer and freesurfer outputs are now in their own dedicated output folder.

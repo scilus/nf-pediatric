@@ -92,6 +92,7 @@ workflow PREPROC_T1 {
             ch_bet = IMAGE_RESAMPLE.out.image
                 .join(ch_template)
                 .join(ch_probability_map)
+                .map{ it + [[], []] }
 
             BETCROP_ANTSBET ( ch_bet )
             ch_versions = ch_versions.mix(BETCROP_ANTSBET.out.versions.first())

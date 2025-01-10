@@ -122,10 +122,10 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run scilus/nf-pediatric -r main --input ./samplesheet.csv --outdir ./results -profile docker
+nextflow run scilus/nf-pediatric -r main --input ./samplesheet.csv --outdir ./results --dti_shells "0 1000" --fodf_shells "0 1000" -profile docker
 ```
 
-This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+This will launch the pipeline with the `docker` configuration profile. There is only 4 parameters that need to be supplied at runtime: `--input`: for the path to your samplesheet, `--oudir`: path to the output directory, `--dti_shells`: if the tracking profile is selected, you need to identify which shell to use for DTI fitting (0 and 1000 were selected in the previous example), and `--fodf_shells`: if the tracking profile is selected, specify your shells as for the DTI parameter. See below for more information about profiles.
 
 Note that the pipeline will create the following files in your working directory:
 

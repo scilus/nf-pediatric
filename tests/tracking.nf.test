@@ -13,6 +13,9 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
                 params.outdir = "$outputDir"
 
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
+
                 params.tracking = true
 
             }
@@ -42,6 +45,9 @@ nextflow_pipeline {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
                 params.outdir = "$outputDir"
+
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
 
                 params.tracking = true
                 params.skip_dwi_preprocessing = true
@@ -76,12 +82,57 @@ nextflow_pipeline {
 
                 params.tracking = true
 
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
+
             }
         }
 
         then {
             assert workflow.failed
             assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
+        }
+    }
+
+    test("Tracking profile no dti shells - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
+                params.outdir = "$outputDir"
+
+                params.tracking = true
+
+                params.fodf_shells = "0 1000"
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide the DTI shells using --dti_shells parameter")
+        }
+    }
+
+    test("Tracking profile no fodf shells - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
+                params.outdir = "$outputDir"
+
+                params.tracking = true
+
+                params.dti_shells = "0 1000"
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Please provide the FODF shells using --fodf_shells parameter")
         }
     }
 
@@ -92,6 +143,9 @@ nextflow_pipeline {
 
                 params.input = "$projectDir/tests/data/samplesheet_testtracking_nodwi.csv"
                 params.outdir = "$outputDir"
+
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
 
                 params.tracking = true
 
@@ -125,6 +179,9 @@ nextflow_pipeline {
                 params.local_min_len                    = 15
                 params.local_fa_seeding_mask_threshold  = 0.10
                 params.run_local_tracking               = true
+
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
 
             }
         }
@@ -167,6 +224,9 @@ nextflow_pipeline {
                 params.local_min_len                    = 15
                 params.local_fa_seeding_mask_threshold  = 0.10
 
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
+
             }
         }
 
@@ -186,6 +246,9 @@ nextflow_pipeline {
 
                 params.tracking = true
                 params.infant = true
+
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
 
                 // ** Infant specific parameters ** //
                 params.dwi_run_synthstrip               = true
@@ -216,6 +279,9 @@ nextflow_pipeline {
 
                 params.tracking = true
                 params.infant = true
+
+                params.dti_shells = "0 1000"
+                params.fodf_shells = "0 1000"
 
                 // ** Infant specific parameters ** //
                 params.dwi_run_synthstrip               = true
