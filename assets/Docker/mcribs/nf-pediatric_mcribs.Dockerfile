@@ -92,7 +92,7 @@ ENV PERL5LIB="$MINC_LIB_DIR/perl5/5.8.5" \
     PATH="$FREESURFER_HOME/bin:$FREESURFER_HOME/tktools:$MINC_BIN_DIR:$PATH"
 
 # Install MCRIBS from nipreps (with legacy Python)
-COPY --from=gagnonanthony/mcribs@sha256:89a041fbad182a3cca53ae06968b645f849d6943562f1348d70ccc2b9fab7869 /opt/MCRIBS/ /opt/MCRIBS
+COPY --from=gagnonanthony/mcribs@sha256:12ddd74a0d47f055bea4bb19cc0df5b39d0b3ee2aa76d4276d4bfea6f169b2b5 /opt/MCRIBS/ /opt/MCRIBS
 COPY --from=pyenv /usr/local/lib/ /usr/local/lib/
 COPY --from=pyenv /usr/local/bin/python3 /opt/MCRIBS/bin/python
 ENV PATH="/opt/MCRIBS/bin:/opt/MCRIBS/MIRTK/MIRTK-install/bin:/opt/MCRIBS/MIRTK/MIRTK-install/lib/tools:${PATH}" \
