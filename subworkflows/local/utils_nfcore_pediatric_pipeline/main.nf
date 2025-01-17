@@ -92,7 +92,7 @@ workflow PIPELINE_INITIALISATION {
                     if (!bvec) {
                         error("Please provide a bvec file for sample: ${meta.id}")
                     }
-                    if (!rev_b0) {
+                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
                         error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
                     }
                     if (!wmparc) {
@@ -151,7 +151,7 @@ workflow PIPELINE_INITIALISATION {
                     if (!bvec) {
                         error("Please provide a bvec file for sample: ${meta.id}")
                     }
-                    if (!rev_b0) {
+                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
                         error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
                     }
                     if (!wmparc) {
@@ -176,7 +176,7 @@ workflow PIPELINE_INITIALISATION {
                     if (!bvec) {
                         error("Please provide a bvec file for sample: ${meta.id}")
                     }
-                    if (!rev_b0) {
+                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
                         error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
                     }
                 }
@@ -232,7 +232,7 @@ workflow PIPELINE_INITIALISATION {
                     if (!bvec) {
                         error("Please provide a bvec file for sample: ${meta.id}")
                     }
-                    if (!rev_b0) {
+                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
                         error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
                     }
                     if (!labels) {
@@ -288,7 +288,7 @@ workflow PIPELINE_INITIALISATION {
                     if (!bvec) {
                         error("Please provide a bvec file for sample: ${meta.id}")
                     }
-                    if (!rev_b0) {
+                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
                         error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
                     }
                 }

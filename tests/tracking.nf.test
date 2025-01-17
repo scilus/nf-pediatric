@@ -43,7 +43,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
                 params.outdir = "$outputDir"
 
                 params.dti_shells = "0 1000"
