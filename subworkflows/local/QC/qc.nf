@@ -50,12 +50,15 @@ workflow QC {
     //
     ch_labels_qc = ch_anat
         .join(ch_labels, remainder: true)
-        .map { anat_meta, anat_path, labels_path ->
-            def labels = labels_path ?: []
-            [ anat_meta, anat_path, [], [], [], labels ]
+        .branch {
+            withlabels: it.size() > 1 && it[2] != null
+                return [ it[0], it[1], [], [], [], it[2] ]
+            withoutlabels: true
+                return [ it[0], it[1] ]
         }
 
-    QC_LABELS ( ch_labels_qc )
+
+    QC_LABELS ( ch_labels_qc.withlabels )
     ch_versions = ch_versions.mix(QC_LABELS.out.versions.first())
 
     //

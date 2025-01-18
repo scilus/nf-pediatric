@@ -65,7 +65,7 @@ workflow PREPROC_T1 {
         ch_versions = ch_versions.mix(IMAGE_RESAMPLE.out.versions.first())
 
         // ** Brain extraction ** //
-        if ( params.run_synthbet ) {
+        if ( params.t1_run_synthstrip || params.t2_run_synthstrip ) {
             // ** SYNTHBET ** //
             // Result : [ meta, image, weights | [] ]
             //  Steps :

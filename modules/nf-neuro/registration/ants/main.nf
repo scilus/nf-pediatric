@@ -27,7 +27,6 @@ process REGISTRATION_ANTS {
     def transform = task.ext.transform ? task.ext.transform : "s"
     def seed = task.ext.random_seed ? " -e " + task.ext.random_seed : "-e 1234"
 
-    if ( task.ext.threads ) args += "-n " + task.ext.threads
     if ( task.ext.initial_transform ) args += " -i " + task.ext.initial_transform
     if ( task.ext.histogram_bins ) args += " -r " + task.ext.histogram_bins
     if ( task.ext.spline_distance ) args += " -s " + task.ext.spline_distance
@@ -62,7 +61,7 @@ process REGISTRATION_ANTS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ants: antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/'
+        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/')
     END_VERSIONS
     """
 
@@ -82,7 +81,7 @@ process REGISTRATION_ANTS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ants: antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/'
+        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/')
     END_VERSIONS
     """
 }
