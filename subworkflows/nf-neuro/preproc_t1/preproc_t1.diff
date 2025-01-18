@@ -3,6 +3,15 @@ Changes in component 'nf-neuro/preproc_t1'
 Changes in 'preproc_t1/main.nf':
 --- subworkflows/nf-neuro/preproc_t1/main.nf
 +++ subworkflows/nf-neuro/preproc_t1/main.nf
+@@ -65,7 +65,7 @@
+         ch_versions = ch_versions.mix(IMAGE_RESAMPLE.out.versions.first())
+ 
+         // ** Brain extraction ** //
+-        if ( params.run_synthbet ) {
++        if ( params.t1_run_synthstrip || params.t2_run_synthstrip ) {
+             // ** SYNTHBET ** //
+             // Result : [ meta, image, weights | [] ]
+             //  Steps :
 @@ -88,9 +88,11 @@
              // The template and probability maps are mandatory if running antsBET. Since the
              // error message from nextflow when they are absent is either non-informative or
