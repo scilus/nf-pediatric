@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed`
 
 - Structural segmentation pipeline for infant data. (#3)
+- Correctly set `fastsurfer` version in docker container.
 
 ### `Changed`
 
