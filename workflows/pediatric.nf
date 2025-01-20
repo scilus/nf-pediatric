@@ -139,8 +139,8 @@ workflow PEDIATRIC {
         ch_utils_folder = Channel.fromPath(params.utils_folder, checkIfExists: true)
 
         SEGMENTATION (
-            ch_inputs.t1,
-            ch_inputs.t2,
+            ch_t1.witht1,
+            ch_t2.witht2,
             ch_fs_license,
             ch_utils_folder,
             ch_t1_weights,
@@ -155,8 +155,8 @@ workflow PEDIATRIC {
     //
     // SUBWORKFLOW: Run preprocessing on anatomical images.
     //
-    if ( params.infant ) {
-        fs_license = params.fs_license
+    if ( params.infant && params.tracking ) {
+        ch_fs_license = params.fs_license
             ? Channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
             : Channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
         }
@@ -200,7 +200,7 @@ workflow PEDIATRIC {
         ch_reg = PREPROC_T2W.out.t1_final
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch {
-                witht1: it.size() > 2 && it[2] != null
+                witht1: params.infant && it.size() > 2 && it[2] != null
                     return [ it[0], it[1], it[2], [] ]
             }
 
@@ -386,7 +386,7 @@ workflow PEDIATRIC {
 
             // ** Run MCRIBS segmentation ** //
             ch_tissueseg_t2 = REGISTRATION.out.image_warped
-                .combine(fs_license)
+                .combine(ch_fs_license)
                 .join(APPLYTRANSFORMS.out.warped_image, remainder: true)
                 .map{ it[0..2] + [ it[3] ?: [] ] }
 
