@@ -5,9 +5,33 @@
 `nf-pediatric` process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. A specific and unique profile pertains to `infant` data (<2 years old) and sets specific parameters tailored to infant data preprocessing. Here is a list of the available profiles:
 
 - `tracking`: Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
-- `freesurfer`: Run FreeSurfer or FastSurfer for T1w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) is mapped to the subject space. **Not available with the `infant` profile.**
+- `segmentation`: Run FreeSurfer, FastSurfer, or M-CRIB-S/InfantFS for T1w/T2w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or the Desikan-Killiany atlas (for infant) is mapped to the subject space.
 - `connectomics`: Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
-- `infant`: This profile adapt some processing steps to infant data, but also requires more input files. See below for a list of the required files.
+- `infant`: This profile adapt some processing steps to infant data, such as tissue segmentation using M-CRIB-S, surface reconstruction using InfantFS, etc.
+
+---
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Samplesheet Input](#samplesheet-input-for-the-tracking-profile)
+  - [Running the pipeline for multiple subjects](#multiple-subjects-in-the-same-pipeline-run)
+  - [Samplesheet specifications per profile](#specifying-a-samplesheet-for-a-different-profile)
+- [Running nf-pediatric](#running-the-pipeline)
+  - [Updating nf-pediatric](#updating-the-pipeline)
+  - [Reproducibility](#reproducibility)
+- [Core Nextflow Parameters](#core-nextflow-arguments)
+  - [`-profile`](#-profile)
+  - [`-resume`](#-resume)
+  - [`-c`](#-c)
+- [Custom Configurations](#custom-configuration)
+  - [Resource Requests](#resource-requests)
+  - [Custom Containers](#custom-containers)
+  - [Custom Tool Arguments](#custom-tool-arguments)
+  - [nf-core/configs](#nf-coreconfigs)
+- [Running nf-pediatric in the background](#running-in-the-background)
+- [Nextflow Memory Requirements](#nextflow-memory-requirements)
+
+---
 
 ## Samplesheet input for the `tracking` profile.
 
@@ -40,14 +64,14 @@ As mentioned above, the pipeline has various profiles that performs different ta
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
-#### **`-profile freesurfer`**
+#### **`-profile segmentation`**
 
 | Column    | Description                                                                                   |
 | --------- | --------------------------------------------------------------------------------------------- |
 | `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`). |
 | `t1`      | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).     |
 
-#### **`-profile tracking,freesurfer`** or **`-profile tracking,freesurfer,connectomics`**
+#### **`-profile tracking,segmentation`** or **`-profile tracking,segmentation,connectomics`**
 
 | Column    | Description                                                                                                                                                                                                              |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -59,7 +83,7 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 | `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                                                          |
 | `metrics` | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional, can only be supplied if `-profile connectomics` is selected.** |
 
-#### **`-profile connectomics,freesurfer`**
+#### **`-profile connectomics,segmentation`**
 
 | Column    | Description                                                                                                                                                |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -97,25 +121,24 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 | Column    | Description                                                                                                     |
 | --------- | --------------------------------------------------------------------------------------------------------------- |
 | `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                   |
+| `t1`      | Full path to the T1w file (optional). File has to be in the nifti file format (`.nii` or `.nii.gz`)             |
 | `t2`      | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
 | `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
 | `bval`    | Full path to the file containing the b-values.                                                                  |
 | `bvec`    | Full path to the file containing the b-vectors.                                                                 |
 | `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`). |
-| `wmparc`  | Full path to the WM mask file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                   |
 
 #### **`-profile tracking,connectomics,infant`**
 
 | Column    | Description                                                                                                                             |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                                           |
+| `t1`      | Full path to the T1w file (optional). File has to be in the nifti file format (`.nii` or `.nii.gz`)                                     |
 | `t2`      | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                               |
 | `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                               |
 | `bval`    | Full path to the file containing the b-values.                                                                                          |
 | `bvec`    | Full path to the file containing the b-vectors.                                                                                         |
 | `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                         |
-| `labels`  | Full path to the file containing your labels to use in the segmentation. File has to be in the nifti file format (`.nii` or `.nii.gz`). |
-| `wmparc`  | Full path to the WM mask file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                           |
 
 ## Running the pipeline
 
@@ -215,7 +238,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile for ARM based computers.
 - `tracking`
   - Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
-- `freesurfer`
+- `segmentation`
   - Run FreeSurfer or FastSurfer for T1w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) is mapped to the subject space. **Not available with the `infant` profile.**
 - `connectomics`
   - Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.

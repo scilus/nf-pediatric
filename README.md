@@ -4,7 +4,7 @@
 
 ## Introduction
 
-**nf-pediatric** is an end-to-end connectomics pipeline for pediatric (0-18y) dMRI and sMRI brain scans. It performs tractography, t1 reconstruction, cortical and subcortical segmentation, and connectomics. Final outputs are connectivity matrices for a variety of diffusion (or not) related metrics.
+**nf-pediatric** is an end-to-end connectomics pipeline for pediatric (0-18y) dMRI and sMRI brain scans. It performs tractography, t1 reconstruction, cortical and subcortical segmentation, and connectomics.
 
 ![nf-pediatric-schema](/assets/nf-pediatric-schema.svg)
 
@@ -17,22 +17,22 @@
 
 **Processing profiles**:
 
-1. `-profile freesurfer`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/) or [FastSurfer](https://deep-mi.org/research/fastsurfer/) will be used to process the T1w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) will be registered using surface-based methods in the native subject space.
-1. `-profile tracking`: This is the core profile behind `nf-pediatric`. By selecting it, DWI data will be preprocessed (denoised, corrected for distortion, normalized, resampled, ...). In parallel, T1 will be preprocessed (if `-profile freesurfer` is not selected), registered into diffusion space, and segmented to extract tissue masks. Preprocessed DWI data will be used to fit both the DTI and fODF models. As the final step, whole-brain tractography will be performed using either local tracking or particle filter tracking (PFT).
+1. `-profile segmentation`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/), [FastSurfer](https://deep-mi.org/research/fastsurfer/) or MCRIBS/InfantFS will be used to process the T1w/T2w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) or Desikan-Killiany (for infant) will be registered using surface-based methods in the native subject space.
+1. `-profile tracking`: This is the core profile behind `nf-pediatric`. By selecting it, DWI data will be preprocessed (denoised, corrected for distortion, normalized, resampled, ...). In parallel, T1w will be preprocessed (if `-profile segmentation` is not selected), registered into diffusion space, and segmented to extract tissue masks. Preprocessed DWI data will be used to fit both the DTI and fODF models. As the final step, whole-brain tractography will be performed using either local tracking or particle filter tracking (PFT).
 1. `-profile connectomics`: By selecting this profiles, the whole-brain tractogram will be filtered to remove false positive streamlines, labels will be registered in diffusion space and used to segment the tractogram into individual connections. Following segmentation, connectivity matrices will be computed for a variety of metrics and outputted as numpy arrays usable for further statistical analysis.
-1. `-profile infant`: As opposed to the other profiles, the `infant` profile does not enable a specific block of processing steps, but will change various configs and parameters to adapt the existing profile for infant data (<2 years). This profile is made to be used in conjunction with the others (with the exception of `-profile freesurfer` which is unavailable for infant data for now).
+1. `-profile infant`: As opposed to the other profiles, the `infant` profile does not enable a specific block of processing steps (although various steps are changed compared to the default pipeline), but will change various configs and parameters to adapt the existing profile for infant data (<2 years). This profile is made to be used in conjunction with the others.
 
 **Configuration profiles**:
 
 1. `-profile docker`: Each process will be run using docker containers.
 1. `-profile apptainer` or `-profile singularity`: Each process will be run using apptainer/singularity images.
-1. `-profile arm`: Made to be use on computers with an ARM architecture.
+1. `-profile arm`: Made to be use on computers with an ARM architecture. **This is still experimental, depending on which profile you select, some containers might not be built for the ARM architecture. Feel free to open an issue if needed.**
 1. `-profile no_symlink`: By default, the results directory contains symlink to files within the `work` directory. By selecting this profile, results will be copied from the work directory without the use of symlinks.
 1. `-profile slurm`: If selected, the SLURM job scheduler will be used to dispatch jobs.
 
 **Using either `-profile docker` or `-profile apptainer` is highly recommended, as it controls the version of the software used and avoids the installation of all the required softwares.**
 
-For example, to perform the end-to-end connectomics pipeline, users should select `-profile tracking,freesurfer,connectomics` for pediatric data and `-profile infant,tracking,connectomics` for infant data. Once you selected your profile, you can check which input files are mandatory [here](/docs/usage.md). In addition to profile selection, users can change default parameters using command line arguments at runtime. To view a list of the parameters that can be customized, use the `--help` argument as follow:
+For example, to perform the end-to-end connectomics pipeline, users should select `-profile tracking,segmentation,connectomics` for pediatric data and `-profile infant,tracking,segmentation,connectomics` for infant data. Once you selected your profile, you can check which input files are mandatory [here](/docs/usage.md). In addition to profile selection, users can change default parameters using command line arguments at runtime. To view a list of the parameters that can be customized, use the `--help` argument as follow:
 
 ```bash
 nextflow run scilus/nf-pediatric -r main --help
