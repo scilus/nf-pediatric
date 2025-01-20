@@ -157,13 +157,6 @@
                     "format": "directory-path",
                     "exists": true,
                     "hidden": true
-                },
-                "atlas_name": {
-                    "type": "string",
-                    "description": "Name of the atlas used in the pipeline, will be used for naming output files.",
-                    "fa_icon": "fas fa-map-marked-alt",
-                    "default": "BrainnetomeChild",
-                    "hidden": false
                 }
             }
         },
