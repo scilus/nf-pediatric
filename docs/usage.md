@@ -10,6 +10,7 @@
 - `infant`: This profile adapt some processing steps to infant data, such as tissue segmentation using M-CRIB-S, surface reconstruction using InfantFS, etc.
 
 ---
+
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -130,15 +131,15 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 
 #### **`-profile tracking,connectomics,infant`**
 
-| Column    | Description                                                                                                                             |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                                           |
-| `t1`      | Full path to the T1w file (optional). File has to be in the nifti file format (`.nii` or `.nii.gz`)                                     |
-| `t2`      | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                               |
-| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                               |
-| `bval`    | Full path to the file containing the b-values.                                                                                          |
-| `bvec`    | Full path to the file containing the b-vectors.                                                                                         |
-| `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                         |
+| Column    | Description                                                                                                     |
+| --------- | --------------------------------------------------------------------------------------------------------------- |
+| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                   |
+| `t1`      | Full path to the T1w file (optional). File has to be in the nifti file format (`.nii` or `.nii.gz`)             |
+| `t2`      | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
+| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
+| `bval`    | Full path to the file containing the b-values.                                                                  |
+| `bvec`    | Full path to the file containing the b-vectors.                                                                 |
+| `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`). |
 
 ## Running the pipeline
 

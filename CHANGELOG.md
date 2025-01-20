@@ -31,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom atlas name parameter until the use of custom atlas is enabled.
 - White matter mask and labels files as required inputs since they can now be computed for all ages.
 
-
 ## [Unreleased] - [2024-12-23]
 
 ### `Added`
