@@ -72,7 +72,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ARG PYTHON_VERSION=3.10
-ARG FORGE_VERSION=24.3.0-0
+ARG FORGE_VERSION=24.11.2-1
 
 # Install conda
 RUN wget --no-check-certificate -qO ~/miniforge.sh \
@@ -98,7 +98,7 @@ COPY ./fastsurfer.yml /install/
 ARG DEBUG=false
 RUN python /install/install_env.py -m base -i /install/fastsurfer.yml \
       -o /install/base-env.yml && \
-    mamba env create -f "/install/base-env.yml" | tee /install/env-create.log ; \
+    mamba env create -qy -f "/install/base-env.yml" | tee /install/env-create.log ; \
     if [ "${DEBUG}" != "true" ]; then \
       rm /install/base-env.yml ; \
     fi
@@ -110,12 +110,12 @@ ARG DEVICE=cpu
 # install additional packages for cuda/rocm/cpu
 RUN python /install/install_env.py -m ${DEVICE} -i /install/fastsurfer.yml \
       -o /install/${DEVICE}-env.yml && \
-    mamba env update -n "fastsurfer" -f "/install/${DEVICE}-env.yml" \
+    mamba env update -q -n "fastsurfer" -f "/install/${DEVICE}-env.yml" \
       | tee /install/env-update.log && \
     /install/conda_pack.sh "fastsurfer" && \
     echo "DEBUG=$DEBUG\nDEVICE=$DEVICE\n" > /install/build_conda.args ;  \
     if [ "${DEBUG}" != "true" ]; then \
-      mamba env remove -n "fastsurfer" && \
+      mamba env remove -qy -n "fastsurfer" && \
       rm -R /install ; \
     fi
 
@@ -207,8 +207,9 @@ ENV PYTHONPATH=/fastsurfer:/opt/freesurfer/python/packages \
 # bytecode and update the build file with checkpoints md5sums and pip packages.
 RUN cd /fastsurfer ; python3 FastSurferCNN/download_checkpoints.py --all && \
     python3 -m compileall *
-    #python3 FastSurferCNN/version.py --sections +git+checkpoints+pip \
-    #  --build_cache /fastsurfer/Docker/BUILD.info -o BUILD.info
+COPY ./BUILD.info /fastsurfer/Docker/BUILD.info
+RUN cd /fastsurfer ; python3 FastSurferCNN/version.py --sections +git+checkpoints+pip \
+      --build_cache /fastsurfer/Docker/BUILD.info -o BUILD.info
 
 # TODO: SBOM info of FastSurfer and FreeSurfer are missing, it is unclear how to add
 #       those at the moment, as the buildscanner syft does not find simple package.json
@@ -226,7 +227,7 @@ RUN cd /fastsurfer ; python3 FastSurferCNN/download_checkpoints.py --all && \
 
 # Set FastSurfer workdir and entrypoint
 #  the script entrypoint ensures that our conda env is active
-# USER nonroot
+USER nonroot
 WORKDIR "/fastsurfer"
 ENTRYPOINT ["/fastsurfer/Docker/entrypoint.sh","/fastsurfer/run_fastsurfer.sh"]
 CMD ["--help"]
