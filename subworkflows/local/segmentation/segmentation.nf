@@ -5,6 +5,7 @@ include { SEGMENTATION_MCRIBS as MCRIBS } from '../../../modules/local/segmentat
 
 // ** Atlas modules ** //
 include { ATLASES_BRAINNETOMECHILD as BRAINNETOMECHILD } from '../../../modules/local/atlases/brainnetomechild'
+include { ATLASES_FORMATLABELS as FORMATLABELS         } from '../../../modules/local/atlases/formatlabels'
 include { ATLASES_CONCATENATESTATS as CONCATENATESTATS } from '../../../modules/local/atlases/concatenatestats'
 
 // ** Utilities ** //
@@ -114,18 +115,29 @@ workflow SEGMENTATION {
     //
     // MODULE: Run BrainnetomeChild atlas
     //
-    ch_atlas = Channel.empty()
-    if ( !params.infant ) {
-    ch_atlas = ch_folder.combine(ch_utils_folder).combine(ch_fs_license)
-    }
+    ch_atlas = ch_folder
+        .combine(ch_utils_folder)
+        .combine(ch_fs_license)
+        .branch {
+            infant: params.infant
+                return [ it[0], it[1], it[2], it[3] ]
+            children: true
+                return [ it[0], it[1], it[2], it[3] ]
+        }
 
-    BRAINNETOMECHILD (ch_atlas)
+    BRAINNETOMECHILD ( ch_atlas.children )
     ch_versions = ch_versions.mix(BRAINNETOMECHILD.out.versions.first())
+
+    //
+    // MODULE: Format labels
+    //
+    FORMATLABELS ( ch_atlas.infant )
+    ch_versions = ch_versions.mix(FORMATLABELS.out.versions.first())
 
     //
     // MODULE: Concatenate stats
     //
-    CONCATENATESTATS ( BRAINNETOMECHILD.out.stats.collect() )
+    CONCATENATESTATS ( params.infant ? FORMATLABELS.out.stats.collect() : BRAINNETOMECHILD.out.stats.collect() )
     ch_versions = ch_versions.mix(CONCATENATESTATS.out.versions)
 
     emit:
@@ -134,8 +146,8 @@ workflow SEGMENTATION {
     t2              = ch_t2                                                 // channel: [ val(meta), [ t2 ] ]
 
     // ** Segmentation ** //
-    labels          = BRAINNETOMECHILD.out.labels ?: Channel.empty()        // channel: [ val(meta), [ labels ] ]
-    tissues         = ch_tissueseg                                          // channel: [ val(meta), [ tissues ] ]
+    labels          = params.infant ? FORMATLABELS.out.labels : BRAINNETOMECHILD.out.labels // channel: [ val(meta), [ labels ] ]
+    tissues         = ch_tissueseg                                                          // channel: [ val(meta), [ tissues ] ]
 
     // ** Stats ** //
     volume_lh       = CONCATENATESTATS.out.volume_lh ?: Channel.empty()     // channel: [ volume_lh.tsv ]

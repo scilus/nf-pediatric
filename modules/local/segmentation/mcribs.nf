@@ -61,6 +61,11 @@ process SEGMENTATION_MCRIBS {
     mv freesurfer/${prefix} ${prefix}_mcribs
     mri_convert ${prefix}_mcribs/mri/aseg.presurf.preunwmfix.mgz ${prefix}_aseg_presurf.nii.gz
 
+    # If aparc+aseg.mgz exists, convert it to nii.gz.
+    if [ -f "${prefix}_mcribs/mri/aparc+aseg.mgz" ]; then
+        mri_convert ${prefix}_mcribs/mri/aparc+aseg.mgz ${prefix}_mcribs/mri/aparc+aseg.nii.gz
+    fi
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         mcribs: 2.1.0
