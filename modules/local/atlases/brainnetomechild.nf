@@ -37,7 +37,10 @@ process ATLASES_BRAINNETOMECHILD {
 
     # Symlink the fsaverage folder if it is not already there.
     if [ ! -d $folder/fsaverage ]; then
-        rm $folder/fsaverage
+        # Sometimes, when using freesurfer, there is an empty fsaverage file.
+        if [ -f $folder/fsaverage ]; then
+            rm $folder/fsaverage
+        fi
         ln -s \$(readlink -e $utils/fsaverage) $folder/
     fi
 

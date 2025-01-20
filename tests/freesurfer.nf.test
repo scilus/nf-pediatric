@@ -2,7 +2,7 @@ nextflow_pipeline {
 
     options "-stub-run"
 
-    name "Test nf-pediatric profile freesurfer"
+    name "Test nf-pediatric profile segmentation"
     script "../main.nf"
 
     test("Segmentation profile - freesurfer - should run successfully") {
@@ -78,7 +78,7 @@ nextflow_pipeline {
         }
     }
 
-    test("Freesurfer profile - without license - should fail") {
+    test("Segmentation profile - without license - should fail") {
 
         when {
             params {
@@ -98,7 +98,7 @@ nextflow_pipeline {
         }
     }
 
-    test("Freesurfer profile - wrong license path - should fail") {
+    test("Segmentation profile - wrong license path - should fail") {
 
         when {
             params {

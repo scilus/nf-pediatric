@@ -2,7 +2,7 @@ nextflow_pipeline {
 
     options "-stub-run"
 
-    name "Test nf-pediatric profile freesurfer"
+    name "Test nf-pediatric profile segmentation"
     script "../main.nf"
 
     test("Segmentation profile - MCRIBS Infant - should run successfully") {
