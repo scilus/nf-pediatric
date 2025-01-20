@@ -1,4 +1,4 @@
-# nf/pediatric: Output
+# nf-neuro/nf-pediatric: Output
 
 ## Introduction
 
