@@ -158,7 +158,7 @@ nextflow_pipeline {
         }
     }
 
-    test("Tracking profile with infant data - should run successfully") {
+    test("Tracking profile with infant data only T2 - should run successfully") {
 
         when {
             params {
@@ -168,6 +168,7 @@ nextflow_pipeline {
 
                 params.tracking = true
                 params.infant = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
                 // ** Infant specific parameters ** //
                 params.dwi_run_synthstrip               = true
@@ -203,16 +204,17 @@ nextflow_pipeline {
         }
     }
 
-    test("Tracking profile with infant data no wm mask - should fail") {
+    test("Tracking profile with infant data T2 and T1 - should run successfully") {
 
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_nowmmask.csv"
+                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant.csv"
                 params.outdir = "$outputDir"
 
                 params.tracking = true
                 params.infant = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
                 // ** Infant specific parameters ** //
                 params.dwi_run_synthstrip               = true
@@ -223,6 +225,7 @@ nextflow_pipeline {
                 params.run_pft_tracking                 = false
                 params.local_min_len                    = 15
                 params.local_fa_seeding_mask_threshold  = 0.10
+                params.run_local_tracking               = true
 
                 params.dti_shells = "0 1000"
                 params.fodf_shells = "0 1000"
@@ -231,8 +234,19 @@ nextflow_pipeline {
         }
 
         then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide a wmparc image for sample: sub-test")
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
         }
     }
 

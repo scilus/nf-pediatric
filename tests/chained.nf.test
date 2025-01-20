@@ -5,7 +5,7 @@ nextflow_pipeline {
     name "Test nf-pediatric all profiles chained"
     script "../main.nf"
 
-    test("Freesurfer + connectomics profiles - should run successfully") {
+    test("Segmentation + connectomics profiles - should run successfully") {
 
         when {
             params {
@@ -15,7 +15,7 @@ nextflow_pipeline {
                 use_fastsurfer = true
 
                 params.connectomics = true
-                params.freesurfer = true
+                params.segmentation = true
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
             }
@@ -76,7 +76,7 @@ nextflow_pipeline {
         }
     }
 
-    test("Connectomics + tracking + freesurfer profiles - should run successfully") {
+    test("Connectomics + tracking + segmentation profiles - should run successfully") {
 
         when {
             params {
@@ -86,7 +86,7 @@ nextflow_pipeline {
 
                 params.connectomics = true
                 params.tracking = true
-                params.freesurfer = true
+                params.segmentation = true
 
                 params.dti_shells = "0 1000"
                 params.fodf_shells = "0 1000"
@@ -151,7 +151,7 @@ nextflow_pipeline {
         }
     }
 
-    test("Connectomics + tracking + infant profiles - should run successfully") {
+    test("Connectomics + tracking + segmentation + infant profiles - should run successfully") {
 
         when {
             params {
@@ -162,6 +162,9 @@ nextflow_pipeline {
                 params.connectomics = true
                 params.tracking = true
                 params.infant = true
+                params.segmentation = true
+
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
                 // ** Infant specific parameters ** //
                 params.dwi_run_synthstrip               = true
@@ -172,6 +175,9 @@ nextflow_pipeline {
                 params.run_pft_tracking                 = false
                 params.local_min_len                    = 15
                 params.local_fa_seeding_mask_threshold  = 0.10
+
+                params.t1_run_synthstrip                = true
+                params.t2_run_synthstrip                = true
 
                 params.dti_shells = "0 1000"
                 params.fodf_shells = "0 1000"

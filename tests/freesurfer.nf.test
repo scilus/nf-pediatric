@@ -5,17 +5,17 @@ nextflow_pipeline {
     name "Test nf-pediatric profile freesurfer"
     script "../main.nf"
 
-    test("Freesurfer profile - freesurfer - should run successfully") {
+    test("Segmentation profile - freesurfer - should run successfully") {
 
         when {
             params {
 
-                input = "$projectDir/tests/data/samplesheet_testtracking.csv"
-                outdir = "$outputDir"
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "$outputDir"
 
-                use_fastsurfer = false
-                freesurfer = true
-                fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+                params.use_fastsurfer = false
+                params.segmentation = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
             }
         }
@@ -41,7 +41,7 @@ nextflow_pipeline {
         }
     }
 
-    test("Freesurfer profile - fastsurfer - should run successfully") {
+    test("Segmentation profile - fastsurfer - should run successfully") {
 
         when {
             params {
@@ -50,7 +50,7 @@ nextflow_pipeline {
                 params.outdir = "$outputDir"
                 params.fs_output_dir = "$outputDir/../onedirdown/fastsurfer-v2.3.3"
 
-                params.freesurfer = true
+                params.segmentation = true
                 params.use_fastsurfer = true
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
@@ -78,6 +78,46 @@ nextflow_pipeline {
         }
     }
 
+    test("Segmentation profile - MCRIBS Infant - should run successfully") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/samplesheet_testinfant_t1-t2.csv"
+                params.outdir = "$outputDir"
+                params.fs_output_dir = "$outputDir/../onedirdown/mcribs-2.1.0"
+
+                params.segmentation = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+
+                params.infant = true
+                params.t1_run_synthstrip = true
+                params.t2_run_synthstrip = true
+
+            }
+        }
+
+        then {
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            // All mcribs output.
+            def mcribs_output = getAllFilesFromDir(params.fs_output_dir, relative: true, includeDir: true)
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name,
+                    // All mcribs output.
+                    mcribs_output
+                ).match()
+            }
+        }
+    }
+
     test("Freesurfer profile - without license - should fail") {
 
         when {
@@ -86,7 +126,7 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
                 params.outdir = "$outputDir"
 
-                params.freesurfer = true
+                params.segmentation = true
                 params.use_fastsurfer = true
 
             }
@@ -106,7 +146,7 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
                 params.outdir = "$outputDir"
 
-                params.freesurfer = true
+                params.segmentation = true
                 params.use_fastsurfer = true
 
                 params.fs_license = "./not/a/valid/path/license.txt"
