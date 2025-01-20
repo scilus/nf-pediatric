@@ -153,13 +153,13 @@ workflow PIPELINE_INITIALISATION {
                     }
                     if (!rev_b0 && !params.skip_dwi_preprocessing) {
                         error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
-                    }
+                    } /*
                     if (!wmparc) {
                         error("Please provide a wmparc image for sample: ${meta.id}")
                     }
                     if (!labels) {
                         error("Please provide a labels image for sample: ${meta.id}")
-                    }
+                    } */
                 }
 
                 // ** Validate files for profile children with only tracking. ** //
@@ -275,9 +275,28 @@ workflow PIPELINE_INITIALISATION {
                 }
 
                 // ** Validate files for profile segmentation with tracking and connectomics ** //
-                if ( params.tracking && params.connectomics && params.segmentation ) {
+                if ( params.tracking && params.connectomics && params.segmentation && !params.infant ) {
                     if (!t1) {
                         error("Please provide a T1w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
+                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
+                    }
+                }
+
+                // ** Validate files for profile segmentation with tracking and connectomics (infant) ** //
+                if ( params.tracking && params.connectomics && params.segmentation && params.infant ) {
+                    if (!t2) {
+                        error("Please provide a T2w image for sample: ${meta.id}")
                     }
                     if (!dwi) {
                         error("Please provide a DWI image for sample: ${meta.id}")
