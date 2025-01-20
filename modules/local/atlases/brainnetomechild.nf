@@ -37,6 +37,7 @@ process ATLASES_BRAINNETOMECHILD {
 
     # Symlink the fsaverage folder if it is not already there.
     if [ ! -d $folder/fsaverage ]; then
+        rm $folder/fsaverage
         ln -s \$(readlink -e $utils/fsaverage) $folder/
     fi
 
