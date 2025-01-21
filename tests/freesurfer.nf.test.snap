@@ -61,7 +61,7 @@
             6,
             {
                 "FASTSURFER": {
-                    "fastsurfer": "2.2.0+9f37d02"
+                    "fastsurfer": "2.3.3+bd65b36"
                 },
                 "Workflow": {
                     "nf/pediatric": "v1.0dev"

@@ -16,7 +16,7 @@
                     "mrtrix": "3.0.4"
                 },
                 "FASTSURFER": {
-                    "fastsurfer": "2.2.0+9f37d02"
+                    "fastsurfer": "2.3.3+bd65b36"
                 },
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
@@ -469,7 +469,7 @@
                     "scilpy": "2.0.2"
                 },
                 "FASTSURFER": {
-                    "fastsurfer": "2.2.0+9f37d02"
+                    "fastsurfer": "2.3.3+bd65b36"
                 },
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
