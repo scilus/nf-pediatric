@@ -23,7 +23,6 @@ dependencies:
   - tensorboard=2.12.1
   - tqdm=4.65.0
   - yacs=0.1.8
-  - pip
   - pip:
     - --extra-index-url https://download.pytorch.org/whl/cu117
     - simpleitk==2.2.1
