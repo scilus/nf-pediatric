@@ -1,6 +1,6 @@
 process SEGMENTATION_FSRECONALL {
     tag "$meta.id"
-    label 'process_single'
+    label 'process_high'
 
     // Note. Freesurfer is already on Docker. See documentation on
     // https://hub.docker.com/r/freesurfer/freesurfer

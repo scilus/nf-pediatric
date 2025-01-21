@@ -94,10 +94,10 @@ workflow PIPELINE_INITIALISATION {
                     }
                     if (!rev_b0 && !params.skip_dwi_preprocessing) {
                         error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
-                    }
+                    } /*
                     if (!wmparc) {
                         error("Please provide a wmparc image for sample: ${meta.id}")
-                    }
+                    } */
                 }
 
                 // ** Validate mandatory files for profile infant with connectomics. ** //
@@ -153,13 +153,13 @@ workflow PIPELINE_INITIALISATION {
                     }
                     if (!rev_b0 && !params.skip_dwi_preprocessing) {
                         error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
-                    }
+                    } /*
                     if (!wmparc) {
                         error("Please provide a wmparc image for sample: ${meta.id}")
                     }
                     if (!labels) {
                         error("Please provide a labels image for sample: ${meta.id}")
-                    }
+                    } */
                 }
 
                 // ** Validate files for profile children with only tracking. ** //
@@ -219,7 +219,7 @@ workflow PIPELINE_INITIALISATION {
                 }
 
                 // ** Validate files for profile children with tracking and connectomics. ** //
-                if ( params.tracking && params.connectomics && !params.infant && !params.freesurfer ) {
+                if ( params.tracking && params.connectomics && !params.infant && !params.segmentation ) {
                     if (!t1) {
                         error("Please provide a T1w image for sample: ${meta.id}")
                     }
@@ -240,8 +240,8 @@ workflow PIPELINE_INITIALISATION {
                     }
                 }
 
-                // ** Validate files for profile freesurfer with connectomics ** //
-                if ( params.connectomics && !params.tracking && params.freesurfer ) {
+                // ** Validate files for profile segmentation with connectomics ** //
+                if ( params.connectomics && !params.tracking && params.segmentation ) {
                     if (!t1) {
                         error("Please provide a T1w image for sample: ${meta.id}")
                     }
@@ -274,10 +274,29 @@ workflow PIPELINE_INITIALISATION {
                     }
                 }
 
-                // ** Validate files for profile freesurfer with tracking and connectomics ** //
-                if ( params.tracking && params.connectomics && params.freesurfer ) {
+                // ** Validate files for profile segmentation with tracking and connectomics ** //
+                if ( params.tracking && params.connectomics && params.segmentation && !params.infant ) {
                     if (!t1) {
                         error("Please provide a T1w image for sample: ${meta.id}")
+                    }
+                    if (!dwi) {
+                        error("Please provide a DWI image for sample: ${meta.id}")
+                    }
+                    if (!bval) {
+                        error("Please provide a bval file for sample: ${meta.id}")
+                    }
+                    if (!bvec) {
+                        error("Please provide a bvec file for sample: ${meta.id}")
+                    }
+                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
+                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
+                    }
+                }
+
+                // ** Validate files for profile segmentation with tracking and connectomics (infant) ** //
+                if ( params.tracking && params.connectomics && params.segmentation && params.infant ) {
+                    if (!t2) {
+                        error("Please provide a T2w image for sample: ${meta.id}")
                     }
                     if (!dwi) {
                         error("Please provide a DWI image for sample: ${meta.id}")
@@ -367,7 +386,7 @@ def toolCitationText() {
             "FSL (Jenkinson et al., 2011)",
             "ANTs (Tustison et al., 2021)",
             params.use_fastsurfer ? "FastSurfer (Henschel et al., 2020)" : "",
-            params.freesurfer ? "FreeSurfer (Fischl, B. 2012)" : "",
+            params.segmentation ? "FreeSurfer (Fischl, B. 2012)" : "",
             "MultiQC (Ewels et al., 2016)",
             "."
         ].join(' ').trim()
@@ -383,7 +402,7 @@ def toolBibliographyText() {
             "<li>Jenkinson, M., Beckmann, C. F., Behrens, T. E. J., Woolrich, M. W., & Smith, S. M. (2012). FSL. NeuroImage, 62(2), 782–790. https://doi.org/10.1016/j.neuroimage.2011.09.015</li>",
             "<li>Tustison, N. J., Cook, P. A., Holbrook, A. J., Johnson, H. J., Muschelli, J., Devenyi, G. A., Duda, J. T., Das, S. R., Cullen, N. C., Gillen, D. L., Yassa, M. A., Stone, J. R., Gee, J. C., & Avants, B. B. (2021). The ANTsX ecosystem for quantitative biological and medical imaging. Scientific Reports, 11(1), 9068. https://doi.org/10.1038/s41598-021-87564-6</li>",
             params.use_fastsurfer ? "<li>Henschel, L., Conjeti, S., Estrada, S., Diers, K., Fischl, B., & Reuter, M. (2020). FastSurfer—A fast and accurate deep learning based neuroimaging pipeline. NeuroImage, 219, 117012. https://doi.org/10.1016/j.neuroimage.2020.117012</li>" : "",
-            params.freesurfer ? "<li>Fischl, B. (2012). FreeSurfer. NeuroImage, 62(2), 774–781. https://doi.org/10.1016/j.neuroimage.2012.01.021</li>" : "",
+            params.segmentation ? "<li>Fischl, B. (2012). FreeSurfer. NeuroImage, 62(2), 774–781. https://doi.org/10.1016/j.neuroimage.2012.01.021</li>" : "",
             "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()
 

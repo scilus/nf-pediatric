@@ -49,7 +49,7 @@
             }
         },
         "freesurfer_options": {
-            "title": "FreeSurfer/FastSurfer Options",
+            "title": "Segmentation Options",
             "type": "object",
             "fa_icon": "fas fa-brain",
             "description": "Options for FreeSurfer and FastSurfer processing.",
@@ -84,6 +84,61 @@
                     "help_text": "Path to FreeSurfer output directory. This is where FreeSurfer will save its output files.",
                     "format": "directory-path",
                     "hidden": false
+                },
+                "mcribs_surf": {
+                    "type": "boolean",
+                    "description": "Use MCRIBS surface reconstruction.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "mcribs_jointhresh": {
+                    "type": "number",
+                    "description": "Join threshold used in the MCRIBS surface reconstruction step.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": true
+                },
+                "mcribs_fastcollision": {
+                    "type": "boolean",
+                    "description": "Use deformable fast collision test in the MCRIBS surface reconstruction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "mcribs_nopialoutside": {
+                    "type": "boolean",
+                    "description": "Do not ensure pial is outside of WM in the MCRIBS surface reconstruction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "mcribs_cortical": {
+                    "type": "boolean",
+                    "description": "Compute cortical ribbon, thickness, and parcellation on the surface using MCRIBS.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "mcribs_aparcaseg": {
+                    "type": "boolean",
+                    "description": "Use MCRIBS for the aparc+aseg segmentation.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "mcribs_stats": {
+                    "type": "boolean",
+                    "description": "Compute statistics for the cortical/subcortical parcellations.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "mcribs_seed": {
+                    "type": "number",
+                    "description": "Seed used in the MCRIBS surface reconstruction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1234,
+                    "hidden": true
                 }
             }
         },
@@ -102,13 +157,6 @@
                     "format": "directory-path",
                     "exists": true,
                     "hidden": true
-                },
-                "atlas_name": {
-                    "type": "string",
-                    "description": "Name of the atlas used in the pipeline, will be used for naming output files.",
-                    "fa_icon": "fas fa-map-marked-alt",
-                    "default": "BrainnetomeChild",
-                    "hidden": false
                 }
             }
         },
@@ -116,7 +164,7 @@
             "title": "T1 Processing Options",
             "type": "object",
             "fa_icon": "fas fa-brain",
-            "description": "Options for T1 processing.",
+            "description": "Options for T1 processing. In the case where you do not have a T1 image, those steps won't be run.",
             "help_text": "These options are used to configure the T1 processing steps in the pipeline. You can use these options to customise the behaviour of the T1 processing steps.",
             "properties": {
                 "t1_denoise_number_of_coils": {
@@ -193,6 +241,109 @@
                     "description": "Path to the template probability map to use in antsBet",
                     "fa_icon": "fas fa-brain",
                     "hidden": true
+                }
+            }
+        },
+        "t2_preprocessing_options": {
+            "title": "T2 Preprocessing Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for T2 preprocessing. In the case where you do not have a T2 image, those steps won't be run.",
+            "help_text": "These options are used to configure the T2 preprocessing steps in the pipeline. You can use these options to customise the behaviour of the T2 preprocessing steps.",
+            "properties": {
+                "t2_denoise_number_of_coils": {
+                    "type": "integer",
+                    "description": "Number of coils used in the T2 denoising step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t2_bias_bspline_knot_per_voxel": {
+                    "type": "number",
+                    "description": "Number of B-spline knots per voxel used in the T2 bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t2_bias_shrink_factor": {
+                    "type": "integer",
+                    "description": "Shrink factor used in the T2 bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t2_resample_voxel_size": {
+                    "type": "integer",
+                    "description": "Voxel size used in the T2 resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t2_resample_interp": {
+                    "type": "string",
+                    "description": "Interpolation method used in the T2 resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "lin",
+                    "hidden": true
+                },
+                "t2_run_synthstrip": {
+                    "type": "boolean",
+                    "description": "Run SynthStrip for brain extraction.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "t2_synthstrip_border": {
+                    "type": "integer",
+                    "description": "Border used in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t2_synthstrip_nocsf": {
+                    "type": "boolean",
+                    "description": "Do not use CSF in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "t2_synthstrip_weights": {
+                    "type": "string",
+                    "description": "Alternative weights used in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": null,
+                    "hidden": false
+                }
+            }
+        },
+        "coreg_options": {
+            "title": "Anatomical Co-registration Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for anatomical co-registration. Will only be performed if both T2w and T1w images are available.",
+            "help_text": "These options are used to configure the anatomical co-registration steps in the pipeline. You can use these options to customise the behaviour of the anatomical co-registration steps.",
+            "properties": {
+                "coreg_dimensionality": {
+                    "type": "integer",
+                    "description": "Dimensionality of the registered image.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 3,
+                    "hidden": true
+                },
+                "coreg_transform": {
+                    "type": "string",
+                    "description": "Transform used in the coregistration step. t: translation (1 stage), r: rigid (1 stage), a: rigid + affine (2 stages), s: rigid + affine + deformable syn (3 stages)",
+                    "fa_icon": "fas fa-brain",
+                    "default": "a",
+                    "choices": ["t", "r", "a", "s"],
+                    "hidden": false
+                },
+                "coreg_quick": {
+                    "type": "boolean",
+                    "description": "Use quick registration.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
                 }
             }
         },
@@ -1153,7 +1304,7 @@
                     "default": false,
                     "hidden": true
                 },
-                "freesurfer": {
+                "segmentation": {
                     "type": "boolean",
                     "description": "Perform FreeSurfer processing.",
                     "fa_icon": "fas fa-brain",
@@ -1320,6 +1471,12 @@
         },
         {
             "$ref": "#/$defs/t1_processing_options"
+        },
+        {
+            "$ref": "#/$defs/t2_preprocessing_options"
+        },
+        {
+            "$ref": "#/$defs/coreg_options"
         },
         {
             "$ref": "#/$defs/dwi_preprocessing_options"

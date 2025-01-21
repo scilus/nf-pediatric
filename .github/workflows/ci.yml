@@ -29,7 +29,7 @@ jobs:
       matrix:
         NXF_VER:
           - "24.10.0"
-          - "latest-everything"
+          - "latest"
         nf-test-version:
           - "0.9.0"
         profile:
@@ -40,6 +40,7 @@ jobs:
           - "connectomics.nf.test"
           - "tracking.nf.test"
           - "freesurfer.nf.test"
+          - "infantseg.nf.test"
           - "multisubjects.nf.test"
         isMaster:
           - ${{ github.base_ref == 'master' }}

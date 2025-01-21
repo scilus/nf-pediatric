@@ -2,20 +2,20 @@ nextflow_pipeline {
 
     options "-stub-run"
 
-    name "Test nf-pediatric profile freesurfer"
+    name "Test nf-pediatric profile segmentation"
     script "../main.nf"
 
-    test("Freesurfer profile - freesurfer - should run successfully") {
+    test("Segmentation profile - freesurfer - should run successfully") {
 
         when {
             params {
 
-                input = "$projectDir/tests/data/samplesheet_testtracking.csv"
-                outdir = "$outputDir"
+                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.outdir = "$outputDir"
 
-                use_fastsurfer = false
-                freesurfer = true
-                fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
+                params.use_fastsurfer = false
+                params.segmentation = true
+                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
             }
         }
@@ -41,7 +41,7 @@ nextflow_pipeline {
         }
     }
 
-    test("Freesurfer profile - fastsurfer - should run successfully") {
+    test("Segmentation profile - fastsurfer - should run successfully") {
 
         when {
             params {
@@ -50,7 +50,7 @@ nextflow_pipeline {
                 params.outdir = "$outputDir"
                 params.fs_output_dir = "$outputDir/../onedirdown/fastsurfer-v2.3.3"
 
-                params.freesurfer = true
+                params.segmentation = true
                 params.use_fastsurfer = true
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
@@ -78,7 +78,7 @@ nextflow_pipeline {
         }
     }
 
-    test("Freesurfer profile - without license - should fail") {
+    test("Segmentation profile - without license - should fail") {
 
         when {
             params {
@@ -86,7 +86,7 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
                 params.outdir = "$outputDir"
 
-                params.freesurfer = true
+                params.segmentation = true
                 params.use_fastsurfer = true
 
             }
@@ -98,7 +98,7 @@ nextflow_pipeline {
         }
     }
 
-    test("Freesurfer profile - wrong license path - should fail") {
+    test("Segmentation profile - wrong license path - should fail") {
 
         when {
             params {
@@ -106,7 +106,7 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
                 params.outdir = "$outputDir"
 
-                params.freesurfer = true
+                params.segmentation = true
                 params.use_fastsurfer = true
 
                 params.fs_license = "./not/a/valid/path/license.txt"

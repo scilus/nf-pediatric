@@ -36,8 +36,8 @@
                 "sub-test/anat",
                 "sub-test/anat/sub-test_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
                 "sub-test/dwi",
-                "sub-test/dwi/sub-test_desc-filtered_tracking.h5",
-                "sub-test/dwi/sub-test_desc-preproc_tracking.h5",
+                "sub-test/dwi/sub-test_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test/dwi/sub-test_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-len.npy",
                 "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-sc.npy",
                 "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-vol.npy",
@@ -55,9 +55,9 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-03T09:32:30.201203"
+        "timestamp": "2025-01-19T20:03:50.185582"
     },
     "Connectomics profile without metrics - should run successfully": {
         "content": [
@@ -96,8 +96,8 @@
                 "sub-test/anat",
                 "sub-test/anat/sub-test_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
                 "sub-test/dwi",
-                "sub-test/dwi/sub-test_desc-filtered_tracking.h5",
-                "sub-test/dwi/sub-test_desc-preproc_tracking.h5",
+                "sub-test/dwi/sub-test_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test/dwi/sub-test_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-len.npy",
                 "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-sc.npy",
                 "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-vol.npy",
@@ -115,9 +115,9 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-03T09:33:24.097959"
+        "timestamp": "2025-01-19T20:04:39.808131"
     },
     "Connectomics + infant profile - should run successfully": {
         "content": [
@@ -154,19 +154,19 @@
                 "pipeline_info/pipeline_software_mqc_versions.yml",
                 "sub-test",
                 "sub-test/anat",
-                "sub-test/anat/sub-test_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test/anat/sub-test_space-DWI_seg-DK_dseg.nii.gz",
                 "sub-test/dwi",
-                "sub-test/dwi/sub-test_desc-filtered_tracking.h5",
-                "sub-test/dwi/sub-test_desc-preproc_tracking.h5",
-                "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-len.npy",
-                "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-sc.npy",
-                "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-vol.npy",
+                "sub-test/dwi/sub-test_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test/dwi/sub-test_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test/dwi/sub-test_seg-DK_stat-len.npy",
+                "sub-test/dwi/sub-test_seg-DK_stat-sc.npy",
+                "sub-test/dwi/sub-test_seg-DK_stat-vol.npy",
                 "sub-test/figures",
                 "sub-test/figures/sub-test_gradients_mqc.png",
                 "sub-test/figures/sub-test_labels_mqc.png",
-                "sub-test/figures/sub-test_seg-BrainnetomeChild_stat-len.png",
-                "sub-test/figures/sub-test_seg-BrainnetomeChild_stat-sc.png",
-                "sub-test/figures/sub-test_seg-BrainnetomeChild_stat-vol.png",
+                "sub-test/figures/sub-test_seg-DK_stat-len.png",
+                "sub-test/figures/sub-test_seg-DK_stat-sc.png",
+                "sub-test/figures/sub-test_seg-DK_stat-vol.png",
                 "sub-test/multiqc",
                 "sub-test/multiqc/sub-test_multiqc_data",
                 "sub-test/multiqc/sub-test_multiqc_plots",
@@ -175,8 +175,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-03T09:34:32.422069"
+        "timestamp": "2025-01-20T07:58:35.839889"
     }
 }

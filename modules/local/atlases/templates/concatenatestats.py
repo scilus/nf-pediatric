@@ -40,13 +40,19 @@ for stat in ['volume', 'area', 'thickness', 'subcortical']:
             df = pd.concat([pd.read_csv(f, sep='\\t') for f in files], ignore_index=True)
             df.rename(columns={df.columns[0]: "Sample"}, inplace=True)
             if stat == "thickness":
-                df.drop(columns=["BrainSegVolNotVent", "eTIV", f"{hemi}_cluster94_{stat}",
-                                 f"{hemi}_MeanThickness_{stat}"], inplace=True)
+                # Specific to the Brainnetome atlas, drop some columns if they exist.
+                if "BrainSegVolNotVent" in df.columns:
+                    df.drop(columns=["BrainSegVolNotVent", "eTIV", f"{hemi}_cluster94_{stat}",
+                                    f"{hemi}_MeanThickness_{stat}"], inplace=True)
             elif stat == "area":
-                df.drop(columns=["BrainSegVolNotVent", "eTIV", f"{hemi}_cluster94_{stat}",
-                                 f"{hemi}_WhiteSurfArea_{stat}"], inplace=True)
+                # Specific to the Brainnetome atlas, drop some columns if they exist.
+                if "BrainSegVolNotVent" in df.columns:
+                    df.drop(columns=["BrainSegVolNotVent", "eTIV", f"{hemi}_cluster94_{stat}",
+                                    f"{hemi}_WhiteSurfArea_{stat}"], inplace=True)
             else:
-                df.drop(columns=["BrainSegVolNotVent", "eTIV", f"{hemi}_cluster94_{stat}"], inplace=True)
+                # Specific to the Brainnetome atlas, drop some columns if they exist.
+                if "BrainSegVolNotVent" in df.columns:
+                    df.drop(columns=["BrainSegVolNotVent", "eTIV", f"{hemi}_cluster94_{stat}"], inplace=True)
             df.columns = [col.replace(f"_{stat}", "") for col in df.columns]
             df.to_csv(f"cortical_{stat}_{hemi}.tsv", sep='\\t', index=False)
 

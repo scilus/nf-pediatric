@@ -27,7 +27,6 @@ process REGISTRATION_ANTS {
     def transform = task.ext.transform ? task.ext.transform : "s"
     def seed = task.ext.random_seed ? " -e " + task.ext.random_seed : "-e 1234"
 
-    if ( task.ext.threads ) args += "-n " + task.ext.threads
     if ( task.ext.initial_transform ) args += " -i " + task.ext.initial_transform
     if ( task.ext.histogram_bins ) args += " -r " + task.ext.histogram_bins
     if ( task.ext.spline_distance ) args += " -s " + task.ext.spline_distance
@@ -62,18 +61,14 @@ process REGISTRATION_ANTS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ants: antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/'
+        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/')
     END_VERSIONS
     """
 
     stub:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    antsRegistrationSyNQuick.sh -h
-    antsApplyTransforms -h
-
     touch ${prefix}__t1_warped.nii.gz
     touch ${prefix}__output1GenericAffine.mat
     touch ${prefix}__output0InverseAffine.mat
@@ -82,7 +77,17 @@ process REGISTRATION_ANTS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ants: antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/'
+        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/')
     END_VERSIONS
+
+    function handle_code () {
+    local code=\$?
+    ignore=( 1 )
+    exit \$([[ " \${ignore[@]} " =~ " \$code " ]] && echo 0 || echo \$code)
+    }
+    trap 'handle_code' ERR
+
+    antsRegistrationSyNQuick.sh -h
+    antsApplyTransforms -h
     """
 }

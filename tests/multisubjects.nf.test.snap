@@ -1,7 +1,7 @@
 {
     "All profiles with multiple subjects - infant - should run successfully": {
         "content": [
-            77,
+            95,
             {
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": 1.6
@@ -12,22 +12,17 @@
                 "CONNECTIVITY_VISUALIZE": {
                     "scilpy": "2.0.2"
                 },
-                "CROPT2": {
-                    "scilpy": "2.0.2"
-                },
-                "CROPWMMASK": {
-                    "scilpy": "2.0.2"
-                },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.4"
+                },
+                "DENOISING_NLMEANS": {
+                    "scilpy": "2.0.2"
                 },
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
                 },
-                "MASK_COMBINE": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "== mrthreshold 3.0.4 ==",
-                    "fsl": 6.0
+                "MASKS": {
+                    "scilpy": "2.0.2"
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -41,20 +36,14 @@
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
                 },
-                "REGISTRATION_ANTSAPPLYTRANSFORMS": {
-                    "ants": "2.4.3"
-                },
-                "RESAMPLE_T2": {
-                    "scilpy": "2.0.2"
-                },
-                "RESAMPLE_WMMASK": {
-                    "scilpy": "2.0.2"
-                },
                 "TRACKING_LOCALTRACKING": {
                     "scilpy": "2.0.2"
                 },
                 "TRACTOGRAM_DECOMPOSE": {
                     "scilpy": "2.0.2"
+                },
+                "TRANSFORMTISSUES": {
+                    "ants": "2.4.3"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3"
@@ -64,6 +53,12 @@
                 }
             },
             [
+                "cortical_area_lh.tsv",
+                "cortical_area_rh.tsv",
+                "cortical_thickness_lh.tsv",
+                "cortical_thickness_rh.tsv",
+                "cortical_volume_lh.tsv",
+                "cortical_volume_rh.tsv",
                 "multiqc",
                 "multiqc/global_multiqc_data",
                 "multiqc/global_multiqc_plots",
@@ -73,25 +68,35 @@
                 "sub-test1",
                 "sub-test1/anat",
                 "sub-test1/anat/sub-test1_desc-boundingbox.pkl",
+                "sub-test1/anat/sub-test1_desc-brain_mask.nii.gz",
                 "sub-test1/anat/sub-test1_desc-preproc_T2w.nii.gz",
                 "sub-test1/anat/sub-test1_from-T2w_to-dwi_affine.mat",
                 "sub-test1/anat/sub-test1_from-T2w_to-dwi_warp.nii.gz",
                 "sub-test1/anat/sub-test1_from-dwi_to-T2w_warp.nii.gz",
-                "sub-test1/anat/sub-test1_label-WM_desc-seeding_mask.nii.gz",
+                "sub-test1/anat/sub-test1_label-CSF_mask.nii.gz",
+                "sub-test1/anat/sub-test1_label-GM_mask.nii.gz",
                 "sub-test1/anat/sub-test1_label-WM_mask.nii.gz",
+                "sub-test1/anat/sub-test1_seg-DK_dseg.nii.gz",
+                "sub-test1/anat/sub-test1_seg-DK_stat-lh_area.tsv",
+                "sub-test1/anat/sub-test1_seg-DK_stat-lh_thickness.tsv",
+                "sub-test1/anat/sub-test1_seg-DK_stat-lh_volume.tsv",
+                "sub-test1/anat/sub-test1_seg-DK_stat-rh_area.tsv",
+                "sub-test1/anat/sub-test1_seg-DK_stat-rh_thickness.tsv",
+                "sub-test1/anat/sub-test1_seg-DK_stat-rh_volume.tsv",
+                "sub-test1/anat/sub-test1_seg-DK_stat-subcortical.tsv",
                 "sub-test1/anat/sub-test1_space-DWI_desc-preproc_T2w.nii.gz",
-                "sub-test1/anat/sub-test1_space-DWI_label-WM_desc-seeding_mask.nii.gz",
-                "sub-test1/anat/sub-test1_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test1/anat/sub-test1_space-DWI_seg-DK_dseg.nii.gz",
                 "sub-test1/dwi",
                 "sub-test1/dwi/sub-test1_desc-ad.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-afd_max.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-afd_sum.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-afd_total.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-brain_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_desc-csf_fodf.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-fa.nii.gz",
-                "sub-test1/dwi/sub-test1_desc-filtered_tracking.h5",
                 "sub-test1/dwi/sub-test1_desc-fodf.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-ga.nii.gz",
+                "sub-test1/dwi/sub-test1_desc-gm_fodf.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-local_tracking.trk",
                 "sub-test1/dwi/sub-test1_desc-md.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-mode.nii.gz",
@@ -101,19 +106,21 @@
                 "sub-test1/dwi/sub-test1_desc-preproc_dwi.bval",
                 "sub-test1/dwi/sub-test1_desc-preproc_dwi.bvec",
                 "sub-test1/dwi/sub-test1_desc-preproc_dwi.nii.gz",
-                "sub-test1/dwi/sub-test1_desc-preproc_tracking.h5",
                 "sub-test1/dwi/sub-test1_desc-pwdavg_dwi.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-rd.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-rgb.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-tensor.nii.gz",
+                "sub-test1/dwi/sub-test1_desc-wm_fodf.nii.gz",
                 "sub-test1/dwi/sub-test1_frf.txt",
-                "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-ad.npy",
-                "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-afd.npy",
-                "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-fa.npy",
-                "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-md.npy",
-                "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-mode.npy",
-                "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-nufo.npy",
-                "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-rd.npy",
+                "sub-test1/dwi/sub-test1_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test1/dwi/sub-test1_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test1/dwi/sub-test1_seg-DK_stat-ad.npy",
+                "sub-test1/dwi/sub-test1_seg-DK_stat-afd.npy",
+                "sub-test1/dwi/sub-test1_seg-DK_stat-fa.npy",
+                "sub-test1/dwi/sub-test1_seg-DK_stat-md.npy",
+                "sub-test1/dwi/sub-test1_seg-DK_stat-mode.npy",
+                "sub-test1/dwi/sub-test1_seg-DK_stat-nufo.npy",
+                "sub-test1/dwi/sub-test1_seg-DK_stat-rd.npy",
                 "sub-test1/dwi/sub-test1_space-DWI_label-seeding_desc-local_mask.nii.gz",
                 "sub-test1/dwi/sub-test1_space-DWI_label-tracking_desc-local_mask.nii.gz",
                 "sub-test1/figures",
@@ -121,13 +128,14 @@
                 "sub-test1/figures/sub-test1_gradients_mqc.png",
                 "sub-test1/figures/sub-test1_labels_mqc.png",
                 "sub-test1/figures/sub-test1_metrics_mqc.png",
-                "sub-test1/figures/sub-test1_seg-BrainnetomeChild_stat-ad.png",
-                "sub-test1/figures/sub-test1_seg-BrainnetomeChild_stat-afd.png",
-                "sub-test1/figures/sub-test1_seg-BrainnetomeChild_stat-fa.png",
-                "sub-test1/figures/sub-test1_seg-BrainnetomeChild_stat-md.png",
-                "sub-test1/figures/sub-test1_seg-BrainnetomeChild_stat-mode.png",
-                "sub-test1/figures/sub-test1_seg-BrainnetomeChild_stat-nufo.png",
-                "sub-test1/figures/sub-test1_seg-BrainnetomeChild_stat-rd.png",
+                "sub-test1/figures/sub-test1_seg-DK_stat-ad.png",
+                "sub-test1/figures/sub-test1_seg-DK_stat-afd.png",
+                "sub-test1/figures/sub-test1_seg-DK_stat-fa.png",
+                "sub-test1/figures/sub-test1_seg-DK_stat-md.png",
+                "sub-test1/figures/sub-test1_seg-DK_stat-mode.png",
+                "sub-test1/figures/sub-test1_seg-DK_stat-nufo.png",
+                "sub-test1/figures/sub-test1_seg-DK_stat-rd.png",
+                "sub-test1/figures/sub-test1_tissue_segmentation_mqc.png",
                 "sub-test1/multiqc",
                 "sub-test1/multiqc/sub-test1_multiqc_data",
                 "sub-test1/multiqc/sub-test1_multiqc_plots",
@@ -135,25 +143,39 @@
                 "sub-test2",
                 "sub-test2/anat",
                 "sub-test2/anat/sub-test2_desc-boundingbox.pkl",
+                "sub-test2/anat/sub-test2_desc-brain_mask.nii.gz",
+                "sub-test2/anat/sub-test2_desc-preproc_T1w.nii.gz",
                 "sub-test2/anat/sub-test2_desc-preproc_T2w.nii.gz",
+                "sub-test2/anat/sub-test2_from-T1w_to-T2w_affine.mat",
+                "sub-test2/anat/sub-test2_from-T2w_to-T1w_affine.mat",
                 "sub-test2/anat/sub-test2_from-T2w_to-dwi_affine.mat",
                 "sub-test2/anat/sub-test2_from-T2w_to-dwi_warp.nii.gz",
                 "sub-test2/anat/sub-test2_from-dwi_to-T2w_warp.nii.gz",
-                "sub-test2/anat/sub-test2_label-WM_desc-seeding_mask.nii.gz",
+                "sub-test2/anat/sub-test2_label-CSF_mask.nii.gz",
+                "sub-test2/anat/sub-test2_label-GM_mask.nii.gz",
                 "sub-test2/anat/sub-test2_label-WM_mask.nii.gz",
+                "sub-test2/anat/sub-test2_seg-DK_dseg.nii.gz",
+                "sub-test2/anat/sub-test2_seg-DK_stat-lh_area.tsv",
+                "sub-test2/anat/sub-test2_seg-DK_stat-lh_thickness.tsv",
+                "sub-test2/anat/sub-test2_seg-DK_stat-lh_volume.tsv",
+                "sub-test2/anat/sub-test2_seg-DK_stat-rh_area.tsv",
+                "sub-test2/anat/sub-test2_seg-DK_stat-rh_thickness.tsv",
+                "sub-test2/anat/sub-test2_seg-DK_stat-rh_volume.tsv",
+                "sub-test2/anat/sub-test2_seg-DK_stat-subcortical.tsv",
                 "sub-test2/anat/sub-test2_space-DWI_desc-preproc_T2w.nii.gz",
-                "sub-test2/anat/sub-test2_space-DWI_label-WM_desc-seeding_mask.nii.gz",
-                "sub-test2/anat/sub-test2_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test2/anat/sub-test2_space-DWI_seg-DK_dseg.nii.gz",
+                "sub-test2/anat/sub-test2_space-T2w_desc-preproc_T1w.nii.gz",
                 "sub-test2/dwi",
                 "sub-test2/dwi/sub-test2_desc-ad.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-afd_max.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-afd_sum.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-afd_total.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-brain_mask.nii.gz",
+                "sub-test2/dwi/sub-test2_desc-csf_fodf.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-fa.nii.gz",
-                "sub-test2/dwi/sub-test2_desc-filtered_tracking.h5",
                 "sub-test2/dwi/sub-test2_desc-fodf.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-ga.nii.gz",
+                "sub-test2/dwi/sub-test2_desc-gm_fodf.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-local_tracking.trk",
                 "sub-test2/dwi/sub-test2_desc-md.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-mode.nii.gz",
@@ -163,19 +185,21 @@
                 "sub-test2/dwi/sub-test2_desc-preproc_dwi.bval",
                 "sub-test2/dwi/sub-test2_desc-preproc_dwi.bvec",
                 "sub-test2/dwi/sub-test2_desc-preproc_dwi.nii.gz",
-                "sub-test2/dwi/sub-test2_desc-preproc_tracking.h5",
                 "sub-test2/dwi/sub-test2_desc-pwdavg_dwi.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-rd.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-rgb.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-tensor.nii.gz",
+                "sub-test2/dwi/sub-test2_desc-wm_fodf.nii.gz",
                 "sub-test2/dwi/sub-test2_frf.txt",
-                "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-ad.npy",
-                "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-afd.npy",
-                "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-fa.npy",
-                "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-md.npy",
-                "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-mode.npy",
-                "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-nufo.npy",
-                "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-rd.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test2/dwi/sub-test2_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-ad.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-afd.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-fa.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-md.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-mode.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-nufo.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-rd.npy",
                 "sub-test2/dwi/sub-test2_space-DWI_label-seeding_desc-local_mask.nii.gz",
                 "sub-test2/dwi/sub-test2_space-DWI_label-tracking_desc-local_mask.nii.gz",
                 "sub-test2/figures",
@@ -183,24 +207,26 @@
                 "sub-test2/figures/sub-test2_gradients_mqc.png",
                 "sub-test2/figures/sub-test2_labels_mqc.png",
                 "sub-test2/figures/sub-test2_metrics_mqc.png",
-                "sub-test2/figures/sub-test2_seg-BrainnetomeChild_stat-ad.png",
-                "sub-test2/figures/sub-test2_seg-BrainnetomeChild_stat-afd.png",
-                "sub-test2/figures/sub-test2_seg-BrainnetomeChild_stat-fa.png",
-                "sub-test2/figures/sub-test2_seg-BrainnetomeChild_stat-md.png",
-                "sub-test2/figures/sub-test2_seg-BrainnetomeChild_stat-mode.png",
-                "sub-test2/figures/sub-test2_seg-BrainnetomeChild_stat-nufo.png",
-                "sub-test2/figures/sub-test2_seg-BrainnetomeChild_stat-rd.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-ad.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-afd.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-fa.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-md.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-mode.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-nufo.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-rd.png",
+                "sub-test2/figures/sub-test2_tissue_segmentation_mqc.png",
                 "sub-test2/multiqc",
                 "sub-test2/multiqc/sub-test2_multiqc_data",
                 "sub-test2/multiqc/sub-test2_multiqc_plots",
-                "sub-test2/multiqc/sub-test2_multiqc_report.html"
+                "sub-test2/multiqc/sub-test2_multiqc_report.html",
+                "subcortical_volumes.tsv"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-03T09:41:26.277083"
+        "timestamp": "2025-01-20T10:25:26.402006"
     },
     "All profiles with multiple subjects - should run successfully": {
         "content": [
@@ -219,7 +245,7 @@
                     "mrtrix": "3.0.4"
                 },
                 "FASTSURFER": {
-                    "fastsurfer": "2.3.3+0000000"
+                    "fastsurfer": "2.3.3+bd65b36"
                 },
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
@@ -301,10 +327,11 @@
                 "sub-test1/dwi/sub-test1_desc-afd_sum.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-afd_total.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-brain_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_desc-csf_fodf.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-fa.nii.gz",
-                "sub-test1/dwi/sub-test1_desc-filtered_tracking.h5",
                 "sub-test1/dwi/sub-test1_desc-fodf.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-ga.nii.gz",
+                "sub-test1/dwi/sub-test1_desc-gm_fodf.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-local_tracking.trk",
                 "sub-test1/dwi/sub-test1_desc-md.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-mode.nii.gz",
@@ -315,11 +342,13 @@
                 "sub-test1/dwi/sub-test1_desc-preproc_dwi.bval",
                 "sub-test1/dwi/sub-test1_desc-preproc_dwi.bvec",
                 "sub-test1/dwi/sub-test1_desc-preproc_dwi.nii.gz",
-                "sub-test1/dwi/sub-test1_desc-preproc_tracking.h5",
                 "sub-test1/dwi/sub-test1_desc-rd.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-rgb.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-tensor.nii.gz",
+                "sub-test1/dwi/sub-test1_desc-wm_fodf.nii.gz",
                 "sub-test1/dwi/sub-test1_frf.txt",
+                "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-ad.npy",
                 "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-afd.npy",
                 "sub-test1/dwi/sub-test1_seg-BrainnetomeChild_stat-fa.npy",
@@ -380,10 +409,11 @@
                 "sub-test2/dwi/sub-test2_desc-afd_sum.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-afd_total.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-brain_mask.nii.gz",
+                "sub-test2/dwi/sub-test2_desc-csf_fodf.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-fa.nii.gz",
-                "sub-test2/dwi/sub-test2_desc-filtered_tracking.h5",
                 "sub-test2/dwi/sub-test2_desc-fodf.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-ga.nii.gz",
+                "sub-test2/dwi/sub-test2_desc-gm_fodf.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-local_tracking.trk",
                 "sub-test2/dwi/sub-test2_desc-md.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-mode.nii.gz",
@@ -394,11 +424,13 @@
                 "sub-test2/dwi/sub-test2_desc-preproc_dwi.bval",
                 "sub-test2/dwi/sub-test2_desc-preproc_dwi.bvec",
                 "sub-test2/dwi/sub-test2_desc-preproc_dwi.nii.gz",
-                "sub-test2/dwi/sub-test2_desc-preproc_tracking.h5",
                 "sub-test2/dwi/sub-test2_desc-rd.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-rgb.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-tensor.nii.gz",
+                "sub-test2/dwi/sub-test2_desc-wm_fodf.nii.gz",
                 "sub-test2/dwi/sub-test2_frf.txt",
+                "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-ad.npy",
                 "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-afd.npy",
                 "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_stat-fa.npy",
@@ -438,8 +470,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.1"
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-08T13:42:46.737348"
+        "timestamp": "2025-01-20T16:14:17.502015"
     }
 }

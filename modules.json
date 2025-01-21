@@ -139,7 +139,8 @@
                     "registration/ants": {
                         "branch": "main",
                         "git_sha": "43ec7aa8c9b19bcb2fde3999e9bb71e674130d5d",
-                        "installed_by": ["registration"]
+                        "installed_by": ["registration"],
+                        "patch": "modules/nf-neuro/registration/ants/registration-ants.diff"
                     },
                     "registration/antsapplytransforms": {
                         "branch": "main",
