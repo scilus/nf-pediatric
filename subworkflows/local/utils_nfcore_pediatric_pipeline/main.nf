@@ -16,6 +16,7 @@ include { completionSummary         } from '../../nf-core/utils_nfcore_pipeline'
 include { imNotification            } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE     } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NEXTFLOW_PIPELINE   } from '../../nf-core/utils_nextflow_pipeline'
+include { UTILS_BIDSLAYOUT          } from '../../../modules/local/utils/bidslayout'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,7 +32,8 @@ workflow PIPELINE_INITIALISATION {
     monochrome_logs   // boolean: Do not use coloured log outputs
     nextflow_cli_args //   array: List of positional nextflow CLI args
     outdir            //  string: The output directory where the results will be saved
-    input             //  string: Path to input samplesheet
+    input_bids        //  string: Path to input samplesheet
+    bids_script       //  string: Path to BIDS layout script
 
     main:
 
@@ -64,261 +66,59 @@ workflow PIPELINE_INITIALISATION {
     )
 
     //
+    // Some sanity checks for required inputs.
+    //
+    if (!input_bids && ( params.segmentation || params.tracking ) ) {
+        error "ERROR: Missing input BIDS folder. Please provide a BIDS folder using --input."
+    }
+
+    //
     // Create channel from input file provided through params.input
     //
+    if ( input_bids ) {
+        ch_bids_script = Channel.fromPath(bids_script)
+        ch_input_bids = Channel.fromPath(input_bids)
 
-    Channel
-        .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
-        .map {
-            meta, t1, t2, dwi, bval, bvec, rev_b0, labels, wmparc, trk, peaks, fodf, mat, warp, metrics ->
+        UTILS_BIDSLAYOUT( ch_input_bids, ch_bids_script )
+        ch_versions = ch_versions.mix(UTILS_BIDSLAYOUT.out.versions)
 
-                // ** Check if at least one anatomical image is provided, ** //
-                // ** regardless of the profile ** //
-                if (!t1 && !t2 ) {
-                    error("Please provide at least one anatomical image (T1w or T2w) for sample: ${meta.id}")
+        ch_inputs = UTILS_BIDSLAYOUT.out.layout
+            .flatMap{ layout ->
+                def json = new groovy.json.JsonSlurper().parseText(layout.getText())
+                json.collect { item ->
+                    def sid = "sub-" + item.subject
+
+                    def session = item.session ? "ses-" + item.session : ""
+                    def run = item.run ? "run-" + item.run : ""
+                    def age = item.age ?: ""
+
+                    item.each { _key, value ->
+                        if (value == 'todo') {
+                            error "ERROR ~ $sid contains missing files, please check the BIDS layout for this subject."
+                        }
+                    }
+
+                    return [
+                        [id: sid, session: session, run: run, age: age],
+                        item.t1 ? file(item.t1) : [],
+                        item.t2 ? file(item.t2) : [],
+                        item.dwi ? file(item.dwi) : [],
+                        item.bval ? file(item.bval) : [],
+                        item.bvec ? file(item.bvec) : [],
+                        item.rev_dwi ? file(item.rev_dwi) : [],
+                        item.rev_bval ? file(item.rev_bval) : [],
+                        item.rev_bvec ? file(item.rev_bvec) : [],
+                        item.rev_topup ? file(item.rev_topup) : []
+                    ]
                 }
-
-                // ** Validate mandatory images for profile infant with only tracking. ** //
-                if ( params.infant && params.tracking && !params.connectomics ) {
-                    if (!t2) {
-                        error("Please provide a T2w image for sample: ${meta.id}")
-                    }
-                    if (!dwi) {
-                        error("Please provide a DWI image for sample: ${meta.id}")
-                    }
-                    if (!bval) {
-                        error("Please provide a bval file for sample: ${meta.id}")
-                    }
-                    if (!bvec) {
-                        error("Please provide a bvec file for sample: ${meta.id}")
-                    }
-                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
-                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
-                    } /*
-                    if (!wmparc) {
-                        error("Please provide a wmparc image for sample: ${meta.id}")
-                    } */
-                }
-
-                // ** Validate mandatory files for profile infant with connectomics. ** //
-                if ( params.infant && params.connectomics && !params.tracking ) {
-                    if (!t2) {
-                        error("Please provide a T2w image for sample: ${meta.id}")
-                    }
-                    if (!dwi) {
-                        error("Please provide a DWI image for sample: ${meta.id}")
-                    }
-                    if (!bval) {
-                        error("Please provide a bval file for sample: ${meta.id}")
-                    }
-                    if (!bvec) {
-                        error("Please provide a bvec file for sample: ${meta.id}")
-                    }
-                    if (!labels) {
-                        error("Please provide a labels image for sample: ${meta.id}")
-                    }
-                    if (!trk) {
-                        error("Please provide a trk file for sample: ${meta.id}")
-                    }
-                    if (!peaks) {
-                        error("Please provide a peaks image for sample: ${meta.id}")
-                    }
-                    if (!fodf) {
-                        error("Please provide a fodf image for sample: ${meta.id}")
-                    }
-                    if (!mat) {
-                        error("Please provide a mat file for sample: ${meta.id}")
-                    }
-                    if (!warp) {
-                        error("Please provide a warp image for sample: ${meta.id}")
-                    }
-                    if (!metrics) {
-                        log.warn("You did not provide metric file for sample: ${meta.id}")
-                    }
-                }
-
-                // ** Validate files for profile infant with tracking and connectomics. ** //
-                if ( params.infant && params.tracking && params.connectomics ) {
-                    if (!t2) {
-                        error("Please provide a T2w image for sample: ${meta.id}")
-                    }
-                    if (!dwi) {
-                        error("Please provide a DWI image for sample: ${meta.id}")
-                    }
-                    if (!bval) {
-                        error("Please provide a bval file for sample: ${meta.id}")
-                    }
-                    if (!bvec) {
-                        error("Please provide a bvec file for sample: ${meta.id}")
-                    }
-                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
-                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
-                    } /*
-                    if (!wmparc) {
-                        error("Please provide a wmparc image for sample: ${meta.id}")
-                    }
-                    if (!labels) {
-                        error("Please provide a labels image for sample: ${meta.id}")
-                    } */
-                }
-
-                // ** Validate files for profile children with only tracking. ** //
-                if ( params.tracking && !params.connectomics && !params.infant ) {
-                    if (!t1) {
-                        error("Please provide a T1w image for sample: ${meta.id}")
-                    }
-                    if (!dwi) {
-                        error("Please provide a DWI image for sample: ${meta.id}")
-                    }
-                    if (!bval) {
-                        error("Please provide a bval file for sample: ${meta.id}")
-                    }
-                    if (!bvec) {
-                        error("Please provide a bvec file for sample: ${meta.id}")
-                    }
-                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
-                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
-                    }
-                }
-
-                // ** Validate files for profile children with connectomics. ** //
-                if ( params.connectomics && !params.tracking && !params.infant ) {
-                    if (!t1) {
-                        error("Please provide a T1w image for sample: ${meta.id}")
-                    }
-                    if (!dwi) {
-                        error("Please provide a DWI image for sample: ${meta.id}")
-                    }
-                    if (!bval) {
-                        error("Please provide a bval file for sample: ${meta.id}")
-                    }
-                    if (!bvec) {
-                        error("Please provide a bvec file for sample: ${meta.id}")
-                    }
-                    if (!labels) {
-                        error("Please provide a labels image for sample: ${meta.id}")
-                    }
-                    if (!trk) {
-                        error("Please provide a trk file for sample: ${meta.id}")
-                    }
-                    if (!peaks) {
-                        error("Please provide a peaks image for sample: ${meta.id}")
-                    }
-                    if (!fodf) {
-                        error("Please provide a fodf image for sample: ${meta.id}")
-                    }
-                    if (!mat) {
-                        error("Please provide a mat file for sample: ${meta.id}")
-                    }
-                    if (!warp) {
-                        error("Please provide a warp image for sample: ${meta.id}")
-                    }
-                    if (!metrics) {
-                        log.warn("You did not provide metric file for sample: ${meta.id}")
-                    }
-                }
-
-                // ** Validate files for profile children with tracking and connectomics. ** //
-                if ( params.tracking && params.connectomics && !params.infant && !params.segmentation ) {
-                    if (!t1) {
-                        error("Please provide a T1w image for sample: ${meta.id}")
-                    }
-                    if (!dwi) {
-                        error("Please provide a DWI image for sample: ${meta.id}")
-                    }
-                    if (!bval) {
-                        error("Please provide a bval file for sample: ${meta.id}")
-                    }
-                    if (!bvec) {
-                        error("Please provide a bvec file for sample: ${meta.id}")
-                    }
-                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
-                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
-                    }
-                    if (!labels) {
-                        error("Please provide a labels image for sample: ${meta.id}")
-                    }
-                }
-
-                // ** Validate files for profile segmentation with connectomics ** //
-                if ( params.connectomics && !params.tracking && params.segmentation ) {
-                    if (!t1) {
-                        error("Please provide a T1w image for sample: ${meta.id}")
-                    }
-                    if (!dwi) {
-                        error("Please provide a DWI image for sample: ${meta.id}")
-                    }
-                    if (!bval) {
-                        error("Please provide a bval file for sample: ${meta.id}")
-                    }
-                    if (!bvec) {
-                        error("Please provide a bvec file for sample: ${meta.id}")
-                    }
-                    if (!trk) {
-                        error("Please provide a trk file for sample: ${meta.id}")
-                    }
-                    if (!peaks) {
-                        error("Please provide a peaks image for sample: ${meta.id}")
-                    }
-                    if (!fodf) {
-                        error("Please provide a fodf image for sample: ${meta.id}")
-                    }
-                    if (!mat) {
-                        error("Please provide a mat file for sample: ${meta.id}")
-                    }
-                    if (!warp) {
-                        error("Please provide a warp image for sample: ${meta.id}")
-                    }
-                    if (!metrics) {
-                        log.warn("You did not provide metric file for sample: ${meta.id}")
-                    }
-                }
-
-                // ** Validate files for profile segmentation with tracking and connectomics ** //
-                if ( params.tracking && params.connectomics && params.segmentation && !params.infant ) {
-                    if (!t1) {
-                        error("Please provide a T1w image for sample: ${meta.id}")
-                    }
-                    if (!dwi) {
-                        error("Please provide a DWI image for sample: ${meta.id}")
-                    }
-                    if (!bval) {
-                        error("Please provide a bval file for sample: ${meta.id}")
-                    }
-                    if (!bvec) {
-                        error("Please provide a bvec file for sample: ${meta.id}")
-                    }
-                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
-                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
-                    }
-                }
-
-                // ** Validate files for profile segmentation with tracking and connectomics (infant) ** //
-                if ( params.tracking && params.connectomics && params.segmentation && params.infant ) {
-                    if (!t2) {
-                        error("Please provide a T2w image for sample: ${meta.id}")
-                    }
-                    if (!dwi) {
-                        error("Please provide a DWI image for sample: ${meta.id}")
-                    }
-                    if (!bval) {
-                        error("Please provide a bval file for sample: ${meta.id}")
-                    }
-                    if (!bvec) {
-                        error("Please provide a bvec file for sample: ${meta.id}")
-                    }
-                    if (!rev_b0 && !params.skip_dwi_preprocessing) {
-                        error("Please provide a reverse phase encoded B0 image for sample: ${meta.id}")
-                    }
-                }
-
-                return [ meta, t1, t2, dwi, bval, bvec, rev_b0, labels, wmparc, trk, peaks, fodf, mat, warp, metrics ]
-        }
-        .set { ch_samplesheet }
+            }
+    } else {
+        ch_inputs = Channel.empty()
+    }
 
     emit:
-    samplesheet = ch_samplesheet
-    versions    = ch_versions
+    input_bids      = ch_inputs
+    versions        = ch_versions
 }
 
 /*

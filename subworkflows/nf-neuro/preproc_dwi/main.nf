@@ -57,8 +57,12 @@ workflow PREPROC_DWI {
         //           join operations, so it can be recovered after execution
         ch_denoise_rev_dwi = ch_rev_dwi_bvalbvec.rev_dwi
             .map{ meta, dwi -> [ [id: "${meta.id}_rev", cache: meta], dwi, [] ] }
+            .branch {
+                withrev: it[1]
+                    return [ it[0], it[1], [] ]
+            }
 
-        DENOISE_REVDWI ( ch_denoise_rev_dwi )
+        DENOISE_REVDWI ( ch_denoise_rev_dwi.withrev )
         ch_versions = ch_versions.mix(DENOISE_REVDWI.out.versions.first())
 
         // ** Eddy Topup ** //

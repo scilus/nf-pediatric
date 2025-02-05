@@ -10,6 +10,7 @@ include { paramsSummaryMap                  } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc              } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML            } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_pediatric_pipeline'
+include { FETCH_DERIVATIVES                 } from '../subworkflows/local/utils/fetch_derivatives.nf'
 
 // ** Anatomical reconstruction ** //
 include { SEGMENTATION                    } from '../subworkflows/local/segmentation/segmentation'
@@ -71,7 +72,7 @@ include { BETCROP_ANTSBET } from '../modules/nf-neuro/betcrop/antsbet/main.nf'
 workflow PEDIATRIC {
 
     take:
-    ch_samplesheet // channel: samplesheet read in from --input
+    ch_input_bids    // channel: from --input_bids
 
     main:
 
@@ -81,20 +82,13 @@ workflow PEDIATRIC {
     //
     // Decomposing the samplesheet into individual channels
     //
-    ch_inputs = ch_samplesheet
-        .multiMap{ meta, t1, t2, dwi, bval, bvec, rev_b0, labels, wmparc, trk, peaks, fodf, mat, warp, metrics ->
+    ch_inputs = ch_input_bids
+        .multiMap{ meta, t1, t2, dwi, bval, bvec, rev_dwi, rev_bval, rev_bvec, rev_b0 ->
             t1: [meta, t1]
             t2: [meta, t2]
             dwi_bval_bvec: [meta, dwi, bval, bvec]
             rev_b0: [meta, rev_b0]
-            labels: [meta, labels]
-            wmparc: [meta, wmparc]
-            trk: [meta, trk]
-            peaks: [meta, peaks]
-            fodf: [meta, fodf]
-            mat: [meta, mat]
-            warp: [meta, warp]
-            metrics: [meta, metrics]
+            rev_dwi_bval_bvec: [meta, rev_dwi, rev_bval, rev_bvec]
         }
 
     // ** Check if T1 is provided ** //
@@ -240,7 +234,7 @@ workflow PEDIATRIC {
 
             PREPROC_DWI(
                 ch_inputs.dwi_bval_bvec,
-                Channel.empty(),
+                ch_inputs.rev_dwi_bval_bvec,
                 Channel.empty(),
                 ch_inputs.rev_b0,
                 ch_topup_config,
@@ -474,14 +468,8 @@ workflow PEDIATRIC {
 
     if ( params.connectomics ) {
 
-        if ( params.segmentation ) {
-
-            ch_labels = SEGMENTATION.out.labels
-
-        } else {
-
-            ch_labels = ch_inputs.labels
-
+        if ( params.input_deriv ) {
+            FETCH_DERIVATIVES ( params.input_deriv )
         }
 
         if ( params.tracking ) {
@@ -503,46 +491,40 @@ workflow PEDIATRIC {
                 .map{ meta, fa, md, ad, rd, mode, afd_total, nufo ->
                     tuple(meta, [ fa, md, ad, rd, mode, afd_total, nufo ])}
 
-            ch_provided_metrics = ch_inputs.metrics
-                .map { meta, metrics ->
-                    def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') && it.name != '*.nii.gz' }
-                    return [meta, metrics_files]
-                }
-                .filter { it[1].size() > 0 }
+        } else {
 
-            ch_metrics = ch_metrics.join(ch_provided_metrics, remainder: true)
-                .map { meta, defmet, provmet ->
-                    def met = provmet ? tuple(meta, defmet + provmet) : tuple(meta, defmet)
-                    return met
-                }
+            FETCH_DERIVATIVES ( params.input_deriv )
+
+            ch_trk = FETCH_DERIVATIVES.out.trk
+            ch_transforms = FETCH_DERIVATIVES.out.transforms
+            ch_peaks = FETCH_DERIVATIVES.out.peaks
+            ch_fodf = FETCH_DERIVATIVES.out.fodf
+            ch_dwi_bval_bvec = FETCH_DERIVATIVES.out.dwi_bval_bvec
+            ch_anat = FETCH_DERIVATIVES.out.anat
+            ch_metrics = FETCH_DERIVATIVES.out.metrics
+
+        }
+
+        if ( params.segmentation ) {
+
+            ch_labels = SEGMENTATION.out.labels
 
         } else {
 
-            ch_trk = ch_inputs.trk
-            ch_transforms = ch_inputs.warp
-                .join(ch_inputs.mat)
-            ch_peaks = ch_inputs.peaks
-            ch_fodf = ch_inputs.fodf
-            ch_dwi_bval_bvec = ch_inputs.dwi_bval_bvec
-
-            if ( params.infant ) {
-                ch_anat = ch_inputs.t2
-            } else {
-                ch_anat = ch_inputs.t1
-            }
-
-            ch_metrics = ch_inputs.metrics
-                .map { meta, metrics ->
-                    def metrics_files = file("$metrics/*.nii.gz").findAll { it.name.endsWith('.nii.gz') && it.name != '*.nii.gz' }
-                    return [meta, metrics_files]
-                }
-                .filter { it[1] }
+            ch_labels = FETCH_DERIVATIVES.out.labels
 
         }
         //
         // MODULE : Run AntsApplyTransforms.
         //
-        ch_antsapply = ch_labels
+        ch_labels = ch_labels.branch {
+            reg: it.size() > 2
+                return [it[0], it[2]]
+            notreg: it.size() < 3
+                return [it[0], it[1]]
+        }
+
+        ch_antsapply = ch_labels.notreg
             .join(ch_anat)
             .join(ch_transforms)
 
@@ -554,7 +536,15 @@ workflow PEDIATRIC {
         // MODULE: Run DECOMPOSE.
         //
         ch_decompose = ch_trk
-            .join(TRANSFORM_LABELS.out.warped_image)
+            .join(ch_labels.reg, remainder: true)
+            .map { id, trk, reg_label ->
+                reg_label ? [id, trk, reg_label] : [id, trk, null]
+            }
+            .join(TRANSFORM_LABELS.out.warped_image.map { id, warped -> [id, warped] }, remainder: true)
+            .map { id, trk, reg_label, warped_label ->
+                def label = reg_label ?: warped_label
+                [id, trk, label]
+            }
 
         TRACTOGRAM_DECOMPOSE ( ch_decompose )
         ch_versions = ch_versions.mix(TRACTOGRAM_DECOMPOSE.out.versions.first())
@@ -585,10 +575,17 @@ workflow PEDIATRIC {
         // MODULE: Run CONNECTIVITY_METRICS
         //
         ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
-            .join(TRANSFORM_LABELS.out.warped_image)
+            .join(ch_labels.reg, remainder: true)
+            .map { id, trk, reg_label ->
+                reg_label ? [id, trk, reg_label] : [id, trk, null]
+            }
+            .join(TRANSFORM_LABELS.out.warped_image.map { id, warped -> [id, warped] }, remainder: true)
+            .map { id, trk, reg_label, warped_label ->
+                def label = reg_label ?: warped_label
+                [id, trk, label]
+            }
             .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
-            .join(ch_metrics, remainder: true)
-            .map{ it[0..3] + [it[4] ?: []] }
+            .join(ch_metrics)
 
         CONNECTIVITY_METRICS ( ch_metrics_conn )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())
@@ -604,6 +601,12 @@ workflow PEDIATRIC {
         ch_versions = ch_versions.mix(CONNECTIVITY_VISUALIZE.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(CONNECTIVITY_VISUALIZE.out.zip.collect{it[1]})
 
+        ch_labels_qc = ch_labels.reg
+            .join(TRANSFORM_LABELS.out.warped_image.map { id, warped -> [id, warped] }, remainder: true)
+            .map { id, reg_label, warped_label ->
+                def label = reg_label ?: warped_label
+                [id, label]
+            }
     }
 
     //
@@ -628,15 +631,15 @@ workflow PEDIATRIC {
     } else if (!params.infant && params.segmentation ) {
         ch_anat_qc = SEGMENTATION.out.t1
     } else {
-        ch_anat_qc = params.infant ? ch_inputs.t2 : ch_inputs.t1
+        ch_anat_qc = ch_anat
     }
 
     QC (
         ch_anat_qc,
         ch_tissueseg,
-        params.connectomics ? TRANSFORM_LABELS.out.warped_image : params.segmentation ? SEGMENTATION.out.labels : Channel.empty(),
+        params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : Channel.empty(),
         params.connectomics ? FILTERING_COMMIT.out.trk : params.tracking ? ch_trk : Channel.empty(),
-        params.tracking || params.connectomics ? ch_inputs.dwi_bval_bvec : Channel.empty(),
+        params.tracking ? ch_inputs.dwi_bval_bvec : params.connectomics ? ch_dwi_bval_bvec : Channel.empty(),
         params.tracking ? RECONST_DTIMETRICS.out.fa : Channel.empty(),
         params.tracking ? RECONST_DTIMETRICS.out.md : Channel.empty(),
         params.tracking ? RECONST_FODF.out.nufo : Channel.empty(),

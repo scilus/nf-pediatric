@@ -10,11 +10,14 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.input = "$projectDir/tests/data/bids-revb0/"
                 params.outdir = "$outputDir"
 
                 params.dti_shells = "0 1000"
                 params.fodf_shells = "0 1000"
+
+                params.run_pft_tracking = true
+                params.run_local_tracking = true
 
                 params.tracking = true
 
@@ -43,7 +46,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
+                params.input = "$projectDir/tests/data/bids-revb0/"
                 params.outdir = "$outputDir"
 
                 params.dti_shells = "0 1000"
@@ -72,98 +75,12 @@ nextflow_pipeline {
         }
     }
 
-    test("Tracking profile no rev b0 - should fail") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
-                params.outdir = "$outputDir"
-
-                params.tracking = true
-
-                params.dti_shells = "0 1000"
-                params.fodf_shells = "0 1000"
-
-            }
-        }
-
-        then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
-        }
-    }
-
-    test("Tracking profile no dti shells - should fail") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
-                params.outdir = "$outputDir"
-
-                params.tracking = true
-
-                params.fodf_shells = "0 1000"
-
-            }
-        }
-
-        then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide the DTI shells using --dti_shells parameter")
-        }
-    }
-
-    test("Tracking profile no fodf shells - should fail") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_norev.csv"
-                params.outdir = "$outputDir"
-
-                params.tracking = true
-
-                params.dti_shells = "0 1000"
-
-            }
-        }
-
-        then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide the FODF shells using --fodf_shells parameter")
-        }
-    }
-
-    test("Tracking profile no dwi - should fail") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_nodwi.csv"
-                params.outdir = "$outputDir"
-
-                params.dti_shells = "0 1000"
-                params.fodf_shells = "0 1000"
-
-                params.tracking = true
-
-            }
-        }
-
-        then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide a DWI image for sample: sub-test")
-        }
-    }
-
     test("Tracking profile with infant data only T2 - should run successfully") {
 
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant.csv"
+                params.input = "$projectDir/tests/data/bids-revdwi/"
                 params.outdir = "$outputDir"
 
                 params.tracking = true
@@ -209,7 +126,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant.csv"
+                params.input = "$projectDir/tests/data/bids-infant/"
                 params.outdir = "$outputDir"
 
                 params.tracking = true
@@ -217,6 +134,7 @@ nextflow_pipeline {
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
                 // ** Infant specific parameters ** //
+                params.t2_run_synthstrip                = true
                 params.dwi_run_synthstrip               = true
                 params.dwi_normalize_fa_mask_threshold  = 0.10
                 params.fodf_max_fa_threshold            = 0.01
@@ -247,72 +165,6 @@ nextflow_pipeline {
                     stable_name
                 ).match()
             }
-        }
-    }
-
-    test("Tracking profile with infant data no rev b0 - should fail") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_norev.csv"
-                params.outdir = "$outputDir"
-
-                params.tracking = true
-                params.infant = true
-
-                params.dti_shells = "0 1000"
-                params.fodf_shells = "0 1000"
-
-                // ** Infant specific parameters ** //
-                params.dwi_run_synthstrip               = true
-                params.dwi_normalize_fa_mask_threshold  = 0.10
-                params.fodf_max_fa_threshold            = 0.01
-                params.fodf_min_md_threshold            = 0.00185
-                params.frf_manual_frf                   = "12,5,5"
-                params.run_pft_tracking                 = false
-                params.local_min_len                    = 15
-                params.local_fa_seeding_mask_threshold  = 0.10
-
-            }
-        }
-
-        then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide a reverse phase encoded B0 image for sample: sub-test")
-        }
-    }
-
-    test("Tracking profile with infant data no t2 - should fail") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/samplesheet_testtracking_infant_not2.csv"
-                params.outdir = "$outputDir"
-
-                params.tracking = true
-                params.infant = true
-
-                params.dti_shells = "0 1000"
-                params.fodf_shells = "0 1000"
-
-                // ** Infant specific parameters ** //
-                params.dwi_run_synthstrip               = true
-                params.dwi_normalize_fa_mask_threshold  = 0.10
-                params.fodf_max_fa_threshold            = 0.01
-                params.fodf_min_md_threshold            = 0.00185
-                params.frf_manual_frf                   = "12,5,5"
-                params.run_pft_tracking                 = false
-                params.local_min_len                    = 15
-                params.local_fa_seeding_mask_threshold  = 0.10
-
-            }
-        }
-
-        then {
-            assert workflow.failed
-            assert workflow.stdout.contains("Please provide at least one anatomical image (T1w or T2w) for sample: sub-test")
         }
     }
 }

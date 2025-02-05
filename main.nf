@@ -28,7 +28,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_pedi
 workflow NF_PEDIATRIC {
 
     take:
-    samplesheet // channel: samplesheet read in from --input
+    input_bids  // channel: BIDS folder read in from --input
 
     main:
 
@@ -36,7 +36,7 @@ workflow NF_PEDIATRIC {
     // WORKFLOW: Run pipeline
     //
     PEDIATRIC (
-        samplesheet
+        input_bids
     )
     emit:
     multiqc_report = PEDIATRIC.out.multiqc_report // channel: /path/to/multiqc_report.html
@@ -59,14 +59,15 @@ workflow {
         params.monochrome_logs,
         args,
         params.outdir,
-        params.input
+        params.input,
+        params.bids_script
     )
 
     //
     // WORKFLOW: Run main workflow
     //
     NF_PEDIATRIC (
-        PIPELINE_INITIALISATION.out.samplesheet
+        PIPELINE_INITIALISATION.out.input_bids
     )
     //
     // SUBWORKFLOW: Run completion tasks

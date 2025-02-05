@@ -10,7 +10,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.input = "$projectDir/tests/data/bids-revb0"
                 params.outdir = "$outputDir"
 
                 params.use_fastsurfer = false
@@ -46,7 +46,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.input = "$projectDir/tests/data/bids-revb0"
                 params.outdir = "$outputDir"
                 params.fs_output_dir = "$outputDir/../onedirdown/fastsurfer-v2.3.3"
 
@@ -83,7 +83,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.input = "$projectDir/tests/data/bids-revb0"
                 params.outdir = "$outputDir"
 
                 params.segmentation = true
@@ -103,7 +103,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testtracking.csv"
+                params.input = "$projectDir/tests/data/bids-revb0"
                 params.outdir = "$outputDir"
 
                 params.segmentation = true

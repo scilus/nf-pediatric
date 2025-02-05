@@ -10,7 +10,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testinfant_t1-t2.csv"
+                params.input = "$projectDir/tests/data/bids-infant"
                 params.outdir = "$outputDir"
                 params.fs_output_dir = "$outputDir/../onedirdown/mcribs-2.1.0"
 
