@@ -1,6 +1,6 @@
 {
-    "name": "nf-neuro/nf-pediatric",
-    "homePage": "https://github.com/nf-neuro/nf-pediatric",
+    "name": "scilus/nf-pediatric",
+    "homePage": "https://github.com/scilus/nf-pediatric",
     "repos": {
         "https://github.com/nf-core/modules.git": {
             "modules": {

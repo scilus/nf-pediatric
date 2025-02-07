@@ -12,7 +12,7 @@
                 "CONNECTIVITY_VISUALIZE": {
                     "scilpy": "2.0.2"
                 },
-                "DENOISE_REVDWI": {
+                "DENOISE_DWI": {
                     "mrtrix": "3.0.4"
                 },
                 "DENOISING_NLMEANS": {
@@ -49,7 +49,7 @@
                     "ants": "2.4.3"
                 },
                 "Workflow": {
-                    "nf/pediatric": "v1.0dev"
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -64,7 +64,7 @@
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/pipeline_software_mqc_versions.yml",
+                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/anat",
                 "sub-test1/anat/sub-test1_desc-boundingbox.pkl",
@@ -227,7 +227,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-05T18:02:53.87182"
+        "timestamp": "2025-02-07T12:36:08.946496"
     },
     "All profiles with multiple subjects - should run successfully": {
         "content": [
@@ -281,7 +281,7 @@
                     "ants": "2.4.3"
                 },
                 "Workflow": {
-                    "nf/pediatric": "v1.0dev"
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -296,7 +296,7 @@
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/pipeline_software_mqc_versions.yml",
+                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/anat",
                 "sub-test1/anat/sub-test1_desc-preproc_T1w.nii.gz",
@@ -474,6 +474,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-05T17:59:22.886128"
+        "timestamp": "2025-02-07T12:33:37.104788"
     }
 }

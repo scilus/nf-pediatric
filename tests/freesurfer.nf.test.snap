@@ -7,7 +7,7 @@
                     "freesurfer": "7.4.1"
                 },
                 "Workflow": {
-                    "nf/pediatric": "v1.0dev"
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -22,7 +22,7 @@
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/pipeline_software_mqc_versions.yml",
+                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
                 "sub-test",
                 "sub-test/anat",
                 "sub-test/anat/sub-test_desc-preproc_T1w.nii.gz",
@@ -54,7 +54,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-04T23:08:08.314029"
+        "timestamp": "2025-02-07T12:20:19.787662"
     },
     "Segmentation profile - fastsurfer - should run successfully": {
         "content": [
@@ -64,7 +64,7 @@
                     "fastsurfer": "2.3.3+bd65b36"
                 },
                 "Workflow": {
-                    "nf/pediatric": "v1.0dev"
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -79,7 +79,7 @@
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/pipeline_software_mqc_versions.yml",
+                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
                 "sub-test",
                 "sub-test/anat",
                 "sub-test/anat/sub-test_desc-preproc_T1w.nii.gz",
@@ -111,6 +111,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-04T23:08:40.215335"
+        "timestamp": "2025-02-07T12:30:03.756059"
     }
 }

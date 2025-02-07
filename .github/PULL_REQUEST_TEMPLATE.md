@@ -1,14 +1,14 @@
 <!--
-# nf-neuro/nf-pediatric pull request
+# nf-pediatric pull request
 
-Many thanks for contributing to nf-neuro/nf-pediatric!
+Many thanks for contributing to nf-pediatric!
 
 Please fill in the appropriate checklist below (delete whatever is not relevant).
 These are the most common things requested on pull requests (PRs).
 
 Remember that PRs should be made against the dev branch, unless you're preparing a pipeline release.
 
-Learn more about contributing: [CONTRIBUTING.md](https://github.com/nf-neuro/nf-pediatric/tree/master/.github/CONTRIBUTING.md)
+Learn more about contributing: [CONTRIBUTING.md](https://github.com/scilus/nf-pediatric/tree/master/.github/CONTRIBUTING.md)
 -->
 
 ## PR checklist

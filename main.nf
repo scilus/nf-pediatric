@@ -13,7 +13,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { NF_PEDIATRIC  } from './workflows/nf-pediatric'
+include { PEDIATRIC  } from './workflows/pediatric'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
 
@@ -26,7 +26,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_nf-p
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow PEDIATRIC {
+workflow NF_PEDIATRIC {
 
     take:
     input_bids  // channel: BIDS folder read in from --input
