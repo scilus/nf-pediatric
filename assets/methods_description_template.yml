@@ -1,4 +1,4 @@
-id: "nf-pediatric-methods-description"
+id: "nf-neuro-nf-pediatric-methods-description"
 description: "Suggested text and references to use when describing pipeline usage within the methods section of a publication."
 section_name: "nf-pediatric Methods Description"
 section_href: "https://github.com/scilus/nf-pediatric"

@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf/pediatric/master/nextflow_schema.json",
-    "title": "nf/pediatric pipeline parameters",
-    "description": "nf-pediatric is a neuroimaging pipeline to process pediatric MRI data (including fMRI, dMRI, and sMRI) ranging from 0-18 years old.",
+    "$id": "https://raw.githubusercontent.com/nf-neuro/nf-pediatric/master/nextflow_schema.json",
+    "title": "nf-neuro/nf-pediatric pipeline parameters",
+    "description": "nf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.",
     "type": "object",
     "$defs": {
         "input_output_options": {
@@ -1467,6 +1467,12 @@
                     "description": "Base URL or local path to location of pipeline test dataset files",
                     "hidden": true,
                     "default": null
+                },
+                "trace_report_suffix": {
+                    "type": "string",
+                    "fa_icon": "far calendar",
+                    "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
+                    "hidden": true
                 }
             }
         }

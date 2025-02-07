@@ -9,7 +9,7 @@ include { MULTIQC as MULTIQC_GLOBAL         } from '../modules/nf-core/multiqc/m
 include { paramsSummaryMap                  } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc              } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML            } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_pediatric_pipeline'
+include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
 include { FETCH_DERIVATIVES                 } from '../subworkflows/local/utils/fetch_derivatives.nf'
 
 // ** Anatomical reconstruction ** //
@@ -69,7 +69,7 @@ include { BETCROP_ANTSBET } from '../modules/nf-neuro/betcrop/antsbet/main.nf'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow PEDIATRIC {
+workflow NF_PEDIATRIC {
 
     take:
     ch_input_bids    // channel: from --input_bids
@@ -663,7 +663,7 @@ workflow PEDIATRIC {
     softwareVersionsToYAML(ch_versions)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
-            name:  ''  + 'pipeline_software_' +  'mqc_'  + 'versions.yml',
+            name:  'nf-pediatric_software_'  + 'mqc_'  + 'versions.yml',
             sort: true,
             newLine: true
         ).set { ch_collated_versions }
