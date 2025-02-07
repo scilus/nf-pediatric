@@ -3,11 +3,11 @@
         "content": [
             20,
             {
-                "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
-                },
                 "Workflow": {
                     "scilus/nf-pediatric": "v1.0dev"
+                },
+                "DENOISING_NLMEANS": {
+                    "scilpy": "2.0.2"
                 }
             },
             [
@@ -58,6 +58,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T12:31:17.066027"
+        "timestamp": "2025-02-07T15:43:25.762213"
     }
 }
