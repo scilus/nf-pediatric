@@ -36,5 +36,5 @@ template:
   force: false
   is_nfcore: false
   name: nf-pediatric
-  org: nf-neuro
+  org: scilus
   outdir: .

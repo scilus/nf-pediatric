@@ -69,7 +69,7 @@ include { BETCROP_ANTSBET } from '../modules/nf-neuro/betcrop/antsbet/main.nf'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow NF_PEDIATRIC {
+workflow PEDIATRIC {
 
     take:
     ch_input_bids    // channel: from --input_bids
