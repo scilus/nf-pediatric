@@ -88,6 +88,7 @@ nextflow_pipeline {
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
                 // ** Infant specific parameters ** //
+                params.t2_run_synthstrip                = true
                 params.dwi_run_synthstrip               = true
                 params.dwi_normalize_fa_mask_threshold  = 0.10
                 params.fodf_max_fa_threshold            = 0.01
