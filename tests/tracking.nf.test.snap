@@ -3,9 +3,6 @@
         "content": [
             31,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
-                },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.4"
                 },
@@ -15,6 +12,12 @@
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
                 },
+                "RECONST_FODF": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FRF": {
+                    "scilpy": "2.0.2"
+                },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
                 },
@@ -22,18 +25,15 @@
                     "scilpy": "2.0.0",
                     "fsl": 6.0
                 },
-                "RECONST_FRF": {
-                    "scilpy": "2.0.2"
-                },
-                "RECONST_FODF": {
-                    "scilpy": "2.0.2"
-                },
                 "TRACKING_LOCALTRACKING": {
                     "scilpy": "2.0.2"
                 },
                 "TRACKING_PFTTRACKING": {
                     "scilpy": "2.0.2",
                     "mrtrix": "3.0.4"
+                },
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -104,34 +104,37 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T14:57:22.344643"
+        "timestamp": "2025-02-11T09:13:47.914784"
     },
     "Tracking profile with infant data T2 and T1 - should run successfully": {
         "content": [
             45,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
+                "APPLYTRANSFORMS": {
+                    "ants": "2.4.3"
                 },
-                "DENOISE_DWI": {
+                "COREG": {
+                    "ants": "2.4.3"
+                },
+                "DENOISE_REVDWI": {
                     "mrtrix": "3.0.4"
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
                 },
-                "COREG": {
-                    "ants": "2.4.3"
+                "MASKS": {
+                    "scilpy": "2.0.2"
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
                 },
-                "REGISTRATION_ANATTODWI": {
-                    "ants": "2.4.3"
+                "RECONST_FODF": {
+                    "scilpy": "2.0.2"
                 },
                 "RECONST_FRF": {
                     "scilpy": "2.0.2"
                 },
-                "APPLYTRANSFORMS": {
+                "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
                 },
                 "TISSUESEG": {
@@ -140,14 +143,11 @@
                     "fsl": 6.0,
                     "freesurfer": "7.1.1"
                 },
-                "MASKS": {
-                    "scilpy": "2.0.2"
-                },
-                "RECONST_FODF": {
-                    "scilpy": "2.0.2"
-                },
                 "TRACKING_LOCALTRACKING": {
                     "scilpy": "2.0.2"
+                },
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -218,29 +218,32 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T15:03:02.87979"
+        "timestamp": "2025-02-11T09:18:56.793986"
     },
     "Tracking profile with infant data only T2 - should run successfully": {
         "content": [
             37,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
-                },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.4"
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
                 },
+                "MASKS": {
+                    "scilpy": "2.0.2"
+                },
                 "RECONST_DTIMETRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FODF": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FRF": {
                     "scilpy": "2.0.2"
                 },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
-                },
-                "RECONST_FRF": {
-                    "scilpy": "2.0.2"
                 },
                 "TISSUESEG": {
                     "mcribs": "2.1.0",
@@ -248,14 +251,11 @@
                     "fsl": 6.0,
                     "freesurfer": "7.1.1"
                 },
-                "MASKS": {
-                    "scilpy": "2.0.2"
-                },
-                "RECONST_FODF": {
-                    "scilpy": "2.0.2"
-                },
                 "TRACKING_LOCALTRACKING": {
                     "scilpy": "2.0.2"
+                },
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -321,22 +321,16 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T15:00:58.979878"
+        "timestamp": "2025-02-11T09:16:52.695595"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
             23,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
+                "CROPDWI": {
+                    "scilpy": "2.0.2"
                 },
                 "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
-                },
-                "RESAMPLE_DWI": {
-                    "scilpy": "2.0.2"
-                },
-                "CROPDWI": {
                     "scilpy": "2.0.2"
                 },
                 "EXTRACTB0": {
@@ -346,18 +340,21 @@
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
                 },
+                "RECONST_FODF": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FRF": {
+                    "scilpy": "2.0.2"
+                },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
                 },
-                "RECONST_FRF": {
+                "RESAMPLE_DWI": {
                     "scilpy": "2.0.2"
                 },
                 "SEGMENTATION_FASTSEG": {
                     "scilpy": "2.0.0",
                     "fsl": 6.0
-                },
-                "RECONST_FODF": {
-                    "scilpy": "2.0.2"
                 },
                 "TRACKING_LOCALTRACKING": {
                     "scilpy": "2.0.2"
@@ -365,6 +362,9 @@
                 "TRACKING_PFTTRACKING": {
                     "scilpy": "2.0.2",
                     "mrtrix": "3.0.4"
+                },
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -435,6 +435,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T14:58:57.263118"
+        "timestamp": "2025-02-11T09:15:00.953259"
     }
 }

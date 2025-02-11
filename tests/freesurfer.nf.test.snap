@@ -3,11 +3,11 @@
         "content": [
             7,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
-                },
                 "RECONALL": {
                     "freesurfer": "7.4.1"
+                },
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -54,17 +54,17 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T15:44:07.339814"
+        "timestamp": "2025-02-11T09:04:48.720014"
     },
     "Segmentation profile - fastsurfer - should run successfully": {
         "content": [
             7,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
-                },
                 "FASTSURFER": {
                     "fastsurfer": "2.3.3+bd65b36"
+                },
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -111,6 +111,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T15:44:37.878788"
+        "timestamp": "2025-02-11T09:05:19.550467"
     }
 }

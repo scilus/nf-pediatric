@@ -3,8 +3,14 @@
         "content": [
             35,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
+                "CONNECTIVITY_AFDFIXEL": {
+                    "scilpy": 1.6
+                },
+                "CONNECTIVITY_METRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_VISUALIZE": {
+                    "scilpy": "2.0.2"
                 },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.4"
@@ -12,24 +18,24 @@
                 "FASTSURFER": {
                     "fastsurfer": "2.3.3+bd65b36"
                 },
+                "FILTERING_COMMIT": {
+                    "scilpy": 1.6
+                },
                 "RECONST_DTIMETRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FODF": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FRF": {
                     "scilpy": "2.0.2"
                 },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
                 },
-                "RECONST_FRF": {
-                    "scilpy": "2.0.2"
-                },
-                "TRANSFORM_LABELS": {
-                    "ants": "2.4.3"
-                },
                 "SEGMENTATION_FASTSEG": {
                     "scilpy": "2.0.0",
                     "fsl": 6.0
-                },
-                "RECONST_FODF": {
-                    "scilpy": "2.0.2"
                 },
                 "TRACKING_LOCALTRACKING": {
                     "scilpy": "2.0.2"
@@ -41,17 +47,11 @@
                 "TRACTOGRAM_DECOMPOSE": {
                     "scilpy": "2.0.2"
                 },
-                "FILTERING_COMMIT": {
-                    "scilpy": 1.6
+                "TRANSFORM_LABELS": {
+                    "ants": "2.4.3"
                 },
-                "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
-                },
-                "CONNECTIVITY_METRICS": {
-                    "scilpy": "2.0.2"
-                },
-                "CONNECTIVITY_VISUALIZE": {
-                    "scilpy": "2.0.2"
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -160,51 +160,12 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T15:09:26.319256"
+        "timestamp": "2025-02-11T09:00:21.687971"
     },
     "Connectomics + tracking + segmentation + infant profiles - should run successfully": {
         "content": [
             54,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
-                },
-                "DENOISE_REVDWI": {
-                    "mrtrix": "3.0.4"
-                },
-                "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
-                },
-                "RECONST_DTIMETRICS": {
-                    "scilpy": "2.0.2"
-                },
-                "REGISTRATION_ANATTODWI": {
-                    "ants": "2.4.3"
-                },
-                "TRANSFORMTISSUES": {
-                    "ants": "2.4.3"
-                },
-                "TRANSFORM_LABELS": {
-                    "ants": "2.4.3"
-                },
-                "RECONST_FRF": {
-                    "scilpy": "2.0.2"
-                },
-                "MASKS": {
-                    "scilpy": "2.0.2"
-                },
-                "RECONST_FODF": {
-                    "scilpy": "2.0.2"
-                },
-                "TRACKING_LOCALTRACKING": {
-                    "scilpy": "2.0.2"
-                },
-                "TRACTOGRAM_DECOMPOSE": {
-                    "scilpy": "2.0.2"
-                },
-                "FILTERING_COMMIT": {
-                    "scilpy": 1.6
-                },
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": 1.6
                 },
@@ -213,6 +174,45 @@
                 },
                 "CONNECTIVITY_VISUALIZE": {
                     "scilpy": "2.0.2"
+                },
+                "DENOISE_REVDWI": {
+                    "mrtrix": "3.0.4"
+                },
+                "DENOISING_NLMEANS": {
+                    "scilpy": "2.0.2"
+                },
+                "FILTERING_COMMIT": {
+                    "scilpy": 1.6
+                },
+                "MASKS": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_DTIMETRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FODF": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FRF": {
+                    "scilpy": "2.0.2"
+                },
+                "REGISTRATION_ANATTODWI": {
+                    "ants": "2.4.3"
+                },
+                "TRACKING_LOCALTRACKING": {
+                    "scilpy": "2.0.2"
+                },
+                "TRACTOGRAM_DECOMPOSE": {
+                    "scilpy": "2.0.2"
+                },
+                "TRANSFORMTISSUES": {
+                    "ants": "2.4.3"
+                },
+                "TRANSFORM_LABELS": {
+                    "ants": "2.4.3"
+                },
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -315,27 +315,12 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T15:11:53.803592"
+        "timestamp": "2025-02-11T09:02:21.862908"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
             14,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
-                },
-                "FASTSURFER": {
-                    "fastsurfer": "2.3.3+bd65b36"
-                },
-                "TRANSFORM_LABELS": {
-                    "ants": "2.4.3"
-                },
-                "TRACTOGRAM_DECOMPOSE": {
-                    "scilpy": "2.0.2"
-                },
-                "FILTERING_COMMIT": {
-                    "scilpy": 1.6
-                },
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": 1.6
                 },
@@ -344,6 +329,21 @@
                 },
                 "CONNECTIVITY_VISUALIZE": {
                     "scilpy": "2.0.2"
+                },
+                "FASTSURFER": {
+                    "fastsurfer": "2.3.3+bd65b36"
+                },
+                "FILTERING_COMMIT": {
+                    "scilpy": 1.6
+                },
+                "TRACTOGRAM_DECOMPOSE": {
+                    "scilpy": "2.0.2"
+                },
+                "TRANSFORM_LABELS": {
+                    "ants": "2.4.3"
+                },
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -399,14 +399,20 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T15:04:56.599478"
+        "timestamp": "2025-02-11T08:56:48.656587"
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
             38,
             {
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
+                "CONNECTIVITY_AFDFIXEL": {
+                    "scilpy": 1.6
+                },
+                "CONNECTIVITY_METRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_VISUALIZE": {
+                    "scilpy": "2.0.2"
                 },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.4"
@@ -414,24 +420,24 @@
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
                 },
+                "FILTERING_COMMIT": {
+                    "scilpy": 1.6
+                },
                 "RECONST_DTIMETRICS": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FODF": {
+                    "scilpy": "2.0.2"
+                },
+                "RECONST_FRF": {
                     "scilpy": "2.0.2"
                 },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
                 },
-                "TRANSFORM_LABELS": {
-                    "ants": "2.4.3"
-                },
-                "RECONST_FRF": {
-                    "scilpy": "2.0.2"
-                },
                 "SEGMENTATION_FASTSEG": {
                     "scilpy": "2.0.0",
                     "fsl": 6.0
-                },
-                "RECONST_FODF": {
-                    "scilpy": "2.0.2"
                 },
                 "TRACKING_LOCALTRACKING": {
                     "scilpy": "2.0.2"
@@ -443,17 +449,11 @@
                 "TRACTOGRAM_DECOMPOSE": {
                     "scilpy": "2.0.2"
                 },
-                "FILTERING_COMMIT": {
-                    "scilpy": 1.6
+                "TRANSFORM_LABELS": {
+                    "ants": "2.4.3"
                 },
-                "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
-                },
-                "CONNECTIVITY_METRICS": {
-                    "scilpy": "2.0.2"
-                },
-                "CONNECTIVITY_VISUALIZE": {
-                    "scilpy": "2.0.2"
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
@@ -542,6 +542,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-07T15:07:14.339537"
+        "timestamp": "2025-02-11T08:58:38.382298"
     }
 }
