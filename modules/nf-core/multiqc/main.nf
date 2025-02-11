@@ -2,9 +2,7 @@ process MULTIQC {
     tag "$meta.id"
     label 'process_single'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/multiqc:1.27--pyhdfd78af_0' :
-        'multiqc/multiqc:v1.27' }"
+    container "${ 'multiqc/multiqc:v1.27.1' }"
 
     input:
     tuple val(meta), path(qc_images)
