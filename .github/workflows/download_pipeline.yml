@@ -90,7 +90,7 @@ jobs:
           --container-system 'singularity' \
           --container-library "docker.io" \
           --container-cache-utilisation 'amend' \
-          --download-configuration 'yes'
+          --download-configuration 'no'
 
       - name: Inspect download
         run: tree ./${{ needs.configure.outputs.REPOTITLE_LOWERCASE }}
@@ -111,7 +111,7 @@ jobs:
         env:
           NXF_SINGULARITY_CACHEDIR: ./singularity_container_images
           NXF_SINGULARITY_HOME_MOUNT: true
-        run: nf-test test ${GITHUB_WORKSPACE}/tests/chained.nf.test --ci -profile singularity
+        run: nf-test test ${GITHUB_WORKSPACE}/tests/chained.nf.test --ci --profile singularity
 
       - name: Count the downloaded number of container images
         id: count_afterwards
