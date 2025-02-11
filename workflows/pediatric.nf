@@ -240,7 +240,7 @@ workflow PEDIATRIC {
                 ch_topup_config,
                 ch_dwi_weights
             )
-            ch_versions = ch_versions.mix(PREPROC_DWI.out.versions.first())
+            ch_versions = ch_versions.mix(PREPROC_DWI.out.versions)
             // ch_multiqc_files = ch_multiqc_files.mix(PREPROC_DWI.out.zip.collect{it[1]})
 
             // ** Setting outputs ** //

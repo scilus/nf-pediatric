@@ -3,11 +3,36 @@
         "content": [
             31,
             {
+                "BETCROP_FSLBETCROP": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4",
+                    "fsl": 6.0
+                },
+                "CROPB0": {
+                    "scilpy": "2.0.2"
+                },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.4"
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
+                },
+                "EXTRACTB0_RESAMPLE": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "N4_DWI": {
+                    "scilpy": "2.0.2",
+                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                },
+                "NORMALIZE_DWI": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "PREPROC_TOPUP": {
+                    "scilpy": "2.0.2",
+                    "ants": "2.4.3",
+                    "fsl": 6.0
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -20,6 +45,12 @@
                 },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
+                },
+                "RESAMPLE_DWI": {
+                    "scilpy": "2.0.2"
+                },
+                "RESAMPLE_MASK": {
+                    "scilpy": "2.0.2"
                 },
                 "SEGMENTATION_FASTSEG": {
                     "scilpy": "2.0.0",
@@ -104,7 +135,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-11T09:13:47.914784"
+        "timestamp": "2025-02-11T14:49:27.751075"
     },
     "Tracking profile with infant data T2 and T1 - should run successfully": {
         "content": [
@@ -113,8 +144,29 @@
                 "APPLYTRANSFORMS": {
                     "ants": "2.4.3"
                 },
+                "BETCROP_SYNTHBET": {
+                    "synthstrip": 1.5
+                },
+                "BET_DWI": {
+                    "mrtrix": "3.0.4"
+                },
+                "CONVERT": {
+                    "mrconvert": "3.0.4"
+                },
                 "COREG": {
                     "ants": "2.4.3"
+                },
+                "CROPB0": {
+                    "scilpy": "2.0.2"
+                },
+                "CROPDWI": {
+                    "scilpy": "2.0.2"
+                },
+                "CROPMASK": {
+                    "scilpy": "2.0.2"
+                },
+                "DENOISE_DWI": {
+                    "mrtrix": "3.0.4"
                 },
                 "DENOISE_REVDWI": {
                     "mrtrix": "3.0.4"
@@ -122,8 +174,28 @@
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
                 },
+                "EXTRACTB0_RESAMPLE": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "IMAGE_POWDERAVERAGE": {
+                    "scilpy": "2.0.2"
+                },
                 "MASKS": {
                     "scilpy": "2.0.2"
+                },
+                "N4_DWI": {
+                    "scilpy": "2.0.2",
+                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                },
+                "NORMALIZE_DWI": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "PREPROC_TOPUP": {
+                    "scilpy": "2.0.2",
+                    "ants": "2.4.3",
+                    "fsl": 6.0
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -136,6 +208,12 @@
                 },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
+                },
+                "RESAMPLE_DWI": {
+                    "scilpy": "2.0.2"
+                },
+                "RESAMPLE_MASK": {
+                    "scilpy": "2.0.2"
                 },
                 "TISSUESEG": {
                     "mcribs": "2.1.0",
@@ -218,20 +296,61 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-11T09:18:56.793986"
+        "timestamp": "2025-02-11T14:55:03.675403"
     },
     "Tracking profile with infant data only T2 - should run successfully": {
         "content": [
             37,
             {
+                "BETCROP_SYNTHBET": {
+                    "synthstrip": 1.5
+                },
+                "BET_DWI": {
+                    "mrtrix": "3.0.4"
+                },
+                "CONVERT": {
+                    "mrconvert": "3.0.4"
+                },
+                "CROPB0": {
+                    "scilpy": "2.0.2"
+                },
+                "CROPDWI": {
+                    "scilpy": "2.0.2"
+                },
+                "CROPMASK": {
+                    "scilpy": "2.0.2"
+                },
                 "DENOISE_DWI": {
+                    "mrtrix": "3.0.4"
+                },
+                "DENOISE_REVDWI": {
                     "mrtrix": "3.0.4"
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
                 },
+                "EXTRACTB0_RESAMPLE": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "IMAGE_POWDERAVERAGE": {
+                    "scilpy": "2.0.2"
+                },
                 "MASKS": {
                     "scilpy": "2.0.2"
+                },
+                "N4_DWI": {
+                    "scilpy": "2.0.2",
+                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                },
+                "NORMALIZE_DWI": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "PREPROC_TOPUP": {
+                    "scilpy": "2.0.2",
+                    "ants": "2.4.3",
+                    "fsl": 6.0
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -244,6 +363,12 @@
                 },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
+                },
+                "RESAMPLE_DWI": {
+                    "scilpy": "2.0.2"
+                },
+                "RESAMPLE_MASK": {
+                    "scilpy": "2.0.2"
                 },
                 "TISSUESEG": {
                     "mcribs": "2.1.0",
@@ -321,7 +446,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-11T09:16:52.695595"
+        "timestamp": "2025-02-11T14:52:52.390361"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [

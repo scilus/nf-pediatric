@@ -3,6 +3,11 @@
         "content": [
             35,
             {
+                "BETCROP_FSLBETCROP": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4",
+                    "fsl": 6.0
+                },
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": 1.6
                 },
@@ -12,7 +17,14 @@
                 "CONNECTIVITY_VISUALIZE": {
                     "scilpy": "2.0.2"
                 },
+                "CROPB0": {
+                    "scilpy": "2.0.2"
+                },
                 "DENOISE_DWI": {
+                    "mrtrix": "3.0.4"
+                },
+                "EXTRACTB0_RESAMPLE": {
+                    "scilpy": "2.0.2",
                     "mrtrix": "3.0.4"
                 },
                 "FASTSURFER": {
@@ -20,6 +32,19 @@
                 },
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
+                },
+                "N4_DWI": {
+                    "scilpy": "2.0.2",
+                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                },
+                "NORMALIZE_DWI": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "PREPROC_TOPUP": {
+                    "scilpy": "2.0.2",
+                    "ants": "2.4.3",
+                    "fsl": 6.0
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -32,6 +57,12 @@
                 },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
+                },
+                "RESAMPLE_DWI": {
+                    "scilpy": "2.0.2"
+                },
+                "RESAMPLE_MASK": {
+                    "scilpy": "2.0.2"
                 },
                 "SEGMENTATION_FASTSEG": {
                     "scilpy": "2.0.0",
@@ -160,12 +191,18 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-11T09:00:21.687971"
+        "timestamp": "2025-02-11T14:39:10.893849"
     },
     "Connectomics + tracking + segmentation + infant profiles - should run successfully": {
         "content": [
             54,
             {
+                "BETCROP_SYNTHBET": {
+                    "synthstrip": 1.5
+                },
+                "BET_DWI": {
+                    "mrtrix": "3.0.4"
+                },
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": 1.6
                 },
@@ -175,17 +212,52 @@
                 "CONNECTIVITY_VISUALIZE": {
                     "scilpy": "2.0.2"
                 },
+                "CONVERT": {
+                    "mrconvert": "3.0.4"
+                },
+                "CROPB0": {
+                    "scilpy": "2.0.2"
+                },
+                "CROPDWI": {
+                    "scilpy": "2.0.2"
+                },
+                "CROPMASK": {
+                    "scilpy": "2.0.2"
+                },
+                "DENOISE_DWI": {
+                    "mrtrix": "3.0.4"
+                },
                 "DENOISE_REVDWI": {
                     "mrtrix": "3.0.4"
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
                 },
+                "EXTRACTB0_RESAMPLE": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
                 },
+                "IMAGE_POWDERAVERAGE": {
+                    "scilpy": "2.0.2"
+                },
                 "MASKS": {
                     "scilpy": "2.0.2"
+                },
+                "N4_DWI": {
+                    "scilpy": "2.0.2",
+                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                },
+                "NORMALIZE_DWI": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "PREPROC_TOPUP": {
+                    "scilpy": "2.0.2",
+                    "ants": "2.4.3",
+                    "fsl": 6.0
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -198,6 +270,12 @@
                 },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
+                },
+                "RESAMPLE_DWI": {
+                    "scilpy": "2.0.2"
+                },
+                "RESAMPLE_MASK": {
+                    "scilpy": "2.0.2"
                 },
                 "TRACKING_LOCALTRACKING": {
                     "scilpy": "2.0.2"
@@ -315,7 +393,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-11T09:02:21.862908"
+        "timestamp": "2025-02-11T14:41:27.873118"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -405,6 +483,11 @@
         "content": [
             38,
             {
+                "BETCROP_FSLBETCROP": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4",
+                    "fsl": 6.0
+                },
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": 1.6
                 },
@@ -414,14 +497,34 @@
                 "CONNECTIVITY_VISUALIZE": {
                     "scilpy": "2.0.2"
                 },
+                "CROPB0": {
+                    "scilpy": "2.0.2"
+                },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.4"
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
                 },
+                "EXTRACTB0_RESAMPLE": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
+                },
+                "N4_DWI": {
+                    "scilpy": "2.0.2",
+                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                },
+                "NORMALIZE_DWI": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4"
+                },
+                "PREPROC_TOPUP": {
+                    "scilpy": "2.0.2",
+                    "ants": "2.4.3",
+                    "fsl": 6.0
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -434,6 +537,12 @@
                 },
                 "REGISTRATION_ANATTODWI": {
                     "ants": "2.4.3"
+                },
+                "RESAMPLE_DWI": {
+                    "scilpy": "2.0.2"
+                },
+                "RESAMPLE_MASK": {
+                    "scilpy": "2.0.2"
                 },
                 "SEGMENTATION_FASTSEG": {
                     "scilpy": "2.0.0",
@@ -542,6 +651,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-11T08:58:38.382298"
+        "timestamp": "2025-02-11T14:36:53.676325"
     }
 }
