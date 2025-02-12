@@ -195,11 +195,17 @@ workflow PEDIATRIC {
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch {
                 witht1: params.infant && it.size() > 2 && it[2] != null
-                    return [ it[0], it[1], it[2], [] ]
+                witht2: !params.infant && it.size() > 2 && it[1] != null
+                other: true // Catch-all for any other cases
             }
 
-        COREG ( ch_reg.witht1 )
-        ch_versions = ch_versions.mix(COREG.out.versions.first())
+        ch_reg.witht1
+            .map { it -> [ it[0], it[1], it[2], [] ] }
+            .mix(ch_reg.witht2.map { it -> [ it[0], it[2], it[1], [] ] })
+            .set { ch_coreg_input }
+
+        COREG ( ch_coreg_input )
+        ch_versions = ch_versions.mix(COREG.out.versions)
         // ch_multiqc_files = ch_multiqc_files.mix(COREG.out.zip.collect{it[1]})
         reg_t1 = COREG.out.image ?: Channel.empty()
     }

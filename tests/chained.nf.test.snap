@@ -481,7 +481,7 @@
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
-            38,
+            45,
             {
                 "BETCROP_FSLBETCROP": {
                     "scilpy": "2.0.2",
@@ -496,6 +496,9 @@
                 },
                 "CONNECTIVITY_VISUALIZE": {
                     "scilpy": "2.0.2"
+                },
+                "COREG": {
+                    "ants": "2.4.3"
                 },
                 "CROPB0": {
                     "scilpy": "2.0.2"
@@ -577,8 +580,11 @@
                 "sub-test/anat/sub-test_desc-boundingbox.pkl",
                 "sub-test/anat/sub-test_desc-brain_mask.nii.gz",
                 "sub-test/anat/sub-test_desc-preproc_T1w.nii.gz",
+                "sub-test/anat/sub-test_desc-preproc_T2w.nii.gz",
+                "sub-test/anat/sub-test_from-T1w_to-T2w_affine.mat",
                 "sub-test/anat/sub-test_from-T1w_to-dwi_affine.mat",
                 "sub-test/anat/sub-test_from-T1w_to-dwi_warp.nii.gz",
+                "sub-test/anat/sub-test_from-T2w_to-T1w_affine.mat",
                 "sub-test/anat/sub-test_from-dwi_to-T1w_warp.nii.gz",
                 "sub-test/anat/sub-test_space-DWI_desc-preproc_T1w.nii.gz",
                 "sub-test/anat/sub-test_space-DWI_label-CSF_mask.nii.gz",
@@ -588,6 +594,7 @@
                 "sub-test/anat/sub-test_space-DWI_label-WM_mask.nii.gz",
                 "sub-test/anat/sub-test_space-DWI_label-WM_probseg.nii.gz",
                 "sub-test/anat/sub-test_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test/anat/sub-test_space-T1w_desc-preproc_T2w.nii.gz",
                 "sub-test/dwi",
                 "sub-test/dwi/sub-test_desc-ad.nii.gz",
                 "sub-test/dwi/sub-test_desc-afd_max.nii.gz",
@@ -651,6 +658,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-11T14:36:53.676325"
+        "timestamp": "2025-02-12T15:21:56.857064"
     }
 }

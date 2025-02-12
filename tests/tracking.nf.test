@@ -19,6 +19,8 @@ nextflow_pipeline {
                 params.run_pft_tracking = true
                 params.run_local_tracking = true
 
+                params.t2_run_synthstrip = true
+
                 params.tracking = true
 
             }
@@ -51,6 +53,8 @@ nextflow_pipeline {
 
                 params.dti_shells = "0 1000"
                 params.fodf_shells = "0 1000"
+
+                params.t2_run_synthstrip = true
 
                 params.tracking = true
                 params.skip_dwi_preprocessing = true
