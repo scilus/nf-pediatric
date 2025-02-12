@@ -218,7 +218,7 @@
                     "type": "boolean",
                     "description": "Run SynthStrip for brain extraction rather than AntsBet.",
                     "fa_icon": "fas fa-brain",
-                    "default": false,
+                    "default": true,
                     "hidden": false
                 },
                 "t1_synthstrip_border": {
@@ -302,7 +302,7 @@
                     "type": "boolean",
                     "description": "Run SynthStrip for brain extraction.",
                     "fa_icon": "fas fa-brain",
-                    "default": false,
+                    "default": true,
                     "hidden": true
                 },
                 "t2_synthstrip_border": {
