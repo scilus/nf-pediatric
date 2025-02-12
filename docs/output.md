@@ -2,23 +2,27 @@
 
 ## Introduction
 
-This document describes the output produced by the pipeline. Most of the plots are taken from the MultiQC report, which summarises results at the end of the pipeline.
+This document describes the output produced by the pipeline. Most of the plots are taken from the MultiQC report, which summarizes results at the end of the pipeline.
 
-The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory. The pipeline outputs results in a BIDS-like structure (still WIP, don't hesitate to open an issue if needed). As such, your root output folder will contain one folder per subject.
+The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory. The pipeline outputs results in a BIDS-like structure (still a work in progress, don't hesitate to open an issue if needed). As such, your root output folder will contain one folder per subject.
 
 ```bash
 <outdir>
   |-- multiqc
   |-- sub-0001
-  |     |-- anat
-  |     |-- dwi
-  |     |-- figures
-  |     └-- multiqc
+  |     |-- ses-session
+  |     |    |-- anat
+  |     |    |-- dwi
+  |     |    |-- figures
+  |     |    └-- multiqc
+  |     └-- ses-session2
   |-- sub-0002
-  |     |-- anat
-  |     |-- dwi
-  |     |-- figures
-  |     └-- multiqc
+  |     |-- ses-session
+  |     |    |-- anat
+  |     |    |-- dwi
+  |     |    |-- figures
+  |     |    └-- multiqc
+  |     └-- ses-session2
   <...>
 ```
 
@@ -59,9 +63,11 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `anat/`
-  - `*_space-orig_desc-preproc_T1w.nii.gz`: Final preprocessed T1w image in original space.
-  - `*_space-orig_desc-T1w_mask.nii.gz`: Final brain mask in original space.
-  - `*_space-orig_desc-preproc_T2w.nii.gz`: Final preprocessed T2w image in original space.
+  - `*_desc-preproc_T1w.nii.gz`: Final preprocessed T1w image in original space.
+  - `*_desc-preproc_T2w.nii.gz`: Final preprocessed T2w image in original space.
+  - `*_space-T2w_desc-preproc_T1w.nii.gz`: Final preprocessed T1w image in T2w space (if infant data).
+  - `*_space-T1w_desc-preproc_T2w.nii.gz`: Final preprocessed T2w image in T1w space (if pediatric data).
+  - `*_from-{T1w,T2w}_to-{T1w,T2w}_affine.mat`: Affine transform from T1w/T2w to T1w/T2w space.
 
 </details>
 
@@ -71,11 +77,11 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/`
-  - `*_space-orig_desc-preproc_dwi.nii.gz`: Final preprocessed DWI image in original space.
-  - `*_space-orig_desc-preproc_dwi.bval`: Final b-values file.
-  - `*_space-orig_desc-preproc_dwi.bvec`: Final corrected b-vectors file.
-  - `*_space-orig_desc-preproc_b0.nii.gz`: Final preprocessed B0 image.
-  - `*_space-orig_desc-brain_mask.nii.gz`: Final brain mask in original space.
+  - `*_desc-preproc_dwi.nii.gz`: Final preprocessed DWI image in original space.
+  - `*_desc-preproc_dwi.bval`: Final b-values file.
+  - `*_desc-preproc_dwi.bvec`: Final corrected b-vectors file.
+  - `*_desc-preproc_b0.nii.gz`: Final preprocessed B0 image.
+  - `*_desc-brain_mask.nii.gz`: Final brain mask in original space.
 
 </details>
 
@@ -85,19 +91,19 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/`
-  - `*_space-orig_ad.nii.gz`: Axial Diffusivity map.
-  - `*_space-orig_rd.nii.gz`: Radial Diffusivity map.
-  - `*_space-orig_md.nii.gz`: Mean Diffusivity map.
-  - `*_space-orig_fa.nii.gz`: Fractional Anisotropy map.
-  - `*_space-orig_mode.nii.gz`: Mode map.
-  - `*_space-orig_ga.nii.gz`: Geodesic Anisometry map.
-  - `*_space-orig_tensor.nii.gz`: Tensor map.
-  - `*_space-orig_rgb.nii.gz`: RGB map.
-  - `*_space-orig_fodf.nii.gz`: Fiber oriented distribution functions (fODF).
-  - `*_space-orig_afd_max.nii.gz`: Maximum apparent fiber density (AFD) map.
-  - `*_space-orig_afd_sum.nii.gz`: Sum of the AFD map.
-  - `*_space-orig_afd_total.nii.gz`: AFD total map.
-  - `*_space-orig_peaks.nii.gz`: fODF peaks.
+  - `*_desc-ad.nii.gz`: Axial Diffusivity map.
+  - `*_desc-rd.nii.gz`: Radial Diffusivity map.
+  - `*_desc-md.nii.gz`: Mean Diffusivity map.
+  - `*_desc-fa.nii.gz`: Fractional Anisotropy map.
+  - `*_desc-mode.nii.gz`: Mode map.
+  - `*_desc-ga.nii.gz`: Geodesic Anisometry map.
+  - `*_desc-tensor.nii.gz`: Tensor map.
+  - `*_desc-rgb.nii.gz`: RGB map.
+  - `*_desc-fodf.nii.gz`: Fiber oriented distribution functions (fODF).
+  - `*_desc-afd_max.nii.gz`: Maximum apparent fiber density (AFD) map.
+  - `*_desc-afd_sum.nii.gz`: Sum of the AFD map.
+  - `*_desc-afd_total.nii.gz`: AFD total map.
+  - `*_desc-peaks.nii.gz`: fODF peaks.
 
 </details>
 
@@ -110,7 +116,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
   - `*_from-{T2w,T1w}_to-dwi_affine.mat`: Affine transform from T1w/T2w space to diffusion space.
   - `*_from-{T2w,T1w}_to-dwi_warp.nii.gz`: Non-linear transform from T1w/T2w space to diffusion space.
   - `*_from-dwi_to-{T2w,T1w}_warp.nii.gz`: Non-linear transform from diffusion space to T1w/T2w space.
-  - `*_space-diff_desc-preproc_{T2w,T1w}.nii.gz`: Preprocessed T1w/T2w image in diffusion space.
+  - `*_space-DWI_desc-preproc_{T2w,T1w}.nii.gz`: Preprocessed T1w/T2w image in diffusion space.
 
 </details>
 
@@ -120,12 +126,12 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `anat/`
-  - `*_space-diff_label-WM_mask.nii.gz`: WM mask in diffusion space.
-  - `*_space-diff_label-GM_mask.nii.gz`: GM mask in diffusion space.
-  - `*_space-diff_label-CSF_mask.nii.gz`: CSF mask in diffusion space.
-  - `*_space-diff_label-WM_probseg.nii.gz`: WM probability map in diffusion space.
-  - `*_space-diff_label-GM_probseg.nii.gz`: GM probability map in diffusion space.
-  - `*_space-diff_label-CSF_probseg.nii.gz`: CSF probability map in diffusion space.
+  - `*_space-DWI_label-WM_mask.nii.gz`: WM mask in diffusion space.
+  - `*_space-DWI_label-GM_mask.nii.gz`: GM mask in diffusion space.
+  - `*_space-DWI_label-CSF_mask.nii.gz`: CSF mask in diffusion space.
+  - `*_space-DWI_label-WM_probseg.nii.gz`: WM probability map in diffusion space.
+  - `*_space-DWI_label-GM_probseg.nii.gz`: GM probability map in diffusion space.
+  - `*_space-DWI_label-CSF_probseg.nii.gz`: CSF probability map in diffusion space.
 
 </details>
 
@@ -135,13 +141,13 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/`
-  - `*_space-diff_desc-local_tracking.nii.gz`: Whole-brain tractogram using local tractography.
-  - `*_space-orig_desc-pft_tracking.nii.gz`: Whole-brain tractogram using PFT tractography.
-  - `*_space-diff_label-exclude_desc-pft_probseg.nii.gz`: Exclude probability map for PFT tracking.
-  - `*_space-diff_label-include_desc-pft_probseg.nii.gz`: Include probability map for PFT tracking.
-  - `*_space-diff_label-seeding_desc-local_mask.nii.gz`: Seeding mask for local tracking.
-  - `*_space-diff_label-tracking_desc-local_mask.nii.gz`: Tracking mask for local tracking.
-  - `*_space-diff_label-seeding_desc-pft_mask.nii.gz`: Seeding mask for PFT tracking.
+  - `*_desc-local_tracking.nii.gz`: Whole-brain tractogram using local tractography.
+  - `*_desc-pft_tracking.nii.gz`: Whole-brain tractogram using PFT tractography.
+  - `*_space-dwi_label-exclude_desc-pft_probseg.nii.gz`: Exclude probability map for PFT tracking.
+  - `*_space-DWI_label-include_desc-pft_probseg.nii.gz`: Include probability map for PFT tracking.
+  - `*_space-DWI_label-seeding_desc-local_mask.nii.gz`: Seeding mask for local tracking.
+  - `*_space-DWI_label-tracking_desc-local_mask.nii.gz`: Tracking mask for local tracking.
+  - `*_space-DWI_label-seeding_desc-pft_mask.nii.gz`: Seeding mask for PFT tracking.
 
 </details>
 
@@ -152,30 +158,29 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 
 - `dwi/`
 
-  - `*_space-diff_desc-filtered_tracking.{trk,h5}`: Filtered whole-brain tractogram.
-  - `*_space-orig_desc-preproc_tracking.h5`: Final preprocessed decomposed whole-brain tractogram.
+  - `*_seg-{BrainnetomeChild,DKT}_desc-filtered_tracking.{trk,h5}`: Filtered whole-brain tractogram.
+  - `*_seg-{BrainnetomeChild,DKT}_desc-preproc_tracking.h5`: Final preprocessed decomposed whole-brain tractogram.
   - `*.npy`: Connectivity matrices for all supplied metrics.
   - `*.png`: Connectivity matrices visualized as pngs.
 
 - `anat/`
-  - `*_space-diff_seg-BrainnetomeChild_dseg.nii.gz`: Atlas labels in diffusion space. Name of the atlas might changed depending on which one is used.
+  - `*_space-DWI_seg-{BrainnetomeChild,DKT}_dseg.nii.gz`: Atlas labels in diffusion space. Name of the atlas might changed depending on which one is used.
 
 </details>
 
-### FreeSurfer
+### FreeSurfer/FastSurfer/M-CRIB-S
 
 <details markdown="1">
 <summary>Output files</summary>
 
 - `anat/`
-  - `*_{reconall,fastsurfer}`: FreeSurfer style output folder for either reconall or fastsurfer.
-  - `*_space-orig_seg-BrainnetomeChild_desc-labels.json`: JSON file containing the labels information.
-  - `*_space-orig_seg-BrainnetomeChild_desc-labels.txt`: Text file containing the labels information.
-  - `*_space-orig_seg-BrainnetomeChild_dseg.nii.gz`: Atlas label file in subject original space.
-  - `*_space-orig_seg-BrainnetomeChild_dseg_dilated`: Dilated atlas label file in subject original space.
-  - `*_space-orig_seg-BrainnetomeChild_stat-subcortical.stats`: Subcortical statistics file.
-  - `*_space-orig_seg-BrainnetomeChild_stat-lh.stats`: Left hemisphere statistics file.
-  - `*_space-orig_seg-BrainnetomeChild_stat-rh.stats`: Right hemisphere statistics file.
+  - `*_seg-BrainnetomeChild_desc-labels.json`: JSON file containing the labels information.
+  - `*_seg-BrainnetomeChild_desc-labels.txt`: Text file containing the labels information.
+  - `*_seg-BrainnetomeChild_dseg.nii.gz`: Atlas label file in subject original space.
+  - `*_seg-BrainnetomeChild_dseg_dilated`: Dilated atlas label file in subject original space.
+  - `*_seg-BrainnetomeChild_stat-subcortical.tsv`: Subcortical statistics file.
+  - `*_seg-BrainnetomeChild_stat-{lh,rh}_{area,thickness,volume}.tsv`: Left hemisphere statistics file.
+  - `*_seg-BrainnetomeChild_stat-{lh,rh}_{area,thickness,volume}.tsv`: Right hemisphere statistics file.
 
 </details>
 
@@ -193,7 +198,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 
 **Still under construction, report is experimental for now.**
 
-[MultiQC](http://multiqc.info) is a visualization tool that generates HTML reports on the subject-level and reports on population-level statistics. In your output folder, you will find a global MultiQC report (located next to your `sub-XXXX` folders). This is the population level report, containing statistics allowing the evaluation of outliers in terms of white matter coverage, number of streamlines, and volume, thickness, and surface area for each regions of the Brainnetome Child Atlas.
+[MultiQC](http://multiqc.info) is a visualization tool that generates HTML reports on the subject-level and reports on population-level statistics. In your output folder, you will find a global MultiQC report (located next to your `sub-XXXX` folders). This is the population level report, containing statistics allowing the evaluation of outliers in terms of white matter coverage, number of streamlines, and volume, thickness, and surface area for each regions of the GM parcellation.
 
 Within each subject folder, you will find subject-specific HTML reports. Those will display visual QC of some of the key processing steps performed during the pipeline execution. Those figures (for now) comprise: sphere sampling, tissue segmentation, white matter coverage, labels overlay on anatomical image, and metrics maps visualization. You can refer to those subject-specific reports to obtain a quick overview of the quality of the processing.
 
@@ -205,7 +210,6 @@ Within each subject folder, you will find subject-specific HTML reports. Those w
 - `pipeline_info/`
   - Reports generated by Nextflow: `execution_report.html`, `execution_timeline.html`, `execution_trace.txt` and `pipeline_dag.dot`/`pipeline_dag.svg`.
   - Reports generated by the pipeline: `pipeline_report.html`, `pipeline_report.txt` and `software_versions.yml`. The `pipeline_report*` files will only be present if the `--email` / `--email_on_fail` parameter's are used when running the pipeline.
-  - Reformatted samplesheet files used as input to the pipeline: `samplesheet.valid.csv`.
   - Parameters used by the pipeline run: `params.json`.
 
 </details>

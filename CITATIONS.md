@@ -32,6 +32,10 @@
 
 > Fischl, B. (2012). FreeSurfer. NeuroImage, 62(2), 774–781. https://doi.org/10.1016/j.neuroimage.2012.01.021
 
+- [M-CRIB-S](https://github.com/DevelopmentalImagingMCRI/MCRIBS)
+
+> Adamson, C.L., Alexander, B., Ball, G. et al. Parcellation of the neonatal cortex using Surface-based Melbourne Children’s Regional Infant Brain atlases (M-CRIB-S). Sci Rep 10, 4359 (2020). https://doi.org/10.1038/s41598-020-61326-2
+
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 
 > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.
