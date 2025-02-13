@@ -1,10 +1,10 @@
 Run Name: $runName
 
 <% if (success){
-    out << "## nf/pediatric execution completed successfully! ##"
+    out << "## nf-pediatric execution completed successfully! ##"
 } else {
     out << """####################################################
-## nf/pediatric execution completed unsuccessfully! ##
+## nf-pediatric execution completed unsuccessfully! ##
 ####################################################
 The exit status of the task that caused the workflow execution to fail was: $exitStatus.
 The full error message was:
@@ -27,5 +27,5 @@ Pipeline Configuration:
 <% out << summary.collect{ k,v -> " - $k: $v" }.join("\n") %>
 
 --
-nf/pediatric
-https://github.com/nf/pediatric
+nf-pediatric
+https://github.com/scilus/nf-pediatric

@@ -3,7 +3,32 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased] - [2025-02-12]
+
+### `Added`
+
+- BIDS folder as mandatory input ([#16](https://github.com/scilus/nf-pediatric/issues/16)).
+- New test datasets (BIDS input folder and derivatives).
+- Support BIDS derivatives as input for `-profile connectomics`.
+- T2w image for pediatric data are now preprocessed and coregistered in T1w space.
+
+### `Changed`
+
+- `synthstrip` is now the default brain extraction method.
+- Bump `nf-core` version to `3.2.0`.
+
+### `Removed`
+
+- Samplesheet input is not longer supported. Using BIDS folder now.
+
+## [Unreleased] - [2025-01-22]
+
+### `Fixed`
+
+- Files coming from Phillips scanner had unvalid datatypes making topup/eddy correction creating weird artifacts. Now files are converted to `--data_type float32`.
+- Added build information to fastsurfer container.
+
+## [Unreleased] - [2025-01-20]
 
 ### `Added`
 

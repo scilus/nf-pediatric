@@ -32,7 +32,7 @@ process TRACTOGRAM_DECOMPOSE {
 
     """
     scil_decompose_connectivity.py $trk $labels \
-        "${prefix}__decomposed.h5" --processes $task.cpus \
+        "${prefix}__decomposed.h5" -v --processes $task.cpus \
         --out_labels_list "${prefix}__labels_list.txt" \
         $no_pruning $no_remove_loops $no_remove_outliers \
         $no_remove_curv $min_len $max_len $outlier_threshold \

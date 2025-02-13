@@ -1,2 +1,0 @@
-subject,t1,t2,dwi,bval,bvec,rev_b0,labels,wmparc,trk,peaks,fodf,mat,warp,metrics
-sub-test,,https://github.com/scilus/nf-pediatric/blob/main/tests/data/sub-test/t2.nii.gz,https://github.com/scilus/nf-pediatric/blob/main/tests/data/sub-test/dwi.nii.gz,https://github.com/scilus/nf-pediatric/blob/main/tests/data/sub-test/dwi.bval,https://github.com/scilus/nf-pediatric/blob/main/tests/data/sub-test/dwi.bvec,,,https://github.com/scilus/nf-pediatric/blob/main/tests/data/sub-test/wm_mask.nii.gz,,,,,,,

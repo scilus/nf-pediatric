@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf/pediatric/master/nextflow_schema.json",
-    "title": "nf/pediatric pipeline parameters",
-    "description": "nf-pediatric is a neuroimaging pipeline to process pediatric MRI data (including fMRI, dMRI, and sMRI) ranging from 0-18 years old.",
+    "$id": "https://raw.githubusercontent.com/scilus/nf-pediatric/master/nextflow_schema.json",
+    "title": "nf-pediatric pipeline parameters",
+    "description": "nf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.",
     "type": "object",
     "$defs": {
         "input_output_options": {
@@ -10,18 +10,30 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir"],
+            "required": ["outdir"],
             "properties": {
                 "input": {
                     "type": "string",
-                    "format": "file-path",
+                    "format": "directory-path",
                     "exists": true,
-                    "schema": "assets/schema_input.json",
-                    "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
+                    "description": "Path to the BIDS directory.",
+                    "help_text": "Path to the BIDS directory. This is where the pipeline will find the required raw data.",
                     "fa_icon": "fas fa-file-csv"
+                },
+                "input_deriv": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Path to the derivatives directory.",
+                    "help_text": "Path to the derivatives directory. This is where the pipeline will find the preprocessed data.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "bids_script": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Path to the BIDS script.",
+                    "help_text": "Path to the BIDS script. This is a script that will be used to generate the BIDS directory structure from the raw data.",
+                    "fa_icon": "fas fa-file-code",
+                    "hidden": true
                 },
                 "outdir": {
                     "type": "string",
@@ -206,7 +218,7 @@
                     "type": "boolean",
                     "description": "Run SynthStrip for brain extraction rather than AntsBet.",
                     "fa_icon": "fas fa-brain",
-                    "default": false,
+                    "default": true,
                     "hidden": false
                 },
                 "t1_synthstrip_border": {
@@ -290,7 +302,7 @@
                     "type": "boolean",
                     "description": "Run SynthStrip for brain extraction.",
                     "fa_icon": "fas fa-brain",
-                    "default": false,
+                    "default": true,
                     "hidden": true
                 },
                 "t2_synthstrip_border": {
@@ -1455,6 +1467,12 @@
                     "description": "Base URL or local path to location of pipeline test dataset files",
                     "hidden": true,
                     "default": null
+                },
+                "trace_report_suffix": {
+                    "type": "string",
+                    "fa_icon": "far calendar",
+                    "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
+                    "hidden": true
                 }
             }
         }

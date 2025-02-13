@@ -69,7 +69,7 @@ process REGISTRATION_ANTS {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    touch ${prefix}__t1_warped.nii.gz
+    touch ${prefix}__warped.nii.gz
     touch ${prefix}__output1GenericAffine.mat
     touch ${prefix}__output0InverseAffine.mat
     touch ${prefix}__output1InverseWarp.nii.gz

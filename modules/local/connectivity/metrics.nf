@@ -18,6 +18,7 @@ process CONNECTIVITY_METRICS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def ses = meta.session ? "${meta.session}_" : ""
     def atlas = task.ext.atlas
 
     if ( metrics ) {
@@ -29,10 +30,14 @@ process CONNECTIVITY_METRICS {
         for metric in $metrics_list; do
             base_name=\$(basename \${metric} .nii.gz)
 
-            # Fetch metric tag.
-            stat=\$(echo "\$base_name" | cut -d'_' -f3)
+            # Extract metric type from different patterns
+            if [[ "\$base_name" =~ desc-([^_]+) ]]; then
+                stat="\${BASH_REMATCH[1]}"  # Extract the value after 'desc-'
+            else
+                stat=\$(echo "\$base_name" | cut -d'_' -f3)  # Fallback to old method
+            fi
 
-            metrics_args="\${metrics_args} --metrics \${metric} ${prefix}_seg-${atlas}_stat-\${stat}.npy"
+            metrics_args="\${metrics_args} --metrics \${metric} ${prefix}_${ses}seg-${atlas}_stat-\${stat}.npy"
         done
 
         scil_connectivity_compute_matrices.py $h5 $labels \
@@ -98,6 +103,7 @@ process CONNECTIVITY_METRICS {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def ses = meta.session ? "${meta.session}_" : ""
     def atlas = task.ext.atlas
 
     if ( metrics ) {
@@ -107,10 +113,14 @@ process CONNECTIVITY_METRICS {
         for metric in $metrics_list; do
             base_name=\$(basename \${metric} .nii.gz)
 
-            # Fetch metric tag.
-            stat=\$(echo "\$base_name" | cut -d'_' -f3)
+            # Extract metric type from different patterns
+            if [[ "\$base_name" =~ desc-([^_]+) ]]; then
+                stat="\${BASH_REMATCH[1]}"  # Extract the value after 'desc-'
+            else
+                stat=\$(echo "\$base_name" | cut -d'_' -f3)  # Fallback to old method
+            fi
 
-            touch ${prefix}_seg-${atlas}_stat-\${stat}.npy
+            touch ${prefix}_${ses}seg-${atlas}_stat-\${stat}.npy
         done
 
         scil_connectivity_compute_matrices.py -h

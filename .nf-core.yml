@@ -1,35 +1,36 @@
-bump_version: null
 lint:
+  actions_ci: false
   files_exist:
     - CODE_OF_CONDUCT.md
-    - assets/nf-core-pediatric_logo_light.png
-    - docs/images/nf-core-pediatric_logo_light.png
-    - docs/images/nf-core-pediatric_logo_dark.png
+    - assets/nf-core-nf-pediatric_logo_light.png
+    - docs/images/nf-core-nf-pediatric_logo_light.png
+    - docs/images/nf-core-nf-pediatric_logo_dark.png
     - .github/ISSUE_TEMPLATE/config.yml
     - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
-  actions_ci: False
   files_unchanged:
     - CODE_OF_CONDUCT.md
+    - .github/ISSUE_TEMPLATE/feature_request.yml
+    - assets/email_template.html
+    - assets/email_template.txt
+    - assets/sendmail_template.txt
     - .github/workflows/linting.yml
     - .github/workflows/branch.yml
     - .github/workflows/linting_comment.yml
-    - assets/nf-core-pediatric_logo_light.png
-    - docs/images/nf-core-pediatric_logo_light.png
-    - docs/images/nf-core-pediatric_logo_dark.png
+    - assets/nf-core-nf-pediatric_logo_light.png
+    - docs/images/nf-core-nf-pediatric_logo_light.png
+    - docs/images/nf-core-nf-pediatric_logo_dark.png
     - .github/ISSUE_TEMPLATE/bug_report.yml
     - .github/PULL_REQUEST_TEMPLATE.md
     - docs/README.md
     - .github/CONTRIBUTING.md
     - .gitignore
-  multiqc_config:
-    - report_comment
+  multiqc_config: false
   nextflow_config:
     - manifest.name
     - manifest.homePage
-  template_strings: False
-nf_core_version: 3.1.2
-org_path: null
+  template_strings: false
+nf_core_version: 3.2.0
 repository_type: pipeline
 template:
   author: Anthony Gagnon
@@ -38,6 +39,5 @@ template:
   force: false
   is_nfcore: false
   name: nf-pediatric
-  org: nf-neuro
+  org: scilus
   outdir: .
-update: null

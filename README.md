@@ -4,7 +4,7 @@
 
 ## Introduction
 
-**nf-pediatric** is an end-to-end connectomics pipeline for pediatric (0-18y) dMRI and sMRI brain scans. It performs tractography, t1 reconstruction, cortical and subcortical segmentation, and connectomics.
+**nf-pediatric** is an end-to-end connectomics pipeline for pediatric (0-18y) dMRI and sMRI brain scans. It performs preprocessing, tractography, t1 reconstruction, cortical and subcortical segmentation, and connectomics.
 
 ![nf-pediatric-schema](/assets/nf-pediatric-schema.svg)
 
@@ -13,26 +13,26 @@
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow.
 
-`nf-pediatric` core functionalities are accessed and selected using profiles. This means users can select which part of the pipeline they want to run depending on their specific aims and the current state of their data (already preprocessed or not). Depending on your selection, the mandatory inputs will change, please see the [inputs](/docs/usage.md) documentation for a comprehensive overview for each profile. As of now, here is a list of the available profiles and a short description of their processing steps:
+`nf-pediatric` core functionalities are accessed and selected using profiles. This means users can select which part of the pipeline they want to run depending on their specific aims and the current state of their data (already preprocessed or not). As of now, here is a list of the available profiles and a short description of their processing steps:
 
 **Processing profiles**:
 
-1. `-profile segmentation`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/), [FastSurfer](https://deep-mi.org/research/fastsurfer/) or MCRIBS/InfantFS will be used to process the T1w/T2w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) or Desikan-Killiany (for infant) will be registered using surface-based methods in the native subject space.
-1. `-profile tracking`: This is the core profile behind `nf-pediatric`. By selecting it, DWI data will be preprocessed (denoised, corrected for distortion, normalized, resampled, ...). In parallel, T1w will be preprocessed (if `-profile segmentation` is not selected), registered into diffusion space, and segmented to extract tissue masks. Preprocessed DWI data will be used to fit both the DTI and fODF models. As the final step, whole-brain tractography will be performed using either local tracking or particle filter tracking (PFT).
-1. `-profile connectomics`: By selecting this profiles, the whole-brain tractogram will be filtered to remove false positive streamlines, labels will be registered in diffusion space and used to segment the tractogram into individual connections. Following segmentation, connectivity matrices will be computed for a variety of metrics and outputted as numpy arrays usable for further statistical analysis.
+1. `-profile segmentation`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/), [FastSurfer](https://deep-mi.org/research/fastsurfer/) or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) will be used to process the T1w/T2w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) or Desikan-Killiany (for infant) will be registered using surface-based methods in the native subject space.
+1. `-profile tracking`: This is the core profile behind `nf-pediatric`. By selecting it, DWI data will be preprocessed (denoised, corrected for distortion, normalized, resampled, ...). In parallel, T1w will be preprocessed (if `-profile segmentation` is not selected), registered into diffusion space, and segmented to extract tissue masks/maps. Preprocessed DWI data will be used to fit both the DTI and fODF models. As the final step, whole-brain tractography will be performed using either local tracking or particle filter tracking (PFT).
+1. `-profile connectomics`: By selecting this profiles, labels will be registered in diffusion space and used to segment the tractogram into individual connections. The segmented tractogram will then be filtered, using [COMMIT](https://github.com/daducci/COMMIT) to remove false positive streamlines. Following filtering, connectivity matrices will be computed for a variety of metrics and outputted as numpy arrays usable for further statistical analysis.
 1. `-profile infant`: As opposed to the other profiles, the `infant` profile does not enable a specific block of processing steps (although various steps are changed compared to the default pipeline), but will change various configs and parameters to adapt the existing profile for infant data (<2 years). This profile is made to be used in conjunction with the others.
 
 **Configuration profiles**:
 
-1. `-profile docker`: Each process will be run using docker containers.
-1. `-profile apptainer` or `-profile singularity`: Each process will be run using apptainer/singularity images.
+1. `-profile docker`: Each process will be run using docker containers (**Recommended**).
+1. `-profile apptainer` or `-profile singularity`: Each process will be run using apptainer/singularity images (**Recommended**).
 1. `-profile arm`: Made to be use on computers with an ARM architecture. **This is still experimental, depending on which profile you select, some containers might not be built for the ARM architecture. Feel free to open an issue if needed.**
 1. `-profile no_symlink`: By default, the results directory contains symlink to files within the `work` directory. By selecting this profile, results will be copied from the work directory without the use of symlinks.
-1. `-profile slurm`: If selected, the SLURM job scheduler will be used to dispatch jobs.
+1. `-profile slurm`: If selected, the SLURM job scheduler will be used to dispatch jobs. **Please note that, by using this profile, you might have to adapt the config files to your specific computer nodes architecture.**
 
 **Using either `-profile docker` or `-profile apptainer` is highly recommended, as it controls the version of the software used and avoids the installation of all the required softwares.**
 
-For example, to perform the end-to-end connectomics pipeline, users should select `-profile tracking,segmentation,connectomics` for pediatric data and `-profile infant,tracking,segmentation,connectomics` for infant data. Once you selected your profile, you can check which input files are mandatory [here](/docs/usage.md). In addition to profile selection, users can change default parameters using command line arguments at runtime. To view a list of the parameters that can be customized, use the `--help` argument as follow:
+For example, to perform the end-to-end connectomics pipeline, users should select `-profile tracking,segmentation,connectomics` for pediatric data and `-profile infant,tracking,segmentation,connectomics` for infant data. In addition to profile selection, users can change default parameters using command line arguments at runtime. To view a list of the parameters that can be customized, use the `--help` argument as follow:
 
 ```bash
 nextflow run scilus/nf-pediatric -r main --help
@@ -40,26 +40,38 @@ nextflow run scilus/nf-pediatric -r main --help
 
 ### Input specification
 
-The pipeline required input is in the form of a samplesheet (.csv file) containing the path to all your input files for all your subjects (for more details regarding which files are mandatory for each profile, see [here](/docs/usage.md)). For the most basic usage (`-profile tracking`), your input samplesheet should look like this:
+For complete usage instructions, please see the [documentation](/docs/usage.md). **nf-pediatric** aligns with the [BIDS](https://bids-specification.readthedocs.io/en/stable/) specification. To promote the use of standardized data formats and structures, **nf-pediatric** requires a BIDS-compliant folder as its input directories. We encourage users to validate their BIDS layout using the [bids-validator tool](https://hub.docker.com/r/bids/validator). The following example provides a BIDS structure for pediatric data (not infant) containg an acquisition with a reverse phase-encoded B0 image.
 
-`samplesheet.csv`:
-
-```csv
-subject,t1,t2,dwi,bval,bvec,rev_b0,labels,wmparc,trk,peaks,fodf,mat,warp,metrics
-sub-1000,/input/sub-1000/t1.nii.gz,/input/sub-1000/dwi.nii.gz,/input/sub-1000/dwi.bval,/input/sub-1000/dwi.bvec,/input/sub-1000/rev_b0.nii.gz
+```bash
+<bids_folder>
+  |- sub-XXXX
+  | |- ses-session
+  | | |- anat
+  | | | |- sub-XXXX_*_T1w.nii.gz
+  | | | └- sub-XXXX_*_T1w.json
+  | | |- dwi
+  | | | |- sub-XXXX_*_dwi.nii.gz
+  | | | |- sub-XXXX_*_dwi.json
+  | | | |- sub-XXXX_*_dwi.bval
+  | | | └- sub-XXXX_*_dwi.bvec
+  | | |- fmap
+  | | | |- sub-XXXX_*_epi.nii.gz
+  | | | └- sub-XXXX_*_epi.json
+  └- sub-YYYY
+    <...>
 ```
 
-Each row represents a subject, and each column represent a specific file that can be passed as an input. **It is mandatory that the samplesheet has all the headers, even if some files are not provided as inputs.** To avoid creating this samplesheet by hand, you can script it using a simple bash script that matches your input folder structure. For an example, see the [`assemble_samplesheet.sh`](/assets/assemble_samplesheet.sh) example (modify it according to your needs). Once this is done, the pipeline has only two required parameters that need to be supplied at runtime: `--outdir` and `--input`. Now, you can run the pipeline using:
+Once your input directory is validated with the [bids-validator tool](https://hub.docker.com/r/bids/validator), the pipeline has only two required parameters that need to be supplied at runtime: `--outdir` and `--input`. Now, you can run the pipeline using:
 
 ```bash
 nextflow run scilus/nf-pediatric \
     -r main \
-    -profile docker,tracking \
-    --input samplesheet.csv \
+    -profile <selected_profiles> \
+    --input <BIDS_folder> \
     --outdir <your_outdir>
 ```
 
-With this command, you will run the `tracking` profile for non-infant data. There is no need to `git clone` the pipeline prior to lauching it, **nextflow will do it for you!** Additional information on running multiple profiles and the infant profile can be found [here](/docs/usage.md).
+There is no need to `git clone` the pipeline prior to lauching it, **nextflow will do it for you!** Additional information on running multiple profiles and the infant profile can be found [here](/docs/usage.md).
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
@@ -70,7 +82,7 @@ By default, `nf-pediatric` outputs only the final preprocessed files and leave o
 
 ## Using `nf-pediatric` on computer nodes without internet access.
 
-Some computing nodes does not have access to internet at runtime. Since the pipeline interacts with the containers repository and pull during execution, it won't work if the nodes do not have access to the internet. Fortunately, containers can be downloaded prior to the pipeline execution, and fetch locally during runtime. Using `nf-core` tools (for a detailed installation guide, see the [nf-core documentation](https://nf-co.re/docs/nf-core-tools/installation)), we can use the [`nf-core pipelines download`](https://nf-co.re/docs/nf-core-tools/pipelines/download#downloading-apptainer-containers) command. To view the options before the download, you can use `nf-core pipelines download -h`. To use the prompts, simply run `nf-core pipelines download` as follows (_downloading all containers takes ~15 minutes_):
+Some computing nodes does not have access to internet at runtime. Since the pipeline interacts with the containers repository and pull during execution, it won't work if the nodes do not have access to the internet. Fortunately, containers can be downloaded prior to the pipeline execution, and fetch locally during runtime. Using `nf-core` tools (for a detailed installation guide, see the [nf-core documentation](https://nf-co.re/docs/nf-core-tools/installation)), we can use the [`nf-core pipelines download`](https://nf-co.re/docs/nf-core-tools/pipelines/download#downloading-apptainer-containers) command. To view the options before the download, you can use `nf-core pipelines download -h`. To use the prompts, simply run `nf-core pipelines download` as follows (_downloading all containers takes ~15 minutes but requires a fair amount of local disk space_):
 
 ```bash
 $ nf-core pipelines download -l docker.io

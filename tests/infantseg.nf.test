@@ -10,7 +10,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/samplesheet_testinfant_t1-t2.csv"
+                params.input = "$projectDir/tests/data/bids-infant"
                 params.outdir = "$outputDir"
                 params.fs_output_dir = "$outputDir/../onedirdown/mcribs-2.1.0"
 
@@ -35,7 +35,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/pipeline_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name,
                     // All mcribs output.

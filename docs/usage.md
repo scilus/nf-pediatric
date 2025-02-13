@@ -2,21 +2,21 @@
 
 ## Introduction
 
-`nf-pediatric` process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. A specific and unique profile pertains to `infant` data (<2 years old) and sets specific parameters tailored to infant data preprocessing. Here is a list of the available profiles:
+`nf-pediatric` is a neuro-imaging pipeline to process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. A specific and unique profile pertains to `infant` data (<2 years old) and sets specific parameters tailored to infant data preprocessing. Here is a list of the available profiles:
 
 - `tracking`: Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
-- `segmentation`: Run FreeSurfer, FastSurfer, or M-CRIB-S/InfantFS for T1w/T2w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or the Desikan-Killiany atlas (for infant) is mapped to the subject space.
+- `segmentation`: Run [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/), [FastSurfer](https://deep-mi.org/research/fastsurfer/), or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) for T1w/T2w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or the Desikan-Killiany atlas (for infant) is mapped to the subject space.
 - `connectomics`: Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
-- `infant`: This profile adapt some processing steps to infant data, such as tissue segmentation using M-CRIB-S, surface reconstruction using InfantFS, etc.
+- `infant`: This profile adapt some processing steps to infant data, such as tissue segmentation using [M-CRIB-S](https://github.com/DevelopmentalImagingMCRI/MCRIBS), surface reconstruction using [InfantFS](https://surfer.nmr.mgh.harvard.edu/fswiki/infantFS), etc.
 
 ---
 
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [Samplesheet Input](#samplesheet-input-for-the-tracking-profile)
-  - [Running the pipeline for multiple subjects](#multiple-subjects-in-the-same-pipeline-run)
-  - [Samplesheet specifications per profile](#specifying-a-samplesheet-for-a-different-profile)
+- [BIDS Input](#bids-input-directory)
+  - [Directory Structure](#directory-structure)
+  - [Required files](#required-files)
 - [Running nf-pediatric](#running-the-pipeline)
   - [Updating nf-pediatric](#updating-the-pipeline)
   - [Reproducibility](#reproducibility)
@@ -34,122 +34,68 @@
 
 ---
 
-## Samplesheet input for the `tracking` profile.
+## BIDS input directory
 
-You will need to create a samplesheet with information about the subjects you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with a header row as shown in the examples below.
+The [BIDS (Brain Imaging Data Structure)](https://bids-specification.readthedocs.io/en/stable/) input directory is a standardized way to organize and describe neuroimaging and behavioral data. The nf-pediatric pipeline expects the input data to be organized in the BIDS format. It is recommended that users validate their BIDS layout using the official [bids-validator tool](https://hub.docker.com/r/bids/validator).
 
-```bash
---input '[path to samplesheet file]'
+### Directory Structure
+
+The most basic BIDS directory should have a similar structure (note that sessions folder are also supported):
+
+```
+/path/to/bids_directory/
+├── dataset_description.json
+├── participants.tsv
+├── sub-01/
+│   ├── anat/
+│   │   ├── sub-01_T1w.nii.gz
+│   │   ├── sub-01_T1w.json
+│   │   ├── sub-01_T2w.nii.gz
+│   │   └── sub-01_T2w.json
+│   ├── dwi/
+│   │   ├── sub-01_dwi.nii.gz
+│   │   ├── sub-01_dwi.json
+│   │   ├── sub-01_dwi.bval
+│   │   └── sub-01_dwi.bvec
+│   └── fmap/
+│       ├── sub-01_epi.nii.gz
+│       └── sub-01_epi.json
+└── sub-02/
+    └── <...>
 ```
 
-`samplesheet.csv`:
+### Required Files
 
-```csv
-subject,t1,t2,dwi,bval,bvec,rev_b0,labels,wmparc,trk,peaks,fodf,mat,warp,metrics
-sub-1000,/input/sub-1000/t1.nii.gz,/input/sub-1000/dwi.nii.gz,/input/sub-1000/dwi.bval,/input/sub-1000/dwi.bvec,/input/sub-1000/rev_b0.nii.gz
-```
+- `dataset_description.json`: A JSON file describing the dataset.
+- `participants.tsv`: A TSV file listing the participants and their metadata. **For `-profile infant`, users should provide the participants gestational age under the age columns. Otherwise, all participants will be assumed to have 44 weeks.**
 
-### Multiple subjects in the same pipeline run.
+Subject's data for pediatric setting (default):
 
-The `subject` identifiers let the pipeline know which subjects the files linked to. If you want to process multiple subjects, simply add more rows with their subject identifier and path to their input files.
+- `sub-<participant_id>/`: A directory for each participant containing their data.
+  - `anat/`: A directory containing anatomical MRI data (e.g., T1w, T2w).
+    - `T1w` is **mandatory** for pediatric data.
+    - `T2w` is optional. It will be preprocessed and registered into `T1w` space.
+  - `dwi/`: A directory containing diffusion-weighted imaging data (e.g., DWI, bval, bvec). Acquisition with both direction DWI data are also supported (e.g. rev-DWI, rev-bval, rev-bvec). Specify them according to the [BIDS guidelines](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/magnetic-resonance-imaging-data.html)
+  - `fmap/`: A directory containing field map data (optional but recommended for distortion correction).
 
-```csv title="samplesheet.csv"
-subject,t1,t2,dwi,bval,bvec,rev_b0,labels,wmparc,trk,peaks,fodf,mat,warp,metrics
-sub-1000,/input/sub-1000/t1.nii.gz,/input/sub-1000/dwi.nii.gz,/input/sub-1000/dwi.bval,/input/sub-1000/dwi.bvec,/input/sub-1000/rev_b0.nii.gz
-sub-1001,/input/sub-1001/t1.nii.gz,/input/sub-1001/dwi.nii.gz,/input/sub-1001/dwi.bval,/input/sub-1001/dwi.bvec,/input/sub-1001/rev_b0.nii.gz
-```
+Subject's data for infant setting (`-profile infant`):
 
-### Specifying a samplesheet for a different profile
-
-As mentioned above, the pipeline has various profiles that performs different tasks. The following tables will specify which inputs are required for every possible combination of profiles. Once you gathered all your required inputs, simply add their paths in the correct column of the samplesheet. **If the combination you want to run is not specified, feel free to raise an issue.**
-
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
-
-#### **`-profile segmentation`**
-
-| Column    | Description                                                                                   |
-| --------- | --------------------------------------------------------------------------------------------- |
-| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`). |
-| `t1`      | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).     |
-
-#### **`-profile tracking,segmentation`** or **`-profile tracking,segmentation,connectomics`**
-
-| Column    | Description                                                                                                                                                                                                              |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                                                                                                                            |
-| `t1`      | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                                                                                |
-| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                                                                                |
-| `bval`    | Full path to the file containing the b-values.                                                                                                                                                                           |
-| `bvec`    | Full path to the file containing the b-vectors.                                                                                                                                                                          |
-| `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                                                          |
-| `metrics` | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional, can only be supplied if `-profile connectomics` is selected.** |
-
-#### **`-profile connectomics,segmentation`**
-
-| Column    | Description                                                                                                                                                |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                                                              |
-| `t1`      | Full path to the T1w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                  |
-| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                  |
-| `bval`    | Full path to the file containing the b-values.                                                                                                             |
-| `bvec`    | Full path to the file containing the b-vectors.                                                                                                            |
-| `trk`     | Full path to the whole-brain tractogram. File has to be in the `.trk` file format.                                                                         |
-| `peaks`   | Full path to the file containing the fODF peaks. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                            |
-| `fodf`    | Full path to the fODF file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                 |
-| `mat`     | Full path to the affine transform required to register your anatomical image to the diffusion space.                                                       |
-| `warp`    | Full path to the warp transform required to register your anatomical image to the diffusion space.                                                         |
-| `metrics` | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional** |
-
-#### **`-profile connectomics`** or **`-profile connectomics,infant`**
-
-| Column       | Description                                                                                                                                                |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject`    | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                                                              |
-| `t1` or `t2` | Full path to the T1w/T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                              |
-| `dwi`        | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                  |
-| `bval`       | Full path to the file containing the b-values.                                                                                                             |
-| `bvec`       | Full path to the file containing the b-vectors.                                                                                                            |
-| `labels`     | Full path to the file containing your labels to use in the segmentation. File has to be in the nifti file format (`.nii` or `.nii.gz`).                    |
-| `trk`        | Full path to the whole-brain tractogram. File has to be in the `.trk` file format.                                                                         |
-| `peaks`      | Full path to the file containing the fODF peaks. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                            |
-| `fodf`       | Full path to the fODF file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                                                                 |
-| `mat`        | Full path to the affine transform required to register your anatomical image to the diffusion space.                                                       |
-| `warp`       | Full path to the warp transform required to register your anatomical image to the diffusion space.                                                         |
-| `metrics`    | Full path to the **folder** containing additional metrics. Files within this folder has to be in the nifti file format (`.nii` or `.nii.gz`). **Optional** |
-
-#### **`-profile tracking,infant`**
-
-| Column    | Description                                                                                                     |
-| --------- | --------------------------------------------------------------------------------------------------------------- |
-| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                   |
-| `t1`      | Full path to the T1w file (optional). File has to be in the nifti file format (`.nii` or `.nii.gz`)             |
-| `t2`      | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
-| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
-| `bval`    | Full path to the file containing the b-values.                                                                  |
-| `bvec`    | Full path to the file containing the b-vectors.                                                                 |
-| `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`). |
-
-#### **`-profile tracking,connectomics,infant`**
-
-| Column    | Description                                                                                                     |
-| --------- | --------------------------------------------------------------------------------------------------------------- |
-| `subject` | Custom subject name. Spaces in sample names are automatically converted to underscores (`_`).                   |
-| `t1`      | Full path to the T1w file (optional). File has to be in the nifti file format (`.nii` or `.nii.gz`)             |
-| `t2`      | Full path to the T2w file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
-| `dwi`     | Full path to the DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`).                       |
-| `bval`    | Full path to the file containing the b-values.                                                                  |
-| `bvec`    | Full path to the file containing the b-vectors.                                                                 |
-| `rev_b0`  | Full path to the reverse-phase encoded DWI file. File has to be in the nifti file format (`.nii` or `.nii.gz`). |
+- `sub-<participant_id>/`: A directory for each participant containing their data.
+  - `anat/`: A directory containing anatomical MRI data (e.g., T1w, T2w).
+    - `T1w` is optional. It will be preprocessed, registered into `T2w` space and used for tissue/surface reconstruction if available.
+    - `T2w` is **mandatory** for infant data.
+  - `dwi/`: A directory containing diffusion-weighted imaging data (e.g., DWI, bval, bvec). Acquisition with both direction DWI data are also supported (e.g. rev-DWI, rev-bval, rev-bvec). Specify them according to the [BIDS guidelines](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/magnetic-resonance-imaging-data.html)
+  - `fmap/`: A directory containing field map data (optional but recommended for distortion correction).
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run scilus/nf-pediatric -r main --input ./samplesheet.csv --outdir ./results --dti_shells "0 1000" --fodf_shells "0 1000" -profile docker
+nextflow run scilus/nf-pediatric -r main --input <BIDS_directory> --outdir ./results --dti_shells "0 1000" --fodf_shells "0 1000" -profile docker
 ```
 
-This will launch the pipeline with the `docker` configuration profile. There is only 4 parameters that need to be supplied at runtime: `--input`: for the path to your samplesheet, `--oudir`: path to the output directory, `--dti_shells`: if the tracking profile is selected, you need to identify which shell to use for DTI fitting (0 and 1000 were selected in the previous example), and `--fodf_shells`: if the tracking profile is selected, specify your shells as for the DTI parameter. See below for more information about profiles.
+This will launch the pipeline with the `docker` configuration profile. There is only 4 parameters that need to be supplied at runtime: `--input`: for the path to your BIDS directory, `--outdir`: path to the output directory, `--dti_shells`: if the tracking profile is selected, you need to identify which shell to use for DTI fitting (0 and 1000 were selected in the previous example), and `--fodf_shells`: if the tracking profile is selected, specify your shells as for the DTI parameter. See below for more information about profiles.
 
 Note that the pipeline will create the following files in your working directory:
 
@@ -193,13 +139,13 @@ nextflow pull scilus/nf-pediatric
 
 ### Reproducibility
 
-It is a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
+It is a good idea to specify the pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [nf-pediatric releases page](https://github.com/nf/pediatric/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
+First, go to the [nf-pediatric releases page](https://github.com/scilus/nf-pediatric/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future. For example, at the bottom of the MultiQC reports.
 
-To further assist in reproducbility, you can use share and re-use [parameter files](#running-the-pipeline) to repeat pipeline runs with the same settings without having to write out a command with every single parameter.
+To further assist in reproducibility, you can use share and reuse [parameter files](#running-the-pipeline) to repeat pipeline runs with the same settings without having to write out a command with every single parameter.
 
 > [!TIP]
 > If you wish to share such profile (such as upload as supplementary material for academic publications), make sure to NOT include cluster specific paths to files, nor institutional specific profiles.
@@ -207,7 +153,7 @@ To further assist in reproducbility, you can use share and re-use [parameter fil
 ## Core Nextflow arguments
 
 > [!NOTE]
-> These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen).
+> These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen)
 
 ### `-profile`
 
@@ -215,15 +161,15 @@ Use this parameter to choose a configuration profile. Profiles can give configur
 
 Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, and Apptainer) - see below.
 
-> [!NOTE]
-> We highly recommend the use of Docker/Singularity/Apptainer containers for full pipeline reproducibility, however when this is not possible, you can run it locally if you have the required softwares installed.
+> [!IMPORTANT]
+> We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
 
-The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to see if your system is available in these configs please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
+The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to check if your system is supported, please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
 
-Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important!
+Note that multiple profiles can be loaded, for example: `-profile tracking,docker` - the order of arguments is important!
 They are loaded in sequence, so later profiles can overwrite earlier profiles.
 
-If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer enviroment.
+If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer environment.
 
 - `docker`
   - A generic configuration profile to be used with [Docker](https://docker.com/)
@@ -260,13 +206,13 @@ Specify the path to a specific config file (this is a core Nextflow command). Se
 
 ### Resource requests
 
-Whilst the default requirements set within the pipeline will hopefully work for most people and with most input data, you may find that you want to customise the compute resources that the pipeline requests. Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the steps in the pipeline, if the job exits with any of the error codes specified [here](https://github.com/nf-core/rnaseq/blob/4c27ef5610c87db00c3c5a3eed10b1d161abf575/conf/base.config#L18) it will automatically be resubmitted with higher requests (2 x original). If it still fails after the second attempt then the pipeline execution is stopped.
+Whilst the default requirements set within the pipeline will hopefully work for most people and with most input data, you may find that you want to customise the compute resources that the pipeline requests. Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the pipeline steps, if the job exits with any of the error codes specified [here](https://github.com/nf-core/rnaseq/blob/4c27ef5610c87db00c3c5a3eed10b1d161abf575/conf/base.config#L18) it will automatically be resubmitted with higher resources request (2 x original, then 3 x original). If it still fails after the third attempt then the pipeline execution is stopped.
 
 To change the resource requests, please see the [max resources](https://nf-co.re/docs/usage/configuration#max-resources) and [tuning workflow resources](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources) section of the nf-core website.
 
 ### Custom Containers
 
-In some cases you may wish to change which container or conda environment a step of the pipeline uses for a particular tool. However in some cases the pipeline specified version maybe out of date.
+In some cases, you may wish to change the container or conda environment used by a pipeline steps for a particular tool. By default, nf-core pipelines use containers and software from the [biocontainers](https://biocontainers.pro/) or [bioconda](https://bioconda.github.io/) projects. However, in some cases the pipeline specified version maybe out of date.
 
 To use a different container from the default container or conda environment specified in a pipeline, please see the [updating tool versions](https://nf-co.re/docs/usage/configuration#updating-tool-versions) section of the nf-core website.
 
