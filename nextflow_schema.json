@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/scilus/nf-pediatric/master/nextflow_schema.json",
-    "title": "nf-pediatric pipeline parameters",
+    "title": "scilus/nf-pediatric pipeline parameters",
     "description": "nf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.",
     "type": "object",
     "$defs": {
@@ -172,6 +172,55 @@
                 }
             }
         },
+        "anat_processing_steps": {
+            "title": "Processing steps to apply on anatomical images.",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Processing steps to apply on anatomical images. (NOTE: the same steps will be applied on both T1w/T2w if supplied.",
+            "help_text": "These options are used to configure the processing steps to apply on anatomical images. You can use these options to customise the behaviour of the processing steps.",
+            "properties": {
+                "preproc_run_denoising": {
+                    "type": "boolean",
+                    "description": "Run denoising on the anatomical images.",
+                    "fa_icon": "fas fa-brain",
+                    "help_text": "Run denoising on the anatomical images. This step is used to remove noise from the images.",
+                    "default": true,
+                    "hidden": false
+                },
+                "preproc_run_N4": {
+                    "type": "boolean",
+                    "description": "Run N4 bias correction on the anatomical images.",
+                    "fa_icon": "fas fa-brain",
+                    "help_text": "Run N4 bias correction on the anatomical images. This step is used to correct intensity inhomogeneities in the images.",
+                    "default": true,
+                    "hidden": false
+                },
+                "preproc_run_resampling": {
+                    "type": "boolean",
+                    "description": "Run resampling on the anatomical images.",
+                    "fa_icon": "fas fa-brain",
+                    "help_text": "Run resampling on the anatomical images. This step is used to resample the images to a different voxel size.",
+                    "default": true,
+                    "hidden": false
+                },
+                "preproc_run_synthstrip": {
+                    "type": "boolean",
+                    "description": "Run SynthStrip for brain extraction.",
+                    "fa_icon": "fas fa-brain",
+                    "help_text": "Run SynthStrip for brain extraction. This step is used to extract the brain from the images.",
+                    "default": true,
+                    "hidden": false
+                },
+                "preproc_run_crop": {
+                    "type": "boolean",
+                    "description": "Run cropping on the anatomical images.",
+                    "fa_icon": "fas fa-brain",
+                    "help_text": "Run cropping on the anatomical images. This step is used to crop the images to remove unnecessary background.",
+                    "default": true,
+                    "hidden": false
+                }
+            }
+        },
         "t1_processing_options": {
             "title": "T1 Processing Options",
             "type": "object",
@@ -241,18 +290,6 @@
                     "fa_icon": "fas fa-brain",
                     "default": null,
                     "hidden": false
-                },
-                "t1_bet_template": {
-                    "type": "string",
-                    "description": "Path to the template to use in antsBet",
-                    "fa_icon": "fas fa-brain",
-                    "hidden": true
-                },
-                "t1_bet_template_probability_map": {
-                    "type": "string",
-                    "description": "Path to the template probability map to use in antsBet",
-                    "fa_icon": "fas fa-brain",
-                    "hidden": true
                 }
             }
         },
@@ -296,13 +333,6 @@
                     "description": "Interpolation method used in the T2 resampling step.",
                     "fa_icon": "fas fa-brain",
                     "default": "lin",
-                    "hidden": true
-                },
-                "t2_run_synthstrip": {
-                    "type": "boolean",
-                    "description": "Run SynthStrip for brain extraction.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
                     "hidden": true
                 },
                 "t2_synthstrip_border": {
@@ -373,12 +403,33 @@
                     "default": false,
                     "hidden": false
                 },
+                "dwi_run_denoising": {
+                    "type": "boolean",
+                    "description": "Run denoising on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
                 "dwi_denoise_patch_size": {
                     "type": "integer",
                     "description": "Patch size used in the DWI denoising step.",
                     "fa_icon": "fas fa-brain",
                     "default": 7,
                     "hidden": true
+                },
+                "dwi_run_degibbs": {
+                    "type": "boolean",
+                    "description": "Run Gibbs ringing correction on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "topup_eddy_run_topup": {
+                    "type": "boolean",
+                    "description": "Run topup in the susceptibility distortion correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
                 },
                 "dwi_susceptibility_config_file": {
                     "type": "string",
@@ -414,6 +465,13 @@
                     "fa_icon": "fas fa-brain",
                     "default": "y",
                     "hidden": true
+                },
+                "topup_eddy_run_eddy": {
+                    "type": "boolean",
+                    "description": "Run eddy in the eddy current correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
                 },
                 "dwi_motion_and_eddy_command": {
                     "type": "string",
@@ -498,6 +556,13 @@
                     "default": 20,
                     "hidden": true
                 },
+                "dwi_run_N4": {
+                    "type": "boolean",
+                    "description": "Run N4 bias correction on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
                 "dwi_bias_bspline_knot_per_voxel": {
                     "type": "number",
                     "description": "Number of B-spline knots per voxel used in the DWI bias correction step.",
@@ -525,6 +590,13 @@
                     "fa_icon": "fas fa-brain",
                     "default": 50,
                     "hidden": true
+                },
+                "dwi_run_resampling": {
+                    "type": "boolean",
+                    "description": "Run resampling on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
                 },
                 "dwi_resample_voxel_size": {
                     "type": "integer",
@@ -1486,6 +1558,9 @@
         },
         {
             "$ref": "#/$defs/atlases_options"
+        },
+        {
+            "$ref": "#/$defs/anat_processing_steps"
         },
         {
             "$ref": "#/$defs/t1_processing_options"
