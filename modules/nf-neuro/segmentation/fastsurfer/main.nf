@@ -4,7 +4,7 @@ process SEGMENTATION_FASTSURFER {
 
     container "${ 'gagnonanthony/nf-pediatric-fastsurfer:v2.3.3' }"
     containerOptions {
-        (workflow.containerEngine == 'docker') ? '--entrypoint ""': ''
+        (workflow.containerEngine == 'docker') ? '--entrypoint ""' : ''
     }
 
     input:
@@ -59,14 +59,21 @@ process SEGMENTATION_FASTSURFER {
     def FASTSURFER_HOME = "/fastsurfer"
 
     """
-    $FASTSURFER_HOME/run_fastsurfer.sh --version
-
-    mkdir ${prefix}__fastsurfer
+    mkdir ${prefix}__fastsurfer/
     touch ${prefix}__final_t1.nii.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         fastsurfer: \$($FASTSURFER_HOME/run_fastsurfer.sh --version)
     END_VERSIONS
+
+    function handle_code () {
+    local code=\$?
+    ignore=( 1 )
+    exit \$([[ " \${ignore[@]} " =~ " \$code " ]] && echo 0 || echo \$code)
+    }
+    trap 'handle_code' ERR
+
+    $FASTSURFER_HOME/run_fastsurfer.sh --version
     """
 }
