@@ -53,10 +53,10 @@ include { TRACKING_LOCALTRACKING            } from '../modules/nf-neuro/tracking
 // ** Connectomics ** //
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORM_LABELS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
 include { FILTERING_COMMIT                  } from '../modules/local/filtering/commit.nf'
-include { TRACTOGRAM_DECOMPOSE              } from '../modules/local/tractogram/decompose.nf'
-include { CONNECTIVITY_AFDFIXEL             } from '../modules/local/connectivity/afdfixel.nf'
+include { CONNECTIVITY_DECOMPOSE            } from '../modules/nf-neuro/connectivity/decompose/main'
+include { CONNECTIVITY_AFDFIXEL             } from '../modules/nf-neuro/connectivity/afdfixel/main'
 include { CONNECTIVITY_METRICS              } from '../modules/local/connectivity/metrics.nf'
-include { CONNECTIVITY_VISUALIZE            } from '../modules/local/connectivity/visualize.nf'
+include { CONNECTIVITY_VISUALIZE            } from '../modules/nf-neuro/connectivity/visualize/main'
 
 // ** QC ** //
 include { QC } from '../subworkflows/local/QC/qc.nf'
@@ -515,14 +515,14 @@ workflow PEDIATRIC {
                 [id, trk, label]
             }
 
-        TRACTOGRAM_DECOMPOSE ( ch_decompose )
-        ch_versions = ch_versions.mix(TRACTOGRAM_DECOMPOSE.out.versions.first())
+        CONNECTIVITY_DECOMPOSE ( ch_decompose )
+        ch_versions = ch_versions.mix(CONNECTIVITY_DECOMPOSE.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(TRACTOGRAM_DECOMPOSE.out.zip.collect{it[1]})
 
         //
         // MODULE: Run FILTERING_COMMIT
         //
-        ch_commit = TRACTOGRAM_DECOMPOSE.out.hdf5
+        ch_commit = CONNECTIVITY_DECOMPOSE.out.hdf5
             .join(ch_dwi_bval_bvec)
             .join(ch_peaks)
 
@@ -553,7 +553,7 @@ workflow PEDIATRIC {
                 def label = reg_label ?: warped_label
                 [id, trk, label]
             }
-            .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
+            .join(CONNECTIVITY_DECOMPOSE.out.labels_list)
             .join(ch_metrics)
 
         CONNECTIVITY_METRICS ( ch_metrics_conn )
@@ -564,7 +564,8 @@ workflow PEDIATRIC {
         // MODULE: Run CONNECTIVITY_VISUALIZE
         //
         ch_visualize = CONNECTIVITY_METRICS.out.metrics
-            .join(TRACTOGRAM_DECOMPOSE.out.labels_list)
+            .join(CONNECTIVITY_DECOMPOSE.out.labels_list)
+            .map{ meta, metrics, labels -> [meta, metrics, [], labels] }
 
         CONNECTIVITY_VISUALIZE ( ch_visualize )
         ch_versions = ch_versions.mix(CONNECTIVITY_VISUALIZE.out.versions.first())

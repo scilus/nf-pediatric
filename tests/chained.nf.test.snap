@@ -12,7 +12,10 @@
                     "fsl": 6.0
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_DECOMPOSE": {
+                    "scilpy": "2.0.2"
                 },
                 "CONNECTIVITY_METRICS": {
                     "scilpy": "2.0.2"
@@ -74,9 +77,6 @@
                 "TRACKING_PFTTRACKING": {
                     "scilpy": "2.0.2",
                     "mrtrix": "3.0.4"
-                },
-                "TRACTOGRAM_DECOMPOSE": {
-                    "scilpy": "2.0.2"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3"
@@ -191,7 +191,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-14T09:22:24.543653"
+        "timestamp": "2025-02-14T10:01:02.085677"
     },
     "Connectomics + tracking + segmentation + infant profiles - should run successfully": {
         "content": [
@@ -210,7 +210,10 @@
                     "mrtrix": "3.0.4"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_DECOMPOSE": {
+                    "scilpy": "2.0.2"
                 },
                 "CONNECTIVITY_METRICS": {
                     "scilpy": "2.0.2"
@@ -281,9 +284,6 @@
                     "scilpy": "2.0.2"
                 },
                 "TRACKING_LOCALTRACKING": {
-                    "scilpy": "2.0.2"
-                },
-                "TRACTOGRAM_DECOMPOSE": {
                     "scilpy": "2.0.2"
                 },
                 "TRANSFORMTISSUES": {
@@ -397,14 +397,17 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-14T09:24:59.702694"
+        "timestamp": "2025-02-14T10:03:26.88771"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
             14,
             {
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_DECOMPOSE": {
+                    "scilpy": "2.0.2"
                 },
                 "CONNECTIVITY_METRICS": {
                     "scilpy": "2.0.2"
@@ -417,9 +420,6 @@
                 },
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
-                },
-                "TRACTOGRAM_DECOMPOSE": {
-                    "scilpy": "2.0.2"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3"
@@ -481,7 +481,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-11T08:56:48.656587"
+        "timestamp": "2025-02-14T09:56:30.766871"
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
@@ -496,7 +496,10 @@
                     "fsl": 6.0
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_DECOMPOSE": {
+                    "scilpy": "2.0.2"
                 },
                 "CONNECTIVITY_METRICS": {
                     "scilpy": "2.0.2"
@@ -561,9 +564,6 @@
                 "TRACKING_PFTTRACKING": {
                     "scilpy": "2.0.2",
                     "mrtrix": "3.0.4"
-                },
-                "TRACTOGRAM_DECOMPOSE": {
-                    "scilpy": "2.0.2"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3"
@@ -662,6 +662,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-14T09:20:05.971709"
+        "timestamp": "2025-02-14T09:58:50.304664"
     }
 }

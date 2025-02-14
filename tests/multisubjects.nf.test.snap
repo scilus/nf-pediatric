@@ -16,7 +16,10 @@
                     "mrtrix": "3.0.4"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_DECOMPOSE": {
+                    "scilpy": "2.0.2"
                 },
                 "CONNECTIVITY_METRICS": {
                     "scilpy": "2.0.2"
@@ -87,9 +90,6 @@
                     "scilpy": "2.0.2"
                 },
                 "TRACKING_LOCALTRACKING": {
-                    "scilpy": "2.0.2"
-                },
-                "TRACTOGRAM_DECOMPOSE": {
                     "scilpy": "2.0.2"
                 },
                 "TRANSFORMTISSUES": {
@@ -278,7 +278,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-14T09:16:00.317765"
+        "timestamp": "2025-02-14T10:09:41.964486"
     },
     "All profiles with multiple subjects - should run successfully": {
         "content": [
@@ -293,7 +293,10 @@
                     "fsl": 6.0
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.0.2"
+                },
+                "CONNECTIVITY_DECOMPOSE": {
+                    "scilpy": "2.0.2"
                 },
                 "CONNECTIVITY_METRICS": {
                     "scilpy": "2.0.2"
@@ -358,9 +361,6 @@
                 "TRACKING_PFTTRACKING": {
                     "scilpy": "2.0.2",
                     "mrtrix": "3.0.4"
-                },
-                "TRACTOGRAM_DECOMPOSE": {
-                    "scilpy": "2.0.2"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3"
@@ -559,6 +559,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-14T09:11:56.880957"
+        "timestamp": "2025-02-14T10:06:19.893221"
     }
 }
