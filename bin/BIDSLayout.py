@@ -345,7 +345,7 @@ def get_data(layout, nSub, dwis, t1s, t2s, fs, default_readout, clean):
             sep='\t')
 
         if 'age' in metadata.columns:
-            age = metadata[metadata['participant_id'] == nSub]['age'].values[0]
+            age = metadata[metadata['participant_id'] == f'sub-{nSub}']['age'].values[0]
         else:
             logging.warning("No age column found in participants.tsv file. "
                             "Age will be empty.")
@@ -356,7 +356,7 @@ def get_data(layout, nSub, dwis, t1s, t2s, fs, default_readout, clean):
     return {'subject': nSub,
             'session': nSess,
             'run': nRun,
-            'age': age,
+            'age': f"{age}",
             't1': t1_path,
             't2': t2_path,
             'wmparc': wmparc_path,

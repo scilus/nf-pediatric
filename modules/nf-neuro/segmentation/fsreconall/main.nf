@@ -63,8 +63,6 @@ process SEGMENTATION_FSRECONALL {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    #recon-all --help
-
     mkdir ${prefix}__recon_all
     touch ${prefix}__final_t1.nii.gz
 
@@ -72,5 +70,14 @@ process SEGMENTATION_FSRECONALL {
     "${task.process}":
         freesurfer: \$(mri_convert -version | grep "freesurfer" | sed -E 's/.* ([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/')
     END_VERSIONS
+
+    function handle_code () {
+    local code=\$?
+    ignore=( 1 )
+    exit \$([[ " \${ignore[@]} " =~ " \$code " ]] && echo 0 || echo \$code)
+    }
+    trap 'handle_code' ERR
+
+    recon-all --help
     """
 }

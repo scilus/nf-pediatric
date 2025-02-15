@@ -45,13 +45,14 @@ keywords:
   - Normalization
   - Resampling
 components:
-  - betcrop/cropvolume
+  - image/cropvolume
   - betcrop/fslbetcrop
   - denoising/mppca
   - image/resample
   - preproc/n4
   - preproc/normalize
   - utils/extractb0
+  - preproc/gibbs
   - topup_eddy
 input:
   - ch_dwi:
