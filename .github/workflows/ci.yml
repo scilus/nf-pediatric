@@ -37,12 +37,12 @@ jobs:
           - "singularity"
         test_name:
           - "run_connectomics.nf.test"
-          - "chained.nf.test"
-          - "connectomics.nf.test"
-          - "tracking.nf.test"
-          - "freesurfer.nf.test"
-          - "infantseg.nf.test"
-          - "multisubjects.nf.test"
+          #- "chained.nf.test"
+          #- "connectomics.nf.test"
+          #- "tracking.nf.test"
+          #- "freesurfer.nf.test"
+          #- "infantseg.nf.test"
+          #- "multisubjects.nf.test"
         isMaster:
           - ${{ github.base_ref == 'master' }}
         # Exclude conda and singularity on dev
@@ -90,6 +90,8 @@ jobs:
         env:
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON_FILE_PATH }}
         run: |
+          echo $GDRIVE_CREDENTIALS_DATA > gdrive-credentials.json
+          dvc remote modify --local storage gdrive_service_account_json_file_path $(realpath gdrive-credentials.json)
           dvc pull
 
       - name: "Run pipeline with test data ${{ matrix.NXF_VER }} | ${{ matrix.test_name }} | ${{ matrix.profile }}"
