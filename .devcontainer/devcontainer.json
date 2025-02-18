@@ -4,6 +4,7 @@
     "remoteUser": "gitpod",
     "runArgs": ["--privileged"],
 
+    "postCreateCommand": "bash -c 'conda install -c conda-forge dvc dvc-gdrive && dvc --version'",
     // Configure tool-specific properties.
     "customizations": {
         // Configure properties specific to VS Code.

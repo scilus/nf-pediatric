@@ -1,0 +1,6 @@
+outs:
+- md5: 69c8723df1438101d77d1b87e58c8280.dir
+  size: 348426446
+  nfiles: 13
+  hash: md5
+  path: derivatives-infant
