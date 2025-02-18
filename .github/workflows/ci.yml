@@ -87,8 +87,8 @@ jobs:
         uses: iterative/setup-dvc@v1
 
       - name: Fetch test dataset
-        env: |
-          GDRIVE_CREDENTIALS_DATA:  ${{ secrets.DVC_KEY }}
+        env:
+          GDRIVE_CREDENTIALS_DATA: ${{ secrets.DVC_KEY }}
         run: |
           dvc pull
 
