@@ -1,0 +1,44 @@
+nextflow_pipeline {
+
+    name "Test nf-pediatric -profile connectomics,infant"
+    script "../main.nf"
+
+    test("nf-pediatric -profile connectomics,infant") {
+
+        when {
+            params {
+
+                params.input_deriv = "$projectDir/tests/data/derivatives-infant/"
+                params.outdir = "$outputDir"
+
+                params.connectomics = true
+
+                params.infant = true
+
+                params.commit_para_diff                 = "1.2E-3"
+                params.commit_iso_diff                  = "2.0E-3"
+                params.decompose_min_len                = 10
+                params.decompose_outlier_threshold      = 0.4
+
+                params.cleanup                          = true
+            }
+        }
+
+        then {
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll(
+                { assert workflow.success },
+                { assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).md5().match()
+                }
+            )
+        }
+    }
+}
