@@ -36,6 +36,7 @@ jobs:
           - "docker"
           - "singularity"
         test_name:
+          - "run_connectomics.nf.test"
           - "chained.nf.test"
           - "connectomics.nf.test"
           - "tracking.nf.test"
@@ -81,6 +82,15 @@ jobs:
         run: |
           mkdir -p $NXF_SINGULARITY_CACHEDIR
           mkdir -p $NXF_SINGULARITY_LIBRARYDIR
+
+      - name: Set up DVC
+        uses: iterative/setup-dvc@v1
+
+      - name: Fetch test dataset
+        env: |
+          GDRIVE_CREDENTIALS_DATA:  ${{ secrets.DVC_KEY }}
+        run: |
+          dvc pull
 
       - name: "Run pipeline with test data ${{ matrix.NXF_VER }} | ${{ matrix.test_name }} | ${{ matrix.profile }}"
         run: |
