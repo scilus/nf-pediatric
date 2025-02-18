@@ -95,7 +95,7 @@ jobs:
           echo "$GDRIVE_SERVICE_ACCOUNT_JSON" > dvc-remote-connections.json
           dvc remote modify storage gdrive_client_id "$GDRIVE_CLIENT_ID"
           dvc remote modify storage gdrive_client_secret "$GDRIVE_CLIENT_SECRET"
-          dvc remote modify storage gdrive_service_account_json_file_path dvc-remote-connections.json
+          dvc remote modify --local storage gdrive_service_account_json_file_path dvc-remote-connections.json
 
       - name: Fetch test dataset
         run: |
