@@ -90,7 +90,7 @@ jobs:
         env:
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON_FILE_PATH }}
         run: |
-          echo $GDRIVE_CREDENTIALS_DATA > gdrive-credentials.json
+          printf '%s' "$GDRIVE_CREDENTIALS_DATA" > gdrive-credentials.json
           dvc remote modify --local storage gdrive_service_account_json_file_path $(realpath gdrive-credentials.json)
           dvc pull
 
