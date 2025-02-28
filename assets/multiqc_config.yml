@@ -39,10 +39,19 @@ custom_content:
 
 custom_data:
   shell_qc:
-    file_format: 'tsv'
-    section_name: 'Shell QC'
-    description: 'This section contains QC images for the diffusion shell.'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Shell QC"
+    description: |
+      'This section contains QC images for the diffusion shell, displaying
+      the distribution of b-vectors on the sphere. This visualization ensures
+      that the diffusion-weighted gradient directions are correctly assigned
+      and evenly distributed, which is critical for accurate modeling of
+      diffusion properties. To assess the quality of the b-vectors, check that
+      the gradient directions form a uniform and symmetric distribution on
+      the sphere, corresponding to the expected acquisition scheme (e.g.,
+      single-shell, multi-shell). Look for missing or misaligned directions,
+      which may indicate acquisition or preprocessing errors.'
+    plot_type: "image"
   eddy_qc:
     file_format: "gif"
     section_name: "Eddy QC"
@@ -86,29 +95,80 @@ custom_data:
       consider flagging this specific subject for further review.
     plot_type: "image"
   tissue_segmentation_qc:
-    file_format: 'tsv'
-    section_name: 'Tissue Segmentation'  # This is the new section name
-    description: 'This section contains images for visual quality control of tissue segmentation. Red: white matter segmentation, Green: gray matter segmentation, Blue: CSF segmentation.'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Tissue Segmentation QC" # This is the new section name
+    description: |
+      'This section contains images for visual quality control of tissue segmentation,
+      where different tissue classes are color-coded: red for white matter (WM),
+      green for gray matter (GM), and blue for cerebrospinal fluid (CSF).
+      This segmentation is typically derived from a T1-weighted structural image
+      (if pediatric) or T2-weighted structural image (infant) and is crucial for
+      downstream analyses such as tractography. To assess the quality of the
+      segmentation, ensure that each tissue class is well-defined and corresponds
+      accurately to expected anatomical regions. White matter should be
+      predominantly within deep brain structures and major tracts,
+      gray matter should outline the cortex and subcortical nuclei, and
+      CSF should primarily appear in the ventricles and surrounding sulci.
+      Check for misclassifications, such as CSF incorrectly assigned within
+      the brain or gray/white matter boundaries appearing blurred or inconsistent.
+      If artifacts or misclassifications are present, consider flagging this specific
+      for further review.'
+    plot_type: "image"
   metrics_qc:
-    file_format: 'tsv'
-    section_name: 'Metrics QC'  # This is the new section name
-    description: 'This section contains QC images for diffusion metrics.'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Metrics QC" # This is the new section name
+    description: |
+      'This section contains QC images for diffusion tensor imaging
+      (DTI) metric maps and FODF metric maps, including fractional anisotropy
+      (FA), mean diffusivity (MD), RGB FA, and number of fiber orientation (NuFO).
+      To assess the quality of the DTI metrics, ensure that FA highlights major
+      white matter tracts with expected high values (e.g., corpus callosum,
+      corticospinal tract) and that MD, RGB FA, and NuFO values follow known
+      anatomical distributions. Look for smooth, artifact-free maps, avoiding
+      unexpected signal dropout, distortions, or excessive noise. Pay special
+      attention to regions prone to artifacts, such as near the ventricles or
+      areas affected by eddy currents and susceptibility distortions.'
+    plot_type: "image"
   tracking_qc:
-    file_format: 'tsv'
-    section_name: 'Tracking Coverage'  # This is the new section name
-    description: 'The following images show the WM mask (green) used for tracking overlaid on the TDI image (pink).'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Tracking Coverage" # This is the new section name
+    description: |
+      'This section contains QC images of tractography coverage, shown as an
+      overlay of the tract density image (pink) with the WM mask (green).
+      This visualization assesses how well
+      the reconstructed streamlines cover the white matter mask used for
+      tracking, with higher coverage generally indicating better results.
+      To evaluate tracking quality, check that the tract density image spans
+      the full extent of the white matter mask, ensuring that major pathways
+      (e.g., corpus callosum, corticospinal tract) are well-represented.
+      Ideally, the coverage should be uniform across the mask, with minimal
+      gaps or missing regions. Areas of low coverage may indicate poor
+      tracking due to insufficient diffusion signal, masking errors, or
+      overly restrictive tracking parameters. Conversely, excessive streamlines
+      outside the mask may suggest tracking leakage into non-white matter
+      regions, requiring further filtering.'
+    plot_type: "image"
   labels_qc:
-    file_format: 'tsv'
-    section_name: 'Labels QC'  # This is the new section name
-    description: 'This section contains QC images for atlas labels.'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Labels QC" # This is the new section name
+    description: |
+      'This section contains QC images for the segmentation of
+      cortical and subcortical structures, displayed as an overlay of
+      anatomical labels. These labels are derived from structural MRI
+      and serve as key regions of interest for connectivity analyses and
+      volumetric measurements. To assess segmentation accuracy, verify
+      that each label correctly corresponds to its respective anatomical
+      structure. Cortical labels should align with gyri and follow natural
+      sulcal boundaries, while subcortical labels should fit well within deep
+      gray matter structures such as the thalamus and basal ganglia. Check for
+      misalignments, incorrect label assignments, or excessive partial
+      volume effects. If discrepancies are found, consider refining
+      registration or segmentation parameters.'
+    plot_type: "image"
 
 sp:
   shell_qc:
-    fn: '*gradients_mqc.png'
+    fn: "*gradients_mqc.png"
   topup_qc:
     fn: "*_b0_topup_mqc.gif"
   eddy_qc:
@@ -116,13 +176,13 @@ sp:
   anattodwi_qc:
     fn: "*_registration_anattodwi_mqc.gif"
   tissue_segmentation_qc:
-    fn: '*segmentation_mqc.png'
+    fn: "*segmentation_mqc.png"
   metrics_qc:
-    fn: '*metrics_mqc.png'
+    fn: "*metrics_mqc.png"
   tracking_qc:
-    fn: '*coverage_overlay_mqc.png'
+    fn: "*coverage_overlay_mqc.png"
   labels_qc:
-    fn: '*labels_mqc.png'
+    fn: "*labels_mqc.png"
 
 export_plots: true
 
