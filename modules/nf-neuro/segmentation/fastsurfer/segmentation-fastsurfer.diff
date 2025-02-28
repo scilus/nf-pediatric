@@ -1,10 +1,10 @@
-Changes in module 'nf-neuro/segmentation/fastsurfer'
+Changes in component 'nf-neuro/segmentation/fastsurfer'
 'modules/nf-neuro/segmentation/fastsurfer/environment.yml' is unchanged
 'modules/nf-neuro/segmentation/fastsurfer/meta.yml' is unchanged
 Changes in 'segmentation/fastsurfer/main.nf':
 --- modules/nf-neuro/segmentation/fastsurfer/main.nf
 +++ modules/nf-neuro/segmentation/fastsurfer/main.nf
-@@ -1,35 +1,51 @@
+@@ -1,35 +1,54 @@
  process SEGMENTATION_FASTSURFER {
      tag "$meta.id"
 -    label 'process_single'
@@ -15,7 +15,7 @@ Changes in 'segmentation/fastsurfer/main.nf':
 -    containerOptions '--entrypoint ""'
 +    container "${ 'gagnonanthony/nf-pediatric-fastsurfer:v2.3.3' }"
 +    containerOptions {
-+        (workflow.containerEngine == 'docker') ? '--entrypoint ""': ''
++        (workflow.containerEngine == 'docker') ? '--entrypoint ""' : ''
 +    }
  
      input:
@@ -39,38 +39,39 @@ Changes in 'segmentation/fastsurfer/main.nf':
 +    def prefix = task.ext.prefix ?: "${meta.id}"
 +    def acq3T = task.ext.acq3T ? "--3T" : ""
 +    def FASTSURFER_HOME = "/fastsurfer"
-+    //def SUBJECTS_DIR = "${prefix}_fastsurfer"
++    def SUBJECTS_DIR = "${prefix}__fastsurfer"
++    def cerebnet = task.ext.cerebnet ? "" : "--no_cereb"
++    def hypvinn = task.ext.hypvinn ? "" : "--no_hypothal"
 +
 +    // ** Adding a registration to .gca atlas to generate the talairach.m3z file (subcortical atlas segmentation ** //
 +    // ** wont work without it). A little time consuming but necessary. For FreeSurfer 7.3.2, RB_all_2020-01-02.gca ** //
 +    // ** is the default atlas. Update when bumping FreeSurfer version. ** //
      """
 -    mkdir ${prefix}_fastsurfer/
++    mkdir ${prefix}__fastsurfer/
 +    export FS_LICENSE=\$(realpath $fs_license)
 +
      $FASTSURFER_HOME/run_fastsurfer.sh  --allow_root \
--                                        --sd \$(realpath ${SUBJECTS_DIR}) \
-+                                        --sd \$(pwd) \
+                                         --sd \$(realpath ${SUBJECTS_DIR}) \
                                          --fs_license \$(realpath $fs_license) \
                                          --t1 \$(realpath ${anat}) \
--                                        --sid ${prefix} \
+                                         --sid ${prefix} \
 -                                        --seg_only --py python3 \
-+                                        --sid ${prefix}__fastsurfer \
 +                                        --parallel \
 +                                        --threads $task.cpus \
 +                                        --py python3 \
                                          ${acq3T}
 +
-+    mri_ca_register -align-after -nobigventricles -mask ${prefix}__fastsurfer/mri/brainmask.mgz \
-+        -T ${prefix}__fastsurfer/mri/transforms/talairach.lta -threads $task.cpus \
-+        ${prefix}__fastsurfer/mri/norm.mgz \${FREESURFER_HOME}/average/RB_all_2020-01-02.gca \
-+        ${prefix}__fastsurfer/mri/transforms/talairach.m3z
++    mri_ca_register -align-after -nobigventricles -mask ${prefix}__fastsurfer/${prefix}/mri/brainmask.mgz \
++        -T ${prefix}__fastsurfer/${prefix}/mri/transforms/talairach.lta -threads $task.cpus \
++        ${prefix}__fastsurfer/${prefix}/mri/norm.mgz \${FREESURFER_HOME}/average/RB_all_2020-01-02.gca \
++        ${prefix}__fastsurfer/${prefix}/mri/transforms/talairach.m3z
 +
-+    mri_convert ${prefix}__fastsurfer/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
++    mri_convert ${prefix}__fastsurfer/${prefix}/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
  
      cat <<-END_VERSIONS > versions.yml
      "${task.process}":
-@@ -38,14 +54,18 @@
+@@ -38,14 +57,25 @@
      """
  
      stub:
@@ -79,21 +80,80 @@ Changes in 'segmentation/fastsurfer/main.nf':
 +    def FASTSURFER_HOME = "/fastsurfer"
  
      """
-     $FASTSURFER_HOME/run_fastsurfer.sh --version
- 
-+    mkdir ${prefix}__fastsurfer
+-    $FASTSURFER_HOME/run_fastsurfer.sh --version
++    mkdir ${prefix}__fastsurfer/
 +    touch ${prefix}__final_t1.nii.gz
-+
+ 
      cat <<-END_VERSIONS > versions.yml
      "${task.process}":
 -        fastersurfer: 2.2.0+9f37d02
 +        fastsurfer: \$($FASTSURFER_HOME/run_fastsurfer.sh --version)
      END_VERSIONS
++
++    function handle_code () {
++    local code=\$?
++    ignore=( 1 )
++    exit \$([[ " \${ignore[@]} " =~ " \$code " ]] && echo 0 || echo \$code)
++    }
++    trap 'handle_code' ERR
++
++    $FASTSURFER_HOME/run_fastsurfer.sh --version
      """
  }
 
-'modules/nf-neuro/segmentation/fastsurfer/tests/main.nf.test.snap' is unchanged
+Changes in 'segmentation/fastsurfer/tests/main.nf.test.snap':
+--- modules/nf-neuro/segmentation/fastsurfer/tests/main.nf.test.snap
++++ modules/nf-neuro/segmentation/fastsurfer/tests/main.nf.test.snap
+@@ -1,4 +1,16 @@
+ {
++    "segmentation - fastsurfer - stub-run": {
++        "content": [
++            [
++                "versions.yml:md5,b263ce2ef1818492be3805ba8e49b50f"
++            ]
++        ],
++        "meta": {
++            "nf-test": "0.9.0",
++            "nextflow": "24.10.1"
++        },
++        "timestamp": "2024-12-12T13:38:50.551338"
++    },
+     "segmentation - fastsurfer": {
+         "content": [
+             "test_fastsurfer",
+
 'modules/nf-neuro/segmentation/fastsurfer/tests/tags.yml' is unchanged
 'modules/nf-neuro/segmentation/fastsurfer/tests/nextflow.config' is unchanged
-'modules/nf-neuro/segmentation/fastsurfer/tests/main.nf.test' is unchanged
+Changes in 'segmentation/fastsurfer/tests/main.nf.test':
+--- modules/nf-neuro/segmentation/fastsurfer/tests/main.nf.test
++++ modules/nf-neuro/segmentation/fastsurfer/tests/main.nf.test
+@@ -47,4 +47,27 @@
+             )
+         }
+     }
++
++    test("segmentation - fastsurfer - stub-run") {
++        options "-stub-run"
++        when {
++            process {
++                """
++                input[0] = LOAD_DATA.out.test_data_directory.map{
++                    test_data_directory -> [
++                        [ id:'test' ],
++                        file("\${test_data_directory}/anat_image.nii.gz"),
++                        file("\${test_data_directory}/license.txt")
++                    ]
++                }
++                """
++            }
++        }
++        then {
++            assertAll(
++                { assert process.success },
++                { assert snapshot(process.out.versions).match() }
++            )
++        }
++    }
+ }
+
 ************************************************************

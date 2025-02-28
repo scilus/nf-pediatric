@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed`
 
 - Completed the addition of QC in pipeline ([#7](https://github.com/scilus/nf-pediatric/issues/7))
+- Move cerebellum and hypothalamus sub-segmentation as optional steps in fastsurfer ([#23](https://github.com/scilus/nf-pediatric/issues/23))
 
 ## [Unreleased] - [2025-02-14]
 

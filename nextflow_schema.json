@@ -82,6 +82,22 @@
                     "format": "file-path",
                     "exists": true
                 },
+                "cerebnet": {
+                    "type": "boolean",
+                    "description": "Use CerebNet for cerebellum segmentation.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "help_text": "Use CerebNet for cerebellum sub-segmentation in FastSurfer.",
+                    "hidden": false
+                },
+                "hypvinn": {
+                    "type": "boolean",
+                    "description": "Use HypVINN for hypothalamus sub-segmentation.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "help_text": "Use HypVINN for hypothalamus sub-segmentation in FastSurfer.",
+                    "hidden": false
+                },
                 "acq3T": {
                     "type": "boolean",
                     "description": "Use 3T acquisition parameters.",
