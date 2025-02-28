@@ -4,7 +4,9 @@
             35,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "BETCROP_FSLBETCROP": {
                     "scilpy": "2.0.2",
@@ -53,8 +55,10 @@
                 },
                 "PREPROC_TOPUP": {
                     "scilpy": "2.0.2",
-                    "ants": "2.4.3",
-                    "fsl": 6.0
+                    "antsRegistration": null,
+                    "fsl": 6.0,
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -191,14 +195,16 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-14T10:01:02.085677"
+        "timestamp": "2025-02-28T09:50:07.593117"
     },
     "Connectomics + tracking + segmentation + infant profiles - should run successfully": {
         "content": [
             55,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "APPLYTRANSFORMS": {
                     "ants": "2.4.3"
@@ -265,8 +271,10 @@
                 },
                 "PREPROC_TOPUP": {
                     "scilpy": "2.0.2",
-                    "ants": "2.4.3",
-                    "fsl": 6.0
+                    "antsRegistration": null,
+                    "fsl": 6.0,
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -397,7 +405,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-14T10:03:26.88771"
+        "timestamp": "2025-02-28T09:52:15.648516"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -488,7 +496,9 @@
             45,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "BETCROP_FSLBETCROP": {
                     "scilpy": "2.0.2",
@@ -540,8 +550,10 @@
                 },
                 "PREPROC_TOPUP": {
                     "scilpy": "2.0.2",
-                    "ants": "2.4.3",
-                    "fsl": 6.0
+                    "antsRegistration": null,
+                    "fsl": 6.0,
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -662,6 +674,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-14T09:58:50.304664"
+        "timestamp": "2025-02-28T09:48:08.473952"
     }
 }

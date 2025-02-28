@@ -76,7 +76,7 @@ workflow PEDIATRIC {
     main:
 
     ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
+    ch_multiqc_files_sub = Channel.empty()
 
     //
     // Decomposing the samplesheet into individual channels
@@ -241,7 +241,7 @@ workflow PEDIATRIC {
             ch_dwi_weights
         )
         ch_versions = ch_versions.mix(PREPROC_DWI.out.versions)
-        // ch_multiqc_files = ch_multiqc_files.mix(PREPROC_DWI.out.zip.collect{it[1]})
+        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(PREPROC_DWI.out.ch_mqc)
 
         // ** Setting outputs ** //
         ch_processed_dwi = PREPROC_DWI.out.dwi
@@ -326,7 +326,7 @@ workflow PEDIATRIC {
 
         ANATTODWI( ch_anat_reg )
         ch_versions = ch_versions.mix(ANATTODWI.out.versions)
-        // ch_multiqc_files = ch_multiqc_files.mix(REGISTRATION.out.zip.collect{it[1]})
+        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(ANATTODWI.out.mqc)
 
         //
         // SUBWORKFLOW: Run ANATOMICAL_SEGMENTATION
@@ -616,7 +616,8 @@ workflow PEDIATRIC {
         params.tracking ? RECONST_DTIMETRICS.out.rgb : Channel.empty()
     )
 
-    qc_files = QC.out.tissueseg_png
+    qc_files = ch_multiqc_files_sub
+        .mix(QC.out.tissueseg_png)
         .mix(QC.out.tracking_png)
         .mix(QC.out.shell_png)
         .mix(QC.out.metrics_png)
@@ -641,6 +642,9 @@ workflow PEDIATRIC {
     //
     // MODULE: MultiQC
     //
+    ch_multiqc_files = Channel.empty()  // To store versions, methods description, etc.
+                                        // Otherwise, stored in either subject or global level channel.
+
     ch_multiqc_config_subject = Channel.fromPath(
         "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
     ch_multiqc_config_global = Channel.fromPath(

@@ -6,15 +6,21 @@ report_section_order:
   "nf-pediatric-summary":
     order: -1001
   "shell_qc":
-    order: -850
-  "tissue_segmentation_qc":
     order: -600
-  "metrics_qc":
+  "topup_qc":
     order: -625
-  "tracking_qc":
+  "eddy_qc":
     order: -650
+  "anattodwi_qc":
+    order: -680
+  "tissue_segmentation_qc":
+    order: -700
+  "metrics_qc":
+    order: -675
+  "tracking_qc":
+    order: -725
   "labels_qc":
-    order: -500
+    order: -750
   "nf-pediatric-methods-description":
     order: -900
   software_versions:
@@ -23,6 +29,9 @@ report_section_order:
 custom_content:
   order:
     - shell_qc
+    - topup_qc
+    - eddy_qc
+    - anattodwi_qc
     - tissue_segmentation_qc
     - metrics_qc
     - tracking_qc
@@ -30,42 +39,150 @@ custom_content:
 
 custom_data:
   shell_qc:
-    file_format: 'tsv'
-    section_name: 'Shell QC'
-    description: 'This section contains QC images for the diffusion shell.'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Shell QC"
+    description: |
+      'This section contains QC images for the diffusion shell, displaying
+      the distribution of b-vectors on the sphere. This visualization ensures
+      that the diffusion-weighted gradient directions are correctly assigned
+      and evenly distributed, which is critical for accurate modeling of
+      diffusion properties. To assess the quality of the b-vectors, check that
+      the gradient directions form a uniform and symmetric distribution on
+      the sphere, corresponding to the expected acquisition scheme (e.g.,
+      single-shell, multi-shell). Look for missing or misaligned directions,
+      which may indicate acquisition or preprocessing errors.'
+    plot_type: "image"
+  eddy_qc:
+    file_format: "gif"
+    section_name: "Eddy QC"
+    description: |
+      This section contains QC images for EDDY correction, which is used to
+      correct distortions and motion artifacts. The animation shows a
+      before-and-after comparison of the correction. To assess the quality of
+      the correction, focus on areas prone to distortions, such as the frontal
+      lobe and the cerebellum/spinal cord region. Look for reduced geometric warping,
+      improved alignment with anatomical boundaries, and correction of
+      eddy-current-induced displacements. Additionally, ensure that no new
+      artifacts or excessive blurring are introduced in the corrected images.
+    plot_type: "image"
+  topup_qc:
+    file_format: "gif"
+    section_name: "Topup QC"
+    description: |
+      This section contains QC images for TOPUP correction, which is used to correct
+      susceptibility-induced distortions by leveraging pairs of images acquired with
+      opposite phase-encoding directions. The animation shows a before-and-after
+      comparison of the correction. To assess the quality of the correction, focus
+      on regions most affected by susceptibility distortions, such as the frontal lobe
+      and the cerebellum/spinal cord area. Look for improved alignment of anatomical
+      structures, reduced stretching or compression, and better symmetry between the
+      corrected images. Additionally, ensure that the correction does not introduce
+      new artifacts or excessive blurring.
+    plot_type: "image"
+  anattodwi_qc:
+    file_format: "gif"
+    section_name: "Registration of anatomical image in DWI space QC"
+    description: |
+      This section contains QC images for the registration of the T1-weighted
+      structural image to diffusion space, using the b0 image as a reference.
+      This step ensures accurate alignment between structural and diffusion
+      data. To assess the quality of the registration, check for good alignment
+      of anatomical structures. Specifically, look for proper overlay of cortical
+      and subcortical structures without excessive warping, stretching,
+      or misalignment. Pay particular attention to boundaries such as the
+      ventricles and major white matter tracts, ensuring they match well
+      between the T1-weighted and b0 images. If misalignment is present,
+      consider flagging this specific subject for further review.
+    plot_type: "image"
   tissue_segmentation_qc:
-    file_format: 'tsv'
-    section_name: 'Tissue Segmentation'  # This is the new section name
-    description: 'This section contains images for visual quality control of tissue segmentation. Red: white matter segmentation, Green: gray matter segmentation, Blue: CSF segmentation.'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Tissue Segmentation QC" # This is the new section name
+    description: |
+      'This section contains images for visual quality control of tissue segmentation,
+      where different tissue classes are color-coded: red for white matter (WM),
+      green for gray matter (GM), and blue for cerebrospinal fluid (CSF).
+      This segmentation is typically derived from a T1-weighted structural image
+      (if pediatric) or T2-weighted structural image (infant) and is crucial for
+      downstream analyses such as tractography. To assess the quality of the
+      segmentation, ensure that each tissue class is well-defined and corresponds
+      accurately to expected anatomical regions. White matter should be
+      predominantly within deep brain structures and major tracts,
+      gray matter should outline the cortex and subcortical nuclei, and
+      CSF should primarily appear in the ventricles and surrounding sulci.
+      Check for misclassifications, such as CSF incorrectly assigned within
+      the brain or gray/white matter boundaries appearing blurred or inconsistent.
+      If artifacts or misclassifications are present, consider flagging this specific
+      for further review.'
+    plot_type: "image"
   metrics_qc:
-    file_format: 'tsv'
-    section_name: 'Metrics QC'  # This is the new section name
-    description: 'This section contains QC images for diffusion metrics.'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Metrics QC" # This is the new section name
+    description: |
+      'This section contains QC images for diffusion tensor imaging
+      (DTI) metric maps and FODF metric maps, including fractional anisotropy
+      (FA), mean diffusivity (MD), RGB FA, and number of fiber orientation (NuFO).
+      To assess the quality of the DTI metrics, ensure that FA highlights major
+      white matter tracts with expected high values (e.g., corpus callosum,
+      corticospinal tract) and that MD, RGB FA, and NuFO values follow known
+      anatomical distributions. Look for smooth, artifact-free maps, avoiding
+      unexpected signal dropout, distortions, or excessive noise. Pay special
+      attention to regions prone to artifacts, such as near the ventricles or
+      areas affected by eddy currents and susceptibility distortions.'
+    plot_type: "image"
   tracking_qc:
-    file_format: 'tsv'
-    section_name: 'Tracking Coverage'  # This is the new section name
-    description: 'The following images show the WM mask (green) used for tracking overlaid on the TDI image (pink).'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Tracking Coverage" # This is the new section name
+    description: |
+      'This section contains QC images of tractography coverage, shown as an
+      overlay of the tract density image (pink) with the WM mask (green).
+      This visualization assesses how well
+      the reconstructed streamlines cover the white matter mask used for
+      tracking, with higher coverage generally indicating better results.
+      To evaluate tracking quality, check that the tract density image spans
+      the full extent of the white matter mask, ensuring that major pathways
+      (e.g., corpus callosum, corticospinal tract) are well-represented.
+      Ideally, the coverage should be uniform across the mask, with minimal
+      gaps or missing regions. Areas of low coverage may indicate poor
+      tracking due to insufficient diffusion signal, masking errors, or
+      overly restrictive tracking parameters. Conversely, excessive streamlines
+      outside the mask may suggest tracking leakage into non-white matter
+      regions, requiring further filtering.'
+    plot_type: "image"
   labels_qc:
-    file_format: 'tsv'
-    section_name: 'Labels QC'  # This is the new section name
-    description: 'This section contains QC images for atlas labels.'
-    plot_type: 'image'
+    file_format: "tsv"
+    section_name: "Labels QC" # This is the new section name
+    description: |
+      'This section contains QC images for the segmentation of
+      cortical and subcortical structures, displayed as an overlay of
+      anatomical labels. These labels are derived from structural MRI
+      and serve as key regions of interest for connectivity analyses and
+      volumetric measurements. To assess segmentation accuracy, verify
+      that each label correctly corresponds to its respective anatomical
+      structure. Cortical labels should align with gyri and follow natural
+      sulcal boundaries, while subcortical labels should fit well within deep
+      gray matter structures such as the thalamus and basal ganglia. Check for
+      misalignments, incorrect label assignments, or excessive partial
+      volume effects. If discrepancies are found, consider refining
+      registration or segmentation parameters.'
+    plot_type: "image"
 
 sp:
   shell_qc:
-    fn: '*gradients_mqc.png'
+    fn: "*gradients_mqc.png"
+  topup_qc:
+    fn: "*_b0_topup_mqc.gif"
+  eddy_qc:
+    fn: "*_dwi_eddy_mqc.gif"
+  anattodwi_qc:
+    fn: "*_registration_anattodwi_mqc.gif"
   tissue_segmentation_qc:
-    fn: '*segmentation_mqc.png'
+    fn: "*segmentation_mqc.png"
   metrics_qc:
-    fn: '*metrics_mqc.png'
+    fn: "*metrics_mqc.png"
   tracking_qc:
-    fn: '*coverage_overlay_mqc.png'
+    fn: "*coverage_overlay_mqc.png"
   labels_qc:
-    fn: '*labels_mqc.png'
+    fn: "*labels_mqc.png"
 
 export_plots: true
 
