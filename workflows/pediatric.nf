@@ -642,8 +642,8 @@ workflow PEDIATRIC {
     //
     // MODULE: MultiQC
     //
-    ch_multiqc_files = Channel.empty() // To store versions, methods description, etc.
-                                       // Otherwise, stored in either subject or global level channel.
+    ch_multiqc_files = Channel.empty()  // To store versions, methods description, etc.
+                                        // Otherwise, stored in either subject or global level channel.
 
     ch_multiqc_config_subject = Channel.fromPath(
         "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
