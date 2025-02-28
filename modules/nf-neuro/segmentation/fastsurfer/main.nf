@@ -23,6 +23,8 @@ process SEGMENTATION_FASTSURFER {
     def acq3T = task.ext.acq3T ? "--3T" : ""
     def FASTSURFER_HOME = "/fastsurfer"
     def SUBJECTS_DIR = "${prefix}__fastsurfer"
+    def cerebnet = task.ext.cerebnet ? "" : "--no_cereb"
+    def hypvinn = task.ext.hypvinn ? "" : "--no_hypothal"
 
     // ** Adding a registration to .gca atlas to generate the talairach.m3z file (subcortical atlas segmentation ** //
     // ** wont work without it). A little time consuming but necessary. For FreeSurfer 7.3.2, RB_all_2020-01-02.gca ** //
@@ -39,7 +41,7 @@ process SEGMENTATION_FASTSURFER {
                                         --parallel \
                                         --threads $task.cpus \
                                         --py python3 \
-                                        ${acq3T}
+                                        ${acq3T} ${cerebnet} ${hypvinn}
 
     mri_ca_register -align-after -nobigventricles -mask ${prefix}__fastsurfer/${prefix}/mri/brainmask.mgz \
         -T ${prefix}__fastsurfer/${prefix}/mri/transforms/talairach.lta -threads $task.cpus \
