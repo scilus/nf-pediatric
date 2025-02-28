@@ -105,7 +105,7 @@
                     },
                     "preproc/eddy": {
                         "branch": "main",
-                        "git_sha": "7b8fb95e764e220967c4ae2414184c4f9dad5aaa",
+                        "git_sha": "88387b425ccc4917ba473790883c858e6dcb4577",
                         "installed_by": ["topup_eddy"],
                         "patch": "modules/nf-neuro/preproc/eddy/preproc-eddy.diff"
                     },
@@ -126,7 +126,7 @@
                     },
                     "preproc/topup": {
                         "branch": "main",
-                        "git_sha": "187fc01659eac53dbea80f176449066024b09465",
+                        "git_sha": "0228ee7a52df57340e4373fc278c71f4662c388a",
                         "installed_by": ["topup_eddy"],
                         "patch": "modules/nf-neuro/preproc/topup/preproc-topup.diff"
                     },
@@ -147,17 +147,17 @@
                     },
                     "reconst/meanfrf": {
                         "branch": "main",
-                        "git_sha": "d22a074b33a7672ba7aa473fe93db07468fb50b5",
+                        "git_sha": "a372865103842ddb9b240539e7ec147df9862604",
                         "installed_by": ["modules"]
                     },
                     "registration/anattodwi": {
                         "branch": "main",
-                        "git_sha": "c43c5ced3a48e8dd36b3b7863abbc15d5d87eb98",
+                        "git_sha": "f9eba772a9198dbfca2cf03a71b1a07edbc598af",
                         "installed_by": ["modules"]
                     },
                     "registration/ants": {
                         "branch": "main",
-                        "git_sha": "43ec7aa8c9b19bcb2fde3999e9bb71e674130d5d",
+                        "git_sha": "a80673be326648c16b491f0529b232bb4221429b",
                         "installed_by": ["registration"],
                         "patch": "modules/nf-neuro/registration/ants/registration-ants.diff"
                     },
@@ -219,7 +219,7 @@
                     },
                     "topup_eddy": {
                         "branch": "main",
-                        "git_sha": "e088076166c27704c22be0c45f03bc727d1f1d7d",
+                        "git_sha": "88387b425ccc4917ba473790883c858e6dcb4577",
                         "installed_by": ["preproc_dwi"]
                     }
                 }

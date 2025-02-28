@@ -32,6 +32,7 @@ workflow PREPROC_DWI {
     main:
 
         ch_versions = Channel.empty()
+        ch_multiqc_files = Channel.empty()
 
         // ** Denoise DWI ** //
         if (params.dwi_run_denoising && !params.skip_dwi_preprocessing) {
@@ -110,6 +111,7 @@ workflow PREPROC_DWI {
         // ** Eddy Topup ** //
         TOPUP_EDDY ( ch_dwi, ch_b0, ch_rev_dwi, ch_rev_b0, ch_config_topup )
         ch_versions = ch_versions.mix(TOPUP_EDDY.out.versions.first())
+        ch_multiqc_files = ch_multiqc_files.mix(TOPUP_EDDY.out.ch_mqc)
 
         // ** Bet-crop DWI ** //
         if ( params.dwi_run_synthstrip && !params.skip_dwi_preprocessing ) {
@@ -238,5 +240,6 @@ workflow PREPROC_DWI {
         dwi_bounding_box    = ch_bbox                       // channel: [ val(meta), dwi-bounding-box ]
         dwi_topup_eddy      = TOPUP_EDDY.out.dwi            // channel: [ val(meta), dwi-after-topup-eddy ]
         dwi_n4              = ch_dwi_n4                     // channel: [ val(meta), dwi-after-n4 ]
+        ch_mqc              = ch_multiqc_files              // channel: [ multiqc_files ]
         versions            = ch_versions                   // channel: [ versions.yml ]
 }

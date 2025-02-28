@@ -4,7 +4,9 @@
             38,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "BETCROP_FSLBETCROP": {
                     "scilpy": "2.0.2",
@@ -41,8 +43,10 @@
                 },
                 "PREPROC_TOPUP": {
                     "scilpy": "2.0.2",
-                    "ants": "2.4.3",
-                    "fsl": 6.0
+                    "antsRegistration": null,
+                    "fsl": 6.0,
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -142,14 +146,16 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-13T22:23:27.355717"
+        "timestamp": "2025-02-28T10:04:28.901624"
     },
     "Tracking profile with infant data T2 and T1 - should run successfully": {
         "content": [
             45,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "APPLYTRANSFORMS": {
                     "ants": "2.4.3"
@@ -204,8 +210,10 @@
                 },
                 "PREPROC_TOPUP": {
                     "scilpy": "2.0.2",
-                    "ants": "2.4.3",
-                    "fsl": 6.0
+                    "antsRegistration": null,
+                    "fsl": 6.0,
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -303,14 +311,16 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-13T22:29:48.844981"
+        "timestamp": "2025-02-28T10:10:16.362118"
     },
     "Tracking profile with infant data only T2 - should run successfully": {
         "content": [
             37,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "BETCROP_SYNTHBET": {
                     "synthstrip": 1.5
@@ -359,8 +369,10 @@
                 },
                 "PREPROC_TOPUP": {
                     "scilpy": "2.0.2",
-                    "ants": "2.4.3",
-                    "fsl": 6.0
+                    "antsRegistration": null,
+                    "fsl": 6.0,
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
                     "scilpy": "2.0.2"
@@ -453,14 +465,16 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-13T22:27:23.451305"
+        "timestamp": "2025-02-28T10:08:07.182741"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
             32,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": "6.9.11"
                 },
                 "BETCROP_FSLBETCROP": {
                     "scilpy": "2.0.2",
@@ -583,6 +597,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-13T22:25:14.862338"
+        "timestamp": "2025-02-28T10:06:06.919439"
     }
 }

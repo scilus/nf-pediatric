@@ -6,15 +6,21 @@ report_section_order:
   "nf-pediatric-summary":
     order: -1001
   "shell_qc":
-    order: -850
-  "tissue_segmentation_qc":
     order: -600
-  "metrics_qc":
+  "topup_qc":
     order: -625
-  "tracking_qc":
+  "eddy_qc":
     order: -650
+  "anattodwi_qc":
+    order: -680
+  "tissue_segmentation_qc":
+    order: -700
+  "metrics_qc":
+    order: -675
+  "tracking_qc":
+    order: -725
   "labels_qc":
-    order: -500
+    order: -750
   "nf-pediatric-methods-description":
     order: -900
   software_versions:
@@ -23,6 +29,9 @@ report_section_order:
 custom_content:
   order:
     - shell_qc
+    - topup_qc
+    - eddy_qc
+    - anattodwi_qc
     - tissue_segmentation_qc
     - metrics_qc
     - tracking_qc
@@ -34,6 +43,48 @@ custom_data:
     section_name: 'Shell QC'
     description: 'This section contains QC images for the diffusion shell.'
     plot_type: 'image'
+  eddy_qc:
+    file_format: "gif"
+    section_name: "Eddy QC"
+    description: |
+      This section contains QC images for EDDY correction, which is used to
+      correct distortions and motion artifacts. The animation shows a
+      before-and-after comparison of the correction. To assess the quality of
+      the correction, focus on areas prone to distortions, such as the frontal
+      lobe and the cerebellum/spinal cord region. Look for reduced geometric warping,
+      improved alignment with anatomical boundaries, and correction of
+      eddy-current-induced displacements. Additionally, ensure that no new
+      artifacts or excessive blurring are introduced in the corrected images.
+    plot_type: "image"
+  topup_qc:
+    file_format: "gif"
+    section_name: "Topup QC"
+    description: |
+      This section contains QC images for TOPUP correction, which is used to correct
+      susceptibility-induced distortions by leveraging pairs of images acquired with
+      opposite phase-encoding directions. The animation shows a before-and-after
+      comparison of the correction. To assess the quality of the correction, focus
+      on regions most affected by susceptibility distortions, such as the frontal lobe
+      and the cerebellum/spinal cord area. Look for improved alignment of anatomical
+      structures, reduced stretching or compression, and better symmetry between the
+      corrected images. Additionally, ensure that the correction does not introduce
+      new artifacts or excessive blurring.
+    plot_type: "image"
+  anattodwi_qc:
+    file_format: "gif"
+    section_name: "Registration of anatomical image in DWI space QC"
+    description: |
+      This section contains QC images for the registration of the T1-weighted
+      structural image to diffusion space, using the b0 image as a reference.
+      This step ensures accurate alignment between structural and diffusion
+      data. To assess the quality of the registration, check for good alignment
+      of anatomical structures. Specifically, look for proper overlay of cortical
+      and subcortical structures without excessive warping, stretching,
+      or misalignment. Pay particular attention to boundaries such as the
+      ventricles and major white matter tracts, ensuring they match well
+      between the T1-weighted and b0 images. If misalignment is present,
+      consider flagging this specific subject for further review.
+    plot_type: "image"
   tissue_segmentation_qc:
     file_format: 'tsv'
     section_name: 'Tissue Segmentation'  # This is the new section name
@@ -58,6 +109,12 @@ custom_data:
 sp:
   shell_qc:
     fn: '*gradients_mqc.png'
+  topup_qc:
+    fn: "*_b0_topup_mqc.gif"
+  eddy_qc:
+    fn: "*_dwi_eddy_mqc.gif"
+  anattodwi_qc:
+    fn: "*_registration_anattodwi_mqc.gif"
   tissue_segmentation_qc:
     fn: '*segmentation_mqc.png'
   metrics_qc:
