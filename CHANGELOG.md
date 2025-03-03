@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Output `.annot` and `.stats` file for brainnetome in FS output ([#19](https://github.com/scilus/nf-pediatric/issues/19))
 - Resampling/reshaping according to input file when registering brainnetome atlas ([#26](https://github.com/scilus/nf-pediatric/issues/26))
 
 ## [Unreleased] - [2025-02-28]

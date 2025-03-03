@@ -12,6 +12,8 @@ process ATLASES_BRAINNETOMECHILD {
     tuple val(meta), path("*brainnetome_child_v1_dilated.nii.gz")       , emit: labels_dilate
     tuple val(meta), path("*[brainnetome_child]*.txt")                  , emit: labels_txt
     tuple val(meta), path("*[brainnetome_child]*.json")                 , emit: labels_json
+    tuple val(meta), path("*BN_Child.stats")                            , emit: stats_files
+    tuple val(meta), path("*BN_Child.annot")                            , emit: annot_files
     path("*.tsv")                                                       , emit: stats
     path "versions.yml"                                                 , emit: versions
 
@@ -190,6 +192,10 @@ process ATLASES_BRAINNETOMECHILD {
     cp Brainnetome_Child/* ./
     rm ${folder}/fsaverage
 
+    # Fetch .annot files and .stats files, to place within the FastSurfer/FreeSurfer folder.
+    cp \${FS_ID_FOLDER}/label/*BN_Child.annot ./
+    cp \${FS_ID_FOLDER}/stats/*BN_Child.stats ./
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
@@ -212,6 +218,10 @@ process ATLASES_BRAINNETOMECHILD {
     touch ${prefix}__area_rh.BN_Child.tsv
     touch ${prefix}__thickness_lh.BN_Child.tsv
     touch ${prefix}__thickness_rh.BN_Child.tsv
+    touch lh.BN_Child.annot
+    touch rh.BN_Child.annot
+    touch lh.BN_Child.stats
+    touch rh.BN_Child.stats
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
