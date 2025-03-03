@@ -158,7 +158,7 @@ process ATLASES_BRAINNETOMECHILD {
     # Since Freesurfer is all in 1x1x1mm and a 256x256x256 array, our atlases must be resampled/reshaped
     echo -e "\${BLUE}Reshape as the original input and convert the final atlases into uint16\${NC}"
     mri_convert \${FS_ID_FOLDER}/mri/rawavg.mgz \${FS_ID_FOLDER}/mri/rawavg.nii.gz
-    scil_reshape_to_reference.py BN_child_atlas/atlas_brainnetome_child.nii.gz \${FS_ID_FOLDER}/mri/rawavg.nii.gz \${FS_ID_FOLDER}/atlas_brainnetome_child.nii.gz --interpolation nearest
+    scil_reshape_to_reference.py BN_child_atlas/atlas_brainnetome_child.nii.gz \${FS_ID_FOLDER}/mri/rawavg.nii.gz BN_child_atlas/atlas_brainnetome_child.nii.gz --interpolation nearest -f
 
     # ==================================================================================
     # Safer for most script, thats our label data type
