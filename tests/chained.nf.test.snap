@@ -188,14 +188,27 @@
             ],
             [
                 "",
-                "sub-test' : ''}"
+                "sub-test",
+                "sub-test/sub-test",
+                "sub-test/sub-test/label",
+                "sub-test/sub-test/label/lh.BN_Child.annot",
+                "sub-test/sub-test/label/rh.BN_Child.annot",
+                "sub-test/sub-test/mri",
+                "sub-test/sub-test/mri/transforms",
+                "sub-test/sub-test/scripts",
+                "sub-test/sub-test/stats",
+                "sub-test/sub-test/stats/lh.BN_Child.stats",
+                "sub-test/sub-test/stats/rh.BN_Child.stats",
+                "sub-test/sub-test/surf",
+                "sub-test/sub-test/tmp",
+                "sub-test/sub-test/touch"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-28T09:50:07.593117"
+        "timestamp": "2025-03-03T14:20:39.793993"
     },
     "Connectomics + tracking + segmentation + infant profiles - should run successfully": {
         "content": [
@@ -482,14 +495,27 @@
             ],
             [
                 "",
-                "sub-test' : ''}"
+                "sub-test",
+                "sub-test/sub-test",
+                "sub-test/sub-test/label",
+                "sub-test/sub-test/label/lh.BN_Child.annot",
+                "sub-test/sub-test/label/rh.BN_Child.annot",
+                "sub-test/sub-test/mri",
+                "sub-test/sub-test/mri/transforms",
+                "sub-test/sub-test/scripts",
+                "sub-test/sub-test/stats",
+                "sub-test/sub-test/stats/lh.BN_Child.stats",
+                "sub-test/sub-test/stats/rh.BN_Child.stats",
+                "sub-test/sub-test/surf",
+                "sub-test/sub-test/tmp",
+                "sub-test/sub-test/touch"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-14T09:56:30.766871"
+        "timestamp": "2025-03-03T14:16:15.911625"
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [

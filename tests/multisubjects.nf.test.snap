@@ -559,14 +559,40 @@
             ],
             [
                 "",
-                "sub-test1' : ''}",
-                "sub-test2_ses-baseline' : ''}"
+                "sub-test1",
+                "sub-test1/sub-test1",
+                "sub-test1/sub-test1/label",
+                "sub-test1/sub-test1/label/lh.BN_Child.annot",
+                "sub-test1/sub-test1/label/rh.BN_Child.annot",
+                "sub-test1/sub-test1/mri",
+                "sub-test1/sub-test1/mri/transforms",
+                "sub-test1/sub-test1/scripts",
+                "sub-test1/sub-test1/stats",
+                "sub-test1/sub-test1/stats/lh.BN_Child.stats",
+                "sub-test1/sub-test1/stats/rh.BN_Child.stats",
+                "sub-test1/sub-test1/surf",
+                "sub-test1/sub-test1/tmp",
+                "sub-test1/sub-test1/touch",
+                "sub-test2_ses-baseline",
+                "sub-test2_ses-baseline/sub-test2",
+                "sub-test2_ses-baseline/sub-test2/label",
+                "sub-test2_ses-baseline/sub-test2/label/lh.BN_Child.annot",
+                "sub-test2_ses-baseline/sub-test2/label/rh.BN_Child.annot",
+                "sub-test2_ses-baseline/sub-test2/mri",
+                "sub-test2_ses-baseline/sub-test2/mri/transforms",
+                "sub-test2_ses-baseline/sub-test2/scripts",
+                "sub-test2_ses-baseline/sub-test2/stats",
+                "sub-test2_ses-baseline/sub-test2/stats/lh.BN_Child.stats",
+                "sub-test2_ses-baseline/sub-test2/stats/rh.BN_Child.stats",
+                "sub-test2_ses-baseline/sub-test2/surf",
+                "sub-test2_ses-baseline/sub-test2/tmp",
+                "sub-test2_ses-baseline/sub-test2/touch"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-02-28T09:58:59.024441"
+        "timestamp": "2025-03-03T14:27:20.626009"
     }
 }

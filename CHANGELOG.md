@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - [2025-03-03]
+
+### `Fixed`
+
+- Output `.annot` and `.stats` file for brainnetome in FS output ([#19](https://github.com/scilus/nf-pediatric/issues/19))
+- Resampling/reshaping according to input file when registering brainnetome atlas ([#26](https://github.com/scilus/nf-pediatric/issues/26))
+
 ## [Unreleased] - [2025-02-28]
 
 ### `Added`

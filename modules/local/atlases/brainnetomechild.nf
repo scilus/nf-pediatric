@@ -12,6 +12,8 @@ process ATLASES_BRAINNETOMECHILD {
     tuple val(meta), path("*brainnetome_child_v1_dilated.nii.gz")       , emit: labels_dilate
     tuple val(meta), path("*[brainnetome_child]*.txt")                  , emit: labels_txt
     tuple val(meta), path("*[brainnetome_child]*.json")                 , emit: labels_json
+    tuple val(meta), path("*BN_Child.stats")                            , emit: stats_files
+    tuple val(meta), path("*BN_Child.annot")                            , emit: annot_files
     path("*.tsv")                                                       , emit: stats
     path "versions.yml"                                                 , emit: versions
 
@@ -158,7 +160,7 @@ process ATLASES_BRAINNETOMECHILD {
     # Since Freesurfer is all in 1x1x1mm and a 256x256x256 array, our atlases must be resampled/reshaped
     echo -e "\${BLUE}Reshape as the original input and convert the final atlases into uint16\${NC}"
     mri_convert \${FS_ID_FOLDER}/mri/rawavg.mgz \${FS_ID_FOLDER}/mri/rawavg.nii.gz
-    scil_reshape_to_reference.py BN_child_atlas/atlas_brainnetome_child.nii.gz \${FS_ID_FOLDER}/mri/rawavg.nii.gz \${FS_ID_FOLDER}/atlas_brainnetome_child.nii.gz --interpolation nearest
+    scil_reshape_to_reference.py BN_child_atlas/atlas_brainnetome_child.nii.gz \${FS_ID_FOLDER}/mri/rawavg.nii.gz BN_child_atlas/atlas_brainnetome_child.nii.gz --interpolation nearest -f
 
     # ==================================================================================
     # Safer for most script, thats our label data type
@@ -190,6 +192,10 @@ process ATLASES_BRAINNETOMECHILD {
     cp Brainnetome_Child/* ./
     rm ${folder}/fsaverage
 
+    # Fetch .annot files and .stats files, to place within the FastSurfer/FreeSurfer folder.
+    cp \${FS_ID_FOLDER}/label/*BN_Child.annot ./
+    cp \${FS_ID_FOLDER}/stats/*BN_Child.stats ./
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
@@ -212,6 +218,10 @@ process ATLASES_BRAINNETOMECHILD {
     touch ${prefix}__area_rh.BN_Child.tsv
     touch ${prefix}__thickness_lh.BN_Child.tsv
     touch ${prefix}__thickness_rh.BN_Child.tsv
+    touch lh.BN_Child.annot
+    touch rh.BN_Child.annot
+    touch lh.BN_Child.stats
+    touch rh.BN_Child.stats
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

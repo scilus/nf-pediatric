@@ -61,7 +61,14 @@ process SEGMENTATION_FASTSURFER {
     def FASTSURFER_HOME = "/fastsurfer"
 
     """
-    mkdir ${prefix}__fastsurfer/
+    mkdir -p ${prefix}__fastsurfer/${prefix}/mri/transforms \
+        ${prefix}__fastsurfer/${prefix}/label/ \
+        ${prefix}__fastsurfer/${prefix}/surf/ \
+        ${prefix}__fastsurfer/${prefix}/stats/ \
+        ${prefix}__fastsurfer/${prefix}/scripts/ \
+        ${prefix}__fastsurfer/${prefix}/tmp/ \
+        ${prefix}__fastsurfer/${prefix}/touch/
+
     touch ${prefix}__final_t1.nii.gz
 
     cat <<-END_VERSIONS > versions.yml
