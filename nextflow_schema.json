@@ -1483,6 +1483,14 @@
                     "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
                     "hidden": true
                 },
+                "cleanup": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Remove intermediate files after pipeline completion.",
+                    "help_text": "If set to true, the pipeline will remove all intermediate files after the pipeline has completed. This can save disk space but may make debugging more difficult and option -resume won't be available. Use with caution",
+                    "fa_icon": "fas fa-copy",
+                    "hidden": true
+                },
                 "lean_output": {
                     "type": "boolean",
                     "description": "Do not copy intermediate files to output directory.",
