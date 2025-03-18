@@ -1,4 +1,4 @@
-include { UTILS_TEMPLATEFLOW                    } from '../../../modules/nf-neuro/utils/templateflow/main.nf'
+include { UTILS_TEMPLATEFLOW                    } from '../../../modules/local/utils/templateflow/main.nf'
 include { BETCROP_FSLBETCROP as BET_T1W         } from '../../../modules/nf-neuro/betcrop/fslbetcrop/main.nf'
 include { BETCROP_FSLBETCROP as BET_T2W         } from '../../../modules/nf-neuro/betcrop/fslbetcrop/main.nf'
 include { REGISTRATION_ANTS                     } from '../../../modules/nf-neuro/registration/ants/main.nf'
