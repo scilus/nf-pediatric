@@ -38,11 +38,12 @@ process REGISTRATION_TRACTOGRAM {
         ext=\${tractogram#*.}
         bname=\$(basename \${tractogram} .\${ext})
 
-        if [[ \$ext -eq "h5" ]]; then
+        if [[ \$ext == "h5" ]]; then
             scil_tractogram_apply_transform_to_hdf5.py \$tractogram $anat $transfo \
                         ${prefix}__\${bname}${suffix}.\${ext} \
                         $in_deformation\
                         $inverse\
+                        $cut_invalid\
                         $reverse_operation\
                         $force\
                         $reference
@@ -50,6 +51,7 @@ process REGISTRATION_TRACTOGRAM {
             scil_tractogram_apply_transform.py \$tractogram $anat $transfo tmp.trk\
                             $in_deformation\
                             $inverse\
+                            $cut_invalid\
                             $reverse_operation\
                             $force\
                             $reference

@@ -50,11 +50,11 @@ workflow OUTPUT_TEMPLATE_SPACE {
         def path = "${params.templateflow_home}/tpl-${params.template}/"
         if ( params.templateflow_cohort ) {
             ch_t1w_tpl = Channel.fromPath(
-                "${path}/${params.templateflow_cohort}/*res-*${params.templateflow_res}_T1w.nii.gz",
+                "${path}/cohort-${params.templateflow_cohort}/*res-*${params.templateflow_res}_T1w.nii.gz",
                 checkIfExists: false
             )
             ch_t2w_tpl = Channel.fromPath(
-                "${path}/${params.templateflow_cohort}/*res-*${params.templateflow_res}_T2w.nii.gz",
+                "${path}/cohort-${params.templateflow_cohort}/*res-*${params.templateflow_res}_T2w.nii.gz",
                 checkIfExists: false
             )
         } else {
@@ -92,7 +92,7 @@ workflow OUTPUT_TEMPLATE_SPACE {
     // ** Register the subject to the template space ** //
     ch_registration = ch_anat
         | combine(params.use_template_t2w ? ch_t2w_tpl : ch_t1w_tpl)
-        | map{ meta, anat, tpl -> tuple(meta, anat, tpl, []) }
+        | map{ meta, anat, tpl -> tuple(meta, tpl, anat, []) }
 
     REGISTRATION_ANTS ( ch_registration )
     ch_versions = ch_versions.mix(REGISTRATION_ANTS.out.versions)
@@ -113,7 +113,7 @@ workflow OUTPUT_TEMPLATE_SPACE {
     // ** Apply the transformation to the tractograms ** //
     ch_tractograms_to_transform = ch_trk_files
         | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.warp)
+        | join(REGISTRATION_ANTS.out.inverse_warp)
         | join(REGISTRATION_ANTS.out.affine)
         | map{ meta, trk, image, warp, affine ->
             tuple(meta, image, affine, trk, [], warp)
