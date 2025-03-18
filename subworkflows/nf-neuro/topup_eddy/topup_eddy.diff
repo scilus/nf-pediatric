@@ -1,0 +1,29 @@
+Changes in component 'nf-neuro/topup_eddy'
+'subworkflows/nf-neuro/topup_eddy/meta.yml' is unchanged
+Changes in 'topup_eddy/main.nf':
+--- subworkflows/nf-neuro/topup_eddy/main.nf
++++ subworkflows/nf-neuro/topup_eddy/main.nf
+@@ -23,7 +23,7 @@
+         ch_topup_fieldcoeff = Channel.empty()
+         ch_topup_movpart = Channel.empty()
+         ch_b0_corrected = Channel.empty()
+-        if (params.topup_eddy_run_topup) {
++        if (params.topup_eddy_run_topup && !params.skip_dwi_preprocessing) {
+             // ** Create channel for TOPUP ** //
+             // Result : [ meta, dwi, bval, bvec, b0 | [], rev-dwi | [], rev-bval | [], rev-bvec | [], rev-b0 | [] ]
+             //  Steps :
+@@ -55,7 +55,7 @@
+         }
+ 
+ 
+-        if (params.topup_eddy_run_eddy) {
++        if (params.topup_eddy_run_eddy && !params.skip_dwi_preprocessing) {
+             // ** Create channel for EDDY ** //
+             // Result : [ meta, dwi, bval, bvec, rev-dwi | [], rev-bval | [], rev-bvec | [], b0 | [], coeffs | [], movpar | [] ]
+             //  Steps :
+
+'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test.snap' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/tags.yml' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/nextflow.config' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test' is unchanged
+************************************************************

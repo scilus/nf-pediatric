@@ -105,7 +105,7 @@
                     },
                     "preproc/eddy": {
                         "branch": "main",
-                        "git_sha": "88387b425ccc4917ba473790883c858e6dcb4577",
+                        "git_sha": "9b1c19bd5073aec628e4b9fe11bfc7510e038e09",
                         "installed_by": ["topup_eddy"],
                         "patch": "modules/nf-neuro/preproc/eddy/preproc-eddy.diff"
                     },
@@ -121,7 +121,7 @@
                     },
                     "preproc/normalize": {
                         "branch": "main",
-                        "git_sha": "d367837de6a230f133549831b7199789b592d33e",
+                        "git_sha": "a439fe5eda4249ba0c9d221ba04ede81c1c29f40",
                         "installed_by": ["preproc_dwi"]
                     },
                     "preproc/topup": {
@@ -132,17 +132,17 @@
                     },
                     "reconst/dtimetrics": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "452075a707a9769b0509fc33a1051e8ba80799bf",
                         "installed_by": ["modules"]
                     },
                     "reconst/fodf": {
                         "branch": "main",
-                        "git_sha": "c2980ddb3d3d0be27b36f06282360728fbb63d42",
+                        "git_sha": "452075a707a9769b0509fc33a1051e8ba80799bf",
                         "installed_by": ["modules"]
                     },
                     "reconst/frf": {
                         "branch": "main",
-                        "git_sha": "0bf60b4365fa8e0605436114caf380dac9ee38b8",
+                        "git_sha": "452075a707a9769b0509fc33a1051e8ba80799bf",
                         "installed_by": ["modules"]
                     },
                     "reconst/meanfrf": {
@@ -157,14 +157,21 @@
                     },
                     "registration/ants": {
                         "branch": "main",
-                        "git_sha": "a80673be326648c16b491f0529b232bb4221429b",
-                        "installed_by": ["registration"],
+                        "git_sha": "8b713829fd96b11f3cee6c6f4d502848cbc392d1",
+                        "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/registration/ants/registration-ants.diff"
                     },
                     "registration/antsapplytransforms": {
                         "branch": "main",
                         "git_sha": "89c21b369e7e48b4ae1549e68c7977d405cf837b",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/registration/antsapplytransforms/registration-antsapplytransforms.diff"
+                    },
+                    "registration/tractogram": {
+                        "branch": "main",
+                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/registration/tractogram/registration-tractogram.diff"
                     },
                     "segmentation/fastseg": {
                         "branch": "main",
@@ -185,13 +192,13 @@
                     },
                     "tracking/localtracking": {
                         "branch": "main",
-                        "git_sha": "162124f316f48c93ca2c2649c756da382c73a806",
+                        "git_sha": "b8f82569a1160bf13138b6278c0e22caf88c4e22",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/tracking/localtracking/tracking-localtracking.diff"
                     },
                     "tracking/pfttracking": {
                         "branch": "main",
-                        "git_sha": "162124f316f48c93ca2c2649c756da382c73a806",
+                        "git_sha": "12dd6cf0fa5cdac800c7960b3c42c960d5760907",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/tracking/pfttracking/tracking-pfttracking.diff"
                     },
@@ -207,7 +214,7 @@
                 "nf-neuro": {
                     "preproc_dwi": {
                         "branch": "main",
-                        "git_sha": "2e222d18c89e5547a6bf5c0c74673baeb63bcd52",
+                        "git_sha": "e7ecaddd48ac16eebc751f076530e2de74efafd9",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/preproc_dwi/preproc_dwi.diff"
                     },
@@ -219,8 +226,9 @@
                     },
                     "topup_eddy": {
                         "branch": "main",
-                        "git_sha": "88387b425ccc4917ba473790883c858e6dcb4577",
-                        "installed_by": ["preproc_dwi"]
+                        "git_sha": "e7ecaddd48ac16eebc751f076530e2de74efafd9",
+                        "installed_by": ["preproc_dwi"],
+                        "patch": "subworkflows/nf-neuro/topup_eddy/topup_eddy.diff"
                     }
                 }
             }

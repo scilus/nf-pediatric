@@ -117,6 +117,6 @@ workflow TOPUP_EDDY {
         bvec     = ch_output_dwi.bvec   // channel: [ val(meta), bvec-corrected ]
         b0       = ch_b0_corrected      // channel: [ val(meta), b0-corrected ]
         b0_mask  = ch_b0_mask           // channel: [ val(meta), b0-mask ]
-        ch_mqc   = ch_multiqc_files     // channel: [ mqc files ]
+        mqc      = ch_multiqc_files     // channel: [ val(meta), mqc ]
         versions = ch_versions          // channel: [ versions.yml ]
 }
