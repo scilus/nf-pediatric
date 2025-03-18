@@ -22,6 +22,10 @@ nextflow_pipeline {
                 params.segmentation = true
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
+                params.template = "MNIPediatricAsym"
+                params.templateflow_cohort = 4
+                params.templateflow_res = 1
+                params.templateflow_home = "$outputDir/../templateflow"
             }
         }
 

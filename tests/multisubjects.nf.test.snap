@@ -9,7 +9,9 @@
                     "imagemagick": "6.9.11"
                 },
                 "APPLYTRANSFORMS": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": null
                 },
                 "BETCROP_SYNTHBET": {
                     "synthstrip": 1.5
@@ -97,10 +99,14 @@
                     "scilpy": "2.0.2"
                 },
                 "TRANSFORMTISSUES": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": null
                 },
                 "TRANSFORM_LABELS": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": null
                 },
                 "Workflow": {
                     "scilus/nf-pediatric": "v1.0dev"
@@ -280,13 +286,13 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
+            "nextflow": "24.10.5"
         },
-        "timestamp": "2025-02-28T10:02:27.542444"
+        "timestamp": "2025-03-17T14:32:14.002357"
     },
     "All profiles with multiple subjects - should run successfully": {
         "content": [
-            68,
+            77,
             {
                 "ANATTODWI": {
                     "ants": "2.4.3",
@@ -294,6 +300,16 @@
                     "imagemagick": "6.9.11"
                 },
                 "BETCROP_FSLBETCROP": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4",
+                    "fsl": 6.0
+                },
+                "BET_T1W": {
+                    "scilpy": "2.0.2",
+                    "mrtrix": "3.0.4",
+                    "fsl": 6.0
+                },
+                "BET_T2W": {
                     "scilpy": "2.0.2",
                     "mrtrix": "3.0.4",
                     "fsl": 6.0
@@ -357,6 +373,17 @@
                 "RECONST_FRF": {
                     "scilpy": "2.0.2"
                 },
+                "REGISTRATION_ANTS": {
+                    "ants": "2.4.3"
+                },
+                "REGISTRATION_ANTSAPPLYTRANSFORMS": {
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": null
+                },
+                "REGISTRATION_TRACTOGRAM": {
+                    "scilpy": "2.0.2"
+                },
                 "RESAMPLE_DWI": {
                     "scilpy": "2.0.2"
                 },
@@ -371,7 +398,13 @@
                     "mrtrix": "3.0.4"
                 },
                 "TRANSFORM_LABELS": {
-                    "ants": "2.4.3"
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": null
+                },
+                "UTILS_TEMPLATEFLOW": {
+                    "templateflow": "24.2.2",
+                    "python": "3.13.2"
                 },
                 "Workflow": {
                     "scilus/nf-pediatric": "v1.0dev"
@@ -393,6 +426,10 @@
                 "sub-test1",
                 "sub-test1/anat",
                 "sub-test1/anat/sub-test1_desc-preproc_T1w.nii.gz",
+                "sub-test1/anat/sub-test1_from-MNIPediatricAsym_to-T1w_affine.mat",
+                "sub-test1/anat/sub-test1_from-MNIPediatricAsym_to-T1w_warp.nii.gz",
+                "sub-test1/anat/sub-test1_from-T1w_to-MNIPediatricAsym_affine.mat",
+                "sub-test1/anat/sub-test1_from-T1w_to-MNIPediatricAsym_warp.nii.gz",
                 "sub-test1/anat/sub-test1_from-T1w_to-dwi_affine.mat",
                 "sub-test1/anat/sub-test1_from-T1w_to-dwi_warp.nii.gz",
                 "sub-test1/anat/sub-test1_from-dwi_to-T1w_warp.nii.gz",
@@ -415,6 +452,8 @@
                 "sub-test1/anat/sub-test1_space-DWI_label-WM_mask.nii.gz",
                 "sub-test1/anat/sub-test1_space-DWI_label-WM_probseg.nii.gz",
                 "sub-test1/anat/sub-test1_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test1/anat/sub-test1_space-MNIPediatricAsym_desc-preproc_T1w.nii.gz",
+                "sub-test1/anat/sub-test1_space-MNIPediatricAsym_seg-BrainnetomeChild_dseg.nii.gz",
                 "sub-test1/dwi",
                 "sub-test1/dwi/sub-test1_desc-ad.nii.gz",
                 "sub-test1/dwi/sub-test1_desc-afd_max.nii.gz",
@@ -455,6 +494,21 @@
                 "sub-test1/dwi/sub-test1_space-DWI_label-seeding_desc-local_mask.nii.gz",
                 "sub-test1/dwi/sub-test1_space-DWI_label-seeding_desc-pft_mask.nii.gz",
                 "sub-test1/dwi/sub-test1_space-DWI_label-tracking_desc-local_mask.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-ad.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-afd_max.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-afd_sum.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-afd_total.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-fa.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-ga.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-local_tracking.trk",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-md.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-mode.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-nufo.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-pft_tracking.trk",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-rd.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsym_desc-rgb.nii.gz",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsymseg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test1/dwi/sub-test1_space-MNIPediatricAsymseg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test1/figures",
                 "sub-test1/figures/sub-test1__coverage_overlay_mqc.png",
                 "sub-test1/figures/sub-test1_gradients_mqc.png",
@@ -476,6 +530,10 @@
                 "sub-test2/ses-baseline",
                 "sub-test2/ses-baseline/anat",
                 "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_desc-preproc_T1w.nii.gz",
+                "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_from-MNIPediatricAsym_to-T1w_affine.mat",
+                "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_from-MNIPediatricAsym_to-T1w_warp.nii.gz",
+                "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_from-T1w_to-MNIPediatricAsym_affine.mat",
+                "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_from-T1w_to-MNIPediatricAsym_warp.nii.gz",
                 "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_from-T1w_to-dwi_affine.mat",
                 "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_from-T1w_to-dwi_warp.nii.gz",
                 "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_from-dwi_to-T1w_warp.nii.gz",
@@ -498,6 +556,8 @@
                 "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_space-DWI_label-WM_mask.nii.gz",
                 "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_space-DWI_label-WM_probseg.nii.gz",
                 "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-preproc_T1w.nii.gz",
+                "sub-test2/ses-baseline/anat/sub-test2_ses-baseline_space-MNIPediatricAsym_seg-BrainnetomeChild_dseg.nii.gz",
                 "sub-test2/ses-baseline/dwi",
                 "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_desc-ad.nii.gz",
                 "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_desc-afd_max.nii.gz",
@@ -538,6 +598,21 @@
                 "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-DWI_label-seeding_desc-local_mask.nii.gz",
                 "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-DWI_label-seeding_desc-pft_mask.nii.gz",
                 "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-DWI_label-tracking_desc-local_mask.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-ad.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-afd_max.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-afd_sum.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-afd_total.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-fa.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-ga.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-local_tracking.trk",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-md.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-mode.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-nufo.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-pft_tracking.trk",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-rd.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsym_desc-rgb.nii.gz",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsymseg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test2/ses-baseline/dwi/sub-test2_ses-baseline_space-MNIPediatricAsymseg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test2/ses-baseline/figures",
                 "sub-test2/ses-baseline/figures/sub-test2__coverage_overlay_mqc.png",
                 "sub-test2/ses-baseline/figures/sub-test2_gradients_mqc.png",
@@ -591,8 +666,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
+            "nextflow": "24.10.5"
         },
-        "timestamp": "2025-03-03T14:27:20.626009"
+        "timestamp": "2025-03-17T14:25:28.789615"
     }
 }
