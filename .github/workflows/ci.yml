@@ -42,6 +42,7 @@ jobs:
           - "freesurfer.nf.test"
           - "infantseg.nf.test"
           - "multisubjects.nf.test"
+          - "multisubjects_infant.nf.test"
         isMaster:
           - ${{ github.base_ref == 'master' }}
         # Exclude conda and singularity on dev

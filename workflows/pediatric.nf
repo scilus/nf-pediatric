@@ -58,6 +58,9 @@ include { CONNECTIVITY_AFDFIXEL             } from '../modules/nf-neuro/connecti
 include { CONNECTIVITY_METRICS              } from '../modules/local/connectivity/metrics.nf'
 include { CONNECTIVITY_VISUALIZE            } from '../modules/nf-neuro/connectivity/visualize/main'
 
+// ** Output in template space ** //
+include { OUTPUT_TEMPLATE_SPACE             } from '../subworkflows/nf-neuro/output_template_space/main'
+
 // ** QC ** //
 include { QC } from '../subworkflows/local/QC/qc.nf'
 include { imNotification } from '../subworkflows/nf-core/utils_nfcore_pipeline/main.nf'
@@ -75,8 +78,11 @@ workflow PEDIATRIC {
 
     main:
 
+    // Empty channels to collect data during runtime
     ch_versions = Channel.empty()
     ch_multiqc_files_sub = Channel.empty()
+    ch_nifti_files_to_transform = Channel.empty()
+    ch_trk_files_to_transform = Channel.empty()
 
     //
     // Decomposing the samplesheet into individual channels
@@ -241,7 +247,7 @@ workflow PEDIATRIC {
             ch_dwi_weights
         )
         ch_versions = ch_versions.mix(PREPROC_DWI.out.versions)
-        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(PREPROC_DWI.out.ch_mqc)
+        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(PREPROC_DWI.out.mqc)
 
         // ** Setting outputs ** //
         ch_processed_dwi = PREPROC_DWI.out.dwi
@@ -261,6 +267,14 @@ workflow PEDIATRIC {
         RECONST_DTIMETRICS ( ch_reconst_dti )
         ch_versions = ch_versions.mix(RECONST_DTIMETRICS.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(RECONST_DTIMETRICS.out.zip.collect{it[1]})
+        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+            .mix(RECONST_DTIMETRICS.out.fa)
+            .mix(RECONST_DTIMETRICS.out.md)
+            .mix(RECONST_DTIMETRICS.out.ad)
+            .mix(RECONST_DTIMETRICS.out.rd)
+            .mix(RECONST_DTIMETRICS.out.ga)
+            .mix(RECONST_DTIMETRICS.out.mode)
+            .mix(RECONST_DTIMETRICS.out.rgb)
 
         //
         // MODULE: Run FRF
@@ -302,6 +316,11 @@ workflow PEDIATRIC {
         RECONST_FODF ( ch_reconst_fodf )
         ch_versions = ch_versions.mix(RECONST_FODF.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(RECONST_FODF.out.zip.collect{it[1]})
+        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+            .mix(RECONST_FODF.out.afd_total)
+            .mix(RECONST_FODF.out.nufo)
+            .mix(RECONST_FODF.out.afd_max)
+            .mix(RECONST_FODF.out.afd_sum)
 
         //
         // MODULE: Run REGISTRATION
@@ -341,6 +360,7 @@ workflow PEDIATRIC {
                     .join(ANATTODWI.out.t1_warped)
                     .join(ANATTODWI.out.warp)
                     .join(ANATTODWI.out.affine)
+                    .view()
             }
 
             APPLYTRANSFORMS ( ch_antsapply )
@@ -412,6 +432,8 @@ workflow PEDIATRIC {
             TRACKING_PFTTRACKING ( ch_pft_tracking )
             ch_versions = ch_versions.mix(TRACKING_PFTTRACKING.out.versions.first())
             // ch_multiqc_files = ch_multiqc_files.mix(TRACKING_PFTTRACKING.out.zip.collect{it[1]})
+            ch_trk_files_to_transform = ch_trk_files_to_transform
+                .mix(TRACKING_PFTTRACKING.out.trk)
 
             ch_trk = TRACKING_PFTTRACKING.out.trk
 
@@ -428,6 +450,8 @@ workflow PEDIATRIC {
             TRACKING_LOCALTRACKING ( ch_local_tracking )
             ch_versions = ch_versions.mix(TRACKING_LOCALTRACKING.out.versions.first())
             // ch_multiqc_files = ch_multiqc_files.mix(TRACKING_LOCALTRACKING.out.zip.collect{it[1]})
+            ch_trk_files_to_transform = ch_trk_files_to_transform
+                .mix(TRACKING_LOCALTRACKING.out.trk)
 
             ch_trk = TRACKING_LOCALTRACKING.out.trk
 
@@ -500,6 +524,8 @@ workflow PEDIATRIC {
         TRANSFORM_LABELS ( ch_antsapply )
         ch_versions = ch_versions.mix(TRANSFORM_LABELS.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(TRANSFORM_LABELS.out.zip.collect{it[1]})
+        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+            .mix(TRANSFORM_LABELS.out.warped_image)
 
         //
         // MODULE: Run DECOMPOSE.
@@ -529,6 +555,8 @@ workflow PEDIATRIC {
         FILTERING_COMMIT ( ch_commit )
         ch_versions = ch_versions.mix(FILTERING_COMMIT.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(FILTERING_COMMIT.out.zip.collect{it[1]})
+        ch_trk_files_to_transform = ch_trk_files_to_transform
+            .mix(FILTERING_COMMIT.out.hdf5)
 
         //
         // MODULE: Run AFDFIXEL
@@ -539,6 +567,8 @@ workflow PEDIATRIC {
         CONNECTIVITY_AFDFIXEL ( ch_afdfixel )
         ch_versions = ch_versions.mix(CONNECTIVITY_AFDFIXEL.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(CONNECTIVITY_AFDFIXEL.out.zip.collect{it[1]})
+        ch_trk_files_to_transform = ch_trk_files_to_transform
+            .mix(CONNECTIVITY_AFDFIXEL.out.hdf5)
 
         //
         // MODULE: Run CONNECTIVITY_METRICS
@@ -577,6 +607,32 @@ workflow PEDIATRIC {
                 def label = reg_label ?: warped_label
                 [id, label]
             }
+    }
+
+    //
+    // SUBWORKFLOW: RUN OUTPUT_TEMPLATE_SPACE
+    //
+    if ( params.template ) {
+        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+            .groupTuple()
+            .map { meta, nii_list ->
+                def images = nii_list.flatten().findAll { it != null }
+                return tuple(meta, images)
+            }
+
+        ch_trk_files_to_transform = ch_trk_files_to_transform
+            .groupTuple()
+            .map{ meta, trk_list ->
+                def trk = trk_list.flatten().findAll { it != null }
+                return tuple(meta, trk)
+            }
+
+        OUTPUT_TEMPLATE_SPACE(
+            ANATTODWI.out.t1_warped,
+            ch_nifti_files_to_transform,
+            ch_trk_files_to_transform
+        )
+        ch_versions = ch_versions.mix(OUTPUT_TEMPLATE_SPACE.out.versions)
     }
 
     //

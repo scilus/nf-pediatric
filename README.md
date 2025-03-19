@@ -61,14 +61,16 @@ For complete usage instructions, please see the [documentation](/docs/usage.md).
     <...>
 ```
 
-Once your input directory is validated with the [bids-validator tool](https://hub.docker.com/r/bids/validator), the pipeline has only two required parameters that need to be supplied at runtime: `--outdir` and `--input`. Now, you can run the pipeline using:
+Once your input directory is validated with the [bids-validator tool](https://hub.docker.com/r/bids/validator), the pipeline has only four required parameters that need to be supplied at runtime: `--outdir`, `--input`, `--dti_shells`, and `--fodf_shells`. Now, you can run the pipeline using:
 
 ```bash
 nextflow run scilus/nf-pediatric \
     -r main \
     -profile <selected_profiles> \
     --input <BIDS_folder> \
-    --outdir <your_outdir>
+    --outdir <your_outdir> \
+    --dti_shells "0 1500" \ # Replace with the shells you want to use for DTI fitting.
+    --fodf_shells "1000 2000 3000" # Replace with the desired shells.
 ```
 
 There is no need to `git clone` the pipeline prior to lauching it, **nextflow will do it for you!** Additional information on running multiple profiles and the infant profile can be found [here](/docs/usage.md).

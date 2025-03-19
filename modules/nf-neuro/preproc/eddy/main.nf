@@ -3,8 +3,8 @@ process PREPROC_EDDY {
     label 'process_high'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
-        "scilus/scilus:latest"}"
+        'https://scil.usherbrooke.ca/containers/scilus_latest.sif':
+        'scilus/scilus:latest'}"
 
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec), path(rev_dwi), path(rev_bval), path(rev_bvec), path(corrected_b0s), path(topup_fieldcoef), path(topup_movpart)
@@ -94,7 +94,7 @@ process PREPROC_EDDY {
             $slice_drop_flag
     fi
 
-    echo "--very_verbose $extra_args" >> eddy.sh
+    echo "--very_verbose $extra_args --nthr=$task.cpus" >> eddy.sh
     sh eddy.sh
     scil_volume_math.py lower_clip dwi_eddy_corrected.nii.gz 0 ${prefix}__dwi_corrected.nii.gz
 

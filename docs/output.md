@@ -44,7 +44,7 @@ fastsurfer-v2.3.3/
 
 ## Pipeline overview
 
-The pipeline is built using [Nextflow](https://www.nextflow.io/) and data processing steps can be grouped. The final output files are listed below for each of those steps. If you used `--lean_output false`, you will find additional files than the ones described here.
+The pipeline is built using [Nextflow](https://www.nextflow.io/) and data processing steps can be grouped. The final output files are listed below for each of those steps. If you used `--lean_output false`, you will find additional files than the ones described here (not recommended, this will highly increase the number of output files).
 
 - [T1w/T2w Preprocessing](#t1wt2w-preprocessing) - Preprocess anatomical images (denoising, normalization, etc.)
 - [DWI Preprocessing](#dwi-preprocessing) - Preprocess DWI images (denoising, susceptibility correction, normalization, etc.)
@@ -68,6 +68,10 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
   - `*_space-T2w_desc-preproc_T1w.nii.gz`: Final preprocessed T1w image in T2w space (if infant data).
   - `*_space-T1w_desc-preproc_T2w.nii.gz`: Final preprocessed T2w image in T1w space (if pediatric data).
   - `*_from-{T1w,T2w}_to-{T1w,T2w}_affine.mat`: Affine transform from T1w/T2w to T1w/T2w space.
+  - `*_space-{template}_desc-preproc_T1w.nii.gz`: Final preprocessed T1w image in template space (if a destination template has been selected).
+  - `*_space-{template}_desc-preproc_T2w.nii.gz`: Final preprocessed T2w image in template space (if a destination template has been selected).
+  - `*_from-dwi_to-{template}_affine.mat`: Affine transform from T1w/T2w to template space.
+  - `*_from-dwi_to-{template}_warp.nii.gz`: Non-linear transform from T1w/T2w to template space.
 
 </details>
 
@@ -91,18 +95,19 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/`
-  - `*_desc-ad.nii.gz`: Axial Diffusivity map.
-  - `*_desc-rd.nii.gz`: Radial Diffusivity map.
-  - `*_desc-md.nii.gz`: Mean Diffusivity map.
-  - `*_desc-fa.nii.gz`: Fractional Anisotropy map.
-  - `*_desc-mode.nii.gz`: Mode map.
-  - `*_desc-ga.nii.gz`: Geodesic Anisometry map.
+  - `*_{space-template}_desc-ad.nii.gz`: Axial Diffusivity map.
+  - `*_{space-template}_desc-rd.nii.gz`: Radial Diffusivity map.
+  - `*_{space-template}_desc-md.nii.gz`: Mean Diffusivity map.
+  - `*_{space-template}_desc-fa.nii.gz`: Fractional Anisotropy map.
+  - `*_{space-template}_desc-mode.nii.gz`: Mode map.
+  - `*_{space-template}_desc-ga.nii.gz`: Geodesic Anisometry map.
   - `*_desc-tensor.nii.gz`: Tensor map.
-  - `*_desc-rgb.nii.gz`: RGB map.
+  - `*_{space-template}_desc-rgb.nii.gz`: RGB map.
   - `*_desc-fodf.nii.gz`: Fiber oriented distribution functions (fODF).
-  - `*_desc-afd_max.nii.gz`: Maximum apparent fiber density (AFD) map.
-  - `*_desc-afd_sum.nii.gz`: Sum of the AFD map.
-  - `*_desc-afd_total.nii.gz`: AFD total map.
+  - `*_{space-template}_desc-afd_max.nii.gz`: Maximum apparent fiber density (AFD) map.
+  - `*_{space-template}_desc-afd_sum.nii.gz`: Sum of the AFD map.
+  - `*_{space-template}_desc-afd_total.nii.gz`: AFD total map.
+  - `*_{space-template}_desc-nufo.nii.gz`: Number of fiber orientation map.
   - `*_desc-peaks.nii.gz`: fODF peaks.
 
 </details>
@@ -141,9 +146,9 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/`
-  - `*_desc-local_tracking.nii.gz`: Whole-brain tractogram using local tractography.
-  - `*_desc-pft_tracking.nii.gz`: Whole-brain tractogram using PFT tractography.
-  - `*_space-dwi_label-exclude_desc-pft_probseg.nii.gz`: Exclude probability map for PFT tracking.
+  - `*_{space-template}_desc-local_tracking.nii.gz`: Whole-brain tractogram using local tractography.
+  - `*_{space-template}_desc-pft_tracking.nii.gz`: Whole-brain tractogram using PFT tractography.
+  - `*_space-DWI_label-exclude_desc-pft_probseg.nii.gz`: Exclude probability map for PFT tracking.
   - `*_space-DWI_label-include_desc-pft_probseg.nii.gz`: Include probability map for PFT tracking.
   - `*_space-DWI_label-seeding_desc-local_mask.nii.gz`: Seeding mask for local tracking.
   - `*_space-DWI_label-tracking_desc-local_mask.nii.gz`: Tracking mask for local tracking.
@@ -158,8 +163,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 
 - `dwi/`
 
-  - `*_seg-{BrainnetomeChild,DKT}_desc-filtered_tracking.{trk,h5}`: Filtered whole-brain tractogram.
-  - `*_seg-{BrainnetomeChild,DKT}_desc-preproc_tracking.h5`: Final preprocessed decomposed whole-brain tractogram.
+  - `*_{space-template}_seg-{BrainnetomeChild,DKT}_desc-filtered_tracking.{trk,h5}`: Filtered whole-brain tractogram.
+  - `*_{space-template}_seg-{BrainnetomeChild,DKT}_desc-preproc_tracking.h5`: Final preprocessed decomposed whole-brain tractogram.
   - `*.npy`: Connectivity matrices for all supplied metrics.
   - `*.png`: Connectivity matrices visualized as pngs.
 
@@ -176,7 +181,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 - `anat/`
   - `*_seg-BrainnetomeChild_desc-labels.json`: JSON file containing the labels information.
   - `*_seg-BrainnetomeChild_desc-labels.txt`: Text file containing the labels information.
-  - `*_seg-BrainnetomeChild_dseg.nii.gz`: Atlas label file in subject original space.
+  - `*_{space-template}_seg-BrainnetomeChild_dseg.nii.gz`: Atlas label file in subject original space.
   - `*_seg-BrainnetomeChild_dseg_dilated`: Dilated atlas label file in subject original space.
   - `*_seg-BrainnetomeChild_stat-subcortical.tsv`: Subcortical statistics file.
   - `*_seg-BrainnetomeChild_stat-{lh,rh}_{area,thickness,volume}.tsv`: Left hemisphere statistics file.
