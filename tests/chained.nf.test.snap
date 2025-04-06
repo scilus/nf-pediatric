@@ -1,7 +1,7 @@
 {
     "Connectomics + tracking + segmentation profiles - should run successfully": {
         "content": [
-            35,
+            36,
             {
                 "ANATTODWI": {
                     "ants": "2.4.3",
@@ -83,6 +83,9 @@
                     "scilpy": "2.0.2",
                     "mrtrix": "3.0.4"
                 },
+                "TRACTOGRAM_MATH": {
+                    "scilpy": "2.0.2"
+                },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3",
                     "mrtrix": "3.0.4",
@@ -136,6 +139,7 @@
                 "sub-test/dwi/sub-test_desc-afd_sum.nii.gz",
                 "sub-test/dwi/sub-test_desc-afd_total.nii.gz",
                 "sub-test/dwi/sub-test_desc-brain_mask.nii.gz",
+                "sub-test/dwi/sub-test_desc-concatenated_tractogram.trk",
                 "sub-test/dwi/sub-test_desc-csf_fodf.nii.gz",
                 "sub-test/dwi/sub-test_desc-fa.nii.gz",
                 "sub-test/dwi/sub-test_desc-fodf.nii.gz",
@@ -211,7 +215,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-03-17T17:57:26.150678"
+        "timestamp": "2025-04-06T16:17:27.884769"
     },
     "Connectomics + tracking + segmentation + infant profiles - should run successfully": {
         "content": [
@@ -531,7 +535,7 @@
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
-            45,
+            46,
             {
                 "ANATTODWI": {
                     "ants": "2.4.3",
@@ -618,6 +622,9 @@
                     "scilpy": "2.0.2",
                     "mrtrix": "3.0.4"
                 },
+                "TRACTOGRAM_MATH": {
+                    "scilpy": "2.0.2"
+                },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3",
                     "mrtrix": "3.0.4",
@@ -660,6 +667,7 @@
                 "sub-test/dwi/sub-test_desc-afd_sum.nii.gz",
                 "sub-test/dwi/sub-test_desc-afd_total.nii.gz",
                 "sub-test/dwi/sub-test_desc-brain_mask.nii.gz",
+                "sub-test/dwi/sub-test_desc-concatenated_tractogram.trk",
                 "sub-test/dwi/sub-test_desc-csf_fodf.nii.gz",
                 "sub-test/dwi/sub-test_desc-fa.nii.gz",
                 "sub-test/dwi/sub-test_desc-fodf.nii.gz",
@@ -717,6 +725,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-03-17T17:53:44.139033"
+        "timestamp": "2025-04-06T16:14:47.646118"
     }
 }
