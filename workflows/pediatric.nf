@@ -420,7 +420,6 @@ workflow PEDIATRIC {
         // MODULE: Run PFT_TRACKING
         //
         ch_trk_pft = Channel.empty()
-        ch_trk_local = Channel.empty()
         if ( params.run_pft_tracking ) {
 
             params.infant ? error( "PFT tracking is not implemented for infant data as of now, please use local tracking instead." ) : null
