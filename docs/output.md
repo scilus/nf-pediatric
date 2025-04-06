@@ -146,8 +146,9 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/`
-  - `*_{space-template}_desc-local_tracking.nii.gz`: Whole-brain tractogram using local tractography.
-  - `*_{space-template}_desc-pft_tracking.nii.gz`: Whole-brain tractogram using PFT tractography.
+  - `*_{space-template}_desc-local_tractogram.trk`: Whole-brain tractogram using local tractography.
+  - `*_{space-template}_desc-pft_tractogram.trk`: Whole-brain tractogram using PFT tractography.
+  - `*_{space-template}_desc-concatenated_tractogram.trk`: Whole-brain tractogram combining both PFT/local tracking.
   - `*_space-DWI_label-exclude_desc-pft_probseg.nii.gz`: Exclude probability map for PFT tracking.
   - `*_space-DWI_label-include_desc-pft_probseg.nii.gz`: Include probability map for PFT tracking.
   - `*_space-DWI_label-seeding_desc-local_mask.nii.gz`: Seeding mask for local tracking.

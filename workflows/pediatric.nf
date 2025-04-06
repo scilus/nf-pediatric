@@ -49,6 +49,7 @@ include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORMTISSUES } from '../module
 // ** Tracking ** //
 include { TRACKING_PFTTRACKING              } from '../modules/nf-neuro/tracking/pfttracking/main'
 include { TRACKING_LOCALTRACKING            } from '../modules/nf-neuro/tracking/localtracking/main'
+include { TRACTOGRAM_MATH                   } from '../modules/local/tractogram/math/main'
 
 // ** Connectomics ** //
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORM_LABELS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
@@ -360,7 +361,6 @@ workflow PEDIATRIC {
                     .join(ANATTODWI.out.t1_warped)
                     .join(ANATTODWI.out.warp)
                     .join(ANATTODWI.out.affine)
-                    .view()
             }
 
             APPLYTRANSFORMS ( ch_antsapply )
@@ -419,6 +419,7 @@ workflow PEDIATRIC {
         //
         // MODULE: Run PFT_TRACKING
         //
+        ch_trk_pft = Channel.empty()
         if ( params.run_pft_tracking ) {
 
             params.infant ? error( "PFT tracking is not implemented for infant data as of now, please use local tracking instead." ) : null
@@ -435,12 +436,12 @@ workflow PEDIATRIC {
             ch_trk_files_to_transform = ch_trk_files_to_transform
                 .mix(TRACKING_PFTTRACKING.out.trk)
 
-            ch_trk = TRACKING_PFTTRACKING.out.trk
-
+            ch_trk_pft = TRACKING_PFTTRACKING.out.trk
         }
         //
         // MODULE: Run LOCAL_TRACKING
         //
+        ch_trk_local = Channel.empty()
         if ( params.run_local_tracking ) {
 
             ch_local_tracking = ch_wm_mask
@@ -453,9 +454,45 @@ workflow PEDIATRIC {
             ch_trk_files_to_transform = ch_trk_files_to_transform
                 .mix(TRACKING_LOCALTRACKING.out.trk)
 
-            ch_trk = TRACKING_LOCALTRACKING.out.trk
-
+            ch_trk_local = TRACKING_LOCALTRACKING.out.trk
         }
+
+        //
+        // MODULE : Run TRACTOGRAM_MATH
+        //
+        ch_concatenate = ch_trk_local
+            .map{ meta, trk -> [meta, [trk], []] }
+            .mix(
+                ch_trk_pft.map { meta, trk -> [meta, [], [trk]] }
+            )
+            .groupTuple(by: 0)
+            .map { meta, pft, local ->
+                pft = pft.flatten()
+                local = local.flatten()
+                [meta, pft + local, []]
+            }
+            .branch {
+                both: it[1].size() > 1
+                    return it
+            }
+
+        ch_merged = Channel.empty()
+        TRACTOGRAM_MATH ( ch_concatenate.both )
+        ch_versions = ch_versions.mix(TRACTOGRAM_MATH.out.versions.first())
+        ch_trk_files_to_transform = ch_trk_files_to_transform
+            .mix(TRACTOGRAM_MATH.out.trk)
+        ch_merged = ch_merged.mix(TRACTOGRAM_MATH.out.trk)
+
+        // Setting output trk.
+        ch_trk = ch_merged
+            .mix(ch_trk_local)
+            .mix(ch_trk_pft)
+            .groupTuple(by: 0)
+            .map { meta, trks ->
+                def concat = trks.find { it.name?.contains('concatenated') }
+                def individual = trks.find { ! it.name?.contains('concatenated') }
+                [meta, concat ?: individual ]
+            }
     }
 
     if ( params.connectomics ) {
