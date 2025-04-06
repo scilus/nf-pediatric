@@ -480,8 +480,9 @@ workflow PEDIATRIC {
         ch_merged = Channel.empty()
         TRACTOGRAM_MATH ( ch_concatenate.both )
         ch_versions = ch_versions.mix(TRACTOGRAM_MATH.out.versions.first())
-        ch_merged = ch_merged
+        ch_trk_files_to_transform = ch_trk_files_to_transform
             .mix(TRACTOGRAM_MATH.out.trk)
+        ch_merged = ch_merged.mix(TRACTOGRAM_MATH.out.trk)
 
         // Setting output trk.
         ch_trk = ch_merged
