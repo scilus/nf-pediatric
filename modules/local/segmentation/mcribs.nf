@@ -17,7 +17,7 @@ process SEGMENTATION_MCRIBS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def age = meta.age ? "--subjectage ${meta.age}": "--subjectage 44"
+    def age = meta.age ? "--subjectage ${Math.round(meta.age.toFloat())}": "--subjectage 44"
     def useT1 = t1 ? "--useT1" : ""
     def surf = task.ext.surf ? "--surfrecon --inflatesphere --surfreg --surfvol" : ""
     def jointhresh = task.ext.jointhresh ? task.ext.surf ? "--deformablejointhresh ${task.ext.jointhresh}" : "" : ""
