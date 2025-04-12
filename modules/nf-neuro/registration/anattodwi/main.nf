@@ -24,6 +24,7 @@ process REGISTRATION_ANATTODWI {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     def run_qc = task.ext.run_qc ? task.ext.run_qc : false
+    def suffix_qc = task.ext.suffix_qc ?: ""
 
     """
     export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$task.cpus
@@ -99,7 +100,7 @@ process REGISTRATION_ANATTODWI {
         # Create GIF.
         convert -delay 10 -loop 0 -morph 10 \
             t1_warped_mosaic.png b0_mosaic.png t1_warped_mosaic.png \
-            ${prefix}_registration_anattodwi_mqc.gif
+            ${prefix}_${suffix_qc}_mqc.gif
 
         # Clean up.
         rm t1_warped_mosaic.png b0_mosaic.png
@@ -115,6 +116,7 @@ process REGISTRATION_ANATTODWI {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def suffix_qc = task.ext.suffix_qc ?: ""
 
     """
     antsRegistration -h
@@ -123,7 +125,7 @@ process REGISTRATION_ANATTODWI {
     touch ${prefix}__output0GenericAffine.mat
     touch ${prefix}__output1InverseWarp.nii.gz
     touch ${prefix}__output1Warp.nii.gz
-    touch ${prefix}__registration_anattodwi_mqc.gif
+    touch ${prefix}__${suffix_qc}_mqc.gif
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

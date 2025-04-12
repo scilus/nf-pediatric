@@ -21,8 +21,7 @@ workflow SEGMENTATION {
     ch_t2           // channel: [ val(meta), [ t2 ] ]
     ch_fs_license   // channel: [ fs_license ]
     ch_utils_folder // channel: [ utils_folder ]
-    t1_weights      // channel: [ t1_weights ]
-    t2_weights      // channel: [ t2_weights ]
+    weights      // channel: [ weights ]
 
     main:
 
@@ -57,7 +56,7 @@ workflow SEGMENTATION {
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
-            ch_t1.map{ it[0] }.combine(t1_weights)
+            weights
         )
         ch_versions = ch_versions.mix(PREPROC_T1W.out.versions.first())
 
@@ -68,7 +67,7 @@ workflow SEGMENTATION {
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
-            ch_t2.map{ it[0] }.combine(t2_weights)
+            weights
         )
         ch_versions = ch_versions.mix(PREPROC_T2W.out.versions.first())
 

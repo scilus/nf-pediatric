@@ -13,6 +13,8 @@ report_section_order:
     order: -650
   "anattodwi_qc":
     order: -680
+  "templatetodwi_qc":
+    order: -690
   "tissue_segmentation_qc":
     order: -700
   "metrics_qc":
@@ -32,6 +34,7 @@ custom_content:
     - topup_qc
     - eddy_qc
     - anattodwi_qc
+    - templatetodwi_qc
     - tissue_segmentation_qc
     - metrics_qc
     - tracking_qc
@@ -92,6 +95,21 @@ custom_data:
       or misalignment. Pay particular attention to boundaries such as the
       ventricles and major white matter tracts, ensuring they match well
       between the T1-weighted and b0 images. If misalignment is present,
+      consider flagging this specific subject for further review.
+    plot_type: "image"
+  templatetodwi_qc:
+    file_format: "gif"
+    section_name: "Registration of template in DWI space QC"
+    description: |
+      This section contains QC images for the registration of the template (UNCInfant)
+      to diffusion space, using the b0 image as a reference. This step ensures
+      accurate alignment between the template and diffusion data. To assess
+      the quality of the registration, check for good alignment of anatomical
+      structures. Specifically, look for proper overlay of cortical and
+      subcortical structures without excessive warping, stretching,
+      or misalignment. Pay particular attention to boundaries such as the
+      ventricles and major white matter tracts, ensuring they match well
+      between the template and b0 images. If misalignment is present,
       consider flagging this specific subject for further review.
     plot_type: "image"
   tissue_segmentation_qc:
@@ -175,6 +193,8 @@ sp:
     fn: "*_dwi_eddy_mqc.gif"
   anattodwi_qc:
     fn: "*_registration_anattodwi_mqc.gif"
+  templatetodwi_qc:
+    fn: "*_registration_templatetodwi_mqc.gif"
   tissue_segmentation_qc:
     fn: "*segmentation_mqc.png"
   metrics_qc:
