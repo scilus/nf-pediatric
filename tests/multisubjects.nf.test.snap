@@ -24,7 +24,7 @@
                     "fsl": 6.0
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.1.0rc1"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
                     "scilpy": "2.0.2"
@@ -67,21 +67,21 @@
                     "mrtrix": "3.0.4"
                 },
                 "PREPROC_TOPUP": {
-                    "scilpy": "2.0.2",
+                    "scilpy": "2.1.0rc1",
                     "antsRegistration": null,
                     "fsl": 6.0,
                     "mrtrix": "3.0.4",
                     "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.0.2",
+                    "scilpy": "2.1.0rc1",
                     "mrtrix": "3.0.4"
                 },
                 "RECONST_FODF": {
                     "scilpy": "2.0.2"
                 },
                 "RECONST_FRF": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.1.0rc1"
                 },
                 "REGISTRATION_ANTS": {
                     "ants": "2.4.3",
@@ -110,7 +110,7 @@
                     "mrtrix": "3.0.4"
                 },
                 "TRACTOGRAM_MATH": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.1.0rc1"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3",
@@ -387,6 +387,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-06T17:22:33.003687"
+        "timestamp": "2025-04-12T15:33:48.176152"
     }
 }
