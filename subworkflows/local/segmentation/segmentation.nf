@@ -116,6 +116,11 @@ workflow SEGMENTATION {
         }
         .combine(ch_utils_folder)
         .combine(ch_fs_license)
+        .branch {
+            infant: it[0].age < 2.5 || it[0].age > 18
+                return it
+            child: it[0].age >= 2.5 && it[0].age <= 18
+        }
 
     BRAINNETOMECHILD ( ch_atlas.child )
     ch_versions = ch_versions.mix(BRAINNETOMECHILD.out.versions.first())
