@@ -190,8 +190,8 @@ workflow PEDIATRIC {
         ch_reg = PREPROC_T2W.out.t1_final
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch {
-                witht1: it[0].age < 2.5 && it.size() > 2 && it[2] != null
-                witht2: it[0].age >= 2.5 && it.size() > 2 && it[1] != null
+                witht1: (it[0].age < 2.5 || it[0].age > 18) && it.size() > 2 && it[2] != null
+                witht2: (it[0].age >= 2.5 && it[0].age <= 18) && it.size() > 2 && it[1] != null
                 other: true // Catch-all for any other cases
             }
 
@@ -210,9 +210,6 @@ workflow PEDIATRIC {
     // SUBWORKFLOW: Run PREPROC_DWI
     //
     if ( params.tracking ) {
-
-        if ( !params.dti_shells ) { error "Please provide the DTI shells using --dti_shells parameter" }
-        if ( !params.fodf_shells ) { error "Please provide the FODF shells using --fodf_shells parameter" }
 
         /* Load topup config if provided */
         if ( params.dwi_susceptibility_config_file ) {
@@ -320,9 +317,9 @@ workflow PEDIATRIC {
                 .join(SEGMENTATION.out.t2)
                 .join(SEGMENTATION.out.t1)
                 .branch {
-                    infant: it[0].age < 2.5
+                    infant: it[0].age < 2.5 || it[0].age > 18
                         return [it[0], it[4], it[1], it[3]]
-                    child: it[0].age >= 2.5
+                    child: it[0].age >= 2.5 && it[0].age <= 18
                         return [it[0], it[5], it[1], it[2]]
                 }
 
@@ -334,9 +331,9 @@ workflow PEDIATRIC {
                 .join(PREPROC_T2W.out.t1_final, remainder: true)
                 .join(PREPROC_T1W.out.t1_final, remainder: true)
                 .branch{
-                    infant: it[0].age < 2.5
+                    infant: it[0].age < 2.5 || it[0].age > 18
                         return [it[0], it[4], it[1], it[3]]
-                    child: it[0].age >= 2.5
+                    child: it[0].age >= 2.5 && it[0].age <= 18
                         return [it[0], it[5], it[1], it[2]]
                 }
 
@@ -359,7 +356,7 @@ workflow PEDIATRIC {
             .combine(ch_tpl2)
             .combine(ch_tpl3)
             .branch{
-                cohort1: it[0].age < 0.5
+                cohort1: it[0].age < 0.5 || it[0].age > 18
                     return [it[0], it[1], it[2], []]
                 cohort2: it[0].age >= 0.5 && it[0].age < 1.5
                     return [it[0], it[1], it[3], []]
@@ -389,7 +386,7 @@ workflow PEDIATRIC {
             .combine(ch_probseg2)
             .combine(ch_probseg3)
             .branch{
-                cohort1: it[0].age < 0.5
+                cohort1: it[0].age < 0.5 || it[0].age > 18
                     return [it[0], it[4], it[1], it[2], it[3]]
                 cohort2: it[0].age >= 0.5 && it[0].age < 1.5
                     return [it[0], it[5], it[1], it[2], it[3]]
@@ -416,7 +413,7 @@ workflow PEDIATRIC {
         ch_fastseg = ANATTODWI.out.t1_warped
             .map { it + [[]] }
             .branch {
-                child: it[0].age > 2.5
+                child: it[0].age >= 2.5
             }
 
         FASTSEG ( ch_fastseg.child )
@@ -431,9 +428,9 @@ workflow PEDIATRIC {
             .join(FASTSEG.out.csf_map, remainder: true)
             .join(WARPPROBSEG.out.warped_image, remainder: true)
             .branch{
-                infant: it[0].age < 2.5
+                infant: it[0].age < 2.5 || it[0].age > 18
                     return [it[0], it[6][2], it[6][1], it[6][0], it[1], it[2]]
-                child: it[0].age >= 2.5
+                child: it[0].age >= 2.5 && it[0].age <= 18
                     return [it[0], it[3], it[4], it[5], it[1], it[2]]
             }
         ch_pft_tracking = ch_pft_tracking.infant.mix(ch_pft_tracking.child)
@@ -443,9 +440,9 @@ workflow PEDIATRIC {
             .join(FASTSEG.out.wm_mask, remainder: true)
             .join(TRACKINGMASKS.out.wm, remainder: true)
             .branch{
-                infant: it[0].age < 2.5
+                infant: it[0].age < 2.5 || it[0].age > 18
                     return [it[0], it[4], it[1], it[2]]
-                child: it[0].age >= 2.5
+                child: it[0].age >= 2.5 && it[0].age <= 18
                     return [it[0], it[3], it[1], it[2]]
             }
         ch_local_tracking = ch_local_tracking.infant.mix(ch_local_tracking.child)
@@ -697,24 +694,34 @@ workflow PEDIATRIC {
     //
     // SUBWORKFLOW: RUN QC
     //
-    if ( params.tracking && !params.infant ) {
-        ch_tissueseg = FASTSEG.out.wm_mask
-            .join(FASTSEG.out.gm_mask)
-            .join(FASTSEG.out.csf_mask)
-    } else if ( params.infant && params.tracking ) {
-        ch_tissueseg = MASKS.out.wm_mask
-            .join(MASKS.out.gm_mask)
-            .join(MASKS.out.csf_mask)
-    } else {
-        ch_tissueseg = Channel.empty()
-    }
+    ch_tissueseg = Channel.empty()
+        .mix(FASTSEG.out.wm_mask)
+        .mix(FASTSEG.out.gm_mask)
+        .mix(FASTSEG.out.csf_mask)
+        .mix(TRACKINGMASKS.out.wm)
+        .mix(TRACKINGMASKS.out.gm)
+        .mix(TRACKINGMASKS.out.csf)
+        .groupTuple()
+        .map { meta, files ->
+            def sortedFiles = files.flatten().findAll { it != null }.sort { file ->
+                if (file.name.contains('wm')) return 0
+                else if (file.name.contains('gm')) return 1
+                else if (file.name.contains('csf')) return 2
+                else return 3
+            }
+            return [meta] + sortedFiles
+        }
 
     if ( params.tracking ) {
         ch_anat_qc = ANATTODWI.out.t1_warped
-    } else if ( params.infant && params.segmentation ) {
-        ch_anat_qc = SEGMENTATION.out.t2
-    } else if (!params.infant && params.segmentation ) {
-        ch_anat_qc = SEGMENTATION.out.t1
+    } else if ( params.segmentation ) {
+        ch_anat_qc = Channel.empty()
+            .mix(SEGMENTATION.out.t2)
+            .mix(SEGMENTATION.out.t1)
+            .groupTuple()
+            .map { meta, files ->
+                return [meta] + files.flatten().findAll { it != null }
+            }
     } else {
         ch_anat_qc = ch_anat
     }

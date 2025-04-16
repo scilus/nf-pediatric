@@ -126,9 +126,9 @@ workflow PREPROC_DWI {
             ch_synthstrip = IMAGE_POWDERAVERAGE.out.pwd_avg
                 .combine(ch_weights)
                 .branch{
-                    infant: it[0].age < 2.5
+                    infant: it[0].age < 2.5 || it[0].age > 18
                         return [it[0], it[1], it[2]]
-                    child: it[0].age >= 2.5
+                    child: it[0].age >= 2.5 && it[0].age <= 18
                         return [it[0], it[1], []]
                 }
             ch_synthstrip = ch_synthstrip.infant.mix(ch_synthstrip.child)

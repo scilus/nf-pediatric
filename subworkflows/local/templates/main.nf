@@ -1,6 +1,21 @@
 include { UTILS_TEMPLATEFLOW as GET     } from '../../../modules/local/utils/templateflow/main'
 include { IMAGE_APPLYMASK as MASK       } from '../../../modules/nf-neuro/image/applymask/main'
 
+def createCohortChannel(channel, cohort) {
+    channel.map { folder ->
+        def meta = [id: "UNCInfant", cohort: cohort]
+        def files = [
+            file("${folder}/cohort-${cohort}/*${cohort}_T1w.nii.gz"),
+            file("${folder}/cohort-${cohort}/*label-brain_mask.nii.gz"),
+            file("${folder}/cohort-${cohort}/*WM_probseg.nii.gz"),
+            file("${folder}/cohort-${cohort}/*GM_probseg.nii.gz"),
+            file("${folder}/cohort-${cohort}/*CSF_probseg.nii.gz")
+        ]
+        def flattenedFiles = files.flatten().findAll { it.exists() }
+        [meta] + flattenedFiles
+    }
+}
+
 workflow TEMPLATES {
 
     main:
@@ -12,60 +27,19 @@ workflow TEMPLATES {
     //
     def templateExists = file("${params.templateflow_home}/tpl-UNCInfant").exists()
 
-    if ( !templateExists ) {
-        ch_template = Channel.from(
-            [
-                ["UNCInfant", [], []]
-            ]
-        )
+    if (!templateExists) {
+        ch_template = Channel.from([["UNCInfant", [], []]])
         GET(ch_template)
         ch_versions = ch_versions.mix(GET.out.versions)
-
-        // Wait for GET process to complete
-        ch_get_complete = GET.out.folder.toList().map { _it -> true }
+        ch_template_folder = GET.out.folder
     } else {
-        ch_get_complete = Channel.of(true)
+        ch_template_folder = Channel.fromPath("${params.templateflow_home}/tpl-UNCInfant")
     }
 
-    //
-    // Loading back up in a structured format (stratified by cohorts)
-    //
-    ch_UNCInfant_cohort1 = ch_get_complete.map { _it ->
-            def meta = [id: "UNCInfant", cohort: 1]
-            def files = [
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-1/*1_T1w.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-1/*label-brain_mask.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-1/*WM_probseg.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-1/*GM_probseg.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-1/*CSF_probseg.nii.gz")
-            ]
-            def flattenedFiles = files.flatten().findAll { it }
-            [meta] + flattenedFiles
-        }
-    ch_UNCInfant_cohort2 = ch_get_complete.map { _it ->
-            def meta = [id: "UNCInfant", cohort: 2]
-            def files = [
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-2/*2_T1w.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-2/*label-brain_mask.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-2/*WM_probseg.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-2/*GM_probseg.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-2/*CSF_probseg.nii.gz")
-            ]
-            def flattenedFiles = files.flatten().findAll { it }
-            [meta] + flattenedFiles
-        }
-    ch_UNCInfant_cohort3 = ch_get_complete.map { _it ->
-            def meta = [id: "UNCInfant", cohort: 3]
-            def files = [
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-3/*3_T1w.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-3/*label-brain_mask.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-3/*WM_probseg.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-3/*GM_probseg.nii.gz"),
-                file("${params.templateflow_home}/tpl-UNCInfant/cohort-3/*CSF_probseg.nii.gz")
-            ]
-            def flattenedFiles = files.flatten().findAll { it }
-            [meta] + flattenedFiles
-        }
+    // Create channels for each cohort
+    ch_UNCInfant_cohort1 = createCohortChannel(ch_template_folder, 1)
+    ch_UNCInfant_cohort2 = createCohortChannel(ch_template_folder, 2)
+    ch_UNCInfant_cohort3 = createCohortChannel(ch_template_folder, 3)
 
     //
     // Apply brain mask on the template.

@@ -26,105 +26,98 @@ workflow SEGMENTATION {
     main:
 
     ch_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
 
     //
     // MODULE: Run FastSurfer or FreeSurfer T1 reconstruction
     //
-    ch_freesurfer = ch_t1.combine(ch_fs_license)
+    ch_seg = ch_t1
+        .combine(ch_fs_license)
+        .branch {
+            fastsurfer: it[0].age >= 2.5 && it[0].age <= 18 && params.use_fastsurfer
+                return it
+            freesurfer: it[0].age >= 2.5 && it[0].age <= 18 && !params.use_fastsurfer
+                return it
+            infant: it[0].age < 2.5 || it[0].age > 18
+                return [it[0], it[1]]
+        }
 
-    if ( params.use_fastsurfer && !params.infant ) {
+    // ** FastSurfer ** //
+    FASTSURFER ( ch_seg.fastsurfer )
+    ch_versions = ch_versions.mix(FASTSURFER.out.versions.first())
 
-        // ** FastSurfer ** //
-        FASTSURFER (ch_freesurfer)
-        ch_versions = ch_versions.mix(FASTSURFER.out.versions.first())
+    // ** ReconAll ** //
+    RECONALL ( ch_seg.freesurfer )
+    ch_versions = ch_versions.mix(RECONALL.out.versions.first())
 
-        // ** Setting outputs ** //
-        ch_folder = FASTSURFER.out.fastsurferdirectory
-        ch_t1 = FASTSURFER.out.final_t1
-        ch_t2 = Channel.empty()
-        ch_tissueseg = Channel.empty()
+    // ** For infant, it's a bit trickier, as MCRIBS do not  ** //
+    // ** perform preprocessing, so we need to do it here.   ** //
+    // ** Assuming the input channels are properly formatted ** //
+    PREPROC_T1W (
+        ch_seg.infant,
+        Channel.empty(),
+        Channel.empty(),
+        Channel.empty(),
+        Channel.empty(),
+        Channel.empty(),
+        weights
+    )
+    ch_versions = ch_versions.mix(PREPROC_T1W.out.versions.first())
 
-    } else if ( params.infant ) {
-
-        // ** For infant, it's a bit trickier, as MCRIBS do not  ** //
-        // ** perform preprocessing, so we need to do it here.   ** //
-        // ** Assuming the input channels are properly formatted ** //
-        PREPROC_T1W (
-            ch_t1,
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            weights
-        )
-        ch_versions = ch_versions.mix(PREPROC_T1W.out.versions.first())
-
-        PREPROC_T2W (
-            ch_t2,
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            weights
-        )
-        ch_versions = ch_versions.mix(PREPROC_T2W.out.versions.first())
-
-        // ** Register T1 to T2 if T1 is provided ** //
-        ch_reg = PREPROC_T2W.out.t1_final
-            .join(PREPROC_T1W.out.t1_final, remainder: true)
-            .branch {
-                witht1: it.size() > 2 && it[2] != null
-                    return [ it[0], it[1], it[2], [] ]
-            }
-
-        COREG ( ch_reg.witht1 )
-        ch_versions = ch_versions.mix(COREG.out.versions.first())
-        // ch_multiqc_files = ch_multiqc_files.mix(COREG.out.zip.collect{it[1]})
-
-        // ** Run MCRIBS ** //
-        ch_mcribs = PREPROC_T2W.out.t1_final
-            .combine(ch_fs_license)
-            .join(COREG.out.image, remainder: true)
-            .map { it[0..2] + [ it[3] ?: [] ] }
-
-        MCRIBS ( ch_mcribs )
-        ch_versions = ch_versions.mix(MCRIBS.out.versions.first())
-        // ch_multiqc_files = ch_multiqc_files.mix(MCRIBS.out.zip.collect{it[1]})
-
-        // ** Setting outputs ** //
-        ch_folder = MCRIBS.out.folder
-        ch_t1 = PREPROC_T1W.out.t1_final
-        ch_t2 = PREPROC_T2W.out.t1_final
-        ch_tissueseg = MCRIBS.out.aseg_presurf
-
-    } else {
-        // ** FreeSurfer ** //
-        RECONALL (ch_freesurfer)
-        ch_versions = ch_versions.mix(RECONALL.out.versions.first())
-
-        // ** Setting outputs ** //
-        ch_folder = RECONALL.out.recon_all_out_folder
-        ch_t1 = RECONALL.out.final_t1
-        ch_t2 = Channel.empty()
-        ch_tissueseg = Channel.empty()
+    ch_t2w = ch_t2.branch {
+        infant: it[0].age < 2.5 || it[0].age > 18
+            return it
     }
+
+    PREPROC_T2W (
+        ch_t2w.infant,
+        Channel.empty(),
+        Channel.empty(),
+        Channel.empty(),
+        Channel.empty(),
+        Channel.empty(),
+        weights
+    )
+    ch_versions = ch_versions.mix(PREPROC_T2W.out.versions.first())
+
+    // ** Register T1 to T2 if T1 is provided ** //
+    ch_reg = PREPROC_T2W.out.t1_final
+        .join(PREPROC_T1W.out.t1_final, remainder: true)
+        .branch {
+            witht1: it.size() > 2 && it[2] != null
+                return [ it[0], it[1], it[2], [] ]
+        }
+
+    COREG ( ch_reg.witht1 )
+    ch_versions = ch_versions.mix(COREG.out.versions.first())
+    ch_multiqc_files = ch_multiqc_files.mix(COREG.out.mqc)
+
+    // ** Run MCRIBS ** //
+    ch_mcribs = PREPROC_T2W.out.t1_final
+        .combine(ch_fs_license)
+        .join(COREG.out.image, remainder: true)
+        .map { it[0..2] + [ it[3] ?: [] ] }
+
+    MCRIBS ( ch_mcribs )
+    ch_versions = ch_versions.mix(MCRIBS.out.versions.first())
+    // ch_multiqc_files = ch_multiqc_files.mix(MCRIBS.out.zip.collect{it[1]})
 
     //
     // MODULE: Run BrainnetomeChild atlas
     //
-    ch_atlas = ch_folder
+    ch_atlas = Channel.empty()
+        .mix(FASTSURFER.out.fastsurferdirectory)
+        .mix(RECONALL.out.recon_all_out_folder)
+        .mix(MCRIBS.out.folder)
+        .groupTuple()
+        .map {
+            meta, files ->
+                return [meta] + files.flatten().findAll { it != null }
+        }
         .combine(ch_utils_folder)
         .combine(ch_fs_license)
-        .branch {
-            infant: params.infant
-                return [ it[0], it[1], it[2], it[3] ]
-            children: true
-                return [ it[0], it[1], it[2], it[3] ]
-        }
 
-    BRAINNETOMECHILD ( ch_atlas.children )
+    BRAINNETOMECHILD ( ch_atlas.child )
     ch_versions = ch_versions.mix(BRAINNETOMECHILD.out.versions.first())
 
     //
@@ -133,10 +126,18 @@ workflow SEGMENTATION {
     FORMATLABELS ( ch_atlas.infant )
     ch_versions = ch_versions.mix(FORMATLABELS.out.versions.first())
 
+    ch_labels = Channel.empty()
+        .mix(BRAINNETOMECHILD.out.labels)
+        .mix(FORMATLABELS.out.labels)
+
     //
     // MODULE: Concatenate stats
     //
-    CONCATENATESTATS ( params.infant ? FORMATLABELS.out.stats.collect() : BRAINNETOMECHILD.out.stats.collect() )
+    ch_stats = Channel.empty()
+        .mix(FORMATLABELS.out.stats.collect())
+        .mix(BRAINNETOMECHILD.out.stats.collect())
+
+    CONCATENATESTATS ( ch_stats )
     ch_versions = ch_versions.mix(CONCATENATESTATS.out.versions)
 
     emit:
@@ -145,8 +146,8 @@ workflow SEGMENTATION {
     t2              = ch_t2                                                 // channel: [ val(meta), [ t2 ] ]
 
     // ** Segmentation ** //
-    labels          = params.infant ? FORMATLABELS.out.labels : BRAINNETOMECHILD.out.labels // channel: [ val(meta), [ labels ] ]
-    tissues         = ch_tissueseg                                                          // channel: [ val(meta), [ tissues ] ]
+    labels          = ch_labels                                             // channel: [ val(meta), [ labels ] ]
+    tissues         = MCRIBS.out.aseg_presurf                               // channel: [ val(meta), [ tissues ] ]
 
     // ** Stats ** //
     volume_lh       = CONCATENATESTATS.out.volume_lh ?: Channel.empty()     // channel: [ volume_lh.tsv ]
