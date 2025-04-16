@@ -694,6 +694,7 @@ workflow PEDIATRIC {
     //
     // SUBWORKFLOW: RUN QC
     //
+    if ( params.tracking ) {
     ch_tissueseg = Channel.empty()
         .mix(FASTSEG.out.wm_mask)
         .mix(FASTSEG.out.gm_mask)
@@ -711,6 +712,9 @@ workflow PEDIATRIC {
             }
             return [meta] + sortedFiles
         }
+    } else {
+        ch_tissueseg = Channel.empty()
+    }
 
     if ( params.tracking ) {
         ch_anat_qc = ANATTODWI.out.t1_warped
