@@ -2,7 +2,7 @@ process MULTIQC {
     tag "$meta.id"
     label 'process_single'
 
-    container "${ 'multiqc/multiqc:v1.27.1' }"
+    container "${ 'multiqc/multiqc:v1.28' }"
 
     input:
     tuple val(meta), path(qc_images)

@@ -5,7 +5,7 @@ process QC_TRACKING {
     container 'gagnonanthony/nf-pediatric-qc:1.0.0'
 
     input:
-        tuple val(meta), path(tractogram), path(mask)
+        tuple val(meta), path(tractogram), path(wm), path(gm)
 
     output:
         tuple val(meta), path("*__tractogram_mask.nii.gz")   , emit: tractogram_mask
@@ -40,7 +40,7 @@ process QC_TRACKING {
         $smooth_todi $asymmetric $n_steps
 
     # Computing DICE score.
-    scil_volume_pairwise_comparison.py $mask ${prefix}__tractogram_mask.nii.gz \
+    scil_volume_pairwise_comparison.py $wm ${prefix}__tractogram_mask.nii.gz \
         ${prefix}__stats.json
 
     jq -r '.dice_voxels["1"][0]' ${prefix}__stats.json > ${prefix}__dice.txt
@@ -52,7 +52,7 @@ process QC_TRACKING {
     # Visual QC file.
     scil_viz_volume_screenshot.py ${prefix}__TDI.nii.gz ${prefix}_ax.png \
         --volume_cmap pink \
-        --overlays $mask \
+        --overlays $gm \
         --overlays_opacity 0 \
         --overlays_as_contours \
         --display_lr \
@@ -65,7 +65,7 @@ process QC_TRACKING {
 
     scil_viz_volume_screenshot.py ${prefix}__TDI.nii.gz ${prefix}_cor.png \
         --volume_cmap pink \
-        --overlays $mask \
+        --overlays $gm \
         --overlays_opacity 0 \
         --overlays_as_contours \
         --display_lr \
@@ -78,7 +78,7 @@ process QC_TRACKING {
 
     scil_viz_volume_screenshot.py ${prefix}__TDI.nii.gz ${prefix}_sag.png \
         --volume_cmap pink \
-        --overlays $mask \
+        --overlays $gm \
         --overlays_opacity 0 \
         --overlays_as_contours \
         --display_lr \
