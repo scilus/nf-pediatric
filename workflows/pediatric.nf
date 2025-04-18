@@ -413,7 +413,7 @@ workflow PEDIATRIC {
         ch_fastseg = ANATTODWI.out.t1_warped
             .map { it + [[]] }
             .branch {
-                child: it[0].age >= 2.5
+                child: it[0].age >= 2.5 && it[0].age <= 18
             }
 
         FASTSEG ( ch_fastseg.child )
