@@ -170,7 +170,8 @@
                         "git_sha": "a439fe5eda4249ba0c9d221ba04ede81c1c29f40",
                         "installed_by": [
                             "preproc_dwi"
-                        ]
+                        ],
+                        "patch": "modules/nf-neuro/preproc/normalize/preproc-normalize.diff"
                     },
                     "preproc/topup": {
                         "branch": "main",
