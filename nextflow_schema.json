@@ -534,7 +534,7 @@
                     "type": "boolean",
                     "description": "Run SynthStrip for brain extraction",
                     "fa_icon": "fas fa-brain",
-                    "default": false,
+                    "default": true,
                     "hidden": false
                 },
                 "dwi_synthstrip_border": {
