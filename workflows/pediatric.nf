@@ -26,9 +26,6 @@ include { REGISTRATION_ANTS as COREG        } from '../modules/nf-neuro/registra
 
 // ** DWI Preprocessing ** //
 include { PREPROC_DWI                       } from '../subworkflows/nf-neuro/preproc_dwi/main'
-include { IMAGE_RESAMPLE as RESAMPLE_DWI    } from '../modules/nf-neuro/image/resample/main'
-include { BETCROP_CROPVOLUME as CROPDWI     } from '../modules/nf-neuro/betcrop/cropvolume/main'
-include { UTILS_EXTRACTB0 as EXTRACTB0      } from '../modules/nf-neuro/utils/extractb0/main'
 
 // ** DTI Metrics ** //
 include { RECONST_DTIMETRICS                } from '../modules/nf-neuro/reconst/dtimetrics/main'
@@ -48,9 +45,6 @@ include { REGISTRATION_ANTSAPPLYTRANSFORMS as WARPPROBSEG     } from '../modules
 // ** Anatomical Segmentation ** //
 include { SEGMENTATION_FASTSEG as FASTSEG   } from '../modules/nf-neuro/segmentation/fastseg/main'
 include { SEGMENTATION_TRACKINGMASKS as TRACKINGMASKS } from '../modules/local/segmentation/trackingmasks/main'
-include { SEGMENTATION_MCRIBS as TISSUESEG  } from '../modules/local/segmentation/mcribs.nf'
-include { SEGMENTATION_MASKS as MASKS       } from '../modules/local/segmentation/masks.nf'
-include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORMTISSUES } from '../modules/nf-neuro/registration/antsapplytransforms/main'
 
 // ** Tracking ** //
 include { TRACKING_PFTTRACKING              } from '../modules/nf-neuro/tracking/pfttracking/main'
