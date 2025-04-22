@@ -5,8 +5,7 @@ def createCohortChannel(channel, cohort) {
     channel.map { folder ->
         def meta = [id: "UNCInfant", cohort: cohort]
         def files = [
-            file("${folder}/cohort-${cohort}/*${cohort}_T1w.nii.gz"),
-            file("${folder}/cohort-${cohort}/*label-brain_mask.nii.gz"),
+            file("${folder}/cohort-${cohort}/*desc-brain_T1w.nii.gz"),
             file("${folder}/cohort-${cohort}/*WM_probseg.nii.gz"),
             file("${folder}/cohort-${cohort}/*GM_probseg.nii.gz"),
             file("${folder}/cohort-${cohort}/*CSF_probseg.nii.gz")
@@ -40,29 +39,6 @@ workflow TEMPLATES {
     ch_UNCInfant_cohort1 = createCohortChannel(ch_template_folder, 1)
     ch_UNCInfant_cohort2 = createCohortChannel(ch_template_folder, 2)
     ch_UNCInfant_cohort3 = createCohortChannel(ch_template_folder, 3)
-
-    //
-    // Apply brain mask on the template.
-    //
-    ch_mask = ch_UNCInfant_cohort1.mix(ch_UNCInfant_cohort2).mix(ch_UNCInfant_cohort3)
-        .map{ it[0..2] }
-
-    MASK ( ch_mask )
-    ch_versions = ch_versions.mix(MASK.out.versions)
-
-    // ** Setting outputs ** //
-    ch_UNCInfant_cohort1 = MASK.out.image
-        .join(ch_UNCInfant_cohort1)
-        .map{ meta, bet, _t1w, _mask, wm, gm, csf ->
-            [meta, bet, wm, gm, csf]}
-    ch_UNCInfant_cohort2 = MASK.out.image
-        .join(ch_UNCInfant_cohort2)
-        .map{ meta, bet, _t1w, _mask, wm, gm, csf ->
-            [meta, bet, wm, gm, csf]}
-    ch_UNCInfant_cohort3 = MASK.out.image
-        .join(ch_UNCInfant_cohort3)
-        .map{ meta, bet, _t1w, _mask, wm, gm, csf ->
-            [meta, bet, wm, gm, csf]}
 
     emit:
     UNCInfant1              = ch_UNCInfant_cohort1 // channel: [ meta, bet, wm, gm, csf ]
