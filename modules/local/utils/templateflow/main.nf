@@ -32,7 +32,19 @@ process UTILS_TEMPLATEFLOW {
     stub:
 
     """
-    mkdir tpl-${template}
+    mkdir -p tpl-${template}/cohort-1 tpl-${template}/cohort-2 tpl-${template}/cohort-3
+    touch tpl-${template}/cohort-1/tpl-${template}_cohort-1_desc-brain_T1w.nii.gz
+    touch tpl-${template}/cohort-1/tpl-${template}_cohort-1_label-CSF_probseg.nii.gz
+    touch tpl-${template}/cohort-1/tpl-${template}_cohort-1_label-GM_probseg.nii.gz
+    touch tpl-${template}/cohort-1/tpl-${template}_cohort-1_label-WM_probseg.nii.gz
+    touch tpl-${template}/cohort-2/tpl-${template}_cohort-2_desc-brain_T1w.nii.gz
+    touch tpl-${template}/cohort-2/tpl-${template}_cohort-2_label-CSF_probseg.nii.gz
+    touch tpl-${template}/cohort-2/tpl-${template}_cohort-2_label-GM_probseg.nii.gz
+    touch tpl-${template}/cohort-2/tpl-${template}_cohort-2_label-WM_probseg.nii.gz
+    touch tpl-${template}/cohort-3/tpl-${template}_cohort-3_desc-brain_T1w.nii.gz
+    touch tpl-${template}/cohort-3/tpl-${template}_cohort-3_label-CSF_probseg.nii.gz
+    touch tpl-${template}/cohort-3/tpl-${template}_cohort-3_label-GM_probseg.nii.gz
+    touch tpl-${template}/cohort-3/tpl-${template}_cohort-3_label-WM_probseg.nii.gz
     touch ${template}_metadata.json
     touch ${template}_citations.bib
     touch ${template}_T1w.nii.gz
