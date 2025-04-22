@@ -32,15 +32,15 @@
                 "sub-test",
                 "sub-test/ses-baseline",
                 "sub-test/ses-baseline/dwi",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-BrainnetomeChild_stat-fa.npy",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-BrainnetomeChild_stat-md.npy",
+                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_stat-fa.npy",
+                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_stat-md.npy",
                 "sub-test/ses-baseline/figures",
                 "sub-test/ses-baseline/figures/sub-test_gradients_mqc.png",
                 "sub-test/ses-baseline/figures/sub-test_labels_mqc.png",
-                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-BrainnetomeChild_stat-fa.png",
-                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-BrainnetomeChild_stat-md.png",
+                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-DK_stat-fa.png",
+                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-DK_stat-md.png",
                 "sub-test/ses-baseline/multiqc",
                 "sub-test/ses-baseline/multiqc/sub-test_multiqc_data",
                 "sub-test/ses-baseline/multiqc/sub-test_multiqc_plots",
@@ -51,7 +51,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-12T11:54:05.983251"
+        "timestamp": "2025-04-22T14:58:19.427856"
     },
     "Connectomics profile with derivatives - should run successfully": {
         "content": [
@@ -111,60 +111,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-12T11:53:20.394945"
-    },
-    "Connectomics + infant profile - should run successfully": {
-        "content": [
-            9,
-            {
-                "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.1.0rc1"
-                },
-                "CONNECTIVITY_DECOMPOSE": {
-                    "scilpy": "2.0.2"
-                },
-                "CONNECTIVITY_METRICS": {
-                    "scilpy": "2.0.2"
-                },
-                "CONNECTIVITY_VISUALIZE": {
-                    "scilpy": "2.0.2"
-                },
-                "FILTERING_COMMIT": {
-                    "scilpy": 1.6
-                },
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
-                }
-            },
-            [
-                "multiqc",
-                "multiqc/global_multiqc_data",
-                "multiqc/global_multiqc_plots",
-                "multiqc/global_multiqc_report.html",
-                "pipeline_info",
-                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
-                "sub-test",
-                "sub-test/ses-baseline",
-                "sub-test/ses-baseline/dwi",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_desc-filtered_tractogram.h5",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_desc-preproc_tractogram.h5",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_stat-fa.npy",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_stat-md.npy",
-                "sub-test/ses-baseline/figures",
-                "sub-test/ses-baseline/figures/sub-test_gradients_mqc.png",
-                "sub-test/ses-baseline/figures/sub-test_labels_mqc.png",
-                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-DK_stat-fa.png",
-                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-DK_stat-md.png",
-                "sub-test/ses-baseline/multiqc",
-                "sub-test/ses-baseline/multiqc/sub-test_multiqc_data",
-                "sub-test/ses-baseline/multiqc/sub-test_multiqc_plots",
-                "sub-test/ses-baseline/multiqc/sub-test_multiqc_report.html"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.5"
-        },
-        "timestamp": "2025-04-12T11:54:50.329455"
+        "timestamp": "2025-04-22T14:57:11.715238"
     }
 }
