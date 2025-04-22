@@ -11,6 +11,7 @@ include { paramsSummaryMultiqc              } from '../subworkflows/nf-core/util
 include { softwareVersionsToYAML            } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
 include { FETCH_DERIVATIVES                 } from '../subworkflows/local/utils/fetch_derivatives.nf'
+include { generateDatasetJson               } from '../subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
 
 // ** Prepare templates ** //
 include { TEMPLATES                         } from '../subworkflows/local/templates/main.nf'
@@ -90,6 +91,9 @@ workflow PEDIATRIC {
     ch_nifti_files_to_transform = Channel.empty()
     ch_trk_files_to_transform = Channel.empty()
 
+    // ** BIDS dataset_description file. ** //
+    generateDatasetJson ()
+
     //
     // Fetching required templates
     //
@@ -128,38 +132,11 @@ workflow PEDIATRIC {
         checkIfExists: true)
 
     //
-    // SUBWORKFLOW: Run FastSurfer or FreeSurfer T1 reconstruction with BrainnetomeChild atlas
-    // Additionally, if infant data is provided, run MCRIBS segmentation.
-    //
-    if ( params.segmentation ) {
-
-        // ** Fetch license file ** //
-        ch_fs_license = params.fs_license
-            ? Channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
-            : Channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
-
-        // ** Fetch utils folder ** //
-        ch_utils_folder = Channel.fromPath(params.utils_folder, checkIfExists: true)
-
-        SEGMENTATION (
-            ch_t1.witht1,
-            ch_t2.witht2,
-            ch_fs_license,
-            ch_utils_folder,
-            ch_synthstrip_weights
-        )
-
-        ch_versions = ch_versions.mix(SEGMENTATION.out.versions.first())
-        // ch_multiqc_files = ch_multiqc_files.mix(FASTSURFER.out.zip.collect{it[1]})
-
-    }
-
-    //
     // SUBWORKFLOW: Run preprocessing on anatomical images.
     //
     reg_t1 = Channel.empty()
 
-    if ( params.tracking && !params.segmentation ) {
+    if ( params.tracking || params.segmentation ) {
 
         // ** Run T1 preprocessing ** //
         PREPROC_T1W (
@@ -205,6 +182,56 @@ workflow PEDIATRIC {
         ch_versions = ch_versions.mix(COREG.out.versions)
         // ch_multiqc_files = ch_multiqc_files.mix(COREG.out.zip.collect{it[1]})
         reg_t1 = COREG.out.image ?: Channel.empty()
+
+    }
+
+    //
+    // SUBWORKFLOW: Run FastSurfer or FreeSurfer T1 reconstruction with BrainnetomeChild atlas
+    // Additionally, if infant data is provided, run MCRIBS segmentation.
+    //
+    if ( params.segmentation ) {
+
+        // ** Fetch license file ** //
+        ch_fs_license = params.fs_license
+            ? Channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
+            : Channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
+
+        // ** Fetch utils folder ** //
+        ch_utils_folder = Channel.fromPath(params.utils_folder, checkIfExists: true)
+
+        // ** Assemble T1w/T2w channels using derivatives for < 0.25 years, ** //
+        // ** otherwise, raw images.                                        ** //
+        ch_t1_seg = ch_t1.witht1
+            .join(PREPROC_T1W.out.t1_final, remainder: true)
+            .branch{
+                mcribs: it[0].age < 2.5 || it[0].age > 18
+                    return [it[0], it[2]]
+                fs: true
+                    return [it[0], it[1]]
+            }
+        ch_t1_seg = ch_t1_seg.mcribs.mix(ch_t1_seg.fs).view()
+
+        ch_t2_seg = ch_t2.witht2
+            .join(PREPROC_T2W.out.t1_final, remainder: true)
+            .branch{
+                mcribs: it[0].age < 2.5 || it[0].age > 18
+                    return [it[0], it[2]]
+                fs: true
+                    return [it[0], it[1]]
+            }
+        ch_t2_seg = ch_t2_seg.mcribs.mix(ch_t2_seg.fs).view()
+
+        SEGMENTATION (
+            PREPROC_T1W.out.t1_final,
+            PREPROC_T2W.out.t1_final,
+            reg_t1,
+            ch_fs_license,
+            ch_utils_folder
+        )
+
+        ch_versions = ch_versions.mix(SEGMENTATION.out.versions.first())
+        // ch_multiqc_files = ch_multiqc_files.mix(FASTSURFER.out.zip.collect{it[1]})
+
     }
 
     //
@@ -311,35 +338,19 @@ workflow PEDIATRIC {
         //
         // MODULE: Run REGISTRATION
         //
-        if ( params.segmentation ) {
-            ch_for_reg = ch_processed_b0
-                .join(RECONST_DTIMETRICS.out.fa)
-                .join(RECONST_DTIMETRICS.out.md)
-                .join(SEGMENTATION.out.t2)
-                .join(SEGMENTATION.out.t1)
-                .branch {
-                    infant: it[0].age < 2.5 || it[0].age > 18
-                        return [it[0], it[4], it[1], it[3]]
-                    child: it[0].age >= 2.5 && it[0].age <= 18
-                        return [it[0], it[5], it[1], it[2]]
-                }
+        ch_for_reg = ch_processed_b0
+            .join(RECONST_DTIMETRICS.out.fa)
+            .join(RECONST_DTIMETRICS.out.md)
+            .join(PREPROC_T2W.out.t1_final, remainder: true)
+            .join(PREPROC_T1W.out.t1_final, remainder: true)
+            .branch{
+                infant: it[0].age < 2.5 || it[0].age > 18
+                    return [it[0], it[4], it[1], it[3]]
+                child: it[0].age >= 2.5 && it[0].age <= 18
+                    return [it[0], it[5], it[1], it[2]]
+            }
 
-            ch_anat_reg = ch_for_reg.infant.mix(ch_for_reg.child)
-        } else {
-            ch_for_reg = ch_processed_b0
-                .join(RECONST_DTIMETRICS.out.fa)
-                .join(RECONST_DTIMETRICS.out.md)
-                .join(PREPROC_T2W.out.t1_final, remainder: true)
-                .join(PREPROC_T1W.out.t1_final, remainder: true)
-                .branch{
-                    infant: it[0].age < 2.5 || it[0].age > 18
-                        return [it[0], it[4], it[1], it[3]]
-                    child: it[0].age >= 2.5 && it[0].age <= 18
-                        return [it[0], it[5], it[1], it[2]]
-                }
-
-            ch_anat_reg = ch_for_reg.infant.mix(ch_for_reg.child)
-        }
+        ch_anat_reg = ch_for_reg.infant.mix(ch_for_reg.child)
 
         ANATTODWI( ch_anat_reg )
         ch_versions = ch_versions.mix(ANATTODWI.out.versions)

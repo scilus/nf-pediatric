@@ -19,14 +19,13 @@ workflow SEGMENTATION {
     take:
     ch_t1           // channel: [ val(meta), [ t1 ] ]
     ch_t2           // channel: [ val(meta), [ t2 ] ]
+    ch_coreg        // channel: [ val(meta), [ t1 ] ]
     ch_fs_license   // channel: [ fs_license ]
     ch_utils_folder // channel: [ utils_folder ]
-    weights         // channel: [ weights ]
 
     main:
 
     ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
 
     //
     // MODULE: Run FastSurfer or FreeSurfer T1 reconstruction
@@ -34,9 +33,9 @@ workflow SEGMENTATION {
     ch_seg = ch_t1
         .combine(ch_fs_license)
         .branch {
-            fastsurfer: it[0].age >= 0.25 && it[0].age <= 18 && params.use_fastsurfer
+            fastsurfer: it[0].age >= 2.5 && it[0].age <= 18 && params.use_fastsurfer
                 return it
-            freesurfer: it[0].age >= 0.25 && it[0].age <= 18 && !params.use_fastsurfer
+            freesurfer: it[0].age >= 2.5 && it[0].age <= 18 && !params.use_fastsurfer
                 return it
             infant: true
                 return [it[0], it[1]]
@@ -51,51 +50,17 @@ workflow SEGMENTATION {
     ch_versions = ch_versions.mix(RECONALL.out.versions.first())
 
     // ** For infant, it's a bit trickier, as MCRIBS do not  ** //
-    // ** perform preprocessing, so we need to do it here.   ** //
+    // ** perform preprocessing, so we need to do it (done in pediatric.nf).   ** //
     // ** Assuming the input channels are properly formatted ** //
-    PREPROC_T1W (
-        ch_seg.infant,
-        Channel.empty(),
-        Channel.empty(),
-        Channel.empty(),
-        Channel.empty(),
-        Channel.empty(),
-        weights
-    )
-    ch_versions = ch_versions.mix(PREPROC_T1W.out.versions.first())
-
     ch_t2w = ch_t2.branch {
-        infant: it[0].age < 0.25 || it[0].age > 18
+        infant: it[0].age < 2.5 || it[0].age > 18
             return it
     }
 
-    PREPROC_T2W (
-        ch_t2w.infant,
-        Channel.empty(),
-        Channel.empty(),
-        Channel.empty(),
-        Channel.empty(),
-        Channel.empty(),
-        weights
-    )
-    ch_versions = ch_versions.mix(PREPROC_T2W.out.versions.first())
-
-    // ** Register T1 to T2 if T1 is provided ** //
-    ch_reg = PREPROC_T2W.out.t1_final
-        .join(PREPROC_T1W.out.t1_final, remainder: true)
-        .branch {
-            witht1: it.size() > 2 && it[2] != null
-                return [ it[0], it[1], it[2], [] ]
-        }
-
-    COREG ( ch_reg.witht1 )
-    ch_versions = ch_versions.mix(COREG.out.versions.first())
-    ch_multiqc_files = ch_multiqc_files.mix(COREG.out.mqc)
-
     // ** Run MCRIBS ** //
-    ch_mcribs = PREPROC_T2W.out.t1_final
+    ch_mcribs = ch_t2w.infant
         .combine(ch_fs_license)
-        .join(COREG.out.image, remainder: true)
+        .join(ch_coreg, remainder: true)
         .map { it[0..2] + [ it[3] ?: [] ] }
 
     MCRIBS ( ch_mcribs )
@@ -117,9 +82,9 @@ workflow SEGMENTATION {
         .combine(ch_utils_folder)
         .combine(ch_fs_license)
         .branch {
-            infant: it[0].age < 0.25 || it[0].age > 18
+            infant: it[0].age < 2.5 || it[0].age > 18
                 return it
-            child: it[0].age >= 0.25 && it[0].age <= 18
+            child: it[0].age >= 2.5 && it[0].age <= 18
         }
 
     BRAINNETOMECHILD ( ch_atlas.child )
@@ -145,7 +110,6 @@ workflow SEGMENTATION {
         .mix(BRAINNETOMECHILD.out.stats.collect().map{
             [[id: 'Global', agegroup: 'Child'], it]
         })
-        .view()
 
     CONCATENATESTATS ( ch_stats )
     ch_versions = ch_versions.mix(CONCATENATESTATS.out.versions)
