@@ -21,7 +21,7 @@ workflow SEGMENTATION {
     ch_t2           // channel: [ val(meta), [ t2 ] ]
     ch_fs_license   // channel: [ fs_license ]
     ch_utils_folder // channel: [ utils_folder ]
-    weights      // channel: [ weights ]
+    weights         // channel: [ weights ]
 
     main:
 
@@ -34,11 +34,11 @@ workflow SEGMENTATION {
     ch_seg = ch_t1
         .combine(ch_fs_license)
         .branch {
-            fastsurfer: it[0].age >= 2.5 && it[0].age <= 18 && params.use_fastsurfer
+            fastsurfer: it[0].age >= 0.25 && it[0].age <= 18 && params.use_fastsurfer
                 return it
-            freesurfer: it[0].age >= 2.5 && it[0].age <= 18 && !params.use_fastsurfer
+            freesurfer: it[0].age >= 0.25 && it[0].age <= 18 && !params.use_fastsurfer
                 return it
-            infant: it[0].age < 2.5 || it[0].age > 18
+            infant: true
                 return [it[0], it[1]]
         }
 
@@ -65,7 +65,7 @@ workflow SEGMENTATION {
     ch_versions = ch_versions.mix(PREPROC_T1W.out.versions.first())
 
     ch_t2w = ch_t2.branch {
-        infant: it[0].age < 2.5 || it[0].age > 18
+        infant: it[0].age < 0.25 || it[0].age > 18
             return it
     }
 
@@ -117,9 +117,9 @@ workflow SEGMENTATION {
         .combine(ch_utils_folder)
         .combine(ch_fs_license)
         .branch {
-            infant: it[0].age < 2.5 || it[0].age > 18
+            infant: it[0].age < 0.25 || it[0].age > 18
                 return it
-            child: it[0].age >= 2.5 && it[0].age <= 18
+            child: it[0].age >= 0.25 && it[0].age <= 18
         }
 
     BRAINNETOMECHILD ( ch_atlas.child )
