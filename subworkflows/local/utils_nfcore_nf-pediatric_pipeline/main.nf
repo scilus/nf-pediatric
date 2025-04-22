@@ -211,6 +211,24 @@ def getTemplateAgeGroup(age) {
 }
 
 //
+// Generating dataset_description.json file in output folder.
+//
+def generateDatasetJson() {
+    def jsonFile = "${params.outdir}/dataset_description.json"
+    def info = [
+        Name: "nf-pediatric derivatives",
+        BIDSVersion: "1.10.0",
+        DatasetType: "derivative",
+        GeneratedBy: [
+            Name: workflow.manifest.name,
+            Version: workflow.manifest.version,
+            Date: java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        ]
+    ]
+    file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(info))
+}
+
+//
 // Generate methods description for MultiQC
 //
 def toolCitationText() {
