@@ -139,8 +139,13 @@ workflow SEGMENTATION {
     // MODULE: Concatenate stats
     //
     ch_stats = Channel.empty()
-        .mix(FORMATLABELS.out.stats.collect())
-        .mix(BRAINNETOMECHILD.out.stats.collect())
+        .mix(FORMATLABELS.out.stats.collect().map {
+            [[id: 'Global', agegroup: 'Infant'], it]
+        })
+        .mix(BRAINNETOMECHILD.out.stats.collect().map{
+            [[id: 'Global', agegroup: 'Child'], it]
+        })
+        .view()
 
     CONCATENATESTATS ( ch_stats )
     ch_versions = ch_versions.mix(CONCATENATESTATS.out.versions)

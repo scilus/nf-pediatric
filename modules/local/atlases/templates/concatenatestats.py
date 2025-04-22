@@ -54,7 +54,8 @@ for stat in ['volume', 'area', 'thickness', 'subcortical']:
                 if "BrainSegVolNotVent" in df.columns:
                     df.drop(columns=["BrainSegVolNotVent", "eTIV", f"{hemi}_cluster94_{stat}"], inplace=True)
             df.columns = [col.replace(f"_{stat}", "") for col in df.columns]
-            df.to_csv(f"cortical_{stat}_{hemi}.tsv", sep='\\t', index=False)
+            group = $meta.agegroup
+            df.to_csv(f"cortical_{group}_{stat}_{hemi}.tsv", sep='\\t', index=False)
 
 versions = {
     "${task.process}": {
