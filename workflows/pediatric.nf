@@ -41,8 +41,7 @@ include { RECONST_FODF                      } from '../modules/nf-neuro/reconst/
 
 // ** Registration ** //
 include { REGISTRATION_ANATTODWI as ANATTODWI } from '../modules/nf-neuro/registration/anattodwi/main'
-include { REGISTRATION_ANTS as TEMPLATETODWI   } from '../modules/nf-neuro/registration/ants/main'
-include { REGISTRATION_ANTSAPPLYTRANSFORMS as APPLYTRANSFORMS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
+include { REGISTRATION_ANATTODWI as TEMPLATETODWI   } from '../modules/nf-neuro/registration/anattodwi/main'
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as WARPPROBSEG     } from '../modules/nf-neuro/registration/antsapplytransforms/main'
 
 // ** Anatomical Segmentation ** //
@@ -94,7 +93,9 @@ workflow PEDIATRIC {
     //
     // Fetching required templates
     //
-    TEMPLATES ( )
+    if ( params.tracking ) {
+        TEMPLATES ( )
+    }
 
     //
     // Decomposing the samplesheet into individual channels
@@ -352,16 +353,18 @@ workflow PEDIATRIC {
         ch_tpl3 = TEMPLATES.out.UNCInfant3.map{ it[1] }
 
         ch_reg_template = ANATTODWI.out.t1_warped
+            .join(RECONST_DTIMETRICS.out.fa)
+            .join(RECONST_DTIMETRICS.out.md)
             .combine(ch_tpl1)
             .combine(ch_tpl2)
             .combine(ch_tpl3)
             .branch{
                 cohort1: it[0].age < 0.5 || it[0].age > 18
-                    return [it[0], it[1], it[2], []]
+                    return [it[0], it[4], it[1], it[3]]
                 cohort2: it[0].age >= 0.5 && it[0].age < 1.5
-                    return [it[0], it[1], it[3], []]
+                    return [it[0], it[5], it[1], it[2]]
                 cohort3: it[0].age >= 1.5 && it[0].age < 2.5
-                    return [it[0], it[1], it[4], []]
+                    return [it[0], it[6], it[1], it[2]]
             }
 
         ch_reg_template = ch_reg_template.cohort1
