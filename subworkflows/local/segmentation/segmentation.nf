@@ -8,12 +8,6 @@ include { ATLASES_BRAINNETOMECHILD as BRAINNETOMECHILD } from '../../../modules/
 include { ATLASES_FORMATLABELS as FORMATLABELS         } from '../../../modules/local/atlases/formatlabels'
 include { ATLASES_CONCATENATESTATS as CONCATENATESTATS } from '../../../modules/local/atlases/concatenatestats'
 
-// ** Utilities ** //
-include { PREPROC_T1 as PREPROC_T1W } from '../../../subworkflows/nf-neuro/preproc_t1/main'
-include { PREPROC_T1 as PREPROC_T2W } from '../../../subworkflows/nf-neuro/preproc_t1/main'
-include { REGISTRATION_ANTS as COREG } from '../../../modules/nf-neuro/registration/ants/main'
-include { imNotification } from '../../nf-core/utils_nfcore_pipeline/main.nf'
-
 workflow SEGMENTATION {
 
     take:
