@@ -2,12 +2,11 @@
 
 ## Introduction
 
-`nf-pediatric` is a neuro-imaging pipeline to process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. A specific and unique profile pertains to `infant` data (<2 years old) and sets specific parameters tailored to infant data preprocessing. Here is a list of the available profiles:
+`nf-pediatric` is a neuro-imaging pipeline to process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. Here is a list of the available profiles:
 
 - `tracking`: Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
 - `segmentation`: Run [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/), [FastSurfer](https://deep-mi.org/research/fastsurfer/), or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) for T1w/T2w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or the Desikan-Killiany atlas (for infant) is mapped to the subject space.
 - `connectomics`: Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
-- `infant`: This profile adapt some processing steps to infant data, such as tissue segmentation using [M-CRIB-S](https://github.com/DevelopmentalImagingMCRI/MCRIBS), surface reconstruction using [InfantFS](https://surfer.nmr.mgh.harvard.edu/fswiki/infantFS), etc.
 
 ---
 
@@ -67,24 +66,23 @@ The most basic BIDS directory should have a similar structure (note that session
 ### Required Files
 
 - `dataset_description.json`: A JSON file describing the dataset.
-- `participants.tsv`: A TSV file listing the participants and their metadata. **For `-profile infant`, users should provide the participants gestational age under the age columns. Otherwise, all participants will be assumed to have 44 weeks.**
+- `participants.tsv`: A TSV file listing the participants and their metadata. **`nf-pediatric` requires the participants' age to be supplied within this file, using `age` as the column name. Here is an example:**
 
-Subject's data for pediatric setting (default):
+> [!IMPORTANT] The age can be specified using either post conceptual age (only recommended for infant data, users should indicate age in years as soon as possible) or years.
+
+> | participant_id | age |
+> | -------------- | --- |
+> | sub-test1 | 44 |
+> | sub-test2 | 8 |
+> | ...       | ... |
+
+Mandatory files per subject:
 
 - `sub-<participant_id>/`: A directory for each participant containing their data.
-  - `anat/`: A directory containing anatomical MRI data (e.g., T1w, T2w).
-    - `T1w` is **mandatory** for pediatric data.
-    - `T2w` is optional. It will be preprocessed and registered into `T1w` space.
-  - `dwi/`: A directory containing diffusion-weighted imaging data (e.g., DWI, bval, bvec). Acquisition with both direction DWI data are also supported (e.g. rev-DWI, rev-bval, rev-bvec). Specify them according to the [BIDS guidelines](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/magnetic-resonance-imaging-data.html)
-  - `fmap/`: A directory containing field map data (optional but recommended for distortion correction).
-
-Subject's data for infant setting (`-profile infant`):
-
-- `sub-<participant_id>/`: A directory for each participant containing their data.
-  - `anat/`: A directory containing anatomical MRI data (e.g., T1w, T2w).
-    - `T1w` is optional. It will be preprocessed, registered into `T2w` space and used for tissue/surface reconstruction if available.
-    - `T2w` is **mandatory** for infant data.
-  - `dwi/`: A directory containing diffusion-weighted imaging data (e.g., DWI, bval, bvec). Acquisition with both direction DWI data are also supported (e.g. rev-DWI, rev-bval, rev-bvec). Specify them according to the [BIDS guidelines](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/magnetic-resonance-imaging-data.html)
+  - `anat/`: A directory containing anatomical MRI data (e.g., T1w, T2w). If both are available, the optimal one will be selected and both will be coregistered.
+    - `T1w` is **mandatory** for participants >= 3 months old.
+    - `T2w` is **mandatory** for participants < 3 months old.
+  - `dwi/`: A directory containing diffusion-weighted imaging data (e.g., DWI, bval, bvec). Acquisition with both direction DWI data are also supported (e.g. AP/PA). Specify them according to the [BIDS guidelines](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/magnetic-resonance-imaging-data.html)
   - `fmap/`: A directory containing field map data (optional but recommended for distortion correction).
 
 ## Running the pipeline
@@ -92,10 +90,10 @@ Subject's data for infant setting (`-profile infant`):
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run scilus/nf-pediatric -r main --input <BIDS_directory> --outdir ./results --dti_shells "0 1000" --fodf_shells "0 1000" -profile docker
+nextflow run scilus/nf-pediatric -r main --input <BIDS_directory> --outdir ./results -profile docker,tracking
 ```
 
-This will launch the pipeline with the `docker` configuration profile. There is only 4 parameters that need to be supplied at runtime: `--input`: for the path to your BIDS directory, `--outdir`: path to the output directory, `--dti_shells`: if the tracking profile is selected, you need to identify which shell to use for DTI fitting (0 and 1000 were selected in the previous example), and `--fodf_shells`: if the tracking profile is selected, specify your shells as for the DTI parameter. See below for more information about profiles.
+This will launch the pipeline with the `docker` configuration profile. There is only 2 parameters that need to be supplied at runtime: `--input`: for the path to your BIDS directory and `--outdir`: path to the output directory. See below for more information about profiles.
 
 Note that the pipeline will create the following files in your working directory:
 
@@ -122,7 +120,7 @@ nextflow run scilus/nf-pediatric -r main -profile docker -params-file params.yam
 with:
 
 ```yaml title="params.yaml"
-input: './samplesheet.csv'
+input: './bids-folder/'
 outdir: './results/'
 <...>
 ```
@@ -182,15 +180,13 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `slurm`
   - A generic configuration profile for use on SLURM managed clusters.
 - `arm`
-  - A generic configuration profile for ARM based computers.
+  - A generic configuration profile for ARM based computers. **Experimental, not all containers have their ARM equivalent and might reduce performance.**
 - `tracking`
   - Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
 - `segmentation`
-  - Run FreeSurfer or FastSurfer for T1w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) is mapped to the subject space. **Not available with the `infant` profile.**
+  - Run FreeSurfer or FastSurfer for T1w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or Desikan-Killiany atlas is mapped to the subject space.
 - `connectomics`
   - Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
-- `infant`
-  - This profile adapt some processing steps to infant data, but also requires more input files. See below for a list of the required files.
 
 ### `-resume`
 

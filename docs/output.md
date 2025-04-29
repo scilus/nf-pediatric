@@ -8,6 +8,7 @@ The directories listed below will be created in the results directory after the 
 
 ```bash
 <outdir>
+  |-- dataset_description.json
   |-- multiqc
   |-- sub-0001
   |     |-- ses-session
