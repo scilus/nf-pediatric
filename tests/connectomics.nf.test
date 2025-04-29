@@ -10,7 +10,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input_deriv = "$projectDir/tests/data/derivatives-noses/"
+                params.input_deriv = "$projectDir/tests/data/derivatives/"
                 params.outdir = "$outputDir"
 
                 params.connectomics = true
@@ -40,7 +40,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input_deriv = "$projectDir/tests/data/derivatives-ses/"
+                params.input_deriv = "$projectDir/tests/data/derivatives/"
                 params.outdir = "$outputDir"
 
                 params.connectomics = true
