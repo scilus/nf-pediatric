@@ -4,14 +4,14 @@ nextflow_pipeline {
 
     name "Test nf-pediatric all profiles chained"
     script "../main.nf"
-    /*
+
     test("Segmentation + connectomics profiles - should run successfully") {
 
         when {
             params {
 
                 params.input = "$projectDir/tests/data/bids/"
-                params.input_deriv = "$projectDir/tests/data/derivatives-noses/"
+                params.input_deriv = "$projectDir/tests/data/derivatives/"
                 params.outdir = "$outputDir"
                 use_fastsurfer = true
 
@@ -49,15 +49,12 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/bids-revb0/"
-                params.input_deriv = "$projectDir/tests/data/derivatives-noses/"
+                params.input = "$projectDir/tests/data/bids/"
+                params.input_deriv = "$projectDir/tests/data/derivatives/"
                 params.outdir = "$outputDir"
 
                 params.connectomics = true
                 params.tracking = true
-
-                params.dti_shells = "0 1000"
-                params.fodf_shells = "0 1000"
 
             }
         }
@@ -78,7 +75,7 @@ nextflow_pipeline {
             }
         }
     }
-    */
+
     test("Connectomics + tracking + segmentation profiles - should run successfully") {
 
         when {
