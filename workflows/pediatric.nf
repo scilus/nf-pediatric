@@ -203,7 +203,7 @@ workflow PEDIATRIC {
                 fs: true
                     return [it[0], it[1]]
             }
-        ch_t1_seg = ch_t1_seg.mcribs.mix(ch_t1_seg.fs).view()
+        ch_t1_seg = ch_t1_seg.mcribs.mix(ch_t1_seg.fs)
 
         ch_t2_seg = ch_t2.witht2
             .join(PREPROC_T2W.out.t1_final, remainder: true)
@@ -213,7 +213,7 @@ workflow PEDIATRIC {
                 fs: true
                     return [it[0], it[1]]
             }
-        ch_t2_seg = ch_t2_seg.mcribs.mix(ch_t2_seg.fs).view()
+        ch_t2_seg = ch_t2_seg.mcribs.mix(ch_t2_seg.fs)
 
         SEGMENTATION (
             PREPROC_T1W.out.t1_final,
@@ -575,7 +575,7 @@ workflow PEDIATRIC {
         // MODULE : Run AntsApplyTransforms.
         //
         ch_labels = ch_labels.branch {
-            reg: it.size() > 2
+            reg: it.size() > 2 && !params.segmentation
                 return [it[0], it[2]]
             notreg: it.size() < 3
                 return [it[0], it[1]]
