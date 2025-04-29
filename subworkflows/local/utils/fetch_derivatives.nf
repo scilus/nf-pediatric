@@ -42,7 +42,6 @@ workflow FETCH_DERIVATIVES {
         .map{ meta, files ->
             return [meta] + files
         }
-        .view()
 
     // ** Anatomical file ** //
     ch_anat = Channel.fromPath("${input_deriv}/sub-**/{ses-*/,}anat/*space-DWI_desc-preproc_{T1w,T2w}.nii.gz",
@@ -147,7 +146,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Tractogram file ** //
-    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-*_tracking.trk", checkIfExists: true)
+    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-*_tractogram.trk", checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
