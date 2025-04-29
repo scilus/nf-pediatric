@@ -72,9 +72,9 @@ The most basic BIDS directory should have a similar structure (note that session
 
 > | participant_id | age |
 > | -------------- | --- |
-> | sub-test1 | 44 |
-> | sub-test2 | 8 |
-> | ...       | ... |
+> | sub-test1      | 44  |
+> | sub-test2      | 8   |
+> | ...            | ... |
 
 Mandatory files per subject:
 
