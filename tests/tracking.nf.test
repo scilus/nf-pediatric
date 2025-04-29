@@ -10,16 +10,8 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/bids-revb0/"
+                params.input = "$projectDir/tests/data/bids/"
                 params.outdir = "$outputDir"
-
-                params.dti_shells = "0 1000"
-                params.fodf_shells = "0 1000"
-
-                params.run_pft_tracking = true
-                params.run_local_tracking = true
-
-                params.t2_run_synthstrip = true
 
                 params.tracking = true
 
@@ -48,110 +40,11 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input = "$projectDir/tests/data/bids-revb0/"
+                params.input = "$projectDir/tests/data/bids/"
                 params.outdir = "$outputDir"
-
-                params.dti_shells = "0 1000"
-                params.fodf_shells = "0 1000"
-
-                params.t2_run_synthstrip = true
 
                 params.tracking = true
                 params.skip_dwi_preprocessing = true
-
-            }
-        }
-
-        then {
-            // stable name: All files + folders in ${params.outdir}/ with a stable name.
-            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
-            assertAll {
-                assert workflow.success
-                assert snapshot(
-                    // Number of successfully completed tasks
-                    workflow.trace.succeeded().size(),
-                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
-                    // All stable name.
-                    stable_name
-                ).match()
-            }
-        }
-    }
-
-    test("Tracking profile with infant data only T2 - should run successfully") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/bids-revdwi/"
-                params.outdir = "$outputDir"
-
-                params.tracking = true
-                params.infant = true
-                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
-
-                // ** Infant specific parameters ** //
-                params.t2_run_synthstrip                = true
-                params.dwi_run_synthstrip               = true
-                params.dwi_normalize_fa_mask_threshold  = 0.10
-                params.fodf_max_fa_threshold            = 0.01
-                params.fodf_min_md_threshold            = 0.00185
-                params.frf_manual_frf                   = "12,5,5"
-                params.run_pft_tracking                 = false
-                params.local_min_len                    = 15
-                params.local_fa_seeding_mask_threshold  = 0.10
-                params.run_local_tracking               = true
-
-                params.dti_shells = "0 1000"
-                params.fodf_shells = "0 1000"
-
-            }
-        }
-
-        then {
-            // stable name: All files + folders in ${params.outdir}/ with a stable name.
-            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
-            assertAll {
-                assert workflow.success
-                assert snapshot(
-                    // Number of successfully completed tasks
-                    workflow.trace.succeeded().size(),
-                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
-                    // All stable name.
-                    stable_name
-                ).match()
-            }
-        }
-    }
-
-    test("Tracking profile with infant data T2 and T1 - should run successfully") {
-
-        when {
-            params {
-
-                params.input = "$projectDir/tests/data/bids-infant/"
-                params.outdir = "$outputDir"
-
-                params.tracking = true
-                params.infant = true
-                params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
-
-                // ** Infant specific parameters ** //
-                params.t2_run_synthstrip                = true
-                params.dwi_run_synthstrip               = true
-                params.dwi_normalize_fa_mask_threshold  = 0.10
-                params.fodf_max_fa_threshold            = 0.01
-                params.fodf_min_md_threshold            = 0.00185
-                params.frf_manual_frf                   = "12,5,5"
-                params.run_pft_tracking                 = false
-                params.local_min_len                    = 15
-                params.local_fa_seeding_mask_threshold  = 0.10
-                params.run_local_tracking               = true
-
-                params.dti_shells = "0 1000"
-                params.fodf_shells = "0 1000"
 
             }
         }

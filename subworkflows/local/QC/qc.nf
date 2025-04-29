@@ -77,7 +77,7 @@ workflow QC {
     //
     ch_tracking_qc = ch_tracking
         .join(ch_maps)
-        .map{ it[0..2] }
+        .map{ it[0..3] }
 
     QC_TRACKING ( ch_tracking_qc )
     ch_versions = ch_versions.mix(QC_TRACKING.out.versions.first())

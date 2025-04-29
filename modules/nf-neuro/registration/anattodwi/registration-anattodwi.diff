@@ -1,0 +1,46 @@
+Changes in component 'nf-neuro/registration/anattodwi'
+'modules/nf-neuro/registration/anattodwi/environment.yml' is unchanged
+'modules/nf-neuro/registration/anattodwi/meta.yml' is unchanged
+Changes in 'registration/anattodwi/main.nf':
+--- modules/nf-neuro/registration/anattodwi/main.nf
++++ modules/nf-neuro/registration/anattodwi/main.nf
+@@ -24,6 +24,7 @@
+     def prefix = task.ext.prefix ?: "${meta.id}"
+ 
+     def run_qc = task.ext.run_qc ? task.ext.run_qc : false
++    def suffix_qc = task.ext.suffix_qc ?: ""
+ 
+     """
+     export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$task.cpus
+@@ -99,7 +100,7 @@
+         # Create GIF.
+         convert -delay 10 -loop 0 -morph 10 \
+             t1_warped_mosaic.png b0_mosaic.png t1_warped_mosaic.png \
+-            ${prefix}_registration_anattodwi_mqc.gif
++            ${prefix}_${suffix_qc}_mqc.gif
+ 
+         # Clean up.
+         rm t1_warped_mosaic.png b0_mosaic.png
+@@ -115,6 +116,7 @@
+ 
+     stub:
+     def prefix = task.ext.prefix ?: "${meta.id}"
++    def suffix_qc = task.ext.suffix_qc ?: ""
+ 
+     """
+     antsRegistration -h
+@@ -123,7 +125,7 @@
+     touch ${prefix}__output0GenericAffine.mat
+     touch ${prefix}__output1InverseWarp.nii.gz
+     touch ${prefix}__output1Warp.nii.gz
+-    touch ${prefix}__registration_anattodwi_mqc.gif
++    touch ${prefix}__${suffix_qc}_mqc.gif
+ 
+     cat <<-END_VERSIONS > versions.yml
+     "${task.process}":
+
+'modules/nf-neuro/registration/anattodwi/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/registration/anattodwi/tests/tags.yml' is unchanged
+'modules/nf-neuro/registration/anattodwi/tests/nextflow.config' is unchanged
+'modules/nf-neuro/registration/anattodwi/tests/main.nf.test' is unchanged
+************************************************************

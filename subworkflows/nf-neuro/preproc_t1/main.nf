@@ -17,7 +17,7 @@ workflow PREPROC_T1 {
         ch_mask_nlmeans     // channel: [ val(meta), mask ]                                  , optional
         ch_ref_n4           // channel: [ val(meta), ref, ref-mask ]                         , optional
         ch_ref_resample     // channel: [ val(meta), ref ]                                   , optional
-        ch_weights          // channel: [ val(meta), weights ]                               , optional
+        ch_weights          // channel: [ weights ]                                          , optional
 
     main:
 
@@ -89,8 +89,14 @@ workflow PREPROC_T1 {
             //   - join [ meta, image, weights | null ]
             //   - map  [ meta, image, weights | [] ]
             ch_bet = image_resample
-                .join(ch_weights, remainder: true)
-                .map{ it[0..1] + [it[2] ?: []] }
+                .combine(ch_weights)
+                .branch {
+                    infant: it[0].age < 2.5 || it[0].age > 18
+                        return [it[0], it[1], it[2]]
+                    child: it[0].age >= 2.5 && it[0].age <= 18
+                        return [it[0], it[1], []]
+                }
+            ch_bet = ch_bet.infant.mix(ch_bet.child)
 
             BETCROP_SYNTHBET ( ch_bet )
             ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions)

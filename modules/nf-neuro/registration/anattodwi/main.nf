@@ -10,12 +10,12 @@ process REGISTRATION_ANATTODWI {
     tuple val(meta), path(t1), path(b0), path(metric)
 
     output:
-    tuple val(meta), path("*0GenericAffine.mat")                                , emit: affine
-    tuple val(meta), path("*1Warp.nii.gz")                                      , emit: warp
-    tuple val(meta), path("*1InverseWarp.nii.gz")                               , emit: inverse_warp
-    tuple val(meta), path("*t1_warped.nii.gz")                                  , emit: t1_warped
-    tuple val(meta), path("*_registration_anattodwi_mqc.gif")                   , emit: mqc, optional: true
-    path "versions.yml"                                                         , emit: versions
+    tuple val(meta), path("*0GenericAffine.mat")        , emit: affine
+    tuple val(meta), path("*1Warp.nii.gz")              , emit: warp
+    tuple val(meta), path("*1InverseWarp.nii.gz")       , emit: inverse_warp
+    tuple val(meta), path("*_warped.nii.gz")            , emit: t1_warped
+    tuple val(meta), path("*_mqc.gif")                  , emit: mqc, optional: true
+    path "versions.yml"                                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -24,6 +24,8 @@ process REGISTRATION_ANATTODWI {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     def run_qc = task.ext.run_qc ? task.ext.run_qc : false
+    def suffix = task.ext.suffix ?: ""
+    def suffix_qc = task.ext.suffix_qc ?: ""
 
     """
     export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$task.cpus
@@ -50,10 +52,10 @@ process REGISTRATION_ANATTODWI {
         --convergence [50x25x10,1e-6,10] --shrink-factors 4x2x1\
         --smoothing-sigmas 3x2x1
 
-    mv outputWarped.nii.gz ${prefix}__t1_warped.nii.gz
-    mv output0GenericAffine.mat ${prefix}__output0GenericAffine.mat
-    mv output1InverseWarp.nii.gz ${prefix}__output1InverseWarp.nii.gz
-    mv output1Warp.nii.gz ${prefix}__output1Warp.nii.gz
+    mv outputWarped.nii.gz ${prefix}__${suffix}_warped.nii.gz
+    mv output0GenericAffine.mat ${prefix}__${suffix}_output0GenericAffine.mat
+    mv output1InverseWarp.nii.gz ${prefix}__${suffix}_output1InverseWarp.nii.gz
+    mv output1Warp.nii.gz ${prefix}__${suffix}_output1Warp.nii.gz
 
     ### ** QC ** ###
     if $run_qc;
@@ -70,8 +72,9 @@ process REGISTRATION_ANATTODWI {
         # Set viz params.
         viz_params="--display_slice_number --display_lr --size 256 256"
 
+        mv $b0 reference.nii.gz
         # Iterate over images.
-        for image in t1_warped b0;
+        for image in ${suffix}_warped reference;
         do
             scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_coronal.png \
                 --slices \$coronal_mid --axis coronal \$viz_params
@@ -80,11 +83,11 @@ process REGISTRATION_ANATTODWI {
             scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_axial.png \
                 --slices \$axial_mid --axis axial \$viz_params
 
-            if [ \$image != b0 ];
+            if [ \$image != reference ];
             then
-                title="Warped T1"
+                title="Warped"
             else
-                title="Reference B0"
+                title="Reference"
             fi
 
             convert +append \${image}_coronal*.png \${image}_axial*.png \
@@ -98,11 +101,11 @@ process REGISTRATION_ANATTODWI {
 
         # Create GIF.
         convert -delay 10 -loop 0 -morph 10 \
-            t1_warped_mosaic.png b0_mosaic.png t1_warped_mosaic.png \
-            ${prefix}_registration_anattodwi_mqc.gif
+            ${suffix}_warped_mosaic.png reference_mosaic.png ${suffix}_warped_mosaic.png \
+            ${prefix}_${suffix_qc}_mqc.gif
 
         # Clean up.
-        rm t1_warped_mosaic.png b0_mosaic.png
+        rm ${suffix}_warped_mosaic.png reference_mosaic.png
     fi
 
     cat <<-END_VERSIONS > versions.yml
@@ -115,15 +118,17 @@ process REGISTRATION_ANATTODWI {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def suffix = task.ext.suffix ?: ""
+    def suffix_qc = task.ext.suffix_qc ?: ""
 
     """
     antsRegistration -h
 
-    touch ${prefix}__t1_warped.nii.gz
-    touch ${prefix}__output0GenericAffine.mat
-    touch ${prefix}__output1InverseWarp.nii.gz
-    touch ${prefix}__output1Warp.nii.gz
-    touch ${prefix}__registration_anattodwi_mqc.gif
+    touch ${prefix}__${suffix}_warped.nii.gz
+    touch ${prefix}__${suffix}_output0GenericAffine.mat
+    touch ${prefix}__${suffix}_output1InverseWarp.nii.gz
+    touch ${prefix}__${suffix}_output1Warp.nii.gz
+    touch ${prefix}__${suffix_qc}_mqc.gif
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

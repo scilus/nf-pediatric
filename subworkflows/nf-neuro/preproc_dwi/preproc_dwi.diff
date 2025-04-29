@@ -63,7 +63,7 @@ Changes in 'preproc_dwi/main.nf':
              ch_dwi_bvalbvec = ch_dwi
                  .multiMap { meta, dwi, bval, bvec ->
                      dwi:    [ meta, dwi ]
-@@ -105,27 +114,78 @@
+@@ -105,27 +114,80 @@
          ch_multiqc_files = ch_multiqc_files.mix(TOPUP_EDDY.out.mqc)
  
          // ** Bet-crop DWI ** //
@@ -84,11 +84,13 @@ Changes in 'preproc_dwi/main.nf':
 +
 +            ch_synthstrip = IMAGE_POWDERAVERAGE.out.pwd_avg
 +                .combine(ch_weights)
-+                .map { it ->
-+                    def pwd_avg = it[0..1]
-+                    def weights = it.size() > 2 ? it[2] : []
-+                    pwd_avg + [weights]
++                .branch{
++                    infant: it[0].age < 2.5 || it[0].age > 18
++                        return [it[0], it[1], it[2]]
++                    child: it[0].age >= 2.5 && it[0].age <= 18
++                        return [it[0], it[1], []]
 +                }
++            ch_synthstrip = ch_synthstrip.infant.mix(ch_synthstrip.child)
 +
 +            BETCROP_SYNTHBET ( ch_synthstrip )
 +            ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions.first())
@@ -157,7 +159,7 @@ Changes in 'preproc_dwi/main.nf':
  
              N4_DWI ( ch_N4 )
              ch_versions = ch_versions.mix(N4_DWI.out.versions.first())
-@@ -138,7 +198,7 @@
+@@ -138,7 +200,7 @@
          ch_normalize = ch_dwi_preproc
              .join(TOPUP_EDDY.out.bval)
              .join(TOPUP_EDDY.out.bvec)
@@ -166,7 +168,7 @@ Changes in 'preproc_dwi/main.nf':
  
          NORMALIZE_DWI ( ch_normalize )
          ch_versions = ch_versions.mix(NORMALIZE_DWI.out.versions.first())
-@@ -164,9 +224,7 @@
+@@ -164,9 +226,7 @@
          ch_versions = ch_versions.mix(EXTRACTB0_RESAMPLE.out.versions.first())
  
          // ** Resample mask ** //
@@ -177,7 +179,7 @@ Changes in 'preproc_dwi/main.nf':
          RESAMPLE_MASK ( ch_resample_mask )
          ch_versions = ch_versions.mix(RESAMPLE_MASK.out.versions.first())
  
-@@ -174,9 +232,10 @@
+@@ -174,9 +234,10 @@
          dwi                 = ch_dwi_preproc                // channel: [ val(meta), dwi-preproc ]
          bval                = TOPUP_EDDY.out.bval           // channel: [ val(meta), bval-corrected ]
          bvec                = TOPUP_EDDY.out.bvec           // channel: [ val(meta), bvec-corrected ]

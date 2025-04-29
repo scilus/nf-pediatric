@@ -1,3 +1,14 @@
+def readParticipantsTsv(file) {
+    def participantMap = [:]
+    file.eachLine { line, lineNumber ->
+        if (lineNumber > 1) {  // Skip header
+            def (id, age) = line.split('\t')
+            participantMap[id] = age.toFloat()
+        }
+    }
+    return participantMap
+}
+
 workflow FETCH_DERIVATIVES {
 
     take:
@@ -7,6 +18,13 @@ workflow FETCH_DERIVATIVES {
     //
     // Create channels from a derivatives folder (params.input_deriv)
     //
+    def participantsTsv = file("${input_deriv}/participants.tsv")
+    def ageMap = readParticipantsTsv(participantsTsv)
+
+    // Helper function to get age
+    def getAge = { id ->
+        return ageMap[id] ?: ""
+    }
 
     // ** Segmentations ** //
     ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
@@ -15,7 +33,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def metadata = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id)
+            def metadata = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [metadata, file]
         }
@@ -31,7 +50,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def metadata = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id)
+            def metadata = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
             def type = file.name.contains('T1w') ? 'T1w' : 'T2w'
 
             return [metadata, type, file]
@@ -49,7 +69,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
             def type = file.name.contains('warp') ? 'warp' : 'affine'
 
             return [meta, type, file]
@@ -75,7 +96,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
         }
@@ -87,7 +109,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
         }
@@ -99,7 +122,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
         }
@@ -122,12 +146,13 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Tractogram file ** //
-    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-*_tracking.trk", checkIfExists: true)
+    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-*_tractogram.trk", checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
         }
@@ -139,7 +164,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
         }

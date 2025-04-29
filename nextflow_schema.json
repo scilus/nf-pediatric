@@ -534,7 +534,7 @@
                     "type": "boolean",
                     "description": "Run SynthStrip for brain extraction",
                     "fa_icon": "fas fa-brain",
-                    "default": false,
+                    "default": true,
                     "hidden": false
                 },
                 "dwi_synthstrip_border": {
@@ -669,7 +669,7 @@
                     "type": "integer",
                     "description": "Maximum shell value used in the DTI processing step.",
                     "fa_icon": "fas fa-brain",
-                    "default": 1500,
+                    "default": 1600,
                     "hidden": true
                 },
                 "dti_b0_threshold": {
@@ -733,14 +733,14 @@
                     "type": "integer",
                     "description": "Maximum DTI shell value used.",
                     "fa_icon": "fas fa-brain",
-                    "default": 1500,
+                    "default": 1600,
                     "hidden": true
                 },
                 "frf_min_fodf_shell_value": {
                     "type": "integer",
                     "description": "Minimum FODF shell value used.",
                     "fa_icon": "fas fa-brain",
-                    "default": 100,
+                    "default": 700,
                     "hidden": true
                 },
                 "frf_b0_threshold": {
@@ -799,7 +799,7 @@
                     "type": "integer",
                     "description": "Minimum FODF shell value used.",
                     "fa_icon": "fas fa-brain",
-                    "default": 100,
+                    "default": 700,
                     "hidden": true
                 },
                 "fodf_shells": {

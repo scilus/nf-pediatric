@@ -99,7 +99,7 @@ workflow PIPELINE_INITIALISATION {
                     }
 
                     return [
-                        [id: sid, session: session, run: run, age: age],
+                        [id: sid, session: session, run: run, age: age.toFloat()],
                         item.t1 ? file(item.t1) : [],
                         item.t2 ? file(item.t2) : [],
                         item.dwi ? file(item.dwi) : [],
@@ -174,6 +174,59 @@ workflow PIPELINE_COMPLETION {
     FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+//
+// Generate corresponding template for age groups.
+//
+def getTemplateAgeGroup(age) {
+    def ageGroups = [
+        "0-6 months": [0, 0.5],
+        "6-18 months": [0.5, 1.5],
+        "18-30 months": [1.5, 2.5],
+        "30-44 months": [2.5, 3.66666666666667],
+        "44-60 months": [3.6666666666666667, 5],
+        "5-8.5 years": [5, 8.5],
+        "8.5-11 years": [8.5, 11],
+        "11-14 years": [11, 14],
+        "14-18 years": [14, 18]
+    ]
+
+    def templates = [
+        "0-6 months": ["UNCInfant", 1],
+        "6-18 months": ["UNCInfant", 2],
+        "18-30 months": ["UNCInfant", 3],
+        "30-44 months": ["MNIInfant", 10],
+        "44-60 months": ["MNIInfant", 11],
+        "5-8.5 years": ["MNIPediatricAsym", 2],
+        "8.5-11 years": ["MNIPediatricAsym", 3],
+        "11-14 years": ["MNIPediatricAsym", 5],
+        "14-18 years": ["MNIPediatricAsym", 6]
+    ]
+
+    ageGroups.each { entry ->
+        if (age >= entry.value[0] && age < entry.value[1]) {
+            return entry.key
+        }
+    }
+}
+
+//
+// Generating dataset_description.json file in output folder.
+//
+def generateDatasetJson() {
+    def jsonFile = "${params.outdir}/dataset_description.json"
+    def info = [
+        Name: "nf-pediatric derivatives",
+        BIDSVersion: "1.10.0",
+        DatasetType: "derivative",
+        GeneratedBy: [
+            Name: workflow.manifest.name,
+            Version: workflow.manifest.version,
+            Date: java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        ]
+    ]
+    file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(info))
+}
 
 //
 // Generate methods description for MultiQC

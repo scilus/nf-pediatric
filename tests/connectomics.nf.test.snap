@@ -1,61 +1,7 @@
 {
     "Connectomics profile with derivatives and session - should run successfully": {
         "content": [
-            9,
-            {
-                "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.1.0rc1"
-                },
-                "CONNECTIVITY_DECOMPOSE": {
-                    "scilpy": "2.0.2"
-                },
-                "CONNECTIVITY_METRICS": {
-                    "scilpy": "2.0.2"
-                },
-                "CONNECTIVITY_VISUALIZE": {
-                    "scilpy": "2.0.2"
-                },
-                "FILTERING_COMMIT": {
-                    "scilpy": 1.6
-                },
-                "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
-                }
-            },
-            [
-                "multiqc",
-                "multiqc/global_multiqc_data",
-                "multiqc/global_multiqc_plots",
-                "multiqc/global_multiqc_report.html",
-                "pipeline_info",
-                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
-                "sub-test",
-                "sub-test/ses-baseline",
-                "sub-test/ses-baseline/dwi",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-BrainnetomeChild_stat-fa.npy",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-BrainnetomeChild_stat-md.npy",
-                "sub-test/ses-baseline/figures",
-                "sub-test/ses-baseline/figures/sub-test_gradients_mqc.png",
-                "sub-test/ses-baseline/figures/sub-test_labels_mqc.png",
-                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-BrainnetomeChild_stat-fa.png",
-                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-BrainnetomeChild_stat-md.png",
-                "sub-test/ses-baseline/multiqc",
-                "sub-test/ses-baseline/multiqc/sub-test_multiqc_data",
-                "sub-test/ses-baseline/multiqc/sub-test_multiqc_plots",
-                "sub-test/ses-baseline/multiqc/sub-test_multiqc_report.html"
-            ]
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.5"
-        },
-        "timestamp": "2025-04-12T11:54:05.983251"
-    },
-    "Connectomics profile with derivatives - should run successfully": {
-        "content": [
-            10,
+            35,
             {
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": "2.1.0rc1"
@@ -82,40 +28,93 @@
                 }
             },
             [
+                "dataset_description.json",
                 "multiqc",
                 "multiqc/global_multiqc_data",
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
                 "pipeline_info/nf-pediatric_software_mqc_versions.yml",
-                "sub-test",
-                "sub-test/anat",
-                "sub-test/anat/sub-test_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
-                "sub-test/dwi",
-                "sub-test/dwi/sub-test_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
-                "sub-test/dwi/sub-test_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
-                "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-fa.npy",
-                "sub-test/dwi/sub-test_seg-BrainnetomeChild_stat-md.npy",
-                "sub-test/figures",
-                "sub-test/figures/sub-test_gradients_mqc.png",
-                "sub-test/figures/sub-test_labels_mqc.png",
-                "sub-test/figures/sub-test_seg-BrainnetomeChild_stat-fa.png",
-                "sub-test/figures/sub-test_seg-BrainnetomeChild_stat-md.png",
-                "sub-test/multiqc",
-                "sub-test/multiqc/sub-test_multiqc_data",
-                "sub-test/multiqc/sub-test_multiqc_plots",
-                "sub-test/multiqc/sub-test_multiqc_report.html"
+                "sub-test1",
+                "sub-test1/ses-baseline",
+                "sub-test1/ses-baseline/anat",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-DWI_seg-DK_dseg.nii.gz",
+                "sub-test1/ses-baseline/dwi",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-ad.npy",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-fa.npy",
+                "sub-test1/ses-baseline/figures",
+                "sub-test1/ses-baseline/figures/sub-test1_gradients_mqc.png",
+                "sub-test1/ses-baseline/figures/sub-test1_labels_mqc.png",
+                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-ad.png",
+                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-fa.png",
+                "sub-test1/ses-baseline/multiqc",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_data",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_report.html",
+                "sub-test2",
+                "sub-test2/dwi",
+                "sub-test2/dwi/sub-test2_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test2/dwi/sub-test2_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-ad.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-afd.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-fa.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-nufo.npy",
+                "sub-test2/figures",
+                "sub-test2/figures/sub-test2_gradients_mqc.png",
+                "sub-test2/figures/sub-test2_labels_mqc.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-ad.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-afd.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-fa.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-nufo.png",
+                "sub-test2/multiqc",
+                "sub-test2/multiqc/sub-test2_multiqc_data",
+                "sub-test2/multiqc/sub-test2_multiqc_plots",
+                "sub-test2/multiqc/sub-test2_multiqc_report.html",
+                "sub-test3",
+                "sub-test3/anat",
+                "sub-test3/anat/sub-test3_space-DWI_seg-DK_dseg.nii.gz",
+                "sub-test3/dwi",
+                "sub-test3/dwi/sub-test3_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test3/dwi/sub-test3_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test3/dwi/sub-test3_seg-DK_stat-fa.npy",
+                "sub-test3/dwi/sub-test3_seg-DK_stat-md.npy",
+                "sub-test3/figures",
+                "sub-test3/figures/sub-test3_gradients_mqc.png",
+                "sub-test3/figures/sub-test3_labels_mqc.png",
+                "sub-test3/figures/sub-test3_seg-DK_stat-fa.png",
+                "sub-test3/figures/sub-test3_seg-DK_stat-md.png",
+                "sub-test3/multiqc",
+                "sub-test3/multiqc/sub-test3_multiqc_data",
+                "sub-test3/multiqc/sub-test3_multiqc_plots",
+                "sub-test3/multiqc/sub-test3_multiqc_report.html",
+                "sub-test4",
+                "sub-test4/dwi",
+                "sub-test4/dwi/sub-test4_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test4/dwi/sub-test4_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
+                "sub-test4/dwi/sub-test4_seg-BrainnetomeChild_stat-fa.npy",
+                "sub-test4/dwi/sub-test4_seg-BrainnetomeChild_stat-md.npy",
+                "sub-test4/figures",
+                "sub-test4/figures/sub-test4_gradients_mqc.png",
+                "sub-test4/figures/sub-test4_labels_mqc.png",
+                "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-fa.png",
+                "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-md.png",
+                "sub-test4/multiqc",
+                "sub-test4/multiqc/sub-test4_multiqc_data",
+                "sub-test4/multiqc/sub-test4_multiqc_plots",
+                "sub-test4/multiqc/sub-test4_multiqc_report.html"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-12T11:53:20.394945"
+        "timestamp": "2025-04-29T10:31:39.642255"
     },
-    "Connectomics + infant profile - should run successfully": {
+    "Connectomics profile with derivatives - should run successfully": {
         "content": [
-            9,
+            35,
             {
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": "2.1.0rc1"
@@ -132,39 +131,98 @@
                 "FILTERING_COMMIT": {
                     "scilpy": 1.6
                 },
+                "TRANSFORM_LABELS": {
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": null
+                },
                 "Workflow": {
                     "scilus/nf-pediatric": "v1.0dev"
                 }
             },
             [
+                "dataset_description.json",
                 "multiqc",
                 "multiqc/global_multiqc_data",
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
                 "pipeline_info/nf-pediatric_software_mqc_versions.yml",
-                "sub-test",
-                "sub-test/ses-baseline",
-                "sub-test/ses-baseline/dwi",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_desc-filtered_tractogram.h5",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_desc-preproc_tractogram.h5",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_stat-fa.npy",
-                "sub-test/ses-baseline/dwi/sub-test_ses-baseline_seg-DK_stat-md.npy",
-                "sub-test/ses-baseline/figures",
-                "sub-test/ses-baseline/figures/sub-test_gradients_mqc.png",
-                "sub-test/ses-baseline/figures/sub-test_labels_mqc.png",
-                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-DK_stat-fa.png",
-                "sub-test/ses-baseline/figures/sub-test_ses-baseline_seg-DK_stat-md.png",
-                "sub-test/ses-baseline/multiqc",
-                "sub-test/ses-baseline/multiqc/sub-test_multiqc_data",
-                "sub-test/ses-baseline/multiqc/sub-test_multiqc_plots",
-                "sub-test/ses-baseline/multiqc/sub-test_multiqc_report.html"
+                "sub-test1",
+                "sub-test1/ses-baseline",
+                "sub-test1/ses-baseline/anat",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-DWI_seg-DK_dseg.nii.gz",
+                "sub-test1/ses-baseline/dwi",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-ad.npy",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-fa.npy",
+                "sub-test1/ses-baseline/figures",
+                "sub-test1/ses-baseline/figures/sub-test1_gradients_mqc.png",
+                "sub-test1/ses-baseline/figures/sub-test1_labels_mqc.png",
+                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-ad.png",
+                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-fa.png",
+                "sub-test1/ses-baseline/multiqc",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_data",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_report.html",
+                "sub-test2",
+                "sub-test2/dwi",
+                "sub-test2/dwi/sub-test2_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test2/dwi/sub-test2_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-ad.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-afd.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-fa.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-nufo.npy",
+                "sub-test2/figures",
+                "sub-test2/figures/sub-test2_gradients_mqc.png",
+                "sub-test2/figures/sub-test2_labels_mqc.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-ad.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-afd.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-fa.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-nufo.png",
+                "sub-test2/multiqc",
+                "sub-test2/multiqc/sub-test2_multiqc_data",
+                "sub-test2/multiqc/sub-test2_multiqc_plots",
+                "sub-test2/multiqc/sub-test2_multiqc_report.html",
+                "sub-test3",
+                "sub-test3/anat",
+                "sub-test3/anat/sub-test3_space-DWI_seg-DK_dseg.nii.gz",
+                "sub-test3/dwi",
+                "sub-test3/dwi/sub-test3_seg-DK_desc-filtered_tractogram.h5",
+                "sub-test3/dwi/sub-test3_seg-DK_desc-preproc_tractogram.h5",
+                "sub-test3/dwi/sub-test3_seg-DK_stat-fa.npy",
+                "sub-test3/dwi/sub-test3_seg-DK_stat-md.npy",
+                "sub-test3/figures",
+                "sub-test3/figures/sub-test3_gradients_mqc.png",
+                "sub-test3/figures/sub-test3_labels_mqc.png",
+                "sub-test3/figures/sub-test3_seg-DK_stat-fa.png",
+                "sub-test3/figures/sub-test3_seg-DK_stat-md.png",
+                "sub-test3/multiqc",
+                "sub-test3/multiqc/sub-test3_multiqc_data",
+                "sub-test3/multiqc/sub-test3_multiqc_plots",
+                "sub-test3/multiqc/sub-test3_multiqc_report.html",
+                "sub-test4",
+                "sub-test4/dwi",
+                "sub-test4/dwi/sub-test4_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test4/dwi/sub-test4_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
+                "sub-test4/dwi/sub-test4_seg-BrainnetomeChild_stat-fa.npy",
+                "sub-test4/dwi/sub-test4_seg-BrainnetomeChild_stat-md.npy",
+                "sub-test4/figures",
+                "sub-test4/figures/sub-test4_gradients_mqc.png",
+                "sub-test4/figures/sub-test4_labels_mqc.png",
+                "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-fa.png",
+                "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-md.png",
+                "sub-test4/multiqc",
+                "sub-test4/multiqc/sub-test4_multiqc_data",
+                "sub-test4/multiqc/sub-test4_multiqc_plots",
+                "sub-test4/multiqc/sub-test4_multiqc_report.html"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-12T11:54:50.329455"
+        "timestamp": "2025-04-29T10:30:25.462741"
     }
 }

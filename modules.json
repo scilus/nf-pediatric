@@ -122,7 +122,8 @@
                     "preproc/normalize": {
                         "branch": "main",
                         "git_sha": "a439fe5eda4249ba0c9d221ba04ede81c1c29f40",
-                        "installed_by": ["preproc_dwi"]
+                        "installed_by": ["preproc_dwi"],
+                        "patch": "modules/nf-neuro/preproc/normalize/preproc-normalize.diff"
                     },
                     "preproc/topup": {
                         "branch": "main",
@@ -154,7 +155,8 @@
                     "registration/anattodwi": {
                         "branch": "main",
                         "git_sha": "f9eba772a9198dbfca2cf03a71b1a07edbc598af",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/registration/anattodwi/registration-anattodwi.diff"
                     },
                     "registration/ants": {
                         "branch": "main",

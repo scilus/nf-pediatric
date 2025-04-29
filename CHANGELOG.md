@@ -3,6 +3,19 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - [2025-04-29]
+
+### `Added`
+
+- Dynamic assessment of subject's age from the `participants.tsv` file in the BIDS input directory.
+- Output folder will now contain the `dataset_description.json` file for compliance with BIDS derivatives.
+- Add a copy of the `participants.tsv` file in the output directory.
+
+### `Removed`
+
+- Profile `infant` is no longer available. Dynamic assessment is used now.
+- M-CRIB-S is no longer used for tracking mask generation. Dropped in favor of pre-generated masks from templates.
+
 ## [Unreleased] - [2025-04-06]
 
 ### `Added`

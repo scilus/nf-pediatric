@@ -17,7 +17,7 @@ Changes in 'registration/ants/main.nf':
      script:
      def args = task.ext.args ?: ''
      def prefix = task.ext.prefix ?: "${meta.id}"
-+    def suffix = task.ext.suffix ? "${task.ext.suffix}" : ""
++    def suffix = (meta.age < 2.5 || meta.age > 18) ? "T1w" : "T2w"
      def suffix_qc = task.ext.suffix_qc ? "${task.ext.suffix_qc}" : ""
      def ants = task.ext.quick ? "antsRegistrationSyNQuick.sh " :  "antsRegistrationSyN.sh "
      def dimension = task.ext.dimension ? "-d " + task.ext.dimension : "-d 3"

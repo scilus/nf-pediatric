@@ -29,6 +29,9 @@ process PREPROC_NORMALIZE {
     export OMP_NUM_THREADS=$task.cpus
     export OPENBLAS_NUM_THREADS=1
 
+    echo "BZeroThreshold: $task.ext.dwi_shell_tolerance" > ".mrtrix.conf"
+    export MRTRIX_CONFIGFILE="./.mrtrix.conf"
+
     scil_dwi_extract_shell.py $dwi $bval $bvec $dti_info dwi_dti.nii.gz \
         bval_dti bvec_dti $dwi_shell_tolerance
 
@@ -39,7 +42,8 @@ process PREPROC_NORMALIZE {
         -nthreads $task.cpus
 
     dwinormalise individual $dwi ${prefix}_fa_wm_mask.nii.gz \
-        ${prefix}__dwi_normalized.nii.gz -fslgrad $bvec $bval -nthreads $task.cpus
+        ${prefix}__dwi_normalized.nii.gz -fslgrad $bvec $bval -nthreads $task.cpus \
+        -config BZeroThreshold $task.ext.dwi_shell_tolerance
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -49,7 +53,6 @@ process PREPROC_NORMALIZE {
     """
 
     stub:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
