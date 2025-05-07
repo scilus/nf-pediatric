@@ -1,0 +1,56 @@
+---
+name: "segmentation_reconallclinical"
+description: |
+  This module runs the `recon-all-clinical` pipeline from FreeSurfer. It is a
+  recon-all-like stream for clinical scans of arbitrary orientation/resolution/contrast.
+
+  It essentially uses a combination of SynthSeg, SynthSR, and SynthDist. It is much
+  faster than the standard recon-all. However, it doesn't preprocess the anatomical
+  image the same way recon-all does, which may not be suited for downstream
+  analysis.
+keywords:
+  - freesurfer
+  - anatomical
+  - surface reconstruction
+  - segmentation
+  - recon-all-clinical
+tools:
+  - "FreeSurfer":
+      description: "An open source neuroimaging toolkit for processing, analyzing, and visualizing human brain MR images."
+      homepage: "https://surfer.nmr.mgh.harvard.edu/"
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. `[ id:'sample1', single_end:false ]`
+  - anat:
+      type: file
+      description: Anatomical image (any anatomical modality, e.g. T1w, T2w, etc.)
+      pattern: "*.{nii,nii.gz,mgz}"
+  - fs_license:
+      type: file
+      description: The path to your FreeSurfer license. To get one, go to https://surfer.nmr.mgh.harvard.edu/registration.html. Optional. If you have already set your license as prescribed by Freesurfer (copied to a .license file in your $FREESURFER_HOME), this is not required.
+      pattern: "*.txt"
+
+output:
+  - folder:
+    - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1', single_end:false ]`
+    - "*__freesurfer":
+        type: directory
+        description: FreeSurfer output directory.
+  - versions:
+    - "versions.yml":
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+
+authors:
+  - "@gagnonanthony"
+maintainers:
+  - "@gagnonanthony"

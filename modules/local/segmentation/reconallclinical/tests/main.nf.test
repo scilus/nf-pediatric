@@ -1,0 +1,45 @@
+nextflow_process {
+
+    name "Test Process SEGMENTATION_RECONALLCLINICAL"
+    script "../main.nf"
+    process "SEGMENTATION_RECONALLCLINICAL"
+
+    tag "modules"
+    tag "modules_"
+    tag "segmentation"
+    tag "segmentation/reconallclinical"
+
+    setup {
+        run("LOAD_TEST_DATA", alias: "LOAD_DATA") {
+            script "../../../../../subworkflows/nf-neuro/load_test_data/main.nf"
+            process {
+                """
+                input[0] = Channel.from( [ "freesurfer.zip" ] )
+                input[1] = "test.load-test-data"
+                """
+            }
+        }
+    }
+
+    test("segmentation - reconallclinical - stub") {
+        option "-stub"
+        when {
+            process {
+                """
+                input[0] = LOAD_DATA.out.test_data_directory.map{
+                    test_data_directory -> [
+                        [ id:'test', single_end:false ], // meta map
+                        file("\${test_data_directory}/anat_image.nii.gz"),
+                        file("\${test_data_directory}/license.txt")
+                    ]}
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out.versions).match() }
+            )
+        }
+    }
+}
