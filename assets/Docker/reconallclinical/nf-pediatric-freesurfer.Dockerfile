@@ -280,7 +280,6 @@ RUN apt-get update -qq \
         /opt/freesurfer-dev/average/HippoSF \
         /opt/freesurfer-dev/average/PALS_B12.readme \
         /opt/freesurfer-dev/average/ThalamicNuclei \
-        /opt/freesurfer-dev/average/*.tif \
         /opt/freesurfer-dev/average/samseg \
         /opt/freesurfer-dev/average/mni_icbm152_nlin_asym_09c \
         /opt/freesurfer-dev/average/mult-comp-cor \
