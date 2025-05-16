@@ -113,12 +113,22 @@ workflow PEDIATRIC {
             witht1: it.size() > 1 && it[1] != []
                 return [ it[0], it[1] ]
         }
+    ch_infant_t1 = ch_t1.witht1
+        .branch {
+            infant: it[0].age < 0.25 || it[0].age > 18
+                return it
+        }
 
     // ** Check if T2 is provided ** //
     ch_t2 = ch_inputs.t2
         .branch {
             witht2: it.size() > 1 && it[1] != []
                 return [ it[0], it[1] ]
+        }
+    ch_infant_t2 = ch_t2.witht2
+        .branch {
+            infant: it[0].age < 0.25 || it[0].age > 18
+                return it
         }
 
     // ** Loading synthstrip alternative weights if provided ** //
@@ -134,7 +144,7 @@ workflow PEDIATRIC {
 
         // ** Run T1 preprocessing ** //
         PREPROC_T1W (
-            ch_t1.witht1,
+            !params.tracking ? ch_infant_t1.infant : ch_t1.witht1,
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
@@ -147,7 +157,7 @@ workflow PEDIATRIC {
 
         // ** T2 Preprocessing ** //
         PREPROC_T2W (
-            ch_t2.witht2,
+            !params.tracking ? ch_infant_t2.infant : ch_t2.witht2,
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
@@ -196,28 +206,32 @@ workflow PEDIATRIC {
         // ** Assemble T1w/T2w channels using derivatives for < 0.25 years, ** //
         // ** otherwise, raw images.                                        ** //
         ch_t1_seg = ch_t1.witht1
-            .join(PREPROC_T1W.out.t1_final, remainder: true)
-            .branch{
-                mcribs: it[0].age < 2.5 || it[0].age > 18
-                    return [it[0], it[2]]
-                fs: true
-                    return [it[0], it[1]]
+            .branch {
+                fs: it[0].age >= 0.25 && it[0].age <= 18
+                    return it
             }
-        ch_t1_seg = ch_t1_seg.mcribs.mix(ch_t1_seg.fs)
+        ch_t1_seg_proc = PREPROC_T1W.out.t1_final
+            .branch {
+                mcribs: it[0].age < 0.25 || it[0].age > 18
+                    return it
+            }
+        ch_t1_seg = ch_t1_seg.fs.mix(ch_t1_seg_proc.mcribs)
 
         ch_t2_seg = ch_t2.witht2
-            .join(PREPROC_T2W.out.t1_final, remainder: true)
-            .branch{
-                mcribs: it[0].age < 2.5 || it[0].age > 18
-                    return [it[0], it[2]]
-                fs: true
-                    return [it[0], it[1]]
+            .branch {
+                fs: it[0].age >= 0.25 && it[0].age <= 18
+                    return it
             }
-        ch_t2_seg = ch_t2_seg.mcribs.mix(ch_t2_seg.fs)
+        ch_t2_seg_proc = PREPROC_T2W.out.t1_final
+            .branch {
+                mcribs: it[0].age < 0.25 || it[0].age > 18
+                    return it
+            }
+        ch_t2_seg = ch_t2_seg.fs.mix(ch_t2_seg_proc.mcribs)
 
         SEGMENTATION (
-            PREPROC_T1W.out.t1_final,
-            PREPROC_T2W.out.t1_final,
+            ch_t1_seg,
+            ch_t2_seg,
             reg_t1,
             ch_fs_license,
             ch_utils_folder
@@ -727,13 +741,24 @@ workflow PEDIATRIC {
     if ( params.tracking ) {
         ch_anat_qc = ANATTODWI.out.t1_warped
     } else if ( params.segmentation ) {
+        // ** Fetching the T1w and T2w images for QC ** //
+        // ** If both are provided, use T1w, else, use T2w. ** //
         ch_anat_qc = Channel.empty()
-            .mix(SEGMENTATION.out.t2)
             .mix(SEGMENTATION.out.t1)
+            .mix(SEGMENTATION.out.t2)
             .groupTuple()
             .map { meta, files ->
-                return [meta] + files.flatten().findAll { it != null }
+                return [meta] + files.flatten().findAll { it != null }.sort { file ->
+                    if (file.name.contains("T2w")) return 0
+                    else return 1}
             }
+            .branch{
+                T1w: it.size() > 2 && it[0].age >= 0.25 && it[0].age <= 18
+                    return [it[0], it[2]]
+                T2w: true // Catch-all for only T2w.
+                    return [it[0], it[1]]
+            }
+        ch_anat_qc = ch_anat_qc.T1w.mix(ch_anat_qc.T2w)
     } else {
         ch_anat_qc = ch_anat
     }

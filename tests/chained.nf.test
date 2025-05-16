@@ -13,7 +13,6 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/bids/"
                 params.input_deriv = "$projectDir/tests/data/derivatives/"
                 params.outdir = "$outputDir"
-                use_fastsurfer = true
 
                 params.connectomics = true
                 params.segmentation = true
@@ -88,7 +87,6 @@ nextflow_pipeline {
                 params.tracking = true
                 params.segmentation = true
 
-                params.use_fastsurfer = true
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
             }
         }
