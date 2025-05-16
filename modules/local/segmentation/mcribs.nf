@@ -8,9 +8,9 @@ process SEGMENTATION_MCRIBS {
     tuple val(meta), path(t2), path(fs_license), path(t1) // ** T1 is optional ** //
 
     output:
-    tuple val(meta), path("*_mcribs")               , emit: folder
-    tuple val(meta), path("*_aseg_presurf.nii.gz")  , emit: aseg_presurf
-    path "versions.yml"                             , emit: versions
+    tuple val(meta), path("*_mcribs")                   , emit: folder
+    tuple val(meta), path("*_preprocessed_T2w.nii.gz")  , emit: anat
+    path "versions.yml"                                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -60,7 +60,7 @@ process SEGMENTATION_MCRIBS {
 
     # Move the output to the expected location.
     mv freesurfer/${prefix} ${prefix}_mcribs
-    mri_convert ${prefix}_mcribs/mri/aseg.presurf.preunwmfix.mgz ${prefix}_aseg_presurf.nii.gz
+    mri_convert ${prefix}_mcribs/mri/brain.mgz ${prefix}_preprocessed_T2w.nii.gz
 
     # If aparc+aseg.mgz exists, convert it to nii.gz.
     if [ -f "${prefix}_mcribs/mri/aparc+aseg.mgz" ]; then
@@ -81,7 +81,7 @@ process SEGMENTATION_MCRIBS {
 
     """
     mkdir ${prefix}_mcribs
-    touch ${prefix}_aseg_presurf.nii.gz
+    touch ${prefix}_preprocessed_T2w.nii.gz
 
     MCRIBReconAll -h
 
