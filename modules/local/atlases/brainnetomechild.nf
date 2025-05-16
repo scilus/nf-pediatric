@@ -2,7 +2,7 @@ process ATLASES_BRAINNETOMECHILD {
     tag "$meta.id"
     label 'process_medium'
 
-    container "gagnonanthony/nf-pediatric-atlases:1.0.0"
+    container "gagnonanthony/nf-pediatric-atlases:1.1.0"
 
     input:
     tuple val(meta), path(folder), path(utils), path(fs_license)
@@ -26,7 +26,7 @@ process ATLASES_BRAINNETOMECHILD {
     """
     # Exporting the FS license and setting up the environment
     export FS_LICENSE=./license.txt
-    export PYTHONPATH=/opt/freesurfer/python/packages:\$PYTHONPATH
+    #export PYTHONPATH=/opt/freesurfer/python/packages:\$PYTHONPATH
 
     # Setting the logging configs.
     BLUE='\\033[0;34m'
@@ -34,20 +34,23 @@ process ATLASES_BRAINNETOMECHILD {
     NC='\\033[0m'
     ColorPrint () { echo -e \${BLUE}\${1}\${NC}; }
 
+    # Copy the input folder (this enables the resume feature of nextflow).
+    cp -rL $folder ${prefix}__folder
+
     # If there already is an annot file in the label folder, remove it.
-    rm -f $folder/$prefix/label/lh.BN_Child.annot $folder/$prefix/label/rh.BN_Child.annot
+    rm -f ${prefix}__folder/$prefix/label/lh.BN_Child.annot ${prefix}__folder/$prefix/label/rh.BN_Child.annot
 
     # Symlink the fsaverage folder if it is not already there.
-    if [ ! -d $folder/fsaverage ]; then
+    if [ ! -d ${prefix}__folder/fsaverage ]; then
         # Sometimes, when using freesurfer, there is an empty fsaverage file.
-        if [ -f $folder/fsaverage ]; then
-            rm $folder/fsaverage
+        if [ -f ${prefix}__folder/fsaverage ]; then
+            rm ${prefix}__folder/fsaverage
         fi
-        ln -s \$(readlink -e $utils/fsaverage) $folder/
+        ln -s \$(readlink -e $utils/fsaverage) ${prefix}__folder/
     fi
 
     # Fetching the required variables.
-    export SUBJECTS_DIR=\$(readlink -e $folder)
+    export SUBJECTS_DIR=\$(readlink -e ${prefix}__folder)
     export SUBJID=$prefix
     export NBR_PROCESSES=$task.cpus
     export OUT_DIR="Brainnetome_Child"
@@ -55,7 +58,7 @@ process ATLASES_BRAINNETOMECHILD {
     export FS_ID_FOLDER=\${SUBJECTS_DIR}/\${SUBJID}/
 
     # Make tmp folder because of the LUT
-    mkdir BN_child_atlas
+    mkdir -p BN_child_atlas/tmp
     mkdir FS_atlas
     mkdir \${OUT_DIR}
 
@@ -68,7 +71,6 @@ process ATLASES_BRAINNETOMECHILD {
     # Create the Brainnetomme Child cortical parcellation from Freesurfer data
     echo -e "\${BLUE}Create the Brainnetome Child cortical parcellation from Freesurfer data (slow)\${NC}"
     # Compared to the adult version, the BN Child atlas comes in fsaverage space in an annotation format.
-    mkdir BN_child_atlas/tmp/
     mri_annotation2label --subject fsaverage --hemi lh --outdir BN_child_atlas/tmp/ --annotation \${UTILS_DIR}/lh.BN_child_fsaverage.annot >> logfile.txt &>> logfile.txt
     mri_annotation2label --subject fsaverage --hemi rh --outdir BN_child_atlas/tmp/ --annotation \${UTILS_DIR}/rh.BN_child_fsaverage.annot >> logfile.txt &>> logfile.txt
     rm BN_child_atlas/tmp/*\\?*
@@ -79,25 +81,25 @@ process ATLASES_BRAINNETOMECHILD {
     for i in BN_child_atlas/tmp/r*.*.label;
         do echo mri_label2label --srcsubject fsaverage --srclabel \${i} --trgsubject \${SUBJID} --regmethod surface --hemi rh --trglabel BN_child_atlas/\$(basename \${i}) ' >> logfile.txt' >> cmd.sh; done
     # Slow operation, multiprocessing it!
-    parallel --will-cite -P \${NBR_PROCESSES} < cmd.sh; rm -r cmd.sh BN_child_atlas/tmp/
+    parallel --will-cite -P \${NBR_PROCESSES} < cmd.sh; rm cmd.sh BN_child_atlas/tmp/*
 
     # ==================================================================================
     # Merge it into a single .annot file for statistics (the LUT file has to be copied in the tmp folder each time, since freesurfer is modifying it).
     echo -e "\${BLUE}Exporting cortical statistics from the Brainnetome Child atlas\${NC}"
-    cp \${UTILS_DIR}/atlas_brainnetome_child_v1_LUT.txt \${FS_ID_FOLDER}/tmp/
-    mris_label2annot --s \${SUBJID} --h lh --ctab \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/ >> logfile.txt &>> logfile.txt
-    mris_anatomical_stats -mgz -cortex \${FS_ID_FOLDER}/label/lh.cortex.label -f \${FS_ID_FOLDER}/stats/lh.BN_Child.stats -b -a \${FS_ID_FOLDER}/label/lh.BN_Child.annot -c \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt \${SUBJID} lh white >> logfile.txt &>> logfile.txt
-    cp \${UTILS_DIR}/atlas_brainnetome_child_v1_LUT.txt \${FS_ID_FOLDER}/tmp/
-    mris_label2annot --s \${SUBJID} --h rh --ctab \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/ >> logfile.txt &>> logfile.txt
-    mris_anatomical_stats -mgz -cortex \${FS_ID_FOLDER}/label/rh.cortex.label -f \${FS_ID_FOLDER}/stats/rh.BN_Child.stats -b -a \${FS_ID_FOLDER}/label/rh.BN_Child.annot -c \${FS_ID_FOLDER}/tmp/atlas_brainnetome_child_v1_LUT.txt \${SUBJID} rh white >> logfile.txt &>> logfile.txt
+    cp \${UTILS_DIR}/atlas_brainnetome_child_v1_LUT.txt BN_child_atlas/tmp/
+    mris_label2annot --s \${SUBJID} --h lh --ctab BN_child_atlas/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/ >> logfile.txt &>> logfile.txt
+    mris_anatomical_stats -mgz -cortex \${FS_ID_FOLDER}/label/lh.cortex.label -f \${FS_ID_FOLDER}/stats/lh.BN_Child.stats -b -a \${FS_ID_FOLDER}/label/lh.BN_Child.annot -c BN_child_atlas/tmp/atlas_brainnetome_child_v1_LUT.txt \${SUBJID} lh white >> logfile.txt &>> logfile.txt
+    cp \${UTILS_DIR}/atlas_brainnetome_child_v1_LUT.txt BN_child_atlas/tmp/
+    mris_label2annot --s \${SUBJID} --h rh --ctab BN_child_atlas/tmp/atlas_brainnetome_child_v1_LUT.txt --a BN_Child --ldir BN_child_atlas/ >> logfile.txt &>> logfile.txt
+    mris_anatomical_stats -mgz -cortex \${FS_ID_FOLDER}/label/rh.cortex.label -f \${FS_ID_FOLDER}/stats/rh.BN_Child.stats -b -a \${FS_ID_FOLDER}/label/rh.BN_Child.annot -c BN_child_atlas/tmp/atlas_brainnetome_child_v1_LUT.txt \${SUBJID} rh white >> logfile.txt &>> logfile.txt
 
     # Extracting the stats into a tsv file.
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi lh --meas volume -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__volume_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi rh --meas volume -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__volume_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi lh --meas thickness -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__thickness_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi rh --meas thickness -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__thickness_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi lh --meas area -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__area_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    python3 /opt/freesurfer/python/scripts/aparcstats2table --subjects \${SUBJID} --hemi rh --meas area -p BN_Child --tablefile \${OUT_DIR}/\${SUBJID}__area_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=lh -m volume -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__volume_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=rh -m volume -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__volume_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=lh -m thickness -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__thickness_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=rh -m thickness -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__thickness_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=lh -m area -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__area_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=rh -m area -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__area_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
 
     # ==================================================================================
     # Create the Brainnetomme subcortical parcellation from Freesurfer data
@@ -134,10 +136,10 @@ process ATLASES_BRAINNETOMECHILD {
 
     # ==================================================================================
     echo -e "\${BLUE}Rename the FS wmparc ROIs to a simple ids convention\${NC}"
-    mri_convert \${FS_ID_FOLDER}/mri/wmparc.mgz \${FS_ID_FOLDER}/mri/wmparc.nii.gz
-    scil_image_math.py convert \${FS_ID_FOLDER}/mri/wmparc.nii.gz \${FS_ID_FOLDER}/mri/wmparc.nii.gz --data_type uint16 -f
+    mri_convert \${FS_ID_FOLDER}/mri/wmparc.mgz BN_child_atlas/wmparc.nii.gz
+    scil_image_math.py convert BN_child_atlas/wmparc.nii.gz BN_child_atlas/wmparc.nii.gz --data_type uint16 -f
     mkdir FS_atlas/split_rename/
-    scil_split_volume_by_ids.py \${FS_ID_FOLDER}/mri/wmparc.nii.gz --out_dir FS_atlas/split_rename/
+    scil_split_volume_by_ids.py BN_child_atlas/wmparc.nii.gz --out_dir FS_atlas/split_rename/
 
     # ==================================================================================
     echo "Transfert the FS brainstem and cerebellum to BN Child"
@@ -159,42 +161,45 @@ process ATLASES_BRAINNETOMECHILD {
     # ==================================================================================
     # Since Freesurfer is all in 1x1x1mm and a 256x256x256 array, our atlases must be resampled/reshaped
     echo -e "\${BLUE}Reshape as the original input and convert the final atlases into uint16\${NC}"
-    mri_convert \${FS_ID_FOLDER}/mri/rawavg.mgz \${FS_ID_FOLDER}/mri/rawavg.nii.gz
-    scil_reshape_to_reference.py BN_child_atlas/atlas_brainnetome_child.nii.gz \${FS_ID_FOLDER}/mri/rawavg.nii.gz BN_child_atlas/atlas_brainnetome_child.nii.gz --interpolation nearest -f
+    mri_convert \${FS_ID_FOLDER}/mri/native.mgz BN_child_atlas/native.nii.gz
+    scil_reshape_to_reference.py BN_child_atlas/atlas_brainnetome_child.nii.gz BN_child_atlas/native.nii.gz BN_child_atlas/atlas_brainnetome_child.nii.gz --interpolation nearest -f
 
     # ==================================================================================
     # Safer for most script, thats our label data type
     echo -e "\${BLUE}Finished creating the atlas by dilating the label\${NC}"
     scil_image_math.py convert BN_child_atlas/atlas_brainnetome_child.nii.gz \${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz --data_type uint16 -f
-    rm \${FS_ID_FOLDER}/atlas_*.nii.gz
     cp \${UTILS_DIR}/atlas_brainnetome_child_v1_*.* \${OUT_DIR}/
 
     # Compute statistics on subcortical regions.
-    mri_segstats --seg \${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz --ctab \${OUT_DIR}/atlas_brainnetome_child_v1_LUT.txt --excludeid 0 \
-        --o \${FS_ID_FOLDER}/stats/BN_Child_subcortical.stats --pv \${FS_ID_FOLDER}/mri/norm.mgz \
+    mri_convert \${FS_ID_FOLDER}/mri/synthSR.norm.mgz BN_child_atlas/synthSR.norm.nii.gz
+    scil_reshape_to_reference.py \${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz BN_child_atlas/synthSR.norm.nii.gz BN_child_atlas/atlas_brainnetome_child_reshaped.nii.gz --interpolation nearest --keep_dtype -f
+    mri_segstats --seg BN_child_atlas/atlas_brainnetome_child_reshaped.nii.gz --ctab \${OUT_DIR}/atlas_brainnetome_child_v1_LUT.txt --excludeid 0 \
+        --o \${FS_ID_FOLDER}/stats/subcortical.BN_Child.stats --pv \${FS_ID_FOLDER}/mri/synthSR.norm.mgz \
         --id 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227
-    python3 /opt/freesurfer/python/scripts/asegstats2table --subjects \${SUBJID} --meas volume \
-        --tablefile \${OUT_DIR}/\${SUBJID}__volume_BN_Child_subcortical.tsv --all-segs --stats=BN_Child_subcortical.stats
+    asegstats2table --subjects \${SUBJID} --meas=volume \
+        --tablefile=\${OUT_DIR}/\${SUBJID}__volume_BN_Child_subcortical.tsv --all-segs --stats=subcortical.BN_Child.stats
 
     # Dilating the atlas
-    mri_convert \${FS_ID_FOLDER}/mri/brainmask.mgz \${FS_ID_FOLDER}/mri/brain_mask.nii.gz
-    scil_image_math.py lower_threshold \${FS_ID_FOLDER}/mri/brain_mask.nii.gz 0.001 \${FS_ID_FOLDER}/mri/brain_mask.nii.gz --data_type uint8 -f
-    scil_image_math.py dilation \${FS_ID_FOLDER}/mri/brain_mask.nii.gz 1 \${FS_ID_FOLDER}/mri/brain_mask.nii.gz -f
-    scil_reshape_to_reference.py \${FS_ID_FOLDER}/mri/brain_mask.nii.gz \${FS_ID_FOLDER}/mri/rawavg.nii.gz \${FS_ID_FOLDER}/mri/brain_mask.nii.gz --interpolation nearest -f
-    scil_image_math.py convert \${FS_ID_FOLDER}/mri/brain_mask.nii.gz \${FS_ID_FOLDER}/mri/brain_mask.nii.gz --data_type uint8 -f
+    mri_convert \${FS_ID_FOLDER}/mri/brainmask.mgz BN_child_atlas/brain_mask.nii.gz
+    scil_image_math.py lower_threshold BN_child_atlas/brain_mask.nii.gz 0.001 BN_child_atlas/brain_mask.nii.gz --data_type uint8 -f
+    scil_image_math.py dilation BN_child_atlas/brain_mask.nii.gz 1 BN_child_atlas/brain_mask.nii.gz -f
+    scil_reshape_to_reference.py BN_child_atlas/brain_mask.nii.gz BN_child_atlas/native.nii.gz BN_child_atlas/brain_mask.nii.gz --interpolation nearest -f
+    scil_image_math.py convert BN_child_atlas/brain_mask.nii.gz BN_child_atlas/brain_mask.nii.gz --data_type uint8 -f
 
-    scil_dilate_labels.py \${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz \${OUT_DIR}/atlas_brainnetome_child_v1_dilated.nii.gz --distance 2 --labels_to_dilate {1..188} {225..227} --mask \${FS_ID_FOLDER}/mri/brain_mask.nii.gz
+    scil_dilate_labels.py \${OUT_DIR}/atlas_brainnetome_child_v1.nii.gz \${OUT_DIR}/atlas_brainnetome_child_v1_dilated.nii.gz --distance 2 --labels_to_dilate {1..188} {225..227} --mask BN_child_atlas/brain_mask.nii.gz
 
     echo -e "\${BLUE}Finished creating the atlas.\${NC}"
 
     # ==================================================================================
     # Copy the results to the output folder
     cp Brainnetome_Child/* ./
-    rm ${folder}/fsaverage
 
     # Fetch .annot files and .stats files, to place within the FastSurfer/FreeSurfer folder.
-    cp \${FS_ID_FOLDER}/label/*BN_Child.annot ./
-    cp \${FS_ID_FOLDER}/stats/*BN_Child.stats ./
+    mv \${FS_ID_FOLDER}/label/*BN_Child.annot ./
+    mv \${FS_ID_FOLDER}/stats/*BN_Child.stats ./
+
+    # Clean up the remaining folders.
+    rm -rf BN_child_atlas Brainnetome_Child FS_atlas ${prefix}__folder
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

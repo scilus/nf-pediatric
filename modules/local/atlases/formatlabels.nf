@@ -2,7 +2,7 @@ process ATLASES_FORMATLABELS {
     tag "$meta.id"
     label 'process_single'
 
-    container "gagnonanthony/nf-pediatric-atlases:1.0.0"
+    container "gagnonanthony/nf-pediatric-atlases:1.1.0"
 
     input:
     tuple val(meta), path(folder), path(utils), path(fs_license)
@@ -21,7 +21,6 @@ process ATLASES_FORMATLABELS {
     """
     # Exporting the FS license and setting up the environment
     export FS_LICENSE=./license.txt
-    export PYTHONPATH=/opt/freesurfer/python/packages:\$PYTHONPATH
     export SUBJECTS_DIR=\$(readlink -e ./)
 
     mv $folder ${prefix}
@@ -42,7 +41,7 @@ process ATLASES_FORMATLABELS {
         --unique ${prefix}__labels.nii.gz -f
 
     # Extracting subcortical volume.
-    python3 /opt/freesurfer/python/scripts/asegstats2table --subjects ${prefix} --meas volume \
+    asegstats2table --subjects ${prefix} --meas volume \
         --tablefile ${prefix}__volume_aseg_subcortical.tsv --no-vol-extras
 
     # Extracting cortical statistics.
