@@ -1,6 +1,7 @@
 // ** Main segmentation module ** //
 include { SEGMENTATION_FASTSURFER as FASTSURFER } from '../../../modules/nf-neuro/segmentation/fastsurfer/main'
 include { SEGMENTATION_FSRECONALL as RECONALL } from '../../../modules/nf-neuro/segmentation/fsreconall/main'
+include { SEGMENTATION_RECONALLCLINICAL as RECONALLCLINICAL } from '../../../modules/local/segmentation/reconallclinical/main'
 include { SEGMENTATION_MCRIBS as MCRIBS } from '../../../modules/local/segmentation/mcribs'
 
 // ** Atlas modules ** //
@@ -25,40 +26,43 @@ workflow SEGMENTATION {
     // MODULE: Run FastSurfer or FreeSurfer T1 reconstruction
     //
     ch_seg = ch_t1
+        .join(ch_t2, remainder: true)
+        .join(ch_coreg, remainder: true)
         .combine(ch_fs_license)
         .branch {
-            fastsurfer: it[0].age >= 2.5 && it[0].age <= 18 && params.use_fastsurfer
-                return it
-            freesurfer: it[0].age >= 2.5 && it[0].age <= 18 && !params.use_fastsurfer
-                return it
+            fastsurfer: it[0].age >= 5 && it[0].age <= 18 && params.method == 'fastsurfer'
+                return [it[0], it[1], it[4]]
+            freesurfer: it[0].age >= 5 && it[0].age <= 18 && params.method == "recon-all"
+                return [it[0], it[1], it[4]]
+            clinical: it[0].age >= 0.25 && it[0].age <= 18 && params.method == "recon-all-clinical"
+                return [it[0], it[1] ?: it[2], it[4]]
             infant: true
-                return [it[0], it[1]]
+                return [it[0], it[2], it[4], it[3] ?: []]
         }
 
     // ** FastSurfer ** //
     FASTSURFER ( ch_seg.fastsurfer )
-    ch_versions = ch_versions.mix(FASTSURFER.out.versions.first())
+    ch_versions = ch_versions.mix(FASTSURFER.out.versions)
 
     // ** ReconAll ** //
     RECONALL ( ch_seg.freesurfer )
-    ch_versions = ch_versions.mix(RECONALL.out.versions.first())
+    ch_versions = ch_versions.mix(RECONALL.out.versions)
+
+    // ** ReconAll Clinical ** //
+    RECONALLCLINICAL ( ch_seg.clinical )
+    ch_versions = ch_versions.mix(RECONALLCLINICAL.out.versions)
+
+    // ** Fetching all preprocessed T1s ** //
+    ch_t1_out = Channel.empty()
+        .mix(FASTSURFER.out.final_t1)
+        .mix(RECONALL.out.final_t1)
+        .mix(RECONALLCLINICAL.out.final_t1)
 
     // ** For infant, it's a bit trickier, as MCRIBS do not  ** //
     // ** perform preprocessing, so we need to do it (done in pediatric.nf).   ** //
-    // ** Assuming the input channels are properly formatted ** //
-    ch_t2w = ch_t2.branch {
-        infant: it[0].age < 2.5 || it[0].age > 18
-            return it
-    }
-
     // ** Run MCRIBS ** //
-    ch_mcribs = ch_t2w.infant
-        .combine(ch_fs_license)
-        .join(ch_coreg, remainder: true)
-        .map { it[0..2] + [ it[3] ?: [] ] }
-
-    MCRIBS ( ch_mcribs )
-    ch_versions = ch_versions.mix(MCRIBS.out.versions.first())
+    MCRIBS ( ch_seg.infant )
+    ch_versions = ch_versions.mix(MCRIBS.out.versions)
     // ch_multiqc_files = ch_multiqc_files.mix(MCRIBS.out.zip.collect{it[1]})
 
     //
@@ -67,6 +71,7 @@ workflow SEGMENTATION {
     ch_atlas = Channel.empty()
         .mix(FASTSURFER.out.fastsurferdirectory)
         .mix(RECONALL.out.recon_all_out_folder)
+        .mix(RECONALLCLINICAL.out.folder)
         .mix(MCRIBS.out.folder)
         .groupTuple()
         .map {
@@ -76,19 +81,19 @@ workflow SEGMENTATION {
         .combine(ch_utils_folder)
         .combine(ch_fs_license)
         .branch {
-            infant: it[0].age < 2.5 || it[0].age > 18
+            infant: it[0].age < 0.25 || it[0].age > 18
                 return it
-            child: it[0].age >= 2.5 && it[0].age <= 18
+            child: it[0].age >= 0.25 && it[0].age <= 18
         }
 
     BRAINNETOMECHILD ( ch_atlas.child )
-    ch_versions = ch_versions.mix(BRAINNETOMECHILD.out.versions.first())
+    ch_versions = ch_versions.mix(BRAINNETOMECHILD.out.versions)
 
     //
     // MODULE: Format labels
     //
     FORMATLABELS ( ch_atlas.infant )
-    ch_versions = ch_versions.mix(FORMATLABELS.out.versions.first())
+    ch_versions = ch_versions.mix(FORMATLABELS.out.versions)
 
     ch_labels = Channel.empty()
         .mix(BRAINNETOMECHILD.out.labels)
@@ -111,11 +116,10 @@ workflow SEGMENTATION {
     emit:
     // ** Processed anatomical image ** //
     t1              = ch_t1                                                 // channel: [ val(meta), [ t1 ] ]
-    t2              = ch_t2                                                 // channel: [ val(meta), [ t2 ] ]
+    t2              = MCRIBS.out.anat                                       // channel: [ val(meta), [ t2 ] ]
 
     // ** Segmentation ** //
     labels          = ch_labels                                             // channel: [ val(meta), [ labels ] ]
-    tissues         = MCRIBS.out.aseg_presurf                               // channel: [ val(meta), [ tissues ] ]
 
     // ** Stats ** //
     volume_lh       = CONCATENATESTATS.out.volume_lh ?: Channel.empty()     // channel: [ volume_lh.tsv ]
