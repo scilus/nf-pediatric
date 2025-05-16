@@ -36,19 +36,19 @@ input:
 
 output:
   - folder:
-    - meta:
-        type: map
-        description: |
-          Groovy Map containing sample information
-          e.g. `[ id:'sample1', single_end:false ]`
-    - "*__freesurfer":
-        type: directory
-        description: FreeSurfer output directory.
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1', single_end:false ]`
+      - "*__freesurfer":
+          type: directory
+          description: FreeSurfer output directory.
   - versions:
-    - "versions.yml":
-        type: file
-        description: File containing software versions
-        pattern: "versions.yml"
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
 
 authors:
   - "@gagnonanthony"
