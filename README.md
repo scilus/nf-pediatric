@@ -6,7 +6,7 @@
 
 **nf-pediatric** is an end-to-end connectomics pipeline for pediatric (0-18y) dMRI and sMRI brain scans. It performs preprocessing, tractography, t1 reconstruction, cortical and subcortical segmentation, and connectomics.
 
-![nf-pediatric-schema](/assets/nf-pediatric-schema.svg)
+![nf-pediatric-schema](/assets/nf-pediatric-schema.png)
 
 ## Usage
 
