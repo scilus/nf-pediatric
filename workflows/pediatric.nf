@@ -270,20 +270,13 @@ workflow PEDIATRIC {
         ch_versions = ch_versions.mix(PREPROC_DWI.out.versions)
         ch_multiqc_files_sub = ch_multiqc_files_sub.mix(PREPROC_DWI.out.mqc)
 
-        // ** Setting outputs ** //
-        ch_processed_dwi = PREPROC_DWI.out.dwi
-        ch_processed_bval = PREPROC_DWI.out.bval
-        ch_processed_bvec = PREPROC_DWI.out.bvec
-        ch_processed_b0 = PREPROC_DWI.out.b0
-        ch_processed_b0_mask = PREPROC_DWI.out.b0_mask
-
         //
         // MODULE: Run DTI_METRICS
         //
-        ch_reconst_dti = ch_processed_dwi
-            .join(ch_processed_bval)
-            .join(ch_processed_bvec)
-            .join(ch_processed_b0_mask)
+        ch_reconst_dti = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+            .join(PREPROC_DWI.out.b0_mask)
 
         RECONST_DTIMETRICS ( ch_reconst_dti )
         ch_versions = ch_versions.mix(RECONST_DTIMETRICS.out.versions.first())
@@ -300,10 +293,10 @@ workflow PEDIATRIC {
         //
         // MODULE: Run FRF
         //
-        ch_reconst_frf = ch_processed_dwi
-            .join(ch_processed_bval)
-            .join(ch_processed_bvec)
-            .join(ch_processed_b0_mask)
+        ch_reconst_frf = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+            .join(PREPROC_DWI.out.b0_mask)
             .map{ it + [[], [], []] }
 
         RECONST_FRF ( ch_reconst_frf )
@@ -325,10 +318,10 @@ workflow PEDIATRIC {
         //
         // MODULE: Run MEANFRF
         //
-        ch_reconst_fodf = ch_processed_dwi
-            .join(ch_processed_bval)
-            .join(ch_processed_bvec)
-            .join(ch_processed_b0_mask)
+        ch_reconst_fodf = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+            .join(PREPROC_DWI.out.b0_mask)
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
             .join(ch_frf)
@@ -346,7 +339,7 @@ workflow PEDIATRIC {
         //
         // MODULE: Run REGISTRATION
         //
-        ch_for_reg = ch_processed_b0
+        ch_for_reg = PREPROC_DWI.out.b0
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
             .join(PREPROC_T2W.out.t1_final, remainder: true)
@@ -425,7 +418,8 @@ workflow PEDIATRIC {
 
         ch_tracking_masks = WARPPROBSEG.out.warped_image
             .join(RECONST_DTIMETRICS.out.fa)
-            .map{ [it[0], it[1][2], it[1][1], it[1][0], it[2]] }
+            .join(PREPROC_DWI.out.b0_mask)
+            .map{ [it[0], it[1][2], it[1][1], it[1][0], it[2], it[3]] }
 
         // ** Convert probability segmentation into binary mask ** //
         TRACKINGMASKS ( ch_tracking_masks )
@@ -548,9 +542,9 @@ workflow PEDIATRIC {
                 .join(ANATTODWI.out.affine)
             ch_peaks = RECONST_FODF.out.peaks
             ch_fodf = RECONST_FODF.out.fodf
-            ch_dwi_bval_bvec = ch_processed_dwi
-                .join(ch_processed_bval)
-                .join(ch_processed_bvec)
+            ch_dwi_bval_bvec = PREPROC_DWI.out.dwi
+                .join(PREPROC_DWI.out.bval)
+                .join(PREPROC_DWI.out.bvec)
             ch_anat = ANATTODWI.out.t1_warped
             ch_metrics = RECONST_DTIMETRICS.out.fa
                 .join(RECONST_DTIMETRICS.out.md)
@@ -753,7 +747,7 @@ workflow PEDIATRIC {
                     else return 1}
             }
             .branch{
-                T1w: it.size() > 2 && it[0].age >= 0.25 && it[0].age <= 18
+                T1w: it.size() > 3 && it[0].age >= 0.25 && it[0].age <= 18
                     return [it[0], it[2]]
                 T2w: true // Catch-all for only T2w.
                     return [it[0], it[1]]
