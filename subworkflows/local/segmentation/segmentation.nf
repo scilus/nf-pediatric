@@ -52,18 +52,21 @@ workflow SEGMENTATION {
     RECONALLCLINICAL ( ch_seg.clinical )
     ch_versions = ch_versions.mix(RECONALLCLINICAL.out.versions)
 
-    // ** Fetching all preprocessed T1s ** //
-    ch_t1_out = Channel.empty()
-        .mix(FASTSURFER.out.final_t1)
-        .mix(RECONALL.out.final_t1)
-        .mix(RECONALLCLINICAL.out.final_t1)
-
     // ** For infant, it's a bit trickier, as MCRIBS do not  ** //
     // ** perform preprocessing, so we need to do it (done in pediatric.nf).   ** //
     // ** Run MCRIBS ** //
     MCRIBS ( ch_seg.infant )
     ch_versions = ch_versions.mix(MCRIBS.out.versions)
     // ch_multiqc_files = ch_multiqc_files.mix(MCRIBS.out.zip.collect{it[1]})
+
+    // ** T2w outputs ** //
+    // ** Keeping the MCRIBS output if available, otherwise mix in the ch_t2 ** //
+    ch_t2w = ch_t2
+        .join(MCRIBS.out.anat, remainder: true)
+        .map{
+            meta, t2, mcribs -> 
+                return [meta, mcribs ?: t2]
+        }
 
     //
     // MODULE: Run BrainnetomeChild atlas
@@ -116,7 +119,7 @@ workflow SEGMENTATION {
     emit:
     // ** Processed anatomical image ** //
     t1              = ch_t1                                                 // channel: [ val(meta), [ t1 ] ]
-    t2              = MCRIBS.out.anat                                       // channel: [ val(meta), [ t2 ] ]
+    t2              = ch_t2w                                       // channel: [ val(meta), [ t2 ] ]
 
     // ** Segmentation ** //
     labels          = ch_labels                                             // channel: [ val(meta), [ labels ] ]
