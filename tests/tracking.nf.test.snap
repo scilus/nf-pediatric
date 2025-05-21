@@ -12,10 +12,10 @@
                     "synthstrip": 1.5
                 },
                 "BET_DWI": {
-                    "mrtrix": "3.0.4"
+                    "mrtrix": "3.0.5"
                 },
                 "CONVERT": {
-                    "mrconvert": "3.0.4"
+                    "mrconvert": "3.0.5"
                 },
                 "COREG": {
                     "ants": "2.4.3",
@@ -32,10 +32,10 @@
                     "scilpy": "2.0.2"
                 },
                 "DENOISE_DWI": {
-                    "mrtrix": "3.0.4"
+                    "mrtrix": "3.0.5"
                 },
                 "DENOISE_REVDWI": {
-                    "mrtrix": "3.0.4"
+                    "mrtrix": "3.0.5"
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
@@ -359,7 +359,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-29T09:55:44.556632"
+        "timestamp": "2025-05-20T22:02:57.123985"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
