@@ -2,9 +2,7 @@ process FILTERING_COMMIT {
     tag "$meta.id"
     label 'process_medium'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
-        'scilus/scilpy:1.6.0' }"
+    container "${ 'scilus/scilpy:1.6.0' }"
 
     input:
     tuple val(meta), path(hdf5), path(dwi), path(bval), path(bvec), path(peaks)
