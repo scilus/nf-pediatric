@@ -64,7 +64,7 @@ workflow SEGMENTATION {
     ch_t2w = ch_t2
         .join(MCRIBS.out.anat, remainder: true)
         .map{
-            meta, t2, mcribs -> 
+            meta, t2, mcribs ->
                 return [meta, mcribs ?: t2]
         }
 
