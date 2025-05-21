@@ -100,7 +100,7 @@ process ATLASES_FORMATLABELS {
     scil_remove_labels.py -h
     scil_combine_labels.py -h
     python3 $utils/convert_fs_stats.py -h
-    python3 /opt/freesurfer/python/scripts/asegstats2table --help
+    asegstats2table --help
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
