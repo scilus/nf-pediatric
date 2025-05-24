@@ -345,9 +345,9 @@ workflow PEDIATRIC {
             .join(PREPROC_T2W.out.t1_final, remainder: true)
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch{
-                infant: it[0].age < 2.5 || it[0].age > 18
+                infant: it[0].age < 0.5 || it[0].age > 18
                     return [it[0], it[4], it[1], it[3]]
-                child: it[0].age >= 2.5 && it[0].age <= 18
+                child: it[0].age >= 0.5 && it[0].age <= 18
                     return [it[0], it[5], it[1], it[2]]
             }
 
