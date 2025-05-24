@@ -19,7 +19,7 @@ process PREPROC_NORMALIZE {
 
     script:
     def dwi_shell_tolerance = task.ext.dwi_shell_tolerance ? "--tolerance $task.ext.dwi_shell_tolerance" : ""
-    def fa_mask_threshold = task.ext.fa_mask_threshold ? "-abs $task.ext.fa_mask_threshold": ""
+    def fa_mask_threshold = meta.age < 0.5 || meta.age > 18 ? "-abs 0.10" : "-abs 0.35"
     def max_dti_shell_value = task.ext.max_dti_shell_value ?: "1600"
     def prefix = task.ext.prefix ?: "${meta.id}"
     def dti_info = task.ext.dti_shells ?: "\$(cut -d ' ' --output-delimiter=\$'\\n' -f 1- $bval | awk -F' ' '{v=int(\$1)}{if(v<=$max_dti_shell_value)print v}' | sort | uniq)"

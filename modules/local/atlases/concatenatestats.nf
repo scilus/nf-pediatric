@@ -8,14 +8,14 @@ process ATLASES_CONCATENATESTATS {
     tuple val(meta), path(tsv)
 
     output:
-    path("*_volumes.tsv")     , emit: subcortical
-    path("*_volume_lh.tsv")      , emit: volume_lh
-    path("*_volume_rh.tsv")      , emit: volume_rh
-    path("*_area_lh.tsv")        , emit: area_lh
-    path("*_area_rh.tsv")        , emit: area_rh
-    path("*_thickness_lh.tsv")   , emit: thickness_lh
-    path("*_thickness_rh.tsv")   , emit: thickness_rh
-    path "versions.yml"                 , emit: versions
+    path("*_volumes.tsv")           , emit: subcortical
+    path("*_volume_lh.tsv")         , emit: volume_lh
+    path("*_volume_rh.tsv")         , emit: volume_rh
+    path("*_area_lh.tsv")           , emit: area_lh
+    path("*_area_rh.tsv")           , emit: area_rh
+    path("*_thickness_lh.tsv")      , emit: thickness_lh
+    path("*_thickness_rh.tsv")      , emit: thickness_rh
+    path "versions.yml"             , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

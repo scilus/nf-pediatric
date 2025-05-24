@@ -2,7 +2,7 @@ process CONNECTIVITY_AFDFIXEL {
     tag "$meta.id"
     label 'process_single'
 
-    container "${ 'scilus/scilus:latest' }"
+    container "${ 'scilus/scilpy:1.6.0' }"
 
     input:
     tuple val(meta), path(hdf5), path(fodf)
@@ -21,7 +21,7 @@ process CONNECTIVITY_AFDFIXEL {
     def sh_basis = task.ext.sh_basis ? "--sh_basis $task.ext.sh_basis": ""
 
     """
-    scil_bundle_mean_fixel_afd_from_hdf5.py $hdf5 $fodf \
+    scil_compute_mean_fixel_afd_from_hdf5.py $hdf5 $fodf \
         "${prefix}__afd_fixel.h5" \
         $length_weighting \
         $sh_basis \
@@ -39,7 +39,7 @@ process CONNECTIVITY_AFDFIXEL {
     """
     touch ${prefix}__afd_fixel.h5
 
-    scil_bundle_mean_fixel_afd_from_hdf5.py -h
+    scil_compute_mean_fixel_afd_from_hdf5.py -h
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

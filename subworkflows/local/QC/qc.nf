@@ -57,7 +57,6 @@ workflow QC {
                 return [ it[0], it[1] ]
         }
 
-
     QC_LABELS ( ch_labels_qc.withlabels )
     ch_versions = ch_versions.mix(QC_LABELS.out.versions.first())
 
