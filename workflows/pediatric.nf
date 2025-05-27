@@ -347,11 +347,13 @@ workflow PEDIATRIC {
             .branch{
                 infant: it[0].age < 0.5 || it[0].age > 18
                     return [it[0], it[4], it[1], it[3]]
-                child: it[0].age >= 0.5 && it[0].age <= 18
+                child_t1: (it[0].age >= 0.5 && it[0].age <= 18) && it[5] != null
                     return [it[0], it[5], it[1], it[2]]
+                child_t2: (it[0].age >= 0.5 && it[0].age <= 18) && it[4] != null
+                    return [it[0], it[4], it[1], it[3]]
             }
 
-        ch_anat_reg = ch_for_reg.infant.mix(ch_for_reg.child)
+        ch_anat_reg = ch_for_reg.infant.mix(ch_for_reg.child_t1).mix(ch_for_reg.child_t2)
 
         ANATTODWI( ch_anat_reg )
         ch_versions = ch_versions.mix(ANATTODWI.out.versions)
