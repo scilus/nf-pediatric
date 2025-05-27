@@ -104,6 +104,11 @@ workflow TOPUP_EDDY {
             ch_b0_mask = BETCROP_FSLBETCROP.out.mask
         }
 
+        UTILS_EXTRACTB0 { ch_dwi }
+        ch_versions = ch_versions.mix(UTILS_EXTRACTB0.out.versions.first())
+
+        ch_b0_corrected = UTILS_EXTRACTB0.out.b0
+
         ch_output_dwi = ch_dwi
             .multiMap{ meta, dwi, bval, bvec ->
                 dwi: [meta, dwi]
