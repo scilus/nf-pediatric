@@ -2,7 +2,7 @@ process QC_SHELL {
     tag "$meta.id"
     label 'process_single'
 
-    container 'gagnonanthony/nf-pediatric-qc:1.0.0'
+    container 'scilus/scilus:2.0.2'
 
     input:
     tuple val(meta), path(bval), path(bvec)
