@@ -2,7 +2,7 @@ process QC_TRACKING {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container 'scilus/scilus:latest'
 
     input:
         tuple val(meta), path(tractogram), path(wm), path(gm)

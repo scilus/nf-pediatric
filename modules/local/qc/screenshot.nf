@@ -2,7 +2,7 @@ process QC_SCREENSHOT {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container 'scilus/scilus:latest'
 
     input:
     tuple val(meta), path(image), path(wmmask), path(gmmask), path(csfmask), path(labels)
