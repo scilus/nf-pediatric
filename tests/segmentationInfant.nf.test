@@ -11,7 +11,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/bids"
-                params.participant_label = ["sub-test2", "sub-test3", "sub-test4"]
+                params.participant_label = ["sub-test1"]
                 params.outdir = "$outputDir"
 
                 params.segmentation = true
@@ -23,8 +23,8 @@ nextflow_pipeline {
         then {
             // stable name: All files + folders in ${params.outdir}/ with a stable name.
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
-            // All fastsurfer output.
-            def fastsurfer_output = getAllFilesFromDir("$outputDir/../freesurfer/", relative: true, includeDir: true)
+            // All output.
+            def mcribs_output = getAllFilesFromDir("$outputDir/../mcribs-2.1.0/", relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
                 assert snapshot(
@@ -34,8 +34,8 @@ nextflow_pipeline {
                     removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name,
-                    // All fastsurfer output.
-                    fastsurfer_output
+                    // All output.
+                    mcribs_output
                 ).match()
             }
         }
@@ -47,7 +47,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/bids"
-                params.participant_label = ["sub-test2", "sub-test3", "sub-test4"]
+                params.participant_label = ["sub-test1"]
                 params.outdir = "$outputDir"
 
                 params.segmentation = true
@@ -67,7 +67,7 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/bids"
-                params.participant_label = ["sub-test2", "sub-test3", "sub-test4"]
+                params.participant_label = ["sub-test1"]
                 params.outdir = "$outputDir"
 
                 params.segmentation = true
