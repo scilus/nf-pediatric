@@ -11,10 +11,10 @@ nextflow_pipeline {
             params {
 
                 params.input = "$projectDir/tests/data/bids"
+                params.participant_label = ["sub-test1", "sub-test3"]
                 params.outdir = "$outputDir"
 
                 params.segmentation = true
-                params.use_fastsurfer = true
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
 
             }
@@ -24,7 +24,7 @@ nextflow_pipeline {
             // stable name: All files + folders in ${params.outdir}/ with a stable name.
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
             // All fastsurfer output.
-            def fastsurfer_output = getAllFilesFromDir("$outputDir/../fastsurfer-v2.3.3/", relative: true, includeDir: true)
+            def fastsurfer_output = getAllFilesFromDir("$outputDir/../freesurfer/", relative: true, includeDir: true)
             def mcribs_output = getAllFilesFromDir("$outputDir/../mcribs-2.1.0/", relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
@@ -52,7 +52,6 @@ nextflow_pipeline {
                 params.outdir = "$outputDir"
 
                 params.segmentation = true
-                params.use_fastsurfer = true
 
             }
         }
@@ -72,7 +71,6 @@ nextflow_pipeline {
                 params.outdir = "$outputDir"
 
                 params.segmentation = true
-                params.use_fastsurfer = true
 
                 params.fs_license = "./not/a/valid/path/license.txt"
 

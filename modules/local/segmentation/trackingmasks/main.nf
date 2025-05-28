@@ -8,7 +8,7 @@ process SEGMENTATION_TRACKINGMASKS {
         "scilus/scilus:latest"}"
 
     input:
-    tuple val(meta), path(wm), path(gm), path(csf), path(fa)
+    tuple val(meta), path(wm), path(gm), path(csf), path(fa), path(mask)
 
     output:
     tuple val(meta), path("*wm_mask.nii.gz")        , emit: wm
@@ -21,18 +21,19 @@ process SEGMENTATION_TRACKINGMASKS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    // ** Modular threshold setting depending on the participant's age ** //
+    def threshold = meta.age < 0.5 || meta.age > 18 ? 0.15 : 0.30
 
     """
     # Thresholding the maps.
-    mrthreshold $wm ${prefix}__wm_mask.nii.gz -abs 0.5 -nthreads 1 -force
-    mrthreshold $gm ${prefix}__gm_mask.nii.gz -abs 0.5 -nthreads 1 -force
-    mrthreshold $csf ${prefix}__csf_mask.nii.gz -abs 0.5 -nthreads 1 -force
+    mrthreshold $wm ${prefix}__wm_mask.nii.gz -abs 0.4 -nthreads 1 -force
+    mrthreshold $gm ${prefix}__gm_mask.nii.gz -abs 0.4 -nthreads 1 -force
+    mrthreshold $csf ${prefix}__csf_mask.nii.gz -abs 0.4 -nthreads 1 -force
 
     # Thresholding the FA map.
-    bet $fa ${prefix}__brain.nii.gz -m -f 0.16
-    #scil_volume_math.py erosion ${prefix}__brain_mask.nii.gz 6 ${prefix}__brain_mask.nii.gz -f
-    mrcalc $fa ${prefix}__brain_mask.nii.gz -mul ${prefix}__fa_eroded.nii.gz -nthreads 1 -force
-    mrthreshold $fa ${prefix}__fa_mask.nii.gz -abs 0.10 -nthreads 1 -force
+    scil_volume_math.py erosion $mask 6 ${prefix}__brain_mask_eroded.nii.gz -f
+    mrcalc $fa ${prefix}__brain_mask_eroded.nii.gz -mul ${prefix}__fa_eroded.nii.gz -nthreads 1 -force
+    mrthreshold ${prefix}__fa_eroded.nii.gz ${prefix}__fa_mask.nii.gz -abs $threshold -nthreads 1 -force
     scil_volume_math.py union ${prefix}__wm_mask.nii.gz ${prefix}__fa_mask.nii.gz ${prefix}__wm_mask.nii.gz \
         --data_type uint8 -f
 

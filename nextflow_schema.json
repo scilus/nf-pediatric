@@ -20,6 +20,13 @@
                     "help_text": "Path to the BIDS directory. This is where the pipeline will find the required raw data.",
                     "fa_icon": "fas fa-file-csv"
                 },
+                "participant_label": {
+                    "type": "array",
+                    "description": "List of participant IDs or a single participant ID.",
+                    "help_text": "List of participant IDs or a single participant ID. This will be used to select the specific participants to process.",
+                    "uniqueItems": true,
+                    "fa_icon": "fas id-badge"
+                },
                 "input_deriv": {
                     "type": "string",
                     "format": "directory-path",
@@ -67,12 +74,14 @@
             "description": "Options for FreeSurfer and FastSurfer processing.",
             "help_text": "These options are used to configure the FreeSurfer and FastSurfer processing steps in the pipeline. You can use these options to customise the behaviour of the FreeSurfer and FastSurfer steps.",
             "properties": {
-                "use_fastsurfer": {
-                    "type": "boolean",
-                    "description": "Use FastSurfer instead of FreeSurfer.",
-                    "fa_icon": "fas fa-rocket",
-                    "default": true,
-                    "hidden": false
+                "method": {
+                    "type": "string",
+                    "description": "Method to use to perform surface reconstruction and cortical/subcortical segmentation. Will only affect subjects > 3 months of age. Recon-all-clinical is highly recommended for subjects between 3 months and 5 years old.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "recon-all-clinical",
+                    "enum": ["recon-all-clinical", "recon-all", "fastsurfer"],
+                    "hidden": false,
+                    "errorMessage": "Invalid method. Must be one of: recon-all-clinical, recon-all, fastsurfer."
                 },
                 "fs_license": {
                     "type": "string",

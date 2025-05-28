@@ -113,12 +113,22 @@ workflow PEDIATRIC {
             witht1: it.size() > 1 && it[1] != []
                 return [ it[0], it[1] ]
         }
+    ch_infant_t1 = ch_t1.witht1
+        .branch {
+            infant: it[0].age < 0.25 || it[0].age > 18
+                return it
+        }
 
     // ** Check if T2 is provided ** //
     ch_t2 = ch_inputs.t2
         .branch {
             witht2: it.size() > 1 && it[1] != []
                 return [ it[0], it[1] ]
+        }
+    ch_infant_t2 = ch_t2.witht2
+        .branch {
+            infant: it[0].age < 0.25 || it[0].age > 18
+                return it
         }
 
     // ** Loading synthstrip alternative weights if provided ** //
@@ -134,7 +144,7 @@ workflow PEDIATRIC {
 
         // ** Run T1 preprocessing ** //
         PREPROC_T1W (
-            ch_t1.witht1,
+            !params.tracking ? ch_infant_t1.infant : ch_t1.witht1,
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
@@ -147,7 +157,7 @@ workflow PEDIATRIC {
 
         // ** T2 Preprocessing ** //
         PREPROC_T2W (
-            ch_t2.witht2,
+            !params.tracking ? ch_infant_t2.infant : ch_t2.witht2,
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
@@ -196,28 +206,32 @@ workflow PEDIATRIC {
         // ** Assemble T1w/T2w channels using derivatives for < 0.25 years, ** //
         // ** otherwise, raw images.                                        ** //
         ch_t1_seg = ch_t1.witht1
-            .join(PREPROC_T1W.out.t1_final, remainder: true)
-            .branch{
-                mcribs: it[0].age < 2.5 || it[0].age > 18
-                    return [it[0], it[2]]
-                fs: true
-                    return [it[0], it[1]]
+            .branch {
+                fs: it[0].age >= 0.25 && it[0].age <= 18
+                    return it
             }
-        ch_t1_seg = ch_t1_seg.mcribs.mix(ch_t1_seg.fs)
+        ch_t1_seg_proc = PREPROC_T1W.out.t1_final
+            .branch {
+                mcribs: it[0].age < 0.25 || it[0].age > 18
+                    return it
+            }
+        ch_t1_seg = ch_t1_seg.fs.mix(ch_t1_seg_proc.mcribs)
 
         ch_t2_seg = ch_t2.witht2
-            .join(PREPROC_T2W.out.t1_final, remainder: true)
-            .branch{
-                mcribs: it[0].age < 2.5 || it[0].age > 18
-                    return [it[0], it[2]]
-                fs: true
-                    return [it[0], it[1]]
+            .branch {
+                fs: it[0].age >= 0.25 && it[0].age <= 18
+                    return it
             }
-        ch_t2_seg = ch_t2_seg.mcribs.mix(ch_t2_seg.fs)
+        ch_t2_seg_proc = PREPROC_T2W.out.t1_final
+            .branch {
+                mcribs: it[0].age < 0.25 || it[0].age > 18
+                    return it
+            }
+        ch_t2_seg = ch_t2_seg.fs.mix(ch_t2_seg_proc.mcribs)
 
         SEGMENTATION (
-            PREPROC_T1W.out.t1_final,
-            PREPROC_T2W.out.t1_final,
+            ch_t1_seg,
+            ch_t2_seg,
             reg_t1,
             ch_fs_license,
             ch_utils_folder
@@ -256,20 +270,13 @@ workflow PEDIATRIC {
         ch_versions = ch_versions.mix(PREPROC_DWI.out.versions)
         ch_multiqc_files_sub = ch_multiqc_files_sub.mix(PREPROC_DWI.out.mqc)
 
-        // ** Setting outputs ** //
-        ch_processed_dwi = PREPROC_DWI.out.dwi
-        ch_processed_bval = PREPROC_DWI.out.bval
-        ch_processed_bvec = PREPROC_DWI.out.bvec
-        ch_processed_b0 = PREPROC_DWI.out.b0
-        ch_processed_b0_mask = PREPROC_DWI.out.b0_mask
-
         //
         // MODULE: Run DTI_METRICS
         //
-        ch_reconst_dti = ch_processed_dwi
-            .join(ch_processed_bval)
-            .join(ch_processed_bvec)
-            .join(ch_processed_b0_mask)
+        ch_reconst_dti = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+            .join(PREPROC_DWI.out.b0_mask)
 
         RECONST_DTIMETRICS ( ch_reconst_dti )
         ch_versions = ch_versions.mix(RECONST_DTIMETRICS.out.versions.first())
@@ -286,10 +293,10 @@ workflow PEDIATRIC {
         //
         // MODULE: Run FRF
         //
-        ch_reconst_frf = ch_processed_dwi
-            .join(ch_processed_bval)
-            .join(ch_processed_bvec)
-            .join(ch_processed_b0_mask)
+        ch_reconst_frf = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+            .join(PREPROC_DWI.out.b0_mask)
             .map{ it + [[], [], []] }
 
         RECONST_FRF ( ch_reconst_frf )
@@ -311,10 +318,10 @@ workflow PEDIATRIC {
         //
         // MODULE: Run MEANFRF
         //
-        ch_reconst_fodf = ch_processed_dwi
-            .join(ch_processed_bval)
-            .join(ch_processed_bvec)
-            .join(ch_processed_b0_mask)
+        ch_reconst_fodf = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+            .join(PREPROC_DWI.out.b0_mask)
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
             .join(ch_frf)
@@ -332,19 +339,21 @@ workflow PEDIATRIC {
         //
         // MODULE: Run REGISTRATION
         //
-        ch_for_reg = ch_processed_b0
+        ch_for_reg = PREPROC_DWI.out.b0
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
             .join(PREPROC_T2W.out.t1_final, remainder: true)
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch{
-                infant: it[0].age < 2.5 || it[0].age > 18
+                infant: it[0].age < 0.5 || it[0].age > 18
                     return [it[0], it[4], it[1], it[3]]
-                child: it[0].age >= 2.5 && it[0].age <= 18
+                child_t1: (it[0].age >= 0.5 && it[0].age <= 18) && it[5] != null
                     return [it[0], it[5], it[1], it[2]]
+                child_t2: (it[0].age >= 0.5 && it[0].age <= 18) && it[4] != null
+                    return [it[0], it[4], it[1], it[3]]
             }
 
-        ch_anat_reg = ch_for_reg.infant.mix(ch_for_reg.child)
+        ch_anat_reg = ch_for_reg.infant.mix(ch_for_reg.child_t1).mix(ch_for_reg.child_t2)
 
         ANATTODWI( ch_anat_reg )
         ch_versions = ch_versions.mix(ANATTODWI.out.versions)
@@ -411,7 +420,8 @@ workflow PEDIATRIC {
 
         ch_tracking_masks = WARPPROBSEG.out.warped_image
             .join(RECONST_DTIMETRICS.out.fa)
-            .map{ [it[0], it[1][2], it[1][1], it[1][0], it[2]] }
+            .join(PREPROC_DWI.out.b0_mask)
+            .map{ [it[0], it[1][2], it[1][1], it[1][0], it[2], it[3]] }
 
         // ** Convert probability segmentation into binary mask ** //
         TRACKINGMASKS ( ch_tracking_masks )
@@ -534,9 +544,9 @@ workflow PEDIATRIC {
                 .join(ANATTODWI.out.affine)
             ch_peaks = RECONST_FODF.out.peaks
             ch_fodf = RECONST_FODF.out.fodf
-            ch_dwi_bval_bvec = ch_processed_dwi
-                .join(ch_processed_bval)
-                .join(ch_processed_bvec)
+            ch_dwi_bval_bvec = PREPROC_DWI.out.dwi
+                .join(PREPROC_DWI.out.bval)
+                .join(PREPROC_DWI.out.bvec)
             ch_anat = ANATTODWI.out.t1_warped
             ch_metrics = RECONST_DTIMETRICS.out.fa
                 .join(RECONST_DTIMETRICS.out.md)
@@ -727,13 +737,24 @@ workflow PEDIATRIC {
     if ( params.tracking ) {
         ch_anat_qc = ANATTODWI.out.t1_warped
     } else if ( params.segmentation ) {
+        // ** Fetching the T1w and T2w images for QC ** //
+        // ** If both are provided, use T1w, else, use T2w. ** //
         ch_anat_qc = Channel.empty()
-            .mix(SEGMENTATION.out.t2)
             .mix(SEGMENTATION.out.t1)
+            .mix(SEGMENTATION.out.t2)
             .groupTuple()
             .map { meta, files ->
-                return [meta] + files.flatten().findAll { it != null }
+                return [meta] + files.flatten().findAll { it != null }.sort { file ->
+                    if (file.name.contains("T2w")) return 0
+                    else return 1}
             }
+            .branch{
+                T1w: it.size() > 3 && it[0].age >= 0.25 && it[0].age <= 18
+                    return [it[0], it[2]]
+                T2w: true // Catch-all for only T2w.
+                    return [it[0], it[1]]
+            }
+        ch_anat_qc = ch_anat_qc.T1w.mix(ch_anat_qc.T2w)
     } else {
         ch_anat_qc = ch_anat
     }

@@ -6,7 +6,7 @@
 
 **nf-pediatric** is an end-to-end connectomics pipeline for pediatric (0-18y) dMRI and sMRI brain scans. It performs preprocessing, tractography, t1 reconstruction, cortical and subcortical segmentation, and connectomics.
 
-![nf-pediatric-schema](/assets/nf-pediatric-schema.svg)
+![nf-pediatric-schema](/assets/nf-pediatric-schema.png)
 
 ## Usage
 
@@ -17,7 +17,7 @@
 
 **Processing profiles**:
 
-1. `-profile segmentation`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/), [FastSurfer](https://deep-mi.org/research/fastsurfer/) or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) will be used to process the T1w/T2w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) or Desikan-Killiany (for infant) will be registered using surface-based methods in the native subject space. **A valid FreeSurfer license file is required for this profile. Specify the path to your license using `--fs_license`.**
+1. `-profile segmentation`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/), [FastSurfer](https://deep-mi.org/research/fastsurfer/) or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) will be used to process the T1w/T2w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) or Desikan-Killiany (for infant (< 3 months)) will be registered using surface-based methods in the native subject space. **A valid FreeSurfer license file is required for this profile. Specify the path to your license using `--fs_license`.**
 1. `-profile tracking`: This is the core profile behind `nf-pediatric`. By selecting it, DWI data will be preprocessed (denoised, corrected for distortion, normalized, resampled, ...). In parallel, T1w will be preprocessed (if `-profile segmentation` is not selected), registered into diffusion space, and segmented to extract tissue masks/maps. Preprocessed DWI data will be used to fit both the DTI and fODF models. As the final step, whole-brain tractography will be performed using both local tracking/particle filter tracking (PFT) and concatenated into a single tractogram.
 1. `-profile connectomics`: By selecting this profile, labels will be registered in diffusion space and used to segment the tractogram into individual connections. The segmented tractogram will then be filtered, using [COMMIT](https://github.com/daducci/COMMIT) to remove false positive streamlines. Following filtering, connectivity matrices will be computed for a variety of metrics and outputted as numpy arrays usable for further statistical analysis.
 
@@ -74,7 +74,7 @@ nextflow run scilus/nf-pediatric \
     --outdir <your_outdir>
 ```
 
-There is no need to `git clone` the pipeline prior to lauching it, **nextflow will do it for you!** Additional information on running multiple profiles can be found [here](/docs/usage.md).
+There is no need to `git clone` the pipeline prior to lauching it, **nextflow will do it for you!** Additional information on running multiple profiles can be found [here](/docs/usage.md). To run the pipeline for a subset or a single participant from your dataset, provide `--participant-label ["sub-XXXX", "..."]` at the command-line.
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).

@@ -21,6 +21,18 @@ Changes in 'topup_eddy/main.nf':
              // ** Create channel for EDDY ** //
              // Result : [ meta, dwi, bval, bvec, rev-dwi | [], rev-bval | [], rev-bvec | [], b0 | [], coeffs | [], movpar | [] ]
              //  Steps :
+@@ -104,6 +104,11 @@
+             ch_b0_mask = BETCROP_FSLBETCROP.out.mask
+         }
+ 
++        UTILS_EXTRACTB0 { ch_dwi }
++        ch_versions = ch_versions.mix(UTILS_EXTRACTB0.out.versions.first())
++
++        ch_b0_corrected = UTILS_EXTRACTB0.out.b0
++
+         ch_output_dwi = ch_dwi
+             .multiMap{ meta, dwi, bval, bvec ->
+                 dwi: [meta, dwi]
 
 'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test.snap' is unchanged
 'subworkflows/nf-neuro/topup_eddy/tests/tags.yml' is unchanged

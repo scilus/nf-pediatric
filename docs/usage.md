@@ -93,7 +93,7 @@ The typical command for running the pipeline is as follows:
 nextflow run scilus/nf-pediatric -r main --input <BIDS_directory> --outdir ./results -profile docker,tracking
 ```
 
-This will launch the pipeline with the `docker` configuration profile. There is only 2 parameters that need to be supplied at runtime: `--input`: for the path to your BIDS directory and `--outdir`: path to the output directory. See below for more information about profiles.
+This will launch the pipeline with the `docker` configuration profile. There is only 2 parameters that need to be supplied at runtime: `--input`: for the path to your BIDS directory and `--outdir`: path to the output directory. A single or a subset of participants can be specified using `--participant-label`; this will constrain the pipeline to run only on those specified subjects. See below for more information about profiles.
 
 Note that the pipeline will create the following files in your working directory:
 
@@ -184,9 +184,9 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `tracking`
   - Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
 - `segmentation`
-  - Run FreeSurfer or FastSurfer for T1w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or Desikan-Killiany atlas is mapped to the subject space.
+  - Run Recon-all-clinical (default for participants >= 3 months), FreeSurfer, FastSurfer, or M-CRIB-S (participants < 3 months) for T1w/T2w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or Desikan-Killiany atlas is mapped to the subject space.
 - `connectomics`
-  - Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
+  - Perform tractogram segmentation according to a cortical/subcortical parcellation, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
 
 ### `-resume`
 

@@ -2,7 +2,7 @@ process QC_METRICS {
     tag "$meta.id"
     label 'process_single'
 
-    container 'gagnonanthony/nf-pediatric-qc:1.0.0'
+    container 'scilus/scilus:latest'
 
     input:
     tuple val(meta), path(fa), path(md), path(nufo), path(rgb)
