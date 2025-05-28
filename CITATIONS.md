@@ -1,4 +1,4 @@
-# nf-neuro/nf-pediatric: Citations
+# scilus/nf-pediatric: Citations
 
 ## [nf-core](https://pubmed.ncbi.nlm.nih.gov/32055031/)
 

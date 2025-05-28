@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-neuro/nf-pediatric
+    scilus/nf-pediatric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-neuro/nf-pediatric
+    Github : https://github.com/scilus/nf-pediatric
 ----------------------------------------------------------------------------------------
 */
 
@@ -38,7 +38,7 @@ params.fasta = getGenomeAttribute('fasta')
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NFNEURO_NF-PEDIATRIC {
+workflow SCILUS_NF-PEDIATRIC {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -78,7 +78,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFNEURO_NF-PEDIATRIC (
+    SCILUS_NF-PEDIATRIC (
         PIPELINE_INITIALISATION.out.samplesheet
     )
     //
@@ -91,7 +91,7 @@ workflow {
         params.outdir,
         params.monochrome_logs,
         params.hook_url,
-        NFNEURO_NF-PEDIATRIC.out.multiqc_report
+        SCILUS_NF-PEDIATRIC.out.multiqc_report
     )
 }
 
