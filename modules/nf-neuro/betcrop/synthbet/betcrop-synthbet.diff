@@ -9,7 +9,7 @@ Changes in 'betcrop/synthbet/main.nf':
      label 'process_single'
  
 -    container "freesurfer/freesurfer:7.4.1"
-+    container "freesurfer/synthstrip:1.5"
++    container 'gagnonanthony/nf-pediatric-freesurfer:8.0.0'
 +    containerOptions {
 +        (workflow.containerEngine == 'docker') ? '--entrypoint ""': ''
 +    }

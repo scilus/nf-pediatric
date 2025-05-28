@@ -2,7 +2,7 @@ process BETCROP_SYNTHBET {
     tag "$meta.id"
     label 'process_single'
 
-    container "freesurfer/synthstrip:1.5"
+    container 'gagnonanthony/nf-pediatric-freesurfer:8.0.0'
     containerOptions {
         (workflow.containerEngine == 'docker') ? '--entrypoint ""': ''
     }
