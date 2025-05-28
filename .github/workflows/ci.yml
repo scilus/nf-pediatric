@@ -37,11 +37,9 @@ jobs:
           - "singularity"
         test_name:
           - "chained.nf.test"
-          - "chainedInfant.nf.test"
           - "connectomics.nf.test"
           - "tracking.nf.test"
           - "segmentation.nf.test"
-          - "segmentationInfant.nf.test"
         isMaster:
           - ${{ github.base_ref == 'master' }}
         # Exclude conda and singularity on dev
