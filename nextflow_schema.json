@@ -20,6 +20,13 @@
                     "help_text": "Path to the BIDS directory. This is where the pipeline will find the required raw data.",
                     "fa_icon": "fas fa-file-csv"
                 },
+                "participant_label": {
+                    "type": "array",
+                    "description": "List of participant IDs or a single participant ID.",
+                    "help_text": "List of participant IDs or a single participant ID. This will be used to select the specific participants to process.",
+                    "uniqueItems": true,
+                    "fa_icon": "fas id-badge"
+                },
                 "input_deriv": {
                     "type": "string",
                     "format": "directory-path",

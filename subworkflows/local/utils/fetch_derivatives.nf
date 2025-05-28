@@ -20,6 +20,7 @@ workflow FETCH_DERIVATIVES {
     //
     def participantsTsv = file("${input_deriv}/participants.tsv")
     def ageMap = readParticipantsTsv(participantsTsv)
+    def participant_ids = params.participant_label ?: []
 
     // Helper function to get age
     def getAge = { id ->
@@ -42,6 +43,9 @@ workflow FETCH_DERIVATIVES {
         .map{ meta, files ->
             return [meta] + files
         }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
+        }
 
     // ** Anatomical file ** //
     ch_anat = Channel.fromPath("${input_deriv}/sub-**/{ses-*/,}anat/*space-DWI_desc-preproc_{T1w,T2w}.nii.gz",
@@ -60,6 +64,9 @@ workflow FETCH_DERIVATIVES {
         .map{ metadata, types, files ->
             def sortedFiles = [types, files].transpose().sort { it[0] }.collect { it[1] }
             return [metadata] + sortedFiles
+        }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
     // ** Transformation files ** //
@@ -88,6 +95,9 @@ workflow FETCH_DERIVATIVES {
                 error "ERROR ~ Missing transformation files for ${meta.id}"
             }
         }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
+        }
 
     // ** Peaks file ** //
     ch_peaks = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-peaks*",
@@ -113,6 +123,9 @@ workflow FETCH_DERIVATIVES {
             def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
+        }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
     // ** DWI files (dwi, bval, bvec) ** //
@@ -144,6 +157,9 @@ workflow FETCH_DERIVATIVES {
                 error "ERROR ~ Missing dwi/bval/bvec files for ${meta.id}"
             }
         }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
+        }
 
     // ** Tractogram file ** //
     ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-*_tractogram.trk", checkIfExists: true)
@@ -155,6 +171,9 @@ workflow FETCH_DERIVATIVES {
             def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
+        }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
     // ** Metrics files ** //
@@ -172,6 +191,9 @@ workflow FETCH_DERIVATIVES {
         .groupTuple(by: 0)
         .map{ meta, files ->
             return [meta] + [files]
+        }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
     emit:

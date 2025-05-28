@@ -78,6 +78,7 @@ workflow PIPELINE_INITIALISATION {
     if ( input_bids ) {
         ch_bids_script = Channel.fromPath(bids_script)
         ch_input_bids = Channel.fromPath(input_bids)
+        participant_ids = params.participant_label ?: []
 
         UTILS_BIDSLAYOUT( ch_input_bids, ch_bids_script )
         ch_versions = ch_versions.mix(UTILS_BIDSLAYOUT.out.versions)
@@ -111,6 +112,9 @@ workflow PIPELINE_INITIALISATION {
                         item.rev_topup ? file(item.rev_topup) : []
                     ]
                 }
+            }
+            .filter { meta, t1, t2, dwi, bval, bvec, rev_dwi, rev_bval, rev_bvec, rev_topup ->
+                participant_ids.isEmpty() || meta.id in participant_ids
             }
     } else {
         ch_inputs = Channel.empty()
