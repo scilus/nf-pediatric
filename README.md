@@ -1,6 +1,14 @@
 # nf-pediatric
 
-[![nf-pediatric CI](https://github.com/scilus/nf-pediatric/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/scilus/nf-pediatric/actions/workflows/ci.yml) [![nf-core linting](https://github.com/scilus/nf-pediatric/actions/workflows/linting.yml/badge.svg?branch=main)](https://github.com/scilus/nf-pediatric/actions/workflows/linting.yml) [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com) [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.0-23aa62.svg)](https://www.nextflow.io/) [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/) [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
+# scilus/nf-pediatric
+
+[![GitHub Actions CI Status](https://github.com/scilus/nf-pediatric/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/scilus/nf-pediatric/actions/workflows/ci.yml)
+[![GitHub Actions Linting Status](https://github.com/scilus/nf-pediatric/actions/workflows/linting.yml/badge.svg?branch=main)](https://github.com/scilus/nf-pediatric/actions/workflows/linting.yml)
+[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.0-23aa62.svg)](https://www.nextflow.io/)
+[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
+[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
 ## Introduction
 
@@ -17,7 +25,7 @@
 
 **Processing profiles**:
 
-1. `-profile segmentation`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/), [FastSurfer](https://deep-mi.org/research/fastsurfer/) or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) will be used to process the T1w/T2w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) or Desikan-Killiany (for infant (< 3 months)) will be registered using surface-based methods in the native subject space. **A valid FreeSurfer license file is required for this profile. Specify the path to your license using `--fs_license`.**
+1. `-profile segmentation`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/), [Recon-all-clinical](https://surfer.nmr.mgh.harvard.edu/fswiki/recon-all-clinical), [FastSurfer](https://deep-mi.org/research/fastsurfer/) or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) will be used to process the T1w/T2w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) or Desikan-Killiany (for infant (< 3 months)) will be registered using surface-based methods in the native subject space. **A valid FreeSurfer license file is required for this profile. Specify the path to your license using `--fs_license`.**
 1. `-profile tracking`: This is the core profile behind `nf-pediatric`. By selecting it, DWI data will be preprocessed (denoised, corrected for distortion, normalized, resampled, ...). In parallel, T1w will be preprocessed (if `-profile segmentation` is not selected), registered into diffusion space, and segmented to extract tissue masks/maps. Preprocessed DWI data will be used to fit both the DTI and fODF models. As the final step, whole-brain tractography will be performed using both local tracking/particle filter tracking (PFT) and concatenated into a single tractogram.
 1. `-profile connectomics`: By selecting this profile, labels will be registered in diffusion space and used to segment the tractogram into individual connections. The segmented tractogram will then be filtered, using [COMMIT](https://github.com/daducci/COMMIT) to remove false positive streamlines. Following filtering, connectivity matrices will be computed for a variety of metrics and outputted as numpy arrays usable for further statistical analysis.
 
@@ -128,6 +136,8 @@ INFO     Downloading workflow files from GitHub
 ## Credits
 
 nf-pediatric was originally written by Anthony Gagnon.
+
+We thank the following people for their extensive assistance in the development of this pipeline:
 
 ## Contributions and Support
 

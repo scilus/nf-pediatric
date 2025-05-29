@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the nf-neuro/nf-pediatric pipeline
+// Subworkflow with functionality specific to the scilus/nf-pediatric pipeline
 //
 
 /*

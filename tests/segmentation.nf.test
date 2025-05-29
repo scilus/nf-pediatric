@@ -5,7 +5,7 @@ nextflow_pipeline {
     name "Test nf-pediatric profile segmentation"
     script "../main.nf"
 
-    test("Segmentation profile - fastsurfer - should run successfully") {
+    test("Segmentation profile - should run successfully") {
 
         when {
             params {

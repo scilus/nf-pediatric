@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-neuro/nf-pediatric
+    scilus/nf-pediatric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-neuro/nf-pediatric
+    Github : https://github.com/scilus/nf-pediatric
 ----------------------------------------------------------------------------------------
 */
 
@@ -80,6 +80,7 @@ workflow {
         params.outdir,
         params.monochrome_logs,
         params.hook_url,
+
         NF_PEDIATRIC.out.multiqc_report
     )
 }

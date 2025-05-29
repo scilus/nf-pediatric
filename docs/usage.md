@@ -5,31 +5,33 @@
 `nf-pediatric` is a neuro-imaging pipeline to process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. Here is a list of the available profiles:
 
 - `tracking`: Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
-- `segmentation`: Run [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/), [FastSurfer](https://deep-mi.org/research/fastsurfer/), or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) for T1w/T2w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or the Desikan-Killiany atlas (for infant) is mapped to the subject space.
+- `segmentation`: Run [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/), [Recon-all-clinical](https://surfer.nmr.mgh.harvard.edu/fswiki/recon-all-clinical), [FastSurfer](https://deep-mi.org/research/fastsurfer/), or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) for T1w/T2w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or the Desikan-Killiany atlas (for infant) is mapped to the subject space.
 - `connectomics`: Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
 
 ---
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [BIDS Input](#bids-input-directory)
-  - [Directory Structure](#directory-structure)
-  - [Required files](#required-files)
-- [Running nf-pediatric](#running-the-pipeline)
-  - [Updating nf-pediatric](#updating-the-pipeline)
-  - [Reproducibility](#reproducibility)
-- [Core Nextflow Parameters](#core-nextflow-arguments)
-  - [`-profile`](#-profile)
-  - [`-resume`](#-resume)
-  - [`-c`](#-c)
-- [Custom Configurations](#custom-configuration)
-  - [Resource Requests](#resource-requests)
-  - [Custom Containers](#custom-containers)
-  - [Custom Tool Arguments](#custom-tool-arguments)
-  - [nf-core/configs](#nf-coreconfigs)
-- [Running nf-pediatric in the background](#running-in-the-background)
-- [Nextflow Memory Requirements](#nextflow-memory-requirements)
+- [nf-pediatric: Usage](#nf-pediatric-usage)
+  - [Introduction](#introduction)
+  - [Table of Contents](#table-of-contents)
+  - [BIDS input directory](#bids-input-directory)
+    - [Directory Structure](#directory-structure)
+    - [Required Files](#required-files)
+  - [Running the pipeline](#running-the-pipeline)
+    - [Updating the pipeline](#updating-the-pipeline)
+    - [Reproducibility](#reproducibility)
+  - [Core Nextflow arguments](#core-nextflow-arguments)
+    - [`-profile`](#-profile)
+    - [`-resume`](#-resume)
+    - [`-c`](#-c)
+  - [Custom configuration](#custom-configuration)
+    - [Resource requests](#resource-requests)
+    - [Custom Containers](#custom-containers)
+    - [Custom Tool Arguments](#custom-tool-arguments)
+    - [nf-core/configs](#nf-coreconfigs)
+  - [Running in the background](#running-in-the-background)
+  - [Nextflow memory requirements](#nextflow-memory-requirements)
 
 ---
 
@@ -139,7 +141,7 @@ nextflow pull scilus/nf-pediatric
 
 It is a good idea to specify the pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [nf-pediatric releases page](https://github.com/scilus/nf-pediatric/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
+First, go to the [scilus/nf-pediatric releases page](https://github.com/scilus/nf-pediatric/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future. For example, at the bottom of the MultiQC reports.
 
