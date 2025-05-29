@@ -237,7 +237,7 @@ workflow PEDIATRIC {
             ch_utils_folder
         )
 
-        ch_versions = ch_versions.mix(SEGMENTATION.out.versions.first())
+        ch_versions = ch_versions.mix(SEGMENTATION.out.versions)
         // ch_multiqc_files = ch_multiqc_files.mix(FASTSURFER.out.zip.collect{it[1]})
 
     }

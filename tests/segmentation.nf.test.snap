@@ -1,8 +1,16 @@
 {
-    "Segmentation profile - fastsurfer - should run successfully": {
+    "Segmentation profile - should run successfully": {
         "content": [
             25,
             {
+                "BRAINNETOMECHILD": {
+                    "scilpy": 1.6,
+                    "freesurfer": "7.4.1"
+                },
+                "CONCATENATESTATS": {
+                    "python": "3.10.12",
+                    "pandas": "2.2.3"
+                },
                 "COREG": {
                     "ants": "2.4.3",
                     "mrtrix": "3.0.4",
@@ -10,6 +18,16 @@
                 },
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.0.2"
+                },
+                "FORMATLABELS": {
+                    "scilpy": 1.6,
+                    "freesurfer": "7.4.1"
+                },
+                "MCRIBS": {
+                    "mcribs": "2.1.0",
+                    "ants": "2.5.3-g98bf76d",
+                    "fsl": 6.0,
+                    "freesurfer": "7.1.1"
                 },
                 "RECONALLCLINICAL": {
                     "freesurfer": "8.0.0"
@@ -111,6 +129,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-05-28T15:47:05.98425"
+        "timestamp": "2025-05-28T21:22:02.39543"
     }
 }
