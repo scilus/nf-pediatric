@@ -28,8 +28,8 @@ workflow FETCH_DERIVATIVES {
         "https://github.com/scilus/nf-pediatric.git or open an issue!"
     }
 
-    def participantsTsv = file("${input_deriv}/participants.tsv")
-    def ageMap = readParticipantsTsv(participantsTsv)
+    participantsTsv = file("${input_deriv}/participants.tsv")
+    ageMap = readParticipantsTsv(participantsTsv)
     def participant_ids = params.participant_label ?: []
 
     // Helper function to get age
