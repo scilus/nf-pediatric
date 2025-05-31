@@ -318,7 +318,7 @@ def generateSidecarJson(outputDir) {
     }
     
     niftiFiles.each { niftiFile ->
-        println(niftiFile)
+
         // ** Extract sub ID and session ID for the file ** //
         def bidsInfo = extractBidsInfo(niftiFile)
         def jsonFile = niftiFile.toString().replace('.nii.gz', '.json')
@@ -339,7 +339,7 @@ def generateSidecarJson(outputDir) {
                     .findAll { f -> 
                         f.name.contains("to-dwi")
                     }
-                println("Found transforms: ${transforms}")
+
                 def transformsList = transforms instanceof List ? transforms : [transforms]
                 transformsList.each { f ->
                 if (f.exists()) {
