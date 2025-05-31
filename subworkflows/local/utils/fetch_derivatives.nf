@@ -1,11 +1,14 @@
 def readParticipantsTsv(file) {
     def participantMap = [:]
-    file.eachLine { line, lineNumber ->
-        if (lineNumber > 1) {  // Skip header
-            def (id, age) = line.split('\t')
-            participantMap[id] = age.toFloat()
+    
+    file.splitCsv(sep: '\t', header: true).each { row ->
+        // Access columns by name regardless of position
+        if ( ! row.age ) {
+            error "ERROR: Age is not entered correctly in the participants.tsv file. Please validate."
         }
+        participantMap[row.participant_id] = row.age.toFloat()
     }
+    
     return participantMap
 }
 
@@ -18,6 +21,13 @@ workflow FETCH_DERIVATIVES {
     //
     // Create channels from a derivatives folder (params.input_deriv)
     //
+    if ( ! file("${input_deriv}/participants.tsv").exists() ) {
+        error "ERROR: Your bids dataset does not contain a participants.tsv file. " +
+        "Please provide a participants.tsv file with a column indicating the participants' " +
+        "age. For any questions, please refer to the documentation at " +
+        "https://github.com/scilus/nf-pediatric.git or open an issue!"
+    }
+
     def participantsTsv = file("${input_deriv}/participants.tsv")
     def ageMap = readParticipantsTsv(participantsTsv)
     def participant_ids = params.participant_label ?: []
