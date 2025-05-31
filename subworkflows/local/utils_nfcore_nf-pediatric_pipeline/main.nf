@@ -288,7 +288,7 @@ Please refer to the pipeline documentation for details on how these derivatives 
 ## Citation
 If you use this dataset, please cite the nf-pediatric pipeline and any relevant software packages used in the analysis.
 """
-    
+
     file(readmeFile).text = readmeContent
 }
 
@@ -308,7 +308,7 @@ def extractBidsInfo(filePath) {
 //
 def generateSidecarJson(outputDir) {
     def niftiFiles = []
-    
+
     // Use Java NIO to recursively find files
     def outputPath = java.nio.file.Paths.get(outputDir)
     if (java.nio.file.Files.exists(outputPath)) {
@@ -316,7 +316,7 @@ def generateSidecarJson(outputDir) {
             .filter { path -> path.toString().endsWith('.nii.gz') }
             .forEach { path -> niftiFiles.add(path.toFile()) }
     }
-    
+
     niftiFiles.each { niftiFile ->
 
         // ** Extract sub ID and session ID for the file ** //
@@ -336,7 +336,7 @@ def generateSidecarJson(outputDir) {
 
             if (niftiFile.name.contains("space-DWI")) {
                 def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
-                    .findAll { f -> 
+                    .findAll { f ->
                         f.name.contains("to-dwi")
                     }
 
@@ -349,7 +349,7 @@ def generateSidecarJson(outputDir) {
             }
             if (niftiFile.name.contains("space-T2w")) {
                 def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
-                    .findAll { f -> 
+                    .findAll { f ->
                         f.name.contains("T1w_to-T2w")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
@@ -380,7 +380,7 @@ def generateSidecarJson(outputDir) {
 
             if (niftiFile.name.contains("space-DWI")) {
                 def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
-                    .findAll { f -> 
+                    .findAll { f ->
                         f.name.contains("to-dwi")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
@@ -392,7 +392,7 @@ def generateSidecarJson(outputDir) {
             }
             if (niftiFile.name.contains("space-T1w")) {
                 def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
-                    .findAll { f -> 
+                    .findAll { f ->
                         f.name.contains("T2w_to-T1w")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
@@ -412,7 +412,7 @@ def generateSidecarJson(outputDir) {
 
         if (niftiFile.name.contains("brain_mask.nii.gz")) {
             def links = []
-            
+
             if (niftiFile.name.contains("dwi")) {
                 def fileNames = file("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*dwi.nii.gz")
                 def fileList = fileNames instanceof List ? fileNames : [fileNames]
@@ -459,7 +459,7 @@ def generateSidecarJson(outputDir) {
 
             if (niftiFile.name.contains("space-DWI")) {
                 def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
-                    .findAll { f -> 
+                    .findAll { f ->
                         f.name.contains("to-dwi")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
@@ -500,7 +500,7 @@ def generateSidecarJson(outputDir) {
 
             if (niftiFile.name.contains("space-DWI")) {
                 def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
-                    .findAll { f -> 
+                    .findAll { f ->
                         f.name.contains("to-dwi")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
@@ -539,7 +539,7 @@ def generateSidecarJson(outputDir) {
             }
 
             def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
-                .findAll { f -> 
+                .findAll { f ->
                     f.name.contains("to-dwi")
                 }
             def transformsList = transforms instanceof List ? transforms : [transforms]
@@ -558,7 +558,7 @@ def generateSidecarJson(outputDir) {
 
         if (niftiFile.name.contains("preproc_dwi")) {
             def links = []
-            
+
             def fileNames = file("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*dwi.nii.gz")
             def fileList = fileNames instanceof List ? fileNames : [fileNames]
             fileList.each { f ->
@@ -578,7 +578,7 @@ def generateSidecarJson(outputDir) {
 
         if (patterns.any { pattern -> niftiFile.name.contains(pattern) }) {
             def links = []
-            
+
             def fileNames = file("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*dwi.nii.gz")
             def fileList = fileNames instanceof List ? fileNames : [fileNames]
             fileList.each { f ->

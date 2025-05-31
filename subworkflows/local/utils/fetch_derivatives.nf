@@ -1,6 +1,6 @@
 def readParticipantsTsv(file) {
     def participantMap = [:]
-    
+
     file.splitCsv(sep: '\t', header: true).each { row ->
         // Access columns by name regardless of position
         if ( ! row.age ) {
@@ -8,7 +8,7 @@ def readParticipantsTsv(file) {
         }
         participantMap[row.participant_id] = row.age.toFloat()
     }
-    
+
     return participantMap
 }
 
