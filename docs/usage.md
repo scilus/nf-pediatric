@@ -68,7 +68,7 @@ The most basic BIDS directory should have a similar structure (note that session
 ### Required Files
 
 - `dataset_description.json`: A JSON file describing the dataset.
-- `participants.tsv`: A TSV file listing the participants and their metadata. **`nf-pediatric` requires the participants' age to be supplied within this file, using `age` as the column name. Here is an example:**
+- `participants.tsv`: A TSV file listing the participants and their metadata. **`nf-pediatric` requires the participants' age to be supplied within this file, using `age` as the column name. If not available, the pipeline will return an error at runtime. Here is an example:**
 
 > [!IMPORTANT] The age can be specified using either post conceptual age (only recommended for infant data, users should indicate age in years as soon as possible) or years.
 
@@ -177,8 +177,6 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
 - `apptainer`
   - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
-- `no_symlink`
-  - By default, the pipeline used symlink to create the files in the output directory. By using this profile, files will be copied from the work directory into the specified output directory.
 - `slurm`
   - A generic configuration profile for use on SLURM managed clusters.
 - `arm`

@@ -34,7 +34,6 @@
 1. `-profile docker`: Each process will be run using docker containers (**Recommended**).
 1. `-profile apptainer` or `-profile singularity`: Each process will be run using apptainer/singularity images (**Recommended**).
 1. `-profile arm`: Made to be use on computers with an ARM architecture. **This is still experimental, depending on which profile you select, some containers might not be built for the ARM architecture. Feel free to open an issue if needed.**
-1. `-profile no_symlink`: By default, the results directory contains symlink to files within the `work` directory. By selecting this profile, results will be copied from the work directory without the use of symlinks.
 1. `-profile slurm`: If selected, the SLURM job scheduler will be used to dispatch jobs. **Please note that, by using this profile, you might have to adapt the config files to your specific computer nodes architecture.**
 
 **Using either `-profile docker` or `-profile apptainer` is highly recommended, as it controls the version of the software used and avoids the installation of all the required softwares.**

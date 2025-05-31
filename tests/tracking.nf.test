@@ -65,4 +65,42 @@ nextflow_pipeline {
             }
         }
     }
+
+    test("Tracking profile without participants.tsv file - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/noparticipantfile/"
+                params.outdir = "$outputDir"
+
+                params.tracking = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("ERROR: Your bids dataset does not contain a participants.tsv file. Please provide a participants.tsv file with a column indicating the participants' age. For any questions, please refer to the documentation at https://github.com/scilus/nf-pediatric.git or open an issue!")
+        }
+    }
+
+    test("Tracking profile with wrong participants.tsv file - should fail") {
+
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/wrongparticipantfile/"
+                params.outdir = "$outputDir"
+
+                params.tracking = true
+
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("ERROR: Age is not entered correctly in the participants.tsv file. Please validate.")
+        }
+    }
 }

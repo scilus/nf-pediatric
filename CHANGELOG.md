@@ -3,10 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - [2025-05-28]
+## [Unreleased] - [2025-05-31]
 
 ### `Added`
 
+- More clear logging for missing or not properly formatted `participants.tsv` file and test cases.
+- Derivatives now also contain a `README.txt` file with additional informations regarding the pipeline run.
+- Derivatives now have sidecar Json files indicating source data, transform file, and specific characteristics.
 - Methods for cortical/subcortical segmentation are now selected from a list using `--methods` parameter.
 - Recon-all-clinical is now the default segmentation tool for participants over 3 months.
 - New Dockerfile for the freesurfer 8.0.0 arm/amd build.
@@ -17,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Removed`
 
+- Profile `no_symlink` is no longer available. By default, files are copied and not symlinked. Possible to change that behavior with `--publish-dir-mode` parameters.
 - Profile `infant` is no longer available. Dynamic assessment is used now.
 - M-CRIB-S is no longer used for tracking mask generation. Dropped in favor of pre-generated masks from templates.
 
