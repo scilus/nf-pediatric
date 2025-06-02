@@ -347,9 +347,8 @@ def get_data(layout, nSub, dwis, t1s, t2s, fs, default_readout, clean):
         if 'age' in metadata.columns:
             age = metadata[metadata['participant_id'] == f'sub-{nSub}']['age'].values[0]
         else:
-            logging.warning("No age column found in participants.tsv file. "
-                            "Age will be empty.")
             age = ""
+
     except IndexError:
         logging.warning("No participants.tsv file found. Age will be empty.")
 
