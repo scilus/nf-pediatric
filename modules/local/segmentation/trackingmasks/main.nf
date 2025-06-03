@@ -8,7 +8,7 @@ process SEGMENTATION_TRACKINGMASKS {
         "scilus/scilus:latest"}"
 
     input:
-    tuple val(meta), path(wm), path(gm), path(csf), path(fa), path(mask)
+    tuple val(meta), path(wm), path(gm), path(csf)
 
     output:
     tuple val(meta), path("*wm_mask.nii.gz")        , emit: wm
@@ -30,19 +30,9 @@ process SEGMENTATION_TRACKINGMASKS {
     mrthreshold $gm ${prefix}__gm_mask.nii.gz -abs 0.4 -nthreads 1 -force
     mrthreshold $csf ${prefix}__csf_mask.nii.gz -abs 0.4 -nthreads 1 -force
 
-    # Thresholding the FA map.
-    scil_volume_math.py erosion $mask 6 ${prefix}__brain_mask_eroded.nii.gz -f
-    mrcalc $fa ${prefix}__brain_mask_eroded.nii.gz -mul ${prefix}__fa_eroded.nii.gz -nthreads 1 -force
-    mrthreshold ${prefix}__fa_eroded.nii.gz ${prefix}__fa_mask.nii.gz -abs $threshold -nthreads 1 -force
-    scil_volume_math.py union ${prefix}__wm_mask.nii.gz ${prefix}__fa_mask.nii.gz ${prefix}__wm_mask.nii.gz \
-        --data_type uint8 -f
-
-
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         mrtrix: \$(mrcalc -version 2>&1 | sed -n 's/== mrcalc \\([0-9.]\\+\\).*/\\1/p')
-        fsl: \$(flirt -version 2>&1 | sed -n 's/FLIRT version \\([0-9.]\\+\\)/\\1/p')
     END_VERSIONS
     """
 
@@ -56,9 +46,7 @@ process SEGMENTATION_TRACKINGMASKS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         mrtrix: \$(mrcalc -version 2>&1 | sed -n 's/== mrcalc \\([0-9.]\\+\\).*/\\1/p')
-        fsl: \$(flirt -version 2>&1 | sed -n 's/FLIRT version \\([0-9.]\\+\\)/\\1/p')
     END_VERSIONS
 
     function handle_code () {
@@ -68,9 +56,6 @@ process SEGMENTATION_TRACKINGMASKS {
     }
     trap 'handle_code' ERR
 
-    bet -h
     mrthreshold -h
-    mrcalc -h
-    scil_volume_math.py -h
     """
 }
