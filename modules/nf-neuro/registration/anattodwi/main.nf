@@ -24,7 +24,7 @@ process REGISTRATION_ANATTODWI {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     def run_qc = task.ext.run_qc ? task.ext.run_qc : false
-    def suffix = task.ext.suffix ?: ""
+    def suffix = t1.name.contains("T1w") ? "T1w" : "T2w"
     def suffix_qc = task.ext.suffix_qc ?: ""
 
     """
@@ -118,7 +118,7 @@ process REGISTRATION_ANATTODWI {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def suffix = task.ext.suffix ?: ""
+    def suffix = t1.name.contains("T1w") ? "T1w" : "T2w"
     def suffix_qc = task.ext.suffix_qc ?: ""
 
     """
