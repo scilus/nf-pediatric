@@ -4,7 +4,16 @@ Changes in component 'nf-neuro/registration/anattodwi'
 Changes in 'registration/anattodwi/main.nf':
 --- modules/nf-neuro/registration/anattodwi/main.nf
 +++ modules/nf-neuro/registration/anattodwi/main.nf
-@@ -10,12 +10,12 @@
+@@ -2,20 +2,18 @@
+     tag "$meta.id"
+     label 'process_single'
+ 
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
+-        'scilus/scilus:latest' }"
++    container 'scilus/scilus:latest'
+ 
+     input:
      tuple val(meta), path(t1), path(b0), path(metric)
  
      output:
@@ -23,7 +32,7 @@ Changes in 'registration/anattodwi/main.nf':
  
      when:
      task.ext.when == null || task.ext.when
-@@ -24,6 +24,8 @@
+@@ -24,6 +22,8 @@
      def prefix = task.ext.prefix ?: "${meta.id}"
  
      def run_qc = task.ext.run_qc ? task.ext.run_qc : false
@@ -32,7 +41,7 @@ Changes in 'registration/anattodwi/main.nf':
  
      """
      export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$task.cpus
-@@ -50,10 +52,10 @@
+@@ -50,16 +50,16 @@
          --convergence [50x25x10,1e-6,10] --shrink-factors 4x2x1\
          --smoothing-sigmas 3x2x1
  
@@ -47,7 +56,14 @@ Changes in 'registration/anattodwi/main.nf':
  
      ### ** QC ** ###
      if $run_qc;
-@@ -70,8 +72,9 @@
+     then
+         # Extract dimensions.
+-        dim=\$(mrinfo ${prefix}__t1_warped.nii.gz -size)
++        dim=\$(mrinfo ${prefix}__${suffix}_warped.nii.gz -size)
+         read sagittal_dim coronal_dim axial_dim <<< "\${dim}"
+ 
+         # Get middle slices.
+@@ -70,8 +70,9 @@
          # Set viz params.
          viz_params="--display_slice_number --display_lr --size 256 256"
  
@@ -58,7 +74,7 @@ Changes in 'registration/anattodwi/main.nf':
          do
              scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_coronal.png \
                  --slices \$coronal_mid --axis coronal \$viz_params
-@@ -80,11 +83,11 @@
+@@ -80,11 +81,11 @@
              scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_axial.png \
                  --slices \$axial_mid --axis axial \$viz_params
  
@@ -73,7 +89,7 @@ Changes in 'registration/anattodwi/main.nf':
              fi
  
              convert +append \${image}_coronal*.png \${image}_axial*.png \
-@@ -98,11 +101,11 @@
+@@ -98,11 +99,11 @@
  
          # Create GIF.
          convert -delay 10 -loop 0 -morph 10 \
@@ -88,7 +104,7 @@ Changes in 'registration/anattodwi/main.nf':
      fi
  
      cat <<-END_VERSIONS > versions.yml
-@@ -115,15 +118,17 @@
+@@ -115,15 +116,17 @@
  
      stub:
      def prefix = task.ext.prefix ?: "${meta.id}"

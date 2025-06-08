@@ -4,12 +4,14 @@ Changes in component 'nf-neuro/reconst/frf'
 Changes in 'reconst/frf/main.nf':
 --- modules/nf-neuro/reconst/frf/main.nf
 +++ modules/nf-neuro/reconst/frf/main.nf
-@@ -6,7 +6,7 @@
+@@ -4,9 +4,7 @@
+     tag "$meta.id"
+     label 'process_single'
  
-     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-         'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
 -        'scilus/scilus:dev' }"
-+        'scilus/scilus:latest' }"
++    container 'scilus/scilus:latest'
  
      input:
          tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(wm_mask), path(gm_mask), path(csf_mask)

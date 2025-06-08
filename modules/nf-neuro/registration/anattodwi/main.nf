@@ -2,9 +2,7 @@ process REGISTRATION_ANATTODWI {
     tag "$meta.id"
     label 'process_single'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
-        'scilus/scilus:latest' }"
+    container 'scilus/scilus:latest'
 
     input:
     tuple val(meta), path(t1), path(b0), path(metric)
@@ -61,7 +59,7 @@ process REGISTRATION_ANATTODWI {
     if $run_qc;
     then
         # Extract dimensions.
-        dim=\$(mrinfo ${prefix}__t1_warped.nii.gz -size)
+        dim=\$(mrinfo ${prefix}__${suffix}_warped.nii.gz -size)
         read sagittal_dim coronal_dim axial_dim <<< "\${dim}"
 
         # Get middle slices.

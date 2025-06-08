@@ -3,9 +3,7 @@ process TRACTOGRAM_MATH {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
-        'scilus/scilus:latest' }"
+    container 'scilus/scilus:latest'
 
     input:
         tuple val(meta), path(trks), path(reference)

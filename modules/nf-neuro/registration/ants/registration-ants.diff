@@ -4,7 +4,16 @@ Changes in component 'nf-neuro/registration/ants'
 Changes in 'registration/ants/main.nf':
 --- modules/nf-neuro/registration/ants/main.nf
 +++ modules/nf-neuro/registration/ants/main.nf
-@@ -11,7 +11,7 @@
+@@ -3,15 +3,13 @@
+     tag "$meta.id"
+     label 'process_medium'
+ 
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
+-        "scilus/scilus:latest"}"
++    container 'scilus/scilus:latest'
+ 
+     input:
      tuple val(meta), path(fixedimage), path(movingimage), path(mask) //** optional, input = [] **//
  
      output:
@@ -13,7 +22,7 @@ Changes in 'registration/ants/main.nf':
      tuple val(meta), path("*__output0Warp.nii.gz")                  , emit: warp, optional:true
      tuple val(meta), path("*__output1GenericAffine.mat")            , emit: affine
      tuple val(meta), path("*__output1InverseWarp.nii.gz")           , emit: inverse_warp, optional: true
-@@ -25,6 +25,7 @@
+@@ -25,6 +23,7 @@
      script:
      def args = task.ext.args ?: ''
      def prefix = task.ext.prefix ?: "${meta.id}"
@@ -21,7 +30,7 @@ Changes in 'registration/ants/main.nf':
      def suffix_qc = task.ext.suffix_qc ? "${task.ext.suffix_qc}" : ""
      def ants = task.ext.quick ? "antsRegistrationSyNQuick.sh " :  "antsRegistrationSyN.sh "
      def dimension = task.ext.dimension ? "-d " + task.ext.dimension : "-d 3"
-@@ -50,7 +51,7 @@
+@@ -50,7 +49,7 @@
  
      $ants $dimension -f $fixedimage -m $movingimage -o output -t $transform $args $seed
  
@@ -30,7 +39,7 @@ Changes in 'registration/ants/main.nf':
      mv output0GenericAffine.mat ${prefix}__output1GenericAffine.mat
  
      if [ $transform != "t" ] && [ $transform != "r" ] && [ $transform != "a" ];
-@@ -119,9 +120,10 @@
+@@ -119,9 +118,10 @@
      stub:
      def args = task.ext.args ?: ''
      def prefix = task.ext.prefix ?: "${meta.id}"

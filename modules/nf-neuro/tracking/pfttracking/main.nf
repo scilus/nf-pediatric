@@ -60,7 +60,8 @@ process TRACKING_PFTTRACKING {
     cp $wm tmp_anat_qc.nii.gz
 
     if [ "${pft_seeding_mask}" == "wm" ]; then
-        scil_volume_math.py convert $wm ${prefix}__pft_seeding_mask.nii.gz \
+        mrthreshold $wm ${prefix}__pft_seeding_mask.nii.gz -abs 0.4 -nthreads $task.cpus
+        scil_volume_math.py convert ${prefix}__pft_seeding_mask.nii.gz ${prefix}__pft_seeding_mask.nii.gz \
             --data_type uint8 -f
         scil_volume_math.py union ${prefix}__pft_seeding_mask.nii.gz \
             ${prefix}__interface.nii.gz ${prefix}__pft_seeding_mask.nii.gz \

@@ -3,9 +3,7 @@ process RECONST_DTIMETRICS {
     tag "$meta.id"
     label 'process_single'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://scil.usherbrooke.ca/containers/scilus_latest.sif':
-        'scilus/scilus:latest' }"
+    container 'scilus/scilus:latest'
 
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec), path(b0mask)
