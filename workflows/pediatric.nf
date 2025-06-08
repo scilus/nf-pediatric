@@ -359,7 +359,6 @@ workflow PEDIATRIC {
             .mix(ch_for_reg.infant_t2)
             .mix(ch_for_reg.child_t1)
             .mix(ch_for_reg.child_t2)
-            .view()
 
         ANATTODWI( ch_anat_reg )
         ch_versions = ch_versions.mix(ANATTODWI.out.versions)
@@ -419,7 +418,6 @@ workflow PEDIATRIC {
             .mix(ch_reg_template.cohort6)
             .mix(ch_reg_template.cohort12)
             .mix(ch_reg_template.cohort24)
-            .view()
 
         TEMPLATETODWI ( ch_reg_template )
         ch_versions = ch_versions.mix(TEMPLATETODWI.out.versions)
