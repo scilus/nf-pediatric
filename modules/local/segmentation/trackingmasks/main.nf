@@ -3,9 +3,7 @@ process SEGMENTATION_TRACKINGMASKS {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
-        "scilus/scilus:latest"}"
+    container 'scilus/scilus:latest'
 
     input:
     tuple val(meta), path(wm), path(gm), path(csf)
@@ -21,14 +19,12 @@ process SEGMENTATION_TRACKINGMASKS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    // ** Modular threshold setting depending on the participant's age ** //
-    def threshold = meta.age < 0.5 || meta.age > 18 ? 0.15 : 0.30
 
     """
     # Thresholding the maps.
-    mrthreshold $wm ${prefix}__wm_mask.nii.gz -abs 0.4 -nthreads 1 -force
-    mrthreshold $gm ${prefix}__gm_mask.nii.gz -abs 0.4 -nthreads 1 -force
-    mrthreshold $csf ${prefix}__csf_mask.nii.gz -abs 0.4 -nthreads 1 -force
+    mrthreshold $wm ${prefix}__wm_mask.nii.gz -abs 0.3 -nthreads 1 -force
+    mrthreshold $gm ${prefix}__gm_mask.nii.gz -abs 0.3 -nthreads 1 -force
+    mrthreshold $csf ${prefix}__csf_mask.nii.gz -abs 0.3 -nthreads 1 -force
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
