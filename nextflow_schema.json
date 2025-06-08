@@ -592,7 +592,7 @@
                     "type": "number",
                     "description": "Number of B-spline knots per voxel used in the DWI bias correction step.",
                     "fa_icon": "fas fa-brain",
-                    "default": 0.25,
+                    "default": 8,
                     "hidden": true
                 },
                 "dwi_bias_shrink_factor": {
