@@ -117,7 +117,8 @@
                     "preproc/n4": {
                         "branch": "main",
                         "git_sha": "18273a2cef9ffdaf7088e305b9c4ebf4dd439079",
-                        "installed_by": ["preproc_dwi", "preproc_t1"]
+                        "installed_by": ["preproc_dwi", "preproc_t1"],
+                        "patch": "modules/nf-neuro/preproc/n4/preproc-n4.diff"
                     },
                     "preproc/normalize": {
                         "branch": "main",
