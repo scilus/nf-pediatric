@@ -43,7 +43,10 @@ process QC_TRACKING {
     scil_volume_pairwise_comparison.py $wm ${prefix}__tractogram_mask.nii.gz \
         ${prefix}__stats.json
 
-    jq -r '.dice_voxels["1"][0]' ${prefix}__stats.json > ${prefix}__dice.txt
+    awk '
+    in_block && /\\[/ { getline; gsub(/[[:space:]]/, "", \$0); print \$0; exit }
+    /"dice_voxels"/ { in_block=1 }
+    ' "${prefix}__stats.json" > "${prefix}__dice.txt"
 
     # Fetch middle axial slice.
     size=\$(mrinfo ${prefix}__TDI.nii.gz -size)
