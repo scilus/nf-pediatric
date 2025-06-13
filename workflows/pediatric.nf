@@ -39,7 +39,7 @@ include { RECONST_FODF                      } from '../modules/nf-neuro/reconst/
 
 // ** Registration ** //
 include { REGISTRATION_ANATTODWI as ANATTODWI } from '../modules/nf-neuro/registration/anattodwi/main'
-include { REGISTRATION_ANTS as TEMPLATETODWI   } from '../modules/nf-neuro/registration/ants/main'
+include { REGISTRATION_TEMPLATETODWI as TEMPLATETODWI   } from '../modules/local/registration/templatetodwi/main'
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as WARPPROBSEG     } from '../modules/nf-neuro/registration/antsapplytransforms/main'
 
 // ** Anatomical Segmentation ** //
@@ -368,13 +368,14 @@ workflow PEDIATRIC {
         // ** For infant data (<2.5y), register the template in diff space using warped anat **
         // ** Matching the available anat with the same modality in the template **
         //
-        ch_tpl0 = TEMPLATES.out.UNCBCPInfant0.map{ it[1..2] }
-        ch_tpl3 = TEMPLATES.out.UNCBCPInfant3.map{ it[1..2] }
-        ch_tpl6 = TEMPLATES.out.UNCBCPInfant6.map{ it[1..2] }
-        ch_tpl12 = TEMPLATES.out.UNCBCPInfant12.map{ it[1..2] }
-        ch_tpl24 = TEMPLATES.out.UNCBCPInfant24.map{ it[1..2] }
+        ch_tpl0 = TEMPLATES.out.UNCBCPInfant0.map{ it[1..3] }
+        ch_tpl3 = TEMPLATES.out.UNCBCPInfant3.map{ it[1..3] }
+        ch_tpl6 = TEMPLATES.out.UNCBCPInfant6.map{ it[1..3] }
+        ch_tpl12 = TEMPLATES.out.UNCBCPInfant12.map{ it[1..3] }
+        ch_tpl24 = TEMPLATES.out.UNCBCPInfant24.map{ it[1..3] }
 
         ch_reg_template = ANATTODWI.out.t1_warped
+            .join(RECONST_DTIMETRICS.out.fa)
             .combine(ch_tpl0)
             .combine(ch_tpl3)
             .combine(ch_tpl6)
@@ -383,33 +384,33 @@ workflow PEDIATRIC {
             .branch{
                 cohort0: it[0].age < 0.125 || it[0].age > 18 // age < 1.5 months
                     if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[2], []]
+                        return [it[0], it[1], it[2], it[3], it[5]]
                     } else {
-                        return [it[0], it[1], it[3], []]
+                        return [it[0], it[1], it[2], it[4], it[5]]
                     }
                 cohort3: it[0].age >= 0.125 && it[0].age < 0.375 // 1.5 months <= age < 4.5 months
                     if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[4], []]
+                        return [it[0], it[1], it[2], it[6], it[8]]
                     } else {
-                        return [it[0], it[1], it[5], []]
+                        return [it[0], it[1], it[2], it[7], it[8]]
                     }
                 cohort6: it[0].age >= 0.375 && it[0].age < 0.75 // 4.5 months <= age < 9 months
                     if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[6], []]
+                        return [it[0], it[1], it[2], it[9], it[11]]
                     } else {
-                        return [it[0], it[1], it[7], []]
+                        return [it[0], it[1], it[2], it[10], it[11]]
                     }
                 cohort12: it[0].age >= 0.75 && it[0].age < 1.5 // 9 months <= age < 18 months
                     if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[8], []]
+                        return [it[0], it[1], it[2], it[12], it[14]]
                     } else {
-                        return [it[0], it[1], it[9], []]
+                        return [it[0], it[1], it[2], it[13], it[14]]
                     }
                 cohort24: it[0].age >= 1.5 && it[0].age < 2.5 // 18 months <= age < 30 months
                     if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[10], []]
+                        return [it[0], it[1], it[2], it[15], it[17]]
                     } else {
-                        return [it[0], it[1], it[11], []]
+                        return [it[0], it[1], it[2], it[16], it[17]]
                     }
             }
 
@@ -464,6 +465,9 @@ workflow PEDIATRIC {
 
         ch_tracking_masks = WARPPROBSEG.out.warped_image
             .map{ [it[0], it[1][2], it[1][1], it[1][0]] }
+            .join(RECONST_DTIMETRICS.out.fa)
+            .join(RECONST_DTIMETRICS.out.md)
+            .join(PREPROC_DWI.out.b0_mask)
 
         // ** Convert probability segmentation into binary mask ** //
         TRACKINGMASKS ( ch_tracking_masks )
