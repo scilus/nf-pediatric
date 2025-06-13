@@ -3,12 +3,10 @@ process SEGMENTATION_TRACKINGMASKS {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
-        "scilus/scilus:latest"}"
+    container 'scilus/scilus:latest'
 
     input:
-    tuple val(meta), path(wm), path(gm), path(csf), path(fa), path(mask)
+    tuple val(meta), path(wm), path(gm), path(csf), path(fa), path(md), path(mask)
 
     output:
     tuple val(meta), path("*wm_mask.nii.gz")        , emit: wm
@@ -21,28 +19,43 @@ process SEGMENTATION_TRACKINGMASKS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    // ** Modular threshold setting depending on the participant's age ** //
-    def threshold = meta.age < 0.5 || meta.age > 18 ? 0.15 : 0.30
 
     """
     # Thresholding the maps.
-    mrthreshold $wm ${prefix}__wm_mask.nii.gz -abs 0.4 -nthreads 1 -force
-    mrthreshold $gm ${prefix}__gm_mask.nii.gz -abs 0.4 -nthreads 1 -force
-    mrthreshold $csf ${prefix}__csf_mask.nii.gz -abs 0.4 -nthreads 1 -force
+    mrthreshold $wm ${prefix}__wm_mask.nii.gz -abs 0.3 -nthreads 1 -force
+    mrthreshold $gm ${prefix}__gm_mask.nii.gz -abs 0.3 -nthreads 1 -force
+    mrthreshold $csf ${prefix}__csf_mask.nii.gz -abs 0.3 -nthreads 1 -force
 
-    # Thresholding the FA map.
-    scil_volume_math.py erosion $mask 6 ${prefix}__brain_mask_eroded.nii.gz -f
-    mrcalc $fa ${prefix}__brain_mask_eroded.nii.gz -mul ${prefix}__fa_eroded.nii.gz -nthreads 1 -force
-    mrthreshold ${prefix}__fa_eroded.nii.gz ${prefix}__fa_mask.nii.gz -abs $threshold -nthreads 1 -force
-    scil_volume_math.py union ${prefix}__wm_mask.nii.gz ${prefix}__fa_mask.nii.gz ${prefix}__wm_mask.nii.gz \
-        --data_type uint8 -f
+    # Erode the brain mask.
+    scil_volume_math.py erosion $mask 8 ${prefix}__mask_eroded.nii.gz --data_type uint8
+    mrthreshold $fa ${prefix}__fa_thresholded.nii.gz -abs 0.2 -nthreads 1
+    mrcalc ${prefix}__fa_thresholded.nii.gz ${prefix}__mask_eroded.nii.gz \
+        -mult ${prefix}__fa_thresholded.nii.gz -nthreads 1 -force -datatype uint8
+    scil_volume_math.py dilation ${prefix}__fa_thresholded.nii.gz 1 \
+        ${prefix}__fa_thresholded.nii.gz --data_type uint8 -f
 
+    # Identify the ventricles by thresholding the md. (more robust than the CSF map)
+    mrthreshold $md ventricles.nii.gz -abs 0.002 -nthreads 1 -force
+    mrcalc ventricles.nii.gz ${prefix}__mask_eroded.nii.gz \
+        -mult ventricles.nii.gz -nthreads 1 -force -datatype uint8
+
+    # Union between FA thresholded and WM mask from template.
+    scil_volume_math.py union ${prefix}__fa_thresholded.nii.gz \
+        ${prefix}__wm_mask.nii.gz \
+        ${prefix}__wm_mask.nii.gz \
+        --data_type uint8 \
+        -f
+
+    # Remove the ventricles to prevent tracking through them.
+    scil_volume_math.py difference ${prefix}__wm_mask.nii.gz \
+        ventricles.nii.gz \
+        ${prefix}__wm_mask.nii.gz \
+        --data_type uint8 \
+        -f
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         mrtrix: \$(mrcalc -version 2>&1 | sed -n 's/== mrcalc \\([0-9.]\\+\\).*/\\1/p')
-        fsl: \$(flirt -version 2>&1 | sed -n 's/FLIRT version \\([0-9.]\\+\\)/\\1/p')
     END_VERSIONS
     """
 
@@ -56,9 +69,7 @@ process SEGMENTATION_TRACKINGMASKS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         mrtrix: \$(mrcalc -version 2>&1 | sed -n 's/== mrcalc \\([0-9.]\\+\\).*/\\1/p')
-        fsl: \$(flirt -version 2>&1 | sed -n 's/FLIRT version \\([0-9.]\\+\\)/\\1/p')
     END_VERSIONS
 
     function handle_code () {
@@ -68,9 +79,6 @@ process SEGMENTATION_TRACKINGMASKS {
     }
     trap 'handle_code' ERR
 
-    bet -h
     mrthreshold -h
-    mrcalc -h
-    scil_volume_math.py -h
     """
 }

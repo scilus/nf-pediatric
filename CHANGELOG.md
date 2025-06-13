@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - [2025-05-31]
+## [Unreleased] - [2025-06-13]
 
 ### `Added`
 
@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dynamic assessment of subject's age from the `participants.tsv` file in the BIDS input directory.
 - Output folder will now contain the `dataset_description.json` file for compliance with BIDS derivatives.
 - Add a copy of the `participants.tsv` file in the output directory.
+
+### `Changed`
+
+- Template used to generate probability tissue maps is now the UNC-BCP 4D atlas which contains the cerebellum. UNCInfant is no longer used.
 
 ### `Removed`
 

@@ -4,14 +4,14 @@ Changes in component 'nf-neuro/registration/antsapplytransforms'
 Changes in 'registration/antsapplytransforms/main.nf':
 --- modules/nf-neuro/registration/antsapplytransforms/main.nf
 +++ modules/nf-neuro/registration/antsapplytransforms/main.nf
-@@ -3,62 +3,132 @@
+@@ -2,63 +2,131 @@
+     tag "$meta.id"
      label 'process_low'
  
-     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
 -        'scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
 -        'scilus/scilus:2.0.2' }"
-+        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
-+        "scilus/scilus:latest"}"
++    container 'scilus/scilus:latest'
  
      input:
      tuple val(meta), path(image), path(reference), path(warp), path(affine)

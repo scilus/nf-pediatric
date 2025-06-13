@@ -39,7 +39,7 @@ include { RECONST_FODF                      } from '../modules/nf-neuro/reconst/
 
 // ** Registration ** //
 include { REGISTRATION_ANATTODWI as ANATTODWI } from '../modules/nf-neuro/registration/anattodwi/main'
-include { REGISTRATION_ANATTODWI as TEMPLATETODWI   } from '../modules/nf-neuro/registration/anattodwi/main'
+include { REGISTRATION_TEMPLATETODWI as TEMPLATETODWI   } from '../modules/local/registration/templatetodwi/main'
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as WARPPROBSEG     } from '../modules/nf-neuro/registration/antsapplytransforms/main'
 
 // ** Anatomical Segmentation ** //
@@ -190,7 +190,7 @@ workflow PEDIATRIC {
     }
 
     //
-    // SUBWORKFLOW: Run FastSurfer or FreeSurfer T1 reconstruction with BrainnetomeChild atlas
+    // SUBWORKFLOW: Run FastSurfer, recon-all, or recon-all-clinical T1 reconstruction with BrainnetomeChild atlas
     // Additionally, if infant data is provided, run MCRIBS segmentation.
     //
     if ( params.segmentation ) {
@@ -345,45 +345,80 @@ workflow PEDIATRIC {
             .join(PREPROC_T2W.out.t1_final, remainder: true)
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch{
-                infant: it[0].age < 0.5 || it[0].age > 18
+                infant_t2: it[0].age < 0.5 || it[0].age > 18 && it[4] != null
                     return [it[0], it[4], it[1], it[3]]
+                infant_t1: it[0].age < 0.5 || it[0].age > 18 && it[5] != null
+                    return [it[0], it[5], it[1], it[2]]
                 child_t1: (it[0].age >= 0.5 && it[0].age <= 18) && it[5] != null
                     return [it[0], it[5], it[1], it[2]]
                 child_t2: (it[0].age >= 0.5 && it[0].age <= 18) && it[4] != null
                     return [it[0], it[4], it[1], it[3]]
             }
 
-        ch_anat_reg = ch_for_reg.infant.mix(ch_for_reg.child_t1).mix(ch_for_reg.child_t2)
+        ch_anat_reg = ch_for_reg.infant_t1
+            .mix(ch_for_reg.infant_t2)
+            .mix(ch_for_reg.child_t1)
+            .mix(ch_for_reg.child_t2)
 
         ANATTODWI( ch_anat_reg )
         ch_versions = ch_versions.mix(ANATTODWI.out.versions)
         ch_multiqc_files_sub = ch_multiqc_files_sub.mix(ANATTODWI.out.mqc)
 
         //
-        // ** For infant data (<2.5y), register the template in diff space. **
+        // ** For infant data (<2.5y), register the template in diff space using warped anat **
+        // ** Matching the available anat with the same modality in the template **
         //
-        ch_tpl1 = TEMPLATES.out.UNCInfant1.map{ it[1] }
-        ch_tpl2 = TEMPLATES.out.UNCInfant2.map{ it[1] }
-        ch_tpl3 = TEMPLATES.out.UNCInfant3.map{ it[1] }
+        ch_tpl0 = TEMPLATES.out.UNCBCPInfant0.map{ it[1..3] }
+        ch_tpl3 = TEMPLATES.out.UNCBCPInfant3.map{ it[1..3] }
+        ch_tpl6 = TEMPLATES.out.UNCBCPInfant6.map{ it[1..3] }
+        ch_tpl12 = TEMPLATES.out.UNCBCPInfant12.map{ it[1..3] }
+        ch_tpl24 = TEMPLATES.out.UNCBCPInfant24.map{ it[1..3] }
 
         ch_reg_template = ANATTODWI.out.t1_warped
             .join(RECONST_DTIMETRICS.out.fa)
-            .join(RECONST_DTIMETRICS.out.md)
-            .combine(ch_tpl1)
-            .combine(ch_tpl2)
+            .combine(ch_tpl0)
             .combine(ch_tpl3)
+            .combine(ch_tpl6)
+            .combine(ch_tpl12)
+            .combine(ch_tpl24)
             .branch{
-                cohort1: it[0].age < 0.5 || it[0].age > 18
-                    return [it[0], it[4], it[1], it[3]]
-                cohort2: it[0].age >= 0.5 && it[0].age < 1.5
-                    return [it[0], it[5], it[1], it[2]]
-                cohort3: it[0].age >= 1.5 && it[0].age < 2.5
-                    return [it[0], it[6], it[1], it[2]]
+                cohort0: it[0].age < 0.125 || it[0].age > 18 // age < 1.5 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[3], it[5]]
+                    } else {
+                        return [it[0], it[1], it[2], it[4], it[5]]
+                    }
+                cohort3: it[0].age >= 0.125 && it[0].age < 0.375 // 1.5 months <= age < 4.5 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[6], it[8]]
+                    } else {
+                        return [it[0], it[1], it[2], it[7], it[8]]
+                    }
+                cohort6: it[0].age >= 0.375 && it[0].age < 0.75 // 4.5 months <= age < 9 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[9], it[11]]
+                    } else {
+                        return [it[0], it[1], it[2], it[10], it[11]]
+                    }
+                cohort12: it[0].age >= 0.75 && it[0].age < 1.5 // 9 months <= age < 18 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[12], it[14]]
+                    } else {
+                        return [it[0], it[1], it[2], it[13], it[14]]
+                    }
+                cohort24: it[0].age >= 1.5 && it[0].age < 2.5 // 18 months <= age < 30 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[15], it[17]]
+                    } else {
+                        return [it[0], it[1], it[2], it[16], it[17]]
+                    }
             }
 
-        ch_reg_template = ch_reg_template.cohort1
-            .mix(ch_reg_template.cohort2)
+        ch_reg_template = ch_reg_template.cohort0
             .mix(ch_reg_template.cohort3)
+            .mix(ch_reg_template.cohort6)
+            .mix(ch_reg_template.cohort12)
+            .mix(ch_reg_template.cohort24)
 
         TEMPLATETODWI ( ch_reg_template )
         ch_versions = ch_versions.mix(TEMPLATETODWI.out.versions)
@@ -392,36 +427,47 @@ workflow PEDIATRIC {
         //
         // ** Then, transform the probseg maps for WM, GM, and CSF. **
         //
-        ch_probseg1 = TEMPLATES.out.UNCInfant1.map{ [it[2..4]] }
-        ch_probseg2 = TEMPLATES.out.UNCInfant2.map{ [it[2..4]] }
-        ch_probseg3 = TEMPLATES.out.UNCInfant3.map{ [it[2..4]] }
+        ch_probseg0 = TEMPLATES.out.UNCBCPInfant0.map{ [it[3..5]] }
+        ch_probseg3 = TEMPLATES.out.UNCBCPInfant3.map{ [it[3..5]] }
+        ch_probseg6 = TEMPLATES.out.UNCBCPInfant6.map{ [it[3..5]] }
+        ch_probseg12 = TEMPLATES.out.UNCBCPInfant12.map{ [it[3..5]] }
+        ch_probseg24 = TEMPLATES.out.UNCBCPInfant24.map{ [it[3..5]] }
 
         ch_warp_probseg = ANATTODWI.out.t1_warped
             .join(TEMPLATETODWI.out.warp)
             .join(TEMPLATETODWI.out.affine)
-            .combine(ch_probseg1)
-            .combine(ch_probseg2)
+            .combine(ch_probseg0)
             .combine(ch_probseg3)
+            .combine(ch_probseg6)
+            .combine(ch_probseg12)
+            .combine(ch_probseg24)
             .branch{
-                cohort1: it[0].age < 0.5 || it[0].age > 18
+                cohort0: it[0].age < 0.125 || it[0].age > 18 // age < 1.5 months
                     return [it[0], it[4], it[1], it[2], it[3]]
-                cohort2: it[0].age >= 0.5 && it[0].age < 1.5
+                cohort3: it[0].age >= 0.125 && it[0].age < 0.375 // 1.5 months <= age < 4.5 months
                     return [it[0], it[5], it[1], it[2], it[3]]
-                cohort3: it[0].age >= 1.5 && it[0].age < 2.5
+                cohort6: it[0].age >= 0.375 && it[0].age < 0.75 // 4.5 months <= age < 9 months
                     return [it[0], it[6], it[1], it[2], it[3]]
+                cohort12: it[0].age >= 0.75 && it[0].age < 1.5 // 9 months <= age < 18 months
+                    return [it[0], it[7], it[1], it[2], it[3]]
+                cohort24: it[0].age >= 1.5 && it[0].age < 2.5 // 18 months <= age < 30 months
+                    return [it[0], it[8], it[1], it[2], it[3]]
             }
-        ch_warp_probseg = ch_warp_probseg.cohort1
-            .mix(ch_warp_probseg.cohort2)
+        ch_warp_probseg = ch_warp_probseg.cohort0
             .mix(ch_warp_probseg.cohort3)
+            .mix(ch_warp_probseg.cohort6)
+            .mix(ch_warp_probseg.cohort12)
+            .mix(ch_warp_probseg.cohort24)
 
         // ** Transform atlas probability map into subject's space ** //
         WARPPROBSEG ( ch_warp_probseg )
         ch_versions = ch_versions.mix(WARPPROBSEG.out.versions)
 
         ch_tracking_masks = WARPPROBSEG.out.warped_image
+            .map{ [it[0], it[1][2], it[1][1], it[1][0]] }
             .join(RECONST_DTIMETRICS.out.fa)
+            .join(RECONST_DTIMETRICS.out.md)
             .join(PREPROC_DWI.out.b0_mask)
-            .map{ [it[0], it[1][2], it[1][1], it[1][0], it[2], it[3]] }
 
         // ** Convert probability segmentation into binary mask ** //
         TRACKINGMASKS ( ch_tracking_masks )
