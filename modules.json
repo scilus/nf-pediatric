@@ -56,7 +56,8 @@
                     "connectivity/afdfixel": {
                         "branch": "main",
                         "git_sha": "e649a5f9ca0ebff4efdb7959c8a686eb203f4bf9",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/connectivity/afdfixel/connectivity-afdfixel.diff"
                     },
                     "connectivity/decompose": {
                         "branch": "main",
@@ -66,7 +67,8 @@
                     "connectivity/visualize": {
                         "branch": "main",
                         "git_sha": "1ad734ec15ca7c36d67160b68f17b5f944691487",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/connectivity/visualize/connectivity-visualize.diff"
                     },
                     "denoising/mppca": {
                         "branch": "main",
