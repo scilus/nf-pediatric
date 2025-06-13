@@ -51,7 +51,7 @@ workflow TEMPLATES {
     ch_cohort6 = createCohortChannel(ch_template_folder, "6M")
     ch_cohort12 = createCohortChannel(ch_template_folder, "12M")
     ch_cohort24 = createCohortChannel(ch_template_folder, "24M")
-    
+
 
     emit:
     UNCBCPInfant0              = ch_cohort0     // channel: [ meta, T1w, T2w, wm, gm, csf ]
