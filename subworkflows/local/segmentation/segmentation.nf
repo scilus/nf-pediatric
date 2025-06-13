@@ -135,4 +135,3 @@ workflow SEGMENTATION {
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }
-

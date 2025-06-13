@@ -92,4 +92,3 @@ workflow QC {
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }
-
