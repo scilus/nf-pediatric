@@ -125,4 +125,3 @@ workflow OUTPUT_TEMPLATE_SPACE {
     emit:
         versions = ch_versions                     // channel: [ versions.yml ]
 }
-

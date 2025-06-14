@@ -216,4 +216,3 @@ workflow FETCH_DERIVATIVES {
     trk             = ch_trk
     metrics         = ch_metrics
 }
-
