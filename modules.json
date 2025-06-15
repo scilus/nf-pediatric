@@ -232,7 +232,7 @@
                     },
                     "preproc_dwi": {
                         "branch": "main",
-                        "git_sha": "e7ecaddd48ac16eebc751f076530e2de74efafd9",
+                        "git_sha": "78abc7f1c556b222829f3067e73ae2738162b4fc",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/preproc_dwi/preproc_dwi.diff"
                     },

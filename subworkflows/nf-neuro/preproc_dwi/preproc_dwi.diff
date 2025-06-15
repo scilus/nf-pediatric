@@ -192,8 +192,8 @@ Changes in 'preproc_dwi/main.nf':
          dwi_n4              = ch_dwi_n4                     // channel: [ val(meta), dwi-after-n4 ]
          mqc                 = ch_multiqc_files              // channel: [ val(meta), mqc ]
 
-'subworkflows/nf-neuro/preproc_dwi/tests/main.nf.test.snap' is unchanged
-'subworkflows/nf-neuro/preproc_dwi/tests/tags.yml' is unchanged
-'subworkflows/nf-neuro/preproc_dwi/tests/nextflow.config' is unchanged
 'subworkflows/nf-neuro/preproc_dwi/tests/main.nf.test' is unchanged
+'subworkflows/nf-neuro/preproc_dwi/tests/nextflow.config' is unchanged
+'subworkflows/nf-neuro/preproc_dwi/tests/tags.yml' is unchanged
+'subworkflows/nf-neuro/preproc_dwi/tests/main.nf.test.snap' is unchanged
 ************************************************************
