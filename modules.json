@@ -170,7 +170,7 @@
                     },
                     "registration/antsapplytransforms": {
                         "branch": "main",
-                        "git_sha": "89c21b369e7e48b4ae1549e68c7977d405cf837b",
+                        "git_sha": "33ceec0aee17c292548d325cf645b3e4a77537b8",
                         "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/antsapplytransforms/registration-antsapplytransforms.diff"
                     },
