@@ -36,6 +36,11 @@
         "https://github.com/scilus/nf-neuro.git": {
             "modules": {
                 "nf-neuro": {
+                    "betcrop/antsbet": {
+                        "branch": "main",
+                        "git_sha": "c6e31e3d425759d7f17f8f2d5149ede2b4a231ac",
+                        "installed_by": ["modules"]
+                    },
                     "betcrop/cropvolume": {
                         "branch": "main",
                         "git_sha": "9f12f6cb6245d1cb633ccdc11593524a5befc0dc",
