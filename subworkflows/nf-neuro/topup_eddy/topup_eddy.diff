@@ -34,8 +34,8 @@ Changes in 'topup_eddy/main.nf':
              .multiMap{ meta, dwi, bval, bvec ->
                  dwi: [meta, dwi]
 
-'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test.snap' is unchanged
-'subworkflows/nf-neuro/topup_eddy/tests/tags.yml' is unchanged
-'subworkflows/nf-neuro/topup_eddy/tests/nextflow.config' is unchanged
 'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/nextflow.config' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/tags.yml' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test.snap' is unchanged
 ************************************************************
