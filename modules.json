@@ -44,7 +44,7 @@
                     "betcrop/fslbetcrop": {
                         "branch": "main",
                         "git_sha": "d51aa53995a45009b8e077cfc41c7335a87ae1db",
-                        "installed_by": ["preproc_dwi", "topup_eddy"],
+                        "installed_by": ["output_template_space", "preproc_dwi", "topup_eddy"],
                         "patch": "modules/nf-neuro/betcrop/fslbetcrop/betcrop-fslbetcrop.diff"
                     },
                     "betcrop/synthbet": {
@@ -83,7 +83,7 @@
                     "image/applymask": {
                         "branch": "main",
                         "git_sha": "384d444c001f9cfb23432cb03d94fa03cdc2c24a",
-                        "installed_by": ["preproc_dwi"]
+                        "installed_by": ["output_template_space", "preproc_dwi"]
                     },
                     "image/convert": {
                         "branch": "main",
@@ -165,19 +165,19 @@
                     "registration/ants": {
                         "branch": "main",
                         "git_sha": "8b713829fd96b11f3cee6c6f4d502848cbc392d1",
-                        "installed_by": ["modules"],
+                        "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/ants/registration-ants.diff"
                     },
                     "registration/antsapplytransforms": {
                         "branch": "main",
                         "git_sha": "89c21b369e7e48b4ae1549e68c7977d405cf837b",
-                        "installed_by": ["modules"],
+                        "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/antsapplytransforms/registration-antsapplytransforms.diff"
                     },
                     "registration/tractogram": {
                         "branch": "main",
                         "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["modules"],
+                        "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/tractogram/registration-tractogram.diff"
                     },
                     "segmentation/fastseg": {
@@ -214,11 +214,21 @@
                         "git_sha": "baf69f6658ab3874264d2081aeb5a2388f861bb2",
                         "installed_by": ["preproc_dwi", "topup_eddy"],
                         "patch": "modules/nf-neuro/utils/extractb0/utils-extractb0.diff"
+                    },
+                    "utils/templateflow": {
+                        "branch": "main",
+                        "git_sha": "33ceec0aee17c292548d325cf645b3e4a77537b8",
+                        "installed_by": ["output_template_space"]
                     }
                 }
             },
             "subworkflows": {
                 "nf-neuro": {
+                    "output_template_space": {
+                        "branch": "main",
+                        "git_sha": "33ceec0aee17c292548d325cf645b3e4a77537b8",
+                        "installed_by": ["subworkflows"]
+                    },
                     "preproc_dwi": {
                         "branch": "main",
                         "git_sha": "e7ecaddd48ac16eebc751f076530e2de74efafd9",
