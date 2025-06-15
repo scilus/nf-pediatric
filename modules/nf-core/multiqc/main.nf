@@ -1,8 +1,8 @@
 process MULTIQC {
-    tag "$meta.id"
     label 'process_single'
 
-    container "${ 'multiqc/multiqc:v1.28' }"
+    conda "${moduleDir}/environment.yml"
+    container "multiqc/multiqc:v1.29"
 
     input:
     tuple val(meta), path(qc_images)
@@ -51,16 +51,16 @@ process MULTIQC {
         done
     fi
 
-    multiqc . -v \
-        --force \
-        $args \
-        $config \
-        --filename ${prefix}.html \
-        $extra_config \
-        $logo \
-        $replace \
-        $samples \
-        --comment "This report contains QC images for subject ${prefix}"
+    multiqc \\
+        --force \\
+        $args \\
+        $config \\
+        --filename ${prefix}.html \\
+        $extra_config \\
+        $logo \\
+        $replace \\
+        $samples \\
+        .
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
