@@ -49,7 +49,7 @@
                     },
                     "betcrop/synthbet": {
                         "branch": "main",
-                        "git_sha": "dca20370d97a69c6a91c80843f417206212568e6",
+                        "git_sha": "57eb8378c0b28baf4e11aca7c1eaca6b6ec8798c",
                         "installed_by": ["preproc_dwi", "preproc_t1"],
                         "patch": "modules/nf-neuro/betcrop/synthbet/betcrop-synthbet.diff"
                     },

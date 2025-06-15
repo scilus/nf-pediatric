@@ -1,5 +1,4 @@
 Changes in component 'nf-neuro/betcrop/synthbet'
-'modules/nf-neuro/betcrop/synthbet/environment.yml' is unchanged
 'modules/nf-neuro/betcrop/synthbet/meta.yml' is unchanged
 Changes in 'betcrop/synthbet/main.nf':
 --- modules/nf-neuro/betcrop/synthbet/main.nf
@@ -35,8 +34,9 @@ Changes in 'betcrop/synthbet/main.nf':
  
      function handle_code () {
 
-'modules/nf-neuro/betcrop/synthbet/tests/main.nf.test.snap' is unchanged
-'modules/nf-neuro/betcrop/synthbet/tests/tags.yml' is unchanged
-'modules/nf-neuro/betcrop/synthbet/tests/nextflow.config' is unchanged
+'modules/nf-neuro/betcrop/synthbet/environment.yml' is unchanged
 'modules/nf-neuro/betcrop/synthbet/tests/main.nf.test' is unchanged
+'modules/nf-neuro/betcrop/synthbet/tests/nextflow.config' is unchanged
+'modules/nf-neuro/betcrop/synthbet/tests/tags.yml' is unchanged
+'modules/nf-neuro/betcrop/synthbet/tests/main.nf.test.snap' is unchanged
 ************************************************************
