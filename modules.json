@@ -131,7 +131,7 @@
                     },
                     "preproc/topup": {
                         "branch": "main",
-                        "git_sha": "0228ee7a52df57340e4373fc278c71f4662c388a",
+                        "git_sha": "d67d081e3109b8e2276c2e5629b896cfd34b581a",
                         "installed_by": ["topup_eddy"],
                         "patch": "modules/nf-neuro/preproc/topup/preproc-topup.diff"
                     },
