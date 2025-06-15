@@ -43,7 +43,7 @@
                     },
                     "betcrop/fslbetcrop": {
                         "branch": "main",
-                        "git_sha": "d51aa53995a45009b8e077cfc41c7335a87ae1db",
+                        "git_sha": "ab9e5404528545237c63c5d887b5a54079529b01",
                         "installed_by": ["output_template_space", "preproc_dwi", "topup_eddy"],
                         "patch": "modules/nf-neuro/betcrop/fslbetcrop/betcrop-fslbetcrop.diff"
                     },
