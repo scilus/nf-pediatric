@@ -83,6 +83,8 @@ workflow PEDIATRIC {
     ch_versions = Channel.empty()
     ch_multiqc_files_sub = Channel.empty()
     ch_nifti_files_to_transform = Channel.empty()
+    ch_mask_files_to_transform = Channel.empty()
+    ch_labels_files_to_transform = Channel.empty()
     ch_trk_files_to_transform = Channel.empty()
 
     // ** BIDS dataset_description file. ** //
@@ -462,6 +464,8 @@ workflow PEDIATRIC {
         // ** Transform atlas probability map into subject's space ** //
         WARPPROBSEG ( ch_warp_probseg )
         ch_versions = ch_versions.mix(WARPPROBSEG.out.versions)
+        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+            .mix(WARPPROBSEG.out.warped_image.map{ [it[0], it[1][2], it[1][1], it[1][0]] })
 
         ch_tracking_masks = WARPPROBSEG.out.warped_image
             .map{ [it[0], it[1][2], it[1][1], it[1][0]] }
@@ -472,6 +476,10 @@ workflow PEDIATRIC {
         // ** Convert probability segmentation into binary mask ** //
         TRACKINGMASKS ( ch_tracking_masks )
         ch_versions = ch_versions.mix(TRACKINGMASKS.out.versions)
+        ch_mask_files_to_transform = ch_mask_files_to_transform
+            .mix(TRACKINGMASKS.out.wm)
+            .mix(TRACKINGMASKS.out.gm)
+            .mix(TRACKINGMASKS.out.csf)
 
         // ** FAST segmentation for child data. ** //
         ch_fastseg = ANATTODWI.out.t1_warped
@@ -483,6 +491,14 @@ workflow PEDIATRIC {
         FASTSEG ( ch_fastseg.child )
         ch_versions = ch_versions.mix(FASTSEG.out.versions)
         // ch_multiqc_files = ch_multiqc_files.mix(ANATOMICAL_SEGMENTATION.out.zip.collect{it[1]})
+        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+            .mix(FASTSEG.out.wm_map)
+            .mix(FASTSEG.out.gm_map)
+            .mix(FASTSEG.out.csf_map)
+        ch_mask_files_to_transform = ch_mask_files_to_transform
+            .mix(FASTSEG.out.wm_mask)
+            .mix(FASTSEG.out.gm_mask)
+            .mix(FASTSEG.out.csf_mask)
 
         // ** Setting channel for tracking ** //
         ch_pft_tracking = RECONST_FODF.out.fodf
@@ -644,7 +660,7 @@ workflow PEDIATRIC {
         TRANSFORM_LABELS ( ch_antsapply )
         ch_versions = ch_versions.mix(TRANSFORM_LABELS.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(TRANSFORM_LABELS.out.zip.collect{it[1]})
-        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+        ch_labels_files_to_transform = ch_labels_files_to_transform
             .mix(TRANSFORM_LABELS.out.warped_image)
 
         //
@@ -740,6 +756,20 @@ workflow PEDIATRIC {
                 return tuple(meta, images)
             }
 
+        ch_mask_files_to_transform = ch_mask_files_to_transform
+            .groupTuple()
+            .map { meta, nii_list ->
+                def images = nii_list.flatten().findAll { it != null }
+                return tuple(meta, images)
+            }
+
+        ch_labels_files_to_transform = ch_labels_files_to_transform
+            .groupTuple()
+            .map { meta, nii_list ->
+                def images = nii_list.flatten().findAll { it != null }
+                return tuple(meta, images)
+            }
+
         ch_trk_files_to_transform = ch_trk_files_to_transform
             .groupTuple()
             .map{ meta, trk_list ->
@@ -750,6 +780,8 @@ workflow PEDIATRIC {
         OUTPUT_TEMPLATE_SPACE(
             ANATTODWI.out.t1_warped,
             ch_nifti_files_to_transform,
+            ch_mask_files_to_transform,
+            ch_labels_files_to_transform
             ch_trk_files_to_transform
         )
         ch_versions = ch_versions.mix(OUTPUT_TEMPLATE_SPACE.out.versions)
