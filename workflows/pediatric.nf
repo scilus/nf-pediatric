@@ -152,6 +152,8 @@ workflow PEDIATRIC {
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
+            Channel.empty(),
+            Channel.empty(),
             ch_synthstrip_weights
         )
         ch_versions = ch_versions.mix(PREPROC_T1W.out.versions.first())
@@ -160,6 +162,8 @@ workflow PEDIATRIC {
         // ** T2 Preprocessing ** //
         PREPROC_T2W (
             !params.tracking ? ch_infant_t2.infant : ch_t2.witht2,
+            Channel.empty(),
+            Channel.empty(),
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
@@ -781,7 +785,7 @@ workflow PEDIATRIC {
             ANATTODWI.out.t1_warped,
             ch_nifti_files_to_transform,
             ch_mask_files_to_transform,
-            ch_labels_files_to_transform
+            ch_labels_files_to_transform,
             ch_trk_files_to_transform
         )
         ch_versions = ch_versions.mix(OUTPUT_TEMPLATE_SPACE.out.versions)
