@@ -4,8 +4,8 @@ include { PREPROC_N4 } from '../../../modules/nf-neuro/preproc/n4/main'
 include { IMAGE_RESAMPLE } from '../../../modules/nf-neuro/image/resample/main'
 include { BETCROP_ANTSBET } from '../../../modules/nf-neuro/betcrop/antsbet/main'
 include { BETCROP_SYNTHBET} from '../../../modules/nf-neuro/betcrop/synthbet/main'
-include { IMAGE_CROPVOLUME as IMAGE_CROPVOLUME_T1 } from '../../../modules/nf-neuro/image/cropvolume/main'
-include { IMAGE_CROPVOLUME as IMAGE_CROPVOLUME_MASK } from '../../../modules/nf-neuro/image/cropvolume/main'
+include { IMAGE_CROPVOLUME as CROPVOLUME } from '../../../modules/nf-neuro/image/cropvolume/main'
+include { IMAGE_CROPVOLUME as CROPVOLUME_MASK } from '../../../modules/nf-neuro/image/cropvolume/main'
 
 params.preproc_t1_run_synthbet = false
 
@@ -85,8 +85,8 @@ workflow PREPROC_T1 {
             image_resample = image_N4
         }
 
-        if ( params.preproc_run_synthbet ) {
-            // ** SYNTHBET ** //
+        if ( params.preproc_run_synthstrip ) {
+            // ** SYNTHSTRIP ** //
             // Result : [ meta, image, weights | [] ]
             //  Steps :
             //   - join [ meta, image, weights | null ]
@@ -138,18 +138,18 @@ workflow PREPROC_T1 {
             ch_crop = image_bet
                 .map{ it + [[]] }
 
-            IMAGE_CROPVOLUME_T1 ( ch_crop )
-            ch_versions = ch_versions.mix(IMAGE_CROPVOLUME_T1.out.versions.first())
-            image_crop = IMAGE_CROPVOLUME_T1.out.image
-            bbox = IMAGE_CROPVOLUME_T1.out.bounding_box
+            CROPVOLUME ( ch_crop )
+            ch_versions = ch_versions.mix(CROPVOLUME.out.versions.first())
+            image_crop = CROPVOLUME.out.image
+            bbox = CROPVOLUME.out.bounding_box
 
             // ** Crop mask ** //
             ch_crop_mask = mask_bet
-                .join(IMAGE_CROPVOLUME_T1.out.bounding_box)
+                .join(CROPVOLUME.out.bounding_box)
 
-            IMAGE_CROPVOLUME_MASK ( ch_crop_mask )
-            ch_versions = ch_versions.mix(IMAGE_CROPVOLUME_MASK.out.versions.first())
-            mask_crop = IMAGE_CROPVOLUME_MASK.out.image
+            CROPVOLUME_MASK ( ch_crop_mask )
+            ch_versions = ch_versions.mix(CROPVOLUME_MASK.out.versions.first())
+            mask_crop = CROPVOLUME_MASK.out.image
         }
         else {
             image_crop = image_bet
