@@ -193,4 +193,3 @@ workflow OUTPUT_TEMPLATE_SPACE {
         ch_warped_trk_files         = REGISTRATION_TRACTOGRAM.out.warped_tractogram     // channel: [ val(meta), [ warped_tractogram ] ]
         versions                    = ch_versions                                       // channel: [ versions.yml ]
 }
-
