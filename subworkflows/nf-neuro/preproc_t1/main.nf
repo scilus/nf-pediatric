@@ -2,6 +2,7 @@
 include { DENOISING_NLMEANS } from '../../../modules/nf-neuro/denoising/nlmeans/main'
 include { PREPROC_N4 } from '../../../modules/nf-neuro/preproc/n4/main'
 include { IMAGE_RESAMPLE } from '../../../modules/nf-neuro/image/resample/main'
+include { BETCROP_ANTSBET } from '../../../modules/nf-neuro/betcrop/antsbet/main'
 include { BETCROP_SYNTHBET} from '../../../modules/nf-neuro/betcrop/synthbet/main'
 include { IMAGE_CROPVOLUME as CROPVOLUME } from '../../../modules/nf-neuro/image/cropvolume/main'
 include { IMAGE_CROPVOLUME as CROPVOLUME_MASK } from '../../../modules/nf-neuro/image/cropvolume/main'
@@ -12,12 +13,14 @@ workflow PREPROC_T1 {
 
     take:
         ch_image            // channel: [ val(meta), image ]
-        ch_template         // channel: [ val(meta), template ]                              , optional
-        ch_probability_map  // channel: [ val(meta), probability-map, mask, initial-affine ] , optional
-        ch_mask_nlmeans     // channel: [ val(meta), mask ]                                  , optional
-        ch_ref_n4           // channel: [ val(meta), ref, ref-mask ]                         , optional
-        ch_ref_resample     // channel: [ val(meta), ref ]                                   , optional
-        ch_weights          // channel: [ weights ]                                          , optional
+        ch_template         // channel: [ val(meta), template ]         , optional
+        ch_probability_map  // channel: [ val(meta), probability-map ]  , optional
+        ch_template_mask    // channel: [ val(meta), mask ]             , optional
+        ch_initial_affine   // channel: [ val(meta), init_affine ]      , optional
+        ch_mask_nlmeans     // channel: [ val(meta), mask ]             , optional
+        ch_ref_n4           // channel: [ val(meta), ref, ref-mask ]    , optional
+        ch_ref_resample     // channel: [ val(meta), ref ]              , optional
+        ch_weights          // channel: [ weights ]                    , optional
 
     main:
 
@@ -35,7 +38,7 @@ workflow PREPROC_T1 {
                 .map{ it[0..1] + [it[2] ?: []] }
 
             DENOISING_NLMEANS ( ch_nlmeans )
-            ch_versions = ch_versions.mix(DENOISING_NLMEANS.out.versions)
+            ch_versions = ch_versions.mix(DENOISING_NLMEANS.out.versions.first())
             image_nlmeans = DENOISING_NLMEANS.out.image
         }
         else {
@@ -57,7 +60,7 @@ workflow PREPROC_T1 {
                 .map{ it[0..2] + [it[3] ?: it[4] ?: []] }
 
             PREPROC_N4 ( ch_N4 )
-            ch_versions = ch_versions.mix(PREPROC_N4.out.versions)
+            ch_versions = ch_versions.mix(PREPROC_N4.out.versions.first())
             image_N4 = PREPROC_N4.out.image
         }
         else {
@@ -75,7 +78,7 @@ workflow PREPROC_T1 {
                 .map{ it[0..1] + [it[2] ?: []] }
 
             IMAGE_RESAMPLE ( ch_resampling )
-            ch_versions = ch_versions.mix(IMAGE_RESAMPLE.out.versions)
+            ch_versions = ch_versions.mix(IMAGE_RESAMPLE.out.versions.first())
             image_resample = IMAGE_RESAMPLE.out.image
         }
         else {
@@ -83,7 +86,7 @@ workflow PREPROC_T1 {
         }
 
         if ( params.preproc_run_synthstrip ) {
-            // ** SYNTHBET ** //
+            // ** SYNTHSTRIP ** //
             // Result : [ meta, image, weights | [] ]
             //  Steps :
             //   - join [ meta, image, weights | null ]
@@ -99,12 +102,33 @@ workflow PREPROC_T1 {
             ch_bet = ch_bet.infant.mix(ch_bet.child)
 
             BETCROP_SYNTHBET ( ch_bet )
-            ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions)
+            ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions.first())
 
             // ** Setting BET output ** //
             image_bet = BETCROP_SYNTHBET.out.bet_image
             mask_bet = BETCROP_SYNTHBET.out.brain_mask
-        } else {
+        }
+        else if ( params.preproc_run_ants_bet ) {
+            // ** ANTSBET ** //
+            // The template and probability maps are mandatory if running antsBET. Since the
+            // error message from nextflow when they are absent is either non-informative or
+            // missing, we use ifEmpty to provide a more informative one.
+            ch_bet = image_resample
+                .join(ch_template.ifEmpty{ error("ANTS BET needs a template") })
+                .join(ch_probability_map.ifEmpty{ error("ANTS BET needs a tissue probability map") })
+                .join(ch_template_mask, remainder: true)
+                .map{ it[0..3] + [it[4] ?: []] }
+                .join(ch_initial_affine, remainder: true)
+                .map{ it[0..4] + [it[5] ?: []] }
+
+            BETCROP_ANTSBET ( ch_bet )
+            ch_versions = ch_versions.mix(BETCROP_ANTSBET.out.versions.first())
+
+            // ** Setting BET output ** //
+            image_bet = BETCROP_ANTSBET.out.t1
+            mask_bet = BETCROP_ANTSBET.out.mask
+        }
+        else {
             image_bet = image_resample
             mask_bet = Channel.empty()
         }
@@ -115,7 +139,7 @@ workflow PREPROC_T1 {
                 .map{ it + [[]] }
 
             CROPVOLUME ( ch_crop )
-            ch_versions = ch_versions.mix(CROPVOLUME.out.versions)
+            ch_versions = ch_versions.mix(CROPVOLUME.out.versions.first())
             image_crop = CROPVOLUME.out.image
             bbox = CROPVOLUME.out.bounding_box
 
@@ -124,7 +148,7 @@ workflow PREPROC_T1 {
                 .join(CROPVOLUME.out.bounding_box)
 
             CROPVOLUME_MASK ( ch_crop_mask )
-            ch_versions = ch_versions.mix(CROPVOLUME_MASK.out.versions)
+            ch_versions = ch_versions.mix(CROPVOLUME_MASK.out.versions.first())
             mask_crop = CROPVOLUME_MASK.out.image
         }
         else {

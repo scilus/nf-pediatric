@@ -1,0 +1,17 @@
+Changes in component 'nf-neuro/output_template_space'
+'subworkflows/nf-neuro/output_template_space/meta.yml' is unchanged
+Changes in 'output_template_space/main.nf':
+--- subworkflows/nf-neuro/output_template_space/main.nf
++++ subworkflows/nf-neuro/output_template_space/main.nf
+@@ -193,4 +193,3 @@
+         ch_warped_trk_files         = REGISTRATION_TRACTOGRAM.out.warped_tractogram     // channel: [ val(meta), [ warped_tractogram ] ]
+         versions                    = ch_versions                                       // channel: [ versions.yml ]
+ }
+-
+
+'subworkflows/nf-neuro/output_template_space/tests/main.nf.test.snap' is unchanged
+'subworkflows/nf-neuro/output_template_space/tests/tags.yml' is unchanged
+'subworkflows/nf-neuro/output_template_space/tests/nextflow.config' is unchanged
+'subworkflows/nf-neuro/output_template_space/tests/main.nf.test' is unchanged
+'subworkflows/nf-neuro/output_template_space/tests/nextflow_local.config' is unchanged
+************************************************************

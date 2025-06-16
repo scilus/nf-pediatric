@@ -236,6 +236,14 @@
                     "default": true,
                     "hidden": false
                 },
+                "preproc_run_ants_bet": {
+                    "type": "boolean",
+                    "description": "Run AntsBet for brain extraction",
+                    "fa_icon": "fas fa-brain",
+                    "help_text": "Run antsBrainExtraction for brain extraction. This step will require the use of a template image and is much slower than the default synthstrip method.",
+                    "default": false,
+                    "hidden": false
+                },
                 "preproc_run_crop": {
                     "type": "boolean",
                     "description": "Run cropping on the anatomical images.",

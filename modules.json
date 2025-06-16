@@ -7,7 +7,7 @@
                 "nf-core": {
                     "multiqc": {
                         "branch": "master",
-                        "git_sha": "cf17ca47590cc578dfb47db1c2a44ef86f89976d",
+                        "git_sha": "e594e9dfaffa7572afc11bafc634984fd4cbd87b",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-core/multiqc/multiqc.diff"
                     }
@@ -17,12 +17,12 @@
                 "nf-core": {
                     "utils_nextflow_pipeline": {
                         "branch": "master",
-                        "git_sha": "c2b22d85f30a706a3073387f30380704fcae013b",
+                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
                         "installed_by": ["subworkflows"]
                     },
                     "utils_nfcore_pipeline": {
                         "branch": "master",
-                        "git_sha": "51ae5406a030d4da1e49e4dab49756844fdd6c7a",
+                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
                         "installed_by": ["subworkflows"]
                     },
                     "utils_nfschema_plugin": {
@@ -36,6 +36,11 @@
         "https://github.com/scilus/nf-neuro.git": {
             "modules": {
                 "nf-neuro": {
+                    "betcrop/antsbet": {
+                        "branch": "main",
+                        "git_sha": "c6e31e3d425759d7f17f8f2d5149ede2b4a231ac",
+                        "installed_by": ["preproc_t1"]
+                    },
                     "betcrop/cropvolume": {
                         "branch": "main",
                         "git_sha": "9f12f6cb6245d1cb633ccdc11593524a5befc0dc",
@@ -43,13 +48,13 @@
                     },
                     "betcrop/fslbetcrop": {
                         "branch": "main",
-                        "git_sha": "d51aa53995a45009b8e077cfc41c7335a87ae1db",
-                        "installed_by": ["preproc_dwi", "topup_eddy"],
+                        "git_sha": "ab9e5404528545237c63c5d887b5a54079529b01",
+                        "installed_by": ["output_template_space", "preproc_dwi", "topup_eddy"],
                         "patch": "modules/nf-neuro/betcrop/fslbetcrop/betcrop-fslbetcrop.diff"
                     },
                     "betcrop/synthbet": {
                         "branch": "main",
-                        "git_sha": "dca20370d97a69c6a91c80843f417206212568e6",
+                        "git_sha": "57eb8378c0b28baf4e11aca7c1eaca6b6ec8798c",
                         "installed_by": ["preproc_dwi", "preproc_t1"],
                         "patch": "modules/nf-neuro/betcrop/synthbet/betcrop-synthbet.diff"
                     },
@@ -72,18 +77,19 @@
                     },
                     "denoising/mppca": {
                         "branch": "main",
-                        "git_sha": "2e222d18c89e5547a6bf5c0c74673baeb63bcd52",
-                        "installed_by": ["preproc_dwi"]
+                        "git_sha": "ab9e5404528545237c63c5d887b5a54079529b01",
+                        "installed_by": ["preproc_dwi"],
+                        "patch": "modules/nf-neuro/denoising/mppca/denoising-mppca.diff"
                     },
                     "denoising/nlmeans": {
                         "branch": "main",
-                        "git_sha": "261a7e0606645eeaf863e401cb9fc99c130b3a19",
+                        "git_sha": "d514d1193937657d3eb3ab39bfe757215a348b01",
                         "installed_by": ["preproc_t1"]
                     },
                     "image/applymask": {
                         "branch": "main",
                         "git_sha": "384d444c001f9cfb23432cb03d94fa03cdc2c24a",
-                        "installed_by": ["preproc_dwi"]
+                        "installed_by": ["output_template_space", "preproc_dwi"]
                     },
                     "image/convert": {
                         "branch": "main",
@@ -130,13 +136,13 @@
                     },
                     "preproc/topup": {
                         "branch": "main",
-                        "git_sha": "0228ee7a52df57340e4373fc278c71f4662c388a",
+                        "git_sha": "d67d081e3109b8e2276c2e5629b896cfd34b581a",
                         "installed_by": ["topup_eddy"],
                         "patch": "modules/nf-neuro/preproc/topup/preproc-topup.diff"
                     },
                     "reconst/dtimetrics": {
                         "branch": "main",
-                        "git_sha": "452075a707a9769b0509fc33a1051e8ba80799bf",
+                        "git_sha": "d514d1193937657d3eb3ab39bfe757215a348b01",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/reconst/dtimetrics/reconst-dtimetrics.diff"
                     },
@@ -165,19 +171,19 @@
                     "registration/ants": {
                         "branch": "main",
                         "git_sha": "8b713829fd96b11f3cee6c6f4d502848cbc392d1",
-                        "installed_by": ["modules"],
+                        "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/ants/registration-ants.diff"
                     },
                     "registration/antsapplytransforms": {
                         "branch": "main",
-                        "git_sha": "89c21b369e7e48b4ae1549e68c7977d405cf837b",
-                        "installed_by": ["modules"],
+                        "git_sha": "33ceec0aee17c292548d325cf645b3e4a77537b8",
+                        "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/antsapplytransforms/registration-antsapplytransforms.diff"
                     },
                     "registration/tractogram": {
                         "branch": "main",
                         "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["modules"],
+                        "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/tractogram/registration-tractogram.diff"
                     },
                     "segmentation/fastseg": {
@@ -187,25 +193,25 @@
                     },
                     "segmentation/fastsurfer": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "b7ba4922bd9adab1fb8af7b31900894eca85c8ee",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/segmentation/fastsurfer/segmentation-fastsurfer.diff"
                     },
                     "segmentation/fsreconall": {
                         "branch": "main",
-                        "git_sha": "72c629dd20bf72ae4c580717123ff57516d24f3d",
+                        "git_sha": "cb567ddcd631be744545dbac139a8b0ff21e55e8",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/segmentation/fsreconall/segmentation-fsreconall.diff"
                     },
                     "tracking/localtracking": {
                         "branch": "main",
-                        "git_sha": "b8f82569a1160bf13138b6278c0e22caf88c4e22",
+                        "git_sha": "3227a4068080388811569e7c9d114ab16ac54470",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/tracking/localtracking/tracking-localtracking.diff"
                     },
                     "tracking/pfttracking": {
                         "branch": "main",
-                        "git_sha": "12dd6cf0fa5cdac800c7960b3c42c960d5760907",
+                        "git_sha": "98bb319320eccd276f009fe53db70b493e1b22d6",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/tracking/pfttracking/tracking-pfttracking.diff"
                     },
@@ -214,26 +220,37 @@
                         "git_sha": "baf69f6658ab3874264d2081aeb5a2388f861bb2",
                         "installed_by": ["preproc_dwi", "topup_eddy"],
                         "patch": "modules/nf-neuro/utils/extractb0/utils-extractb0.diff"
+                    },
+                    "utils/templateflow": {
+                        "branch": "main",
+                        "git_sha": "33ceec0aee17c292548d325cf645b3e4a77537b8",
+                        "installed_by": ["output_template_space"]
                     }
                 }
             },
             "subworkflows": {
                 "nf-neuro": {
+                    "output_template_space": {
+                        "branch": "main",
+                        "git_sha": "33ceec0aee17c292548d325cf645b3e4a77537b8",
+                        "installed_by": ["subworkflows"],
+                        "patch": "subworkflows/nf-neuro/output_template_space/output_template_space.diff"
+                    },
                     "preproc_dwi": {
                         "branch": "main",
-                        "git_sha": "e7ecaddd48ac16eebc751f076530e2de74efafd9",
+                        "git_sha": "78abc7f1c556b222829f3067e73ae2738162b4fc",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/preproc_dwi/preproc_dwi.diff"
                     },
                     "preproc_t1": {
                         "branch": "main",
-                        "git_sha": "e373a0b34ed9ee306b91a618a4dc75df7c226cc3",
+                        "git_sha": "f47e7311a62f629fca459c87f4fd9bf01297b70e",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/preproc_t1/preproc_t1.diff"
                     },
                     "topup_eddy": {
                         "branch": "main",
-                        "git_sha": "e7ecaddd48ac16eebc751f076530e2de74efafd9",
+                        "git_sha": "bf225e17c02cf2c20fc2ce0cb3be98daad8bcddb",
                         "installed_by": ["preproc_dwi"],
                         "patch": "subworkflows/nf-neuro/topup_eddy/topup_eddy.diff"
                     }

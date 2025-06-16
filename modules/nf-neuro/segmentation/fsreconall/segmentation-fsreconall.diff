@@ -1,9 +1,17 @@
-Changes in module 'nf-neuro/segmentation/fsreconall'
+Changes in component 'nf-neuro/segmentation/fsreconall'
 'modules/nf-neuro/segmentation/fsreconall/environment.yml' is unchanged
 'modules/nf-neuro/segmentation/fsreconall/meta.yml' is unchanged
 Changes in 'segmentation/fsreconall/main.nf':
 --- modules/nf-neuro/segmentation/fsreconall/main.nf
 +++ modules/nf-neuro/segmentation/fsreconall/main.nf
+@@ -1,6 +1,6 @@
+ process SEGMENTATION_FSRECONALL {
+     tag "$meta.id"
+-    label 'process_single'
++    label 'process_high'
+ 
+     // Note. Freesurfer is already on Docker. See documentation on
+     // https://hub.docker.com/r/freesurfer/freesurfer
 @@ -10,8 +10,9 @@
          tuple val(meta), path(anat), path(fs_license) /* optional, value = [] */
  
@@ -16,22 +24,46 @@ Changes in 'segmentation/fsreconall/main.nf':
  
      when:
      task.ext.when == null || task.ext.when
-@@ -48,6 +49,7 @@
+@@ -35,19 +36,22 @@
+     if [ -z $dev_debug_test ]
+     then
+         # Run the main script
+-        export SUBJECTS_DIR=`pwd`
+-        recon-all -i $anat -s ${prefix}__recon_all -all
++        export SUBJECTS_DIR=\$(pwd)/${prefix}__recon_all
++        mkdir ${prefix}__recon_all
++        recon-all -i $anat -s ${prefix} -all
+     else
+         # (for developers: unit tests: skip the long processing. help only.)
+-        export SUBJECTS_DIR=`pwd`
+-        recon-all -i $anat -s ${prefix}__recon_all -autorecon1 -dontrun
++        export SUBJECTS_DIR=\$(pwd)/${prefix}__recon_all
++        mkdir ${prefix}__recon_all
++        recon-all -i $anat -s ${prefix} -autorecon1 -dontrun
+     fi
++
++    mri_convert ${prefix}__recon_all/${prefix}/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
+ 
+     # Remove the license
+     if [ ! $fs_license = [] ]; then
          rm .license
      fi
- 
-+    mri_convert ${prefix}__recon_all/mri/antsdn.brain.mgz ${prefix}__final_t1.nii.gz
+-
  
      # Finish
      cat <<-END_VERSIONS > versions.yml
-@@ -59,9 +61,10 @@
+@@ -59,7 +63,14 @@
      stub:
      def prefix = task.ext.prefix ?: "${meta.id}"
      """
--    recon-all --help
-+    #recon-all --help
- 
-     mkdir ${prefix}__recon_all
+-    mkdir ${prefix}__recon_all
++    mkdir -p ${prefix}__recon_all/${prefix}/mri/transforms \
++        ${prefix}__recon_all/${prefix}/label/ \
++        ${prefix}__recon_all/${prefix}/surf/ \
++        ${prefix}__recon_all/${prefix}/stats/ \
++        ${prefix}__recon_all/${prefix}/scripts/ \
++        ${prefix}__recon_all/${prefix}/tmp/ \
++        ${prefix}__recon_all/${prefix}/touch/
 +    touch ${prefix}__final_t1.nii.gz
  
      cat <<-END_VERSIONS > versions.yml

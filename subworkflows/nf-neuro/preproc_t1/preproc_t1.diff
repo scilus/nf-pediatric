@@ -1,152 +1,68 @@
 Changes in component 'nf-neuro/preproc_t1'
-Changes in 'preproc_t1/meta.yml':
---- subworkflows/nf-neuro/preproc_t1/meta.yml
-+++ subworkflows/nf-neuro/preproc_t1/meta.yml
-@@ -45,7 +45,7 @@
-   - image/resample
-   - betcrop/antsbet
-   - betcrop/synthbet
--  - betcrop/cropvolume
-+  - image/cropvolume
- 
- input:
-   - ch_image:
-
+'subworkflows/nf-neuro/preproc_t1/meta.yml' is unchanged
 Changes in 'preproc_t1/main.nf':
 --- subworkflows/nf-neuro/preproc_t1/main.nf
 +++ subworkflows/nf-neuro/preproc_t1/main.nf
-@@ -2,12 +2,11 @@
- include { DENOISING_NLMEANS } from '../../../modules/nf-neuro/denoising/nlmeans/main'
- include { PREPROC_N4 } from '../../../modules/nf-neuro/preproc/n4/main'
+@@ -4,8 +4,8 @@
  include { IMAGE_RESAMPLE } from '../../../modules/nf-neuro/image/resample/main'
--include { BETCROP_ANTSBET } from '../../../modules/nf-neuro/betcrop/antsbet/main'
+ include { BETCROP_ANTSBET } from '../../../modules/nf-neuro/betcrop/antsbet/main'
  include { BETCROP_SYNTHBET} from '../../../modules/nf-neuro/betcrop/synthbet/main'
--include { BETCROP_CROPVOLUME as BETCROP_CROPVOLUME_T1 } from '../../../modules/nf-neuro/betcrop/cropvolume/main'
--include { BETCROP_CROPVOLUME as BETCROP_CROPVOLUME_MASK } from '../../../modules/nf-neuro/betcrop/cropvolume/main'
+-include { IMAGE_CROPVOLUME as IMAGE_CROPVOLUME_T1 } from '../../../modules/nf-neuro/image/cropvolume/main'
+-include { IMAGE_CROPVOLUME as IMAGE_CROPVOLUME_MASK } from '../../../modules/nf-neuro/image/cropvolume/main'
 +include { IMAGE_CROPVOLUME as CROPVOLUME } from '../../../modules/nf-neuro/image/cropvolume/main'
 +include { IMAGE_CROPVOLUME as CROPVOLUME_MASK } from '../../../modules/nf-neuro/image/cropvolume/main'
  
--params.run_synthbet = false
-+params.preproc_t1_run_synthbet = false
+ params.preproc_t1_run_synthbet = false
  
- workflow PREPROC_T1 {
- 
-@@ -18,110 +17,130 @@
-         ch_mask_nlmeans     // channel: [ val(meta), mask ]                                  , optional
-         ch_ref_n4           // channel: [ val(meta), ref, ref-mask ]                         , optional
-         ch_ref_resample     // channel: [ val(meta), ref ]                                   , optional
--        ch_weights          // channel: [ val(meta), weights ]                               , optional
-+        ch_weights          // channel: [ weights ]                                          , optional
+@@ -20,13 +20,13 @@
+         ch_mask_nlmeans     // channel: [ val(meta), mask ]             , optional
+         ch_ref_n4           // channel: [ val(meta), ref, ref-mask ]    , optional
+         ch_ref_resample     // channel: [ val(meta), ref ]              , optional
+-        ch_weights          // channel: [ val(meta), weights ]          , optional
++        ch_weights          // channel: [ weights ]                    , optional
  
      main:
  
          ch_versions = Channel.empty()
  
--        // ** Denoising ** //
--        // Result : [ meta, image, mask | [] ]
--        //  Steps :
--        //   - join [ meta, image, mask | null ]
--        //   - map  [ meta, image, mask | [] ]
--        ch_nlmeans = ch_image
--            .join(ch_mask_nlmeans, remainder: true)
--            .map{ it[0..1] + [it[2] ?: []] }
+-        if ( params.preproc_t1_run_denoising ) {
 +        if ( params.preproc_run_denoising ) {
  
--        DENOISING_NLMEANS ( ch_nlmeans )
--        ch_versions = ch_versions.mix(DENOISING_NLMEANS.out.versions.first())
-+            // ** Denoising ** //
-+            // Result : [ meta, image, mask | [] ]
-+            //  Steps :
-+            //   - join [ meta, image, mask | null ]
-+            //   - map  [ meta, image, mask | [] ]
-+            ch_nlmeans = ch_image
-+                .join(ch_mask_nlmeans, remainder: true)
-+                .map{ it[0..1] + [it[2] ?: []] }
+             // ** Denoising ** //
+             // Result : [ meta, image, mask | [] ]
+@@ -45,7 +45,7 @@
+             image_nlmeans = ch_image
+         }
  
--        // ** N4 correction ** //
--        // Result : [ meta, image, reference | [], mask | [] ]
--        //  Steps :
--        //   - join [ meta, image ] + [ reference, mask ] | [ reference, null ] | [ null ]
--        //   - map  [ meta, image, reference | [], mask | [] ]
--        //   - join [ meta, image, reference | [], mask | [], nlmeans-mask | null ]
--        //   - map  [ meta, image, reference | [], mask | [] ]
--        ch_N4 = DENOISING_NLMEANS.out.image
--            .join(ch_ref_n4, remainder: true)
--            .map{ it[0..1] + [it[2] ?: [], it[3] ?: []] }
--            .join(ch_mask_nlmeans, remainder: true)
--            .map{ it[0..2] + [it[3] ?: it[4] ?: []] }
-+            DENOISING_NLMEANS ( ch_nlmeans )
-+            ch_versions = ch_versions.mix(DENOISING_NLMEANS.out.versions)
-+            image_nlmeans = DENOISING_NLMEANS.out.image
-+        }
-+        else {
-+            image_nlmeans = ch_image
-+        }
- 
--        PREPROC_N4 ( ch_N4 )
--        ch_versions = ch_versions.mix(PREPROC_N4.out.versions.first())
+-        if ( params.preproc_t1_run_N4 ) {
 +        if ( params.preproc_run_N4 ) {
-+            // ** N4 correction ** //
-+            // Result : [ meta, image, reference | [], mask | [] ]
-+            //  Steps :
-+            //   - join [ meta, image ] + [ reference, mask ] | [ reference, null ] | [ null ]
-+            //   - map  [ meta, image, reference | [], mask | [] ]
-+            //   - join [ meta, image, reference | [], mask | [], nlmeans-mask | null ]
-+            //   - map  [ meta, image, reference | [], mask | [] ]
-+            ch_N4 = image_nlmeans
-+                .join(ch_ref_n4, remainder: true)
-+                .map{ it[0..1] + [it[2] ?: [], it[3] ?: []] }
-+                .join(ch_mask_nlmeans, remainder: true)
-+                .map{ it[0..2] + [it[3] ?: it[4] ?: []] }
+             // ** N4 correction ** //
+             // Result : [ meta, image, reference | [], mask | [] ]
+             //  Steps :
+@@ -67,7 +67,7 @@
+             image_N4 = image_nlmeans
+         }
  
--        // ** Resampling ** //
--        // Result : [ meta, image, reference | [] ]
--        //  Steps :
--        //   - join [ meta, image, reference | null ]
--        //   - map  [ meta, image, reference | [] ]
--        ch_resampling = PREPROC_N4.out.image
--            .join(ch_ref_resample, remainder: true)
--            .map{ it[0..1] + [it[2] ?: []] }
-+            PREPROC_N4 ( ch_N4 )
-+            ch_versions = ch_versions.mix(PREPROC_N4.out.versions)
-+            image_N4 = PREPROC_N4.out.image
-+        }
-+        else {
-+            image_N4 = image_nlmeans
-+        }
- 
--        IMAGE_RESAMPLE ( ch_resampling )
--        ch_versions = ch_versions.mix(IMAGE_RESAMPLE.out.versions.first())
+-        if ( params.preproc_t1_run_resampling ) {
 +        if ( params.preproc_run_resampling ) {
-+            // ** Resampling ** //
-+            // Result : [ meta, image, reference | [] ]
-+            //  Steps :
-+            //   - join [ meta, image, reference | null ]
-+            //   - map  [ meta, image, reference | [] ]
-+            ch_resampling = image_N4
-+                .join(ch_ref_resample, remainder: true)
-+                .map{ it[0..1] + [it[2] ?: []] }
+             // ** Resampling ** //
+             // Result : [ meta, image, reference | [] ]
+             //  Steps :
+@@ -85,15 +85,21 @@
+             image_resample = image_N4
+         }
  
--        // ** Brain extraction ** //
--        if ( params.run_synthbet ) {
-+            IMAGE_RESAMPLE ( ch_resampling )
-+            ch_versions = ch_versions.mix(IMAGE_RESAMPLE.out.versions)
-+            image_resample = IMAGE_RESAMPLE.out.image
-+        }
-+        else {
-+            image_resample = image_N4
-+        }
-+
+-        if ( params.preproc_t1_run_synthbet ) {
+-            // ** SYNTHBET ** //
 +        if ( params.preproc_run_synthstrip ) {
-             // ** SYNTHBET ** //
++            // ** SYNTHSTRIP ** //
              // Result : [ meta, image, weights | [] ]
              //  Steps :
              //   - join [ meta, image, weights | null ]
              //   - map  [ meta, image, weights | [] ]
--            ch_bet = IMAGE_RESAMPLE.out.image
+             ch_bet = image_resample
 -                .join(ch_weights, remainder: true)
 -                .map{ it[0..1] + [it[2] ?: []] }
-+            ch_bet = image_resample
 +                .combine(ch_weights)
 +                .branch {
 +                    infant: it[0].age < 2.5 || it[0].age > 18
@@ -157,584 +73,55 @@ Changes in 'preproc_t1/main.nf':
 +            ch_bet = ch_bet.infant.mix(ch_bet.child)
  
              BETCROP_SYNTHBET ( ch_bet )
--            ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions.first())
-+            ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions)
- 
-             // ** Setting BET output ** //
+             ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions.first())
+@@ -102,7 +108,7 @@
              image_bet = BETCROP_SYNTHBET.out.bet_image
              mask_bet = BETCROP_SYNTHBET.out.brain_mask
-+        } else {
-+            image_bet = image_resample
-+            mask_bet = Channel.empty()
+         }
+-        else if ( params.preproc_t1_run_ants_bet ) {
++        else if ( params.preproc_run_ants_bet ) {
+             // ** ANTSBET ** //
+             // The template and probability maps are mandatory if running antsBET. Since the
+             // error message from nextflow when they are absent is either non-informative or
+@@ -127,23 +133,23 @@
+             mask_bet = Channel.empty()
          }
  
+-        if ( params.preproc_t1_run_crop ) {
 +        if ( params.preproc_run_crop ) {
-+            // ** Crop image ** //
-+            ch_crop = image_bet
-+                .map{ it + [[]] }
-+
+             // ** Crop image ** //
+             ch_crop = image_bet
+                 .map{ it + [[]] }
+ 
+-            IMAGE_CROPVOLUME_T1 ( ch_crop )
+-            ch_versions = ch_versions.mix(IMAGE_CROPVOLUME_T1.out.versions.first())
+-            image_crop = IMAGE_CROPVOLUME_T1.out.image
+-            bbox = IMAGE_CROPVOLUME_T1.out.bounding_box
 +            CROPVOLUME ( ch_crop )
-+            ch_versions = ch_versions.mix(CROPVOLUME.out.versions)
++            ch_versions = ch_versions.mix(CROPVOLUME.out.versions.first())
 +            image_crop = CROPVOLUME.out.image
 +            bbox = CROPVOLUME.out.bounding_box
-+
-+            // ** Crop mask ** //
-+            ch_crop_mask = mask_bet
+ 
+             // ** Crop mask ** //
+             ch_crop_mask = mask_bet
+-                .join(IMAGE_CROPVOLUME_T1.out.bounding_box)
 +                .join(CROPVOLUME.out.bounding_box)
-+
+ 
+-            IMAGE_CROPVOLUME_MASK ( ch_crop_mask )
+-            ch_versions = ch_versions.mix(IMAGE_CROPVOLUME_MASK.out.versions.first())
+-            mask_crop = IMAGE_CROPVOLUME_MASK.out.image
 +            CROPVOLUME_MASK ( ch_crop_mask )
-+            ch_versions = ch_versions.mix(CROPVOLUME_MASK.out.versions)
++            ch_versions = ch_versions.mix(CROPVOLUME_MASK.out.versions.first())
 +            mask_crop = CROPVOLUME_MASK.out.image
-+        }
+         }
          else {
--            // ** ANTSBET ** //
--            // The template and probability maps are mandatory if running antsBET. Since the
--            // error message from nextflow when they are absent is either non-informative or
--            // missing, we use ifEmpty to provide a more informative one.
--            ch_bet = IMAGE_RESAMPLE.out.image
--                .join(ch_template.ifEmpty{ error("ANTS BET needs a template") })
--                .join(ch_probability_map.ifEmpty{ error("ANTS BET needs a tissue probability map") })
--
--            BETCROP_ANTSBET ( ch_bet )
--            ch_versions = ch_versions.mix(BETCROP_ANTSBET.out.versions.first())
--
--            // ** Setting BET output ** //
--            image_bet = BETCROP_ANTSBET.out.t1
--            mask_bet = BETCROP_ANTSBET.out.mask
-+            image_crop = image_bet
-+            mask_crop = Channel.empty()
-+            bbox = Channel.empty()
-         }
- 
--        // ** Crop image ** //
--        ch_crop = image_bet
--            .map{ it + [[]] }
--
--        BETCROP_CROPVOLUME_T1 ( ch_crop )
--        ch_versions = ch_versions.mix(BETCROP_CROPVOLUME_T1.out.versions.first())
--
--        // ** Crop mask ** //
--        ch_crop_mask = mask_bet
--            .join(BETCROP_CROPVOLUME_T1.out.bounding_box)
--
--        BETCROP_CROPVOLUME_MASK ( ch_crop_mask )
--        ch_versions = ch_versions.mix(BETCROP_CROPVOLUME_MASK.out.versions.first())
--
-     emit:
--        t1_final        = BETCROP_CROPVOLUME_T1.out.image           // channel: [ val(meta), t1-preprocessed ]
--        mask_final      = BETCROP_CROPVOLUME_MASK.out.image         // channel: [ val(meta), t1-mask ]
--        image_nlmeans   = DENOISING_NLMEANS.out.image               // channel: [ val(meta), t1-after-denoise ]
--        image_N4        = PREPROC_N4.out.image                      // channel: [ val(meta), t1-after-unbias ]
--        image_resample  = IMAGE_RESAMPLE.out.image                  // channel: [ val(meta), t1-after-resample ]
--        image_bet       = image_bet                                 // channel: [ val(meta), t1-after-bet ]
--        mask_bet        = mask_bet                                  // channel: [ val(meta), intermediary-mask ]
--        crop_box        = BETCROP_CROPVOLUME_T1.out.bounding_box    // channel: [ val(meta), bounding-box ]
--        versions        = ch_versions                               // channel: [ versions.yml ]
-+        t1_final        = image_crop                    // channel: [ val(meta), t1-preprocessed ]
-+        mask_final      = mask_crop                     // channel: [ val(meta), t1-mask ]
-+        image_nlmeans   = image_nlmeans                 // channel: [ val(meta), t1-after-denoise ]
-+        image_N4        = image_N4                      // channel: [ val(meta), t1-after-unbias ]
-+        image_resample  = image_resample                // channel: [ val(meta), t1-after-resample ]
-+        image_bet       = image_bet                     // channel: [ val(meta), t1-after-bet ]
-+        mask_bet        = mask_bet                      // channel: [ val(meta), intermediary-mask ]
-+        crop_box        = bbox                          // channel: [ val(meta), bounding-box ]
-+        versions        = ch_versions                   // channel: [ versions.yml ]
- }
+             image_crop = image_bet
 
-Changes in 'preproc_t1/tests/main.nf.test.snap':
---- subworkflows/nf-neuro/preproc_t1/tests/main.nf.test.snap
-+++ subworkflows/nf-neuro/preproc_t1/tests/main.nf.test.snap
-@@ -1,4 +1,133 @@
- {
-+    "preproc_t1_quick": {
-+        "content": [
-+            {
-+                "0": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test_cropped.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "1": [
-+
-+                ],
-+                "2": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test__denoised.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "3": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test__denoised.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "4": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test_resampled.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "5": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test_resampled.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "6": [
-+
-+                ],
-+                "7": [
-+
-+                ],
-+                "8": [
-+                    "versions.yml:md5,bdd934b4b8456060c36d6d97e4f30740",
-+                    "versions.yml:md5,bf4dd58c38dd4863ebfb9e78a94c3a20",
-+                    "versions.yml:md5,ea32c30f5320f720b2f5dc32ac2535ea"
-+                ],
-+                "crop_box": [
-+
-+                ],
-+                "image_N4": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test__denoised.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "image_bet": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test_resampled.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "image_nlmeans": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test__denoised.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "image_resample": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test_resampled.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "mask_bet": [
-+
-+                ],
-+                "mask_final": [
-+
-+                ],
-+                "t1_final": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "test_cropped.nii.gz:md5,c507c9182cc410c298fad4a03540c0c9"
-+                    ]
-+                ],
-+                "versions": [
-+                    "versions.yml:md5,bdd934b4b8456060c36d6d97e4f30740",
-+                    "versions.yml:md5,bf4dd58c38dd4863ebfb9e78a94c3a20",
-+                    "versions.yml:md5,ea32c30f5320f720b2f5dc32ac2535ea"
-+                ]
-+            }
-+        ],
-+        "meta": {
-+            "nf-test": "0.9.0",
-+            "nextflow": "24.10.3"
-+        },
-+        "timestamp": "2025-01-14T10:02:29.972139887"
-+    },
-     "preproc_t1_synthbet": {
-         "content": [
-             "test__denoised.nii.gz:md5:header,a7ee0e819007aba98d14f7a145b550e6,data,2e21433e2bcd4de2a6b6167c6233cd40",
-@@ -19,10 +148,10 @@
-             "test_t1_cropped.nii.gz:md5:header,efab188f3700b5b29d4b4ef99cec1295,data,8a93b9d76ead7dae4af4792b9cf70479",
-             [
-                 "versions.yml:md5,318cabe934be45528a25f52083d9c90d",
--                "versions.yml:md5,37229cd5cee6f6788fbc9083d6618c61",
--                "versions.yml:md5,657fbb224f260392e573b8511c4b798d",
-                 "versions.yml:md5,b979132991d8f72a3585465533bd5730",
-                 "versions.yml:md5,bdd934b4b8456060c36d6d97e4f30740",
-+                "versions.yml:md5,be3dbb0ac2589ad263d583018f339102",
-+                "versions.yml:md5,bf4dd58c38dd4863ebfb9e78a94c3a20",
-                 "versions.yml:md5,ea32c30f5320f720b2f5dc32ac2535ea"
-             ]
-         ],
-@@ -31,6 +160,131 @@
-             "nextflow": "24.10.0"
-         },
-         "timestamp": "2024-11-25T18:23:03.990173398"
-+    },
-+    "preproc_t1_skip_all": {
-+        "content": [
-+            {
-+                "0": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "1": [
-+
-+                ],
-+                "2": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "3": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "4": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "5": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "6": [
-+
-+                ],
-+                "7": [
-+
-+                ],
-+                "8": [
-+
-+                ],
-+                "crop_box": [
-+
-+                ],
-+                "image_N4": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "image_bet": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "image_nlmeans": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "image_resample": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "mask_bet": [
-+
-+                ],
-+                "mask_final": [
-+
-+                ],
-+                "t1_final": [
-+                    [
-+                        {
-+                            "id": "test",
-+                            "single_end": false
-+                        },
-+                        "T1w.nii.gz:md5,ce10054d30c0a0753c619d67d811fe32"
-+                    ]
-+                ],
-+                "versions": [
-+
-+                ]
-+            }
-+        ],
-+        "meta": {
-+            "nf-test": "0.9.0",
-+            "nextflow": "24.10.3"
-+        },
-+        "timestamp": "2025-01-14T21:44:26.607236449"
-     },
-     "preproc_t1_antsbet": {
-         "content": [
-@@ -43,18 +297,18 @@
-             "test_cropped.nii.gz",
-             "test_t1_cropped.nii.gz",
-             [
--                "versions.yml:md5,19aaa24cf046e49a4ad4ce5d507ea8aa",
--                "versions.yml:md5,37229cd5cee6f6788fbc9083d6618c61",
--                "versions.yml:md5,657fbb224f260392e573b8511c4b798d",
-                 "versions.yml:md5,b979132991d8f72a3585465533bd5730",
-                 "versions.yml:md5,bdd934b4b8456060c36d6d97e4f30740",
-+                "versions.yml:md5,be3dbb0ac2589ad263d583018f339102",
-+                "versions.yml:md5,bf4dd58c38dd4863ebfb9e78a94c3a20",
-+                "versions.yml:md5,da278daafbe3afa8454021e2716dd205",
-                 "versions.yml:md5,ea32c30f5320f720b2f5dc32ac2535ea"
-             ]
-         ],
-         "meta": {
--            "nf-test": "0.9.2",
--            "nextflow": "24.04.3"
-+            "nf-test": "0.9.0",
-+            "nextflow": "24.10.0"
-         },
--        "timestamp": "2024-12-04T10:38:12.185789"
-+        "timestamp": "2024-12-12T15:50:29.838128539"
-     }
--}+}
-
-'subworkflows/nf-neuro/preproc_t1/tests/nextflow_quick.config' was created
-Changes in 'preproc_t1/tests/nextflow_synthbet.config':
---- subworkflows/nf-neuro/preproc_t1/tests/nextflow_synthbet.config
-+++ subworkflows/nf-neuro/preproc_t1/tests/nextflow_synthbet.config
-@@ -4,7 +4,7 @@
-         ext.voxel_size = 1
-         ext.interp = "lin"
-     }
--    withName: "BETCROP_CROPVOLUME_T1" {
-+    withName: "IMAGE_CROPVOLUME_T1" {
-         ext.output_bbox = true
-         ext.first_suffix = "t1"
-     }
-@@ -14,4 +14,9 @@
-     }
- }
- 
--params.run_synthbet = true
-+params.preproc_t1_run_denoising = true
-+params.preproc_t1_run_N4 = true
-+params.preproc_t1_run_resampling = true
-+params.preproc_t1_run_ants_bet = false
-+params.preproc_t1_run_synthbet = true
-+params.preproc_t1_run_crop = true
-
+'subworkflows/nf-neuro/preproc_t1/tests/main.nf.test.snap' is unchanged
+'subworkflows/nf-neuro/preproc_t1/tests/nextflow_quick.config' is unchanged
+'subworkflows/nf-neuro/preproc_t1/tests/nextflow_synthbet.config' is unchanged
 'subworkflows/nf-neuro/preproc_t1/tests/tags.yml' is unchanged
-Changes in 'preproc_t1/tests/nextflow.config':
---- subworkflows/nf-neuro/preproc_t1/tests/nextflow.config
-+++ subworkflows/nf-neuro/preproc_t1/tests/nextflow.config
-@@ -4,8 +4,15 @@
-         ext.voxel_size = 1
-         ext.interp = "lin"
-     }
--    withName: "BETCROP_CROPVOLUME_T1" {
-+    withName: "IMAGE_CROPVOLUME_T1" {
-         ext.output_bbox = true
-         ext.first_suffix = "t1"
-     }
- }
-+
-+params.preproc_t1_run_denoising = true
-+params.preproc_t1_run_N4 = true
-+params.preproc_t1_run_resampling = true
-+params.preproc_t1_run_ants_bet = true
-+params.preproc_t1_run_synthbet = false
-+params.preproc_t1_run_crop = true
-
-Changes in 'preproc_t1/tests/main.nf.test':
---- subworkflows/nf-neuro/preproc_t1/tests/main.nf.test
-+++ subworkflows/nf-neuro/preproc_t1/tests/main.nf.test
-@@ -13,7 +13,7 @@
-     tag "image/resample"
-     tag "betcrop/antsbet"
-     tag "betcrop/synthbet"
--    tag "betcrop/cropvolume"
-+    tag "image/cropvolume"
- 
-     tag "load_test_data"
- 
-@@ -216,4 +216,126 @@
-             )
-         }
-     }
-+
-+    test("preproc_t1_quick") {
-+        config "./nextflow_quick.config"
-+
-+        when {
-+            workflow {
-+                """
-+                ch_split_test_data = LOAD_DATA.out.test_data_directory
-+                    .branch{
-+                        antsbet: it.simpleName == "antsbet"
-+                        t1w: it.simpleName == "T1w"
-+                    }
-+                input[0] = ch_split_test_data.t1w.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        file("\${test_data_directory}/T1w.nii.gz")
-+                    ]}
-+                input[1] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        []
-+                    ]}
-+                input[2] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        []
-+                    ]}
-+                input[3] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        [],
-+                        [],
-+                        []
-+                    ]}
-+                input[4] = ch_split_test_data.t1w.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        [],
-+                        []
-+                    ]}
-+                input[5] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        []
-+                    ]}
-+                input[6] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        []
-+                    ]}
-+                """
-+            }
-+        }
-+
-+        then {
-+            assertAll(
-+                { assert workflow.success },
-+                { assert snapshot(workflow.out).match() }
-+            )
-+        }
-+    }
-+
-+    test("preproc_t1_skip_all") {
-+        config "./nextflow_skip_all.config"
-+
-+        when {
-+            workflow {
-+                """
-+                ch_split_test_data = LOAD_DATA.out.test_data_directory
-+                    .branch{
-+                        antsbet: it.simpleName == "antsbet"
-+                        t1w: it.simpleName == "T1w"
-+                    }
-+                input[0] = ch_split_test_data.t1w.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        file("\${test_data_directory}/T1w.nii.gz")
-+                    ]}
-+                input[1] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        []
-+                    ]}
-+                input[2] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        []
-+                    ]}
-+                input[3] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        [],
-+                        [],
-+                        []
-+                    ]}
-+                input[4] = ch_split_test_data.t1w.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        [],
-+                        []
-+                    ]}
-+                input[5] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        []
-+                    ]}
-+                input[6] = ch_split_test_data.antsbet.map{
-+                    test_data_directory -> [
-+                        [ id:'test', single_end:false ],
-+                        []
-+                    ]}
-+                """
-+            }
-+        }
-+
-+        then {
-+            assertAll(
-+                { assert workflow.success },
-+                { assert snapshot(workflow.out).match() }
-+            )
-+        }
-+    }
- }
-
-'subworkflows/nf-neuro/preproc_t1/tests/nextflow_skip_all.config' was created
+'subworkflows/nf-neuro/preproc_t1/tests/nextflow.config' is unchanged
+'subworkflows/nf-neuro/preproc_t1/tests/main.nf.test' is unchanged
+'subworkflows/nf-neuro/preproc_t1/tests/nextflow_skip_all.config' is unchanged
 ************************************************************

@@ -1,4 +1,4 @@
-include { UTILS_TEMPLATEFLOW as GET     } from '../../../modules/local/utils/templateflow/main'
+include { UTILS_TEMPLATEFLOW as GET     } from '../../../modules/nf-neuro/utils/templateflow/main'
 
 def createCohortChannel(channel, cohort) {
     channel.map { folder ->
