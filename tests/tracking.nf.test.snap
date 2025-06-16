@@ -94,8 +94,7 @@
                     "scilpy": "2.0.2"
                 },
                 "TRACKING_PFTTRACKING": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.0.2"
                 },
                 "TRACTOGRAM_MATH": {
                     "scilpy": "2.1.0rc1"
@@ -500,7 +499,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-13T10:32:51.382142"
+        "timestamp": "2025-06-16T09:00:05.43812"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
@@ -567,8 +566,7 @@
                     "scilpy": "2.0.2"
                 },
                 "TRACKING_PFTTRACKING": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.0.2"
                 },
                 "TRACTOGRAM_MATH": {
                     "scilpy": "2.1.0rc1"
@@ -969,6 +967,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-13T10:42:31.898219"
+        "timestamp": "2025-06-16T09:06:26.14478"
     }
 }
