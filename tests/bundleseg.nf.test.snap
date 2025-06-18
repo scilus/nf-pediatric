@@ -1,0 +1,48 @@
+{
+    "BundleSeg - should run successfully": {
+        "content": [
+            7,
+            {
+                "BUNDLE_RECOGNIZE": {
+                    "scilpy": "2.1.0rc1"
+                },
+                "REGISTRATION_ANTS": {
+                    "ants": "2.4.3",
+                    "mrtrix": "3.0.4",
+                    "imagemagick": null
+                },
+                "Workflow": {
+                    "scilus/nf-pediatric": "v1.0dev"
+                }
+            },
+            [
+                "README.txt",
+                "dataset_description.json",
+                "multiqc",
+                "multiqc/global_multiqc_data",
+                "multiqc/global_multiqc_plots",
+                "multiqc/global_multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
+                "sub-test1",
+                "sub-test1/ses-baseline",
+                "sub-test1/ses-baseline/dwi",
+                "sub-test1/ses-baseline/dwi/bundles",
+                "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_desc-AF_L.trk",
+                "sub-test3",
+                "sub-test3/dwi",
+                "sub-test3/dwi/bundles",
+                "sub-test3/dwi/bundles/sub-test3_desc-AF_L.trk",
+                "sub-test4",
+                "sub-test4/dwi",
+                "sub-test4/dwi/bundles",
+                "sub-test4/dwi/bundles/sub-test4_desc-AF_L.trk"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.2"
+        },
+        "timestamp": "2025-06-18T09:45:53.840919"
+    }
+}
