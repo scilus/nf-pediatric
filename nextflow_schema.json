@@ -1196,6 +1196,29 @@
                 }
             }
         },
+        "bundleseg_options": {
+            "title": "BundleSeg Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for BundleSeg",
+            "help_text": "These options are used to configure how BundleSeg will recognize and extract bundles from the whole-brain tractogram.",
+            "properties": {
+                "minimal_vote_ratio": {
+                    "type": "number",
+                    "description": "Ratio of vote across models to consider a streamline for saving. If you have 5 input models and a ratio of 0.5, you will need at least 3 votes.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": false
+                },
+                "outlier_alpha": {
+                    "type": "number",
+                    "description": "Percentage of the length of the tree that clusters of individual streamlines will be pruned. Higher values will remove more streamlines.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.6,
+                    "hidden": false
+                }
+            }
+        },
         "transform_labels_options": {
             "title": "Transform Labels Options",
             "type": "object",
@@ -1457,6 +1480,13 @@
                     "default": false,
                     "hidden": true
                 },
+                "bundling": {
+                    "type": "boolean",
+                    "description": "Perform BundleSeg pipeline.",
+                    "fa_icon": "fas fa-map-marker",
+                    "default": false,
+                    "hidden": true
+                },
                 "connectomics": {
                     "type": "boolean",
                     "description": "Perform connectomics pipeline.",
@@ -1667,6 +1697,9 @@
         },
         {
             "$ref": "#/$defs/local_tracking_options"
+        },
+        {
+            "$ref": "#/$defs/bundleseg_options"
         },
         {
             "$ref": "#/$defs/transform_labels_options"
