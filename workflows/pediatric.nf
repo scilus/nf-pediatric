@@ -602,7 +602,7 @@ workflow PEDIATRIC {
     }
 
     if ( params.bundling ) {
-        
+
         // ** Fetch files from an input_deriv if tracking is not run ** //
         if ( ! params.tracking ) {
             FETCH_DERIVATIVES ( params.input_deriv )
@@ -611,7 +611,7 @@ workflow PEDIATRIC {
                 .map { meta, files ->
                     def fa = files.findAll { it.name.contains('desc-fa.nii.gz') }
                     def md = files.findAll { it.name.contains('desc-md.nii.gz') }
-                    
+
                     // ** Some logging if no files exists ** //
                     if ( fa.size() == 0 && md.size() == 0 ) {
                         error "No FA or MD files have been found in your derivatives folder. " +
