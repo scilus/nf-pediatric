@@ -58,6 +58,11 @@
                         "installed_by": ["preproc_dwi", "preproc_t1"],
                         "patch": "modules/nf-neuro/betcrop/synthbet/betcrop-synthbet.diff"
                     },
+                    "bundle/recognize": {
+                        "branch": "main",
+                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
+                        "installed_by": ["bundle_seg"]
+                    },
                     "connectivity/afdfixel": {
                         "branch": "main",
                         "git_sha": "e649a5f9ca0ebff4efdb7959c8a686eb203f4bf9",
@@ -171,7 +176,7 @@
                     "registration/ants": {
                         "branch": "main",
                         "git_sha": "8b713829fd96b11f3cee6c6f4d502848cbc392d1",
-                        "installed_by": ["modules", "output_template_space"],
+                        "installed_by": ["bundle_seg", "modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/ants/registration-ants.diff"
                     },
                     "registration/antsapplytransforms": {
@@ -230,6 +235,12 @@
             },
             "subworkflows": {
                 "nf-neuro": {
+                    "bundle_seg": {
+                        "branch": "main",
+                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
+                        "installed_by": ["subworkflows"],
+                        "patch": "subworkflows/nf-neuro/bundle_seg/bundle_seg.diff"
+                    },
                     "output_template_space": {
                         "branch": "main",
                         "git_sha": "33ceec0aee17c292548d325cf645b3e4a77537b8",
