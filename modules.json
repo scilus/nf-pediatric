@@ -58,10 +58,36 @@
                         "installed_by": ["preproc_dwi", "preproc_t1"],
                         "patch": "modules/nf-neuro/betcrop/synthbet/betcrop-synthbet.diff"
                     },
+                    "bundle/centroid": {
+                        "branch": "main",
+                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
+                        "installed_by": ["modules"]
+                    },
+                    "bundle/fixelafd": {
+                        "branch": "main",
+                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
+                        "installed_by": ["modules"]
+                    },
+                    "bundle/labelmap": {
+                        "branch": "main",
+                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/bundle/labelmap/bundle-labelmap.diff"
+                    },
                     "bundle/recognize": {
                         "branch": "main",
                         "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
                         "installed_by": ["bundle_seg"]
+                    },
+                    "bundle/stats": {
+                        "branch": "main",
+                        "git_sha": "a61ef63ffe62b9c67b23e5b52a2ee18c9b1252de",
+                        "installed_by": ["modules"]
+                    },
+                    "bundle/uniformize": {
+                        "branch": "main",
+                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
+                        "installed_by": ["modules"]
                     },
                     "connectivity/afdfixel": {
                         "branch": "main",
@@ -219,6 +245,16 @@
                         "git_sha": "98bb319320eccd276f009fe53db70b493e1b22d6",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/tracking/pfttracking/tracking-pfttracking.diff"
+                    },
+                    "tractogram/removeinvalid": {
+                        "branch": "main",
+                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "installed_by": ["modules"]
+                    },
+                    "tractogram/resample": {
+                        "branch": "main",
+                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "installed_by": ["modules"]
                     },
                     "utils/extractb0": {
                         "branch": "main",
