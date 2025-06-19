@@ -1,0 +1,37 @@
+nextflow_pipeline {
+
+    options "-stub-run"
+
+    name "Test nf-pediatric bundleseg"
+    script "../main.nf"
+
+    test("BundleSeg - should run successfully") {
+
+        when {
+            params {
+
+                params.participant_label = ["sub-test1", "sub-test3", "sub-test4"]
+                params.input_deriv = "$projectDir/tests/data/derivatives/"
+                params.outdir = "$outputDir"
+
+                params.bundling = true
+            }
+        }
+
+        then {
+            // stable name: All files + folders in ${params.outdir}/ with a stable name.
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            assertAll {
+                assert workflow.success
+                assert snapshot(
+                    // Number of successfully completed tasks
+                    workflow.trace.succeeded().size(),
+                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
+                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    // All stable name.
+                    stable_name
+                ).match()
+            }
+        }
+    }
+}
