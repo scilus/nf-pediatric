@@ -1203,6 +1203,13 @@
             "description": "Options for BundleSeg",
             "help_text": "These options are used to configure how BundleSeg will recognize and extract bundles from the whole-brain tractogram.",
             "properties": {
+                "atlas_directory": {
+                    "type": "string",
+                    "description": "Path to an existing bundle atlas folder.",
+                    "fa_icon": "fas fa-brain",
+                    "default": null,
+                    "hidden": false
+                },
                 "minimal_vote_ratio": {
                     "type": "number",
                     "description": "Ratio of vote across models to consider a streamline for saving. If you have 5 input models and a ratio of 0.5, you will need at least 3 votes.",
@@ -1215,6 +1222,76 @@
                     "description": "Percentage of the length of the tree that clusters of individual streamlines will be pruned. Higher values will remove more streamlines.",
                     "fa_icon": "fas fa-brain",
                     "default": 0.6,
+                    "hidden": false
+                },
+                "nb_points": {
+                    "type": "integer",
+                    "description": "Number of points to segment the bundles.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 5,
+                    "hidden": false
+                },
+                "colormap": {
+                    "type": "string",
+                    "description": "Colormap to use for coloring the bundles. Color only affects visualization.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "jet",
+                    "hidden": false
+                },
+                "density_weighting": {
+                    "type": "boolean",
+                    "description": "If set, weight statistics based on the number of voxel going through the voxel.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "normalize_weights": {
+                    "type": "boolean",
+                    "description": "If set, the weights will be normalized to the [0,1] range.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "length_stats": {
+                    "type": "boolean",
+                    "description": "If set, will output bundles' length.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "endpoints_stats": {
+                    "type": "boolean",
+                    "description": "If set, will output statistics in endpoints.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "means_std": {
+                    "type": "boolean",
+                    "description": "If set, will output mean and std values per bundle per metrics.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "volume": {
+                    "type": "boolean",
+                    "description": "If set, will output volume values per bundles.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "volume_per_labels": {
+                    "type": "boolean",
+                    "description": "If set, will output volume values per labels per bundles.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "mean_std_per_point": {
+                    "type": "boolean",
+                    "description": "If set, will output mean and std per points per metrics per bundles.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
                     "hidden": false
                 }
             }
