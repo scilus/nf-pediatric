@@ -53,6 +53,7 @@ include { TRACTOGRAM_MATH                   } from '../modules/local/tractogram/
 
 // ** BundleSeg ** //
 include { BUNDLE_SEG } from '../subworkflows/nf-neuro/bundle_seg/main'
+include { TRACTOMETRY } from '../subworkflows/local/tractometry/main'
 
 // ** Connectomics ** //
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORM_LABELS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
@@ -607,7 +608,7 @@ workflow PEDIATRIC {
         if ( ! params.tracking ) {
             FETCH_DERIVATIVES ( params.input_deriv )
 
-            ch_metric = FETCH_DERIVATIVES.out.metrics
+            ch_fa_md = FETCH_DERIVATIVES.out.metrics
                 .map { meta, files ->
                     def fa = files.findAll { it.name.contains('desc-fa.nii.gz') }
                     def md = files.findAll { it.name.contains('desc-md.nii.gz') }
@@ -625,11 +626,15 @@ workflow PEDIATRIC {
                     child: true // Catch-all, unlikely that FA is there without MD.
                         return [ it[0], it[1] ]
                 }
-            ch_metric = ch_metric.infant.mix(ch_metric.child)
+            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
+
+            ch_metrics = FETCH_DERIVATIVES.out.metrics
+
+            ch_fodf = FETCH_DERIVATIVES.out.fodf
 
             ch_trk = FETCH_DERIVATIVES.out.trk
         } else {
-            ch_metric = RECONST_DTIMETRICS.out.fa
+            ch_fa_md = RECONST_DTIMETRICS.out.fa
                 .join(RECONST_DTIMETRICS.out.md)
                 .branch {
                     infant: it[0].age < 0.5 || it[0].age > 18
@@ -637,17 +642,39 @@ workflow PEDIATRIC {
                     child: true // Catch all, should work also with infant, but not optimal.
                         return [ it[0], it[1] ]
                 }
-            ch_metric = ch_metric.infant.mix(ch_metric.child)
+            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
+
+            ch_metrics = RECONST_DTIMETRICS.out.fa
+                .join(RECONST_DTIMETRICS.out.md)
+                .join(RECONST_DTIMETRICS.out.ad)
+                .join(RECONST_DTIMETRICS.out.rd)
+                .join(RECONST_DTIMETRICS.out.mode)
+                .join(RECONST_FODF.out.afd_total)
+                .join(RECONST_FODF.out.nufo)
+                .map{ meta, fa, md, ad, rd, mode, afd_total, nufo ->
+                    tuple(meta, [ fa, md, ad, rd, mode, afd_total, nufo ])}
+
+            ch_fodf = RECONST_FODF.out.fodf
         }
 
         //
         // SUBWORKFLOW: Run BUNDLE_SEG
         //
         BUNDLE_SEG(
-            ch_metric,
+            ch_fa_md,
             ch_trk
         )
         ch_versions = ch_versions.mix(BUNDLE_SEG.out.versions)
+
+        //
+        // SUBWORKFLOW: RUN TRACTOMETRY
+        //
+        TRACTOMETRY (
+            BUNDLE_SEG.out.bundles,
+            ch_metrics,
+            Channel.empty(),
+            ch_fodf
+        )
 
     }
 
