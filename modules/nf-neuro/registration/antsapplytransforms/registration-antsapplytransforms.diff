@@ -1,0 +1,23 @@
+Changes in component 'nf-neuro/registration/antsapplytransforms'
+'modules/nf-neuro/registration/antsapplytransforms/environment.yml' is unchanged
+'modules/nf-neuro/registration/antsapplytransforms/meta.yml' is unchanged
+Changes in 'registration/antsapplytransforms/main.nf':
+--- modules/nf-neuro/registration/antsapplytransforms/main.nf
++++ modules/nf-neuro/registration/antsapplytransforms/main.nf
+@@ -2,9 +2,7 @@
+     tag "$meta.id"
+     label 'process_low'
+ 
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
+-        "scilus/scilus:latest"}"
++    container "scilus/scilus:2.1.0"
+ 
+     input:
+     tuple val(meta), path(image), path(reference), path(warp), path(affine)
+
+'modules/nf-neuro/registration/antsapplytransforms/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/registration/antsapplytransforms/tests/tags.yml' is unchanged
+'modules/nf-neuro/registration/antsapplytransforms/tests/nextflow.config' is unchanged
+'modules/nf-neuro/registration/antsapplytransforms/tests/main.nf.test' is unchanged
+************************************************************

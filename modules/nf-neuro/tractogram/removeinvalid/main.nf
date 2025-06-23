@@ -31,7 +31,9 @@ process TRACTOGRAM_REMOVEINVALID {
     for tractogram in ${tractogram};
         do \
         ext=\${tractogram#*.}
-        bname=\$(basename \${tractogram} .\${ext})
+        pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
+        bname=\${tractogram:\$pos}
+        bname=\$(basename \$bname \${ext})
 
         scil_tractogram_remove_invalid.py \$tractogram ${prefix}__\${bname}${suffix}.\${ext}\
                         $cut_invalid\
@@ -59,7 +61,9 @@ process TRACTOGRAM_REMOVEINVALID {
     for tractogram in ${tractogram};
         do \
         ext=\${tractogram#*.}
-        bname=\$(basename \${tractogram} .\${ext})
+        pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
+        bname=\${tractogram:\$pos}
+        bname=\$(basename \$bname \${ext})
 
         touch ${prefix}__\${bname}${suffix}.\${ext}
     done

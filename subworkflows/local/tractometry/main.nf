@@ -29,7 +29,9 @@ workflow TRACTOMETRY {
     ch_versions = ch_versions.mix(BUNDLE_FIXELAFD.out.versions)
 
     // ** Append the fixel afd to the existing metric channel ** //
-    ch_metrics = ch_metrics.join(BUNDLE_FIXELAFD.out.fixel_afd)
+    ch_metrics = ch_metrics.mix(BUNDLE_FIXELAFD.out.fixel_afd)
+        .groupTuple(by: 0) // [ meta, [ metrics ] ]
+        .map{ meta, metrics -> [ meta, metrics.flatten() ]}
 
     // ** Compute the centroids ** //
     BUNDLE_CENTROID( TRACTOGRAM_REMOVEINVALID.out.tractograms )

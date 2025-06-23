@@ -3,7 +3,7 @@ process REGISTRATION_TEMPLATETODWI {
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
-    container 'scilus/scilus:latest'
+    container 'scilus/scilus:2.1.0'
 
     input:
     tuple val(meta), path(ref), path(fa), path(moving), path(wm)

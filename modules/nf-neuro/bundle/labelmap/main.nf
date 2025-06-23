@@ -30,8 +30,11 @@ process BUNDLE_LABELMAP {
     centroids=(${centroids.join(" ")})
 
     for index in \${!bundles[@]};
-        do ext=\${bundles[index]#*.}
-        bname=\$(basename \${bundles[index]} .\${ext})
+        do
+        ext=\${bundles[index]#*.}
+        pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
+        bname=\${bundles[index]:\$pos}
+        bname=\$(basename \${bname} .\${ext})
 
         scil_bundle_label_map.py \${bundles[index]} \${centroids[index]} \
             tmp_out $nb_points $colormap $new_labelling -f
@@ -57,8 +60,11 @@ process BUNDLE_LABELMAP {
     centroids=(${centroids.join(" ")})
 
     for index in \${!bundles[@]};
-        do ext=\${bundles[index]#*.}
-        bname=\$(basename \${bundles[index]} .\${ext})
+        do
+        ext=\${bundles[index]#*.}
+        pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
+        bname=\${bundles[index]:\$pos}
+        bname=\$(basename \${bname} .\${ext})
 
         touch ${prefix}__\${bname}_labels.nii.gz
         touch ${prefix}__\${bname}_labels.trk

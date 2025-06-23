@@ -4,7 +4,7 @@ process BUNDLE_RECOGNIZE {
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://scil.usherbrooke.ca/containers/scilus_latest.sif':
-        'scilus/scilus:latest' }"
+        'scilus/scilus:2.1.0' }"
 
     input:
         tuple val(meta), path(tractograms), path(transform), path(config), path(directory)
@@ -49,6 +49,7 @@ process BUNDLE_RECOGNIZE {
 
     # dummy output for single bundle
     touch ${prefix}__AF_L_cleaned.trk
+    touch ${prefix}__AF_R_cleaned.trk
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

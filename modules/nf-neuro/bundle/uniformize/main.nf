@@ -30,7 +30,10 @@ process BUNDLE_UNIFORMIZE {
 
     for index in \${!bundles[@]};
         do \
-        bname=\$(basename \${bundles[index]} .trk)
+        ext=\${bundles[index]#*.}
+        pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
+        bname=\${bundles[index]:\$pos}
+        bname=\$(basename \${bname} .\${ext})
         if [[ -f "$centroids" ]]; then
             option="--centroid \${centroids[index]}"
         else
@@ -50,11 +53,16 @@ process BUNDLE_UNIFORMIZE {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
+    bundles=(${bundles.join(" ")})
+
     scil_bundle_uniformize_endpoints.py -h
 
-    for bundles in ${bundles};
+    for index in \${!bundles[@]};
         do \
-        bname=\$(basename \${bundles} .trk)
+        ext=\${bundles[index]#*.}
+        pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
+        bname=\${bundles[index]:\$pos}
+        bname=\$(basename \${bname} .\${ext})
         touch ${prefix}__\${bname}_uniformized.trk
     done
 
