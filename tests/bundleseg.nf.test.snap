@@ -4,7 +4,7 @@
             25,
             {
                 "BUNDLE_RECOGNIZE": {
-                    "scilpy": "2.1.0rc1"
+                    "scilpy": "2.1.0"
                 },
                 "REGISTRATION_ANTS": {
                     "ants": "2.4.3",
@@ -29,6 +29,7 @@
                 "sub-test1/ses-baseline/dwi",
                 "sub-test1/ses-baseline/dwi/bundles",
                 "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_desc-AF_L.trk",
+                "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_desc-AF_R.trk",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-endpoints_map_head.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-endpoints_map_head.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-endpoints_map_raw_stats.json",
@@ -44,6 +45,7 @@
                 "sub-test3/dwi",
                 "sub-test3/dwi/bundles",
                 "sub-test3/dwi/bundles/sub-test3_desc-AF_L.trk",
+                "sub-test3/dwi/bundles/sub-test3_desc-AF_R.trk",
                 "sub-test3/dwi/sub-test3_desc-endpoints_map_head.json",
                 "sub-test3/dwi/sub-test3_desc-endpoints_map_head.nii.gz",
                 "sub-test3/dwi/sub-test3_desc-endpoints_map_raw_stats.json",
@@ -59,6 +61,7 @@
                 "sub-test4/dwi",
                 "sub-test4/dwi/bundles",
                 "sub-test4/dwi/bundles/sub-test4_desc-AF_L.trk",
+                "sub-test4/dwi/bundles/sub-test4_desc-AF_R.trk",
                 "sub-test4/dwi/sub-test4_desc-endpoints_map_head.json",
                 "sub-test4/dwi/sub-test4_desc-endpoints_map_head.nii.gz",
                 "sub-test4/dwi/sub-test4_desc-endpoints_map_raw_stats.json",
@@ -76,6 +79,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-18T20:04:10.215653"
+        "timestamp": "2025-06-22T19:00:32.526311"
     }
 }

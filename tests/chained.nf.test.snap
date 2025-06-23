@@ -89,7 +89,7 @@
                     "mrtrix": "3.0.4"
                 },
                 "PREPROC_TOPUP": {
-                    "scilpy": "2.1.0rc1",
+                    "scilpy": "2.1.0",
                     "antsRegistration": null,
                     "fsl": 6.0,
                     "mrtrix": "3.0.4",
@@ -99,14 +99,14 @@
                     "freesurfer": "8.0.0"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.1.0rc1",
+                    "scilpy": "2.1.0",
                     "mrtrix": "3.0.4"
                 },
                 "RECONST_FODF": {
                     "scilpy": "2.0.2"
                 },
                 "RECONST_FRF": {
-                    "scilpy": "2.1.0rc1"
+                    "scilpy": "2.1.0"
                 },
                 "RESAMPLE_DWI": {
                     "scilpy": "2.0.2"
@@ -129,7 +129,7 @@
                     "scilpy": "2.0.2"
                 },
                 "TRACTOGRAM_MATH": {
-                    "scilpy": "2.1.0rc1"
+                    "scilpy": "2.1.0"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3",
@@ -585,7 +585,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-16T08:50:06.713889"
+        "timestamp": "2025-06-22T19:49:07.515179"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
@@ -603,7 +603,7 @@
                     "mrtrix": "3.0.5"
                 },
                 "BUNDLE_RECOGNIZE": {
-                    "scilpy": "2.1.0rc1"
+                    "scilpy": "2.1.0"
                 },
                 "CONVERT": {
                     "mrconvert": "3.0.5"
@@ -651,21 +651,21 @@
                     "mrtrix": "3.0.4"
                 },
                 "PREPROC_TOPUP": {
-                    "scilpy": "2.1.0rc1",
+                    "scilpy": "2.1.0",
                     "antsRegistration": null,
                     "fsl": 6.0,
                     "mrtrix": "3.0.4",
                     "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.1.0rc1",
+                    "scilpy": "2.1.0",
                     "mrtrix": "3.0.4"
                 },
                 "RECONST_FODF": {
                     "scilpy": "2.0.2"
                 },
                 "RECONST_FRF": {
-                    "scilpy": "2.1.0rc1"
+                    "scilpy": "2.1.0"
                 },
                 "REGISTRATION_ANTS": {
                     "ants": "2.4.3",
@@ -693,7 +693,7 @@
                     "scilpy": "2.0.2"
                 },
                 "TRACTOGRAM_MATH": {
-                    "scilpy": "2.1.0rc1"
+                    "scilpy": "2.1.0"
                 },
                 "WARPPROBSEG": {
                     "ants": "2.4.3",
@@ -748,6 +748,7 @@
                 "sub-test1/ses-baseline/dwi",
                 "sub-test1/ses-baseline/dwi/bundles",
                 "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_desc-AF_L.trk",
+                "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_desc-AF_R.trk",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-ad.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-ad.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-afd_max.json",
@@ -853,6 +854,7 @@
                 "sub-test2/dwi",
                 "sub-test2/dwi/bundles",
                 "sub-test2/dwi/bundles/sub-test2_desc-AF_L.trk",
+                "sub-test2/dwi/bundles/sub-test2_desc-AF_R.trk",
                 "sub-test2/dwi/sub-test2_desc-ad.json",
                 "sub-test2/dwi/sub-test2_desc-ad.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-afd_max.json",
@@ -958,6 +960,7 @@
                 "sub-test4/dwi",
                 "sub-test4/dwi/bundles",
                 "sub-test4/dwi/bundles/sub-test4_desc-AF_L.trk",
+                "sub-test4/dwi/bundles/sub-test4_desc-AF_R.trk",
                 "sub-test4/dwi/sub-test4_desc-ad.json",
                 "sub-test4/dwi/sub-test4_desc-ad.nii.gz",
                 "sub-test4/dwi/sub-test4_desc-afd_max.json",
@@ -1042,7 +1045,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-18T20:31:01.059222"
+        "timestamp": "2025-06-22T20:00:16.456772"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -1341,21 +1344,21 @@
                     "mrtrix": "3.0.4"
                 },
                 "PREPROC_TOPUP": {
-                    "scilpy": "2.1.0rc1",
+                    "scilpy": "2.1.0",
                     "antsRegistration": null,
                     "fsl": 6.0,
                     "mrtrix": "3.0.4",
                     "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.1.0rc1",
+                    "scilpy": "2.1.0",
                     "mrtrix": "3.0.4"
                 },
                 "RECONST_FODF": {
                     "scilpy": "2.0.2"
                 },
                 "RECONST_FRF": {
-                    "scilpy": "2.1.0rc1"
+                    "scilpy": "2.1.0"
                 },
                 "RESAMPLE_DWI": {
                     "scilpy": "2.0.2"
@@ -1378,7 +1381,7 @@
                     "scilpy": "2.0.2"
                 },
                 "TRACTOGRAM_MATH": {
-                    "scilpy": "2.1.0rc1"
+                    "scilpy": "2.1.0"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3",
@@ -1746,6 +1749,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-16T08:38:23.647391"
+        "timestamp": "2025-06-22T19:37:22.449731"
     }
 }
