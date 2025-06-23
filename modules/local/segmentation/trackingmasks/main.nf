@@ -3,7 +3,7 @@ process SEGMENTATION_TRACKINGMASKS {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container 'scilus/scilus:latest'
+    container 'scilus/scilus:2.1.0'
 
     input:
     tuple val(meta), path(wm), path(gm), path(csf), path(fa), path(md), path(mask)

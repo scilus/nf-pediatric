@@ -51,6 +51,10 @@ include { TRACKING_PFTTRACKING              } from '../modules/nf-neuro/tracking
 include { TRACKING_LOCALTRACKING            } from '../modules/nf-neuro/tracking/localtracking/main'
 include { TRACTOGRAM_MATH                   } from '../modules/local/tractogram/math/main'
 
+// ** BundleSeg ** //
+include { BUNDLE_SEG } from '../subworkflows/nf-neuro/bundle_seg/main'
+include { TRACTOMETRY } from '../subworkflows/local/tractometry/main'
+
 // ** Connectomics ** //
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORM_LABELS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
 include { FILTERING_COMMIT                  } from '../modules/local/filtering/commit.nf'
@@ -598,6 +602,82 @@ workflow PEDIATRIC {
             }
     }
 
+    if ( params.bundling ) {
+
+        // ** Fetch files from an input_deriv if tracking is not run ** //
+        if ( ! params.tracking ) {
+            FETCH_DERIVATIVES ( params.input_deriv )
+
+            ch_fa_md = FETCH_DERIVATIVES.out.metrics
+                .map { meta, files ->
+                    def fa = files.findAll { it.name.contains('desc-fa.nii.gz') }
+                    def md = files.findAll { it.name.contains('desc-md.nii.gz') }
+
+                    // ** Some logging if no files exists ** //
+                    if ( fa.size() == 0 && md.size() == 0 ) {
+                        error "No FA or MD files have been found in your derivatives folder. " +
+                        "Please validate your structure respects the BIDS specification."
+                    }
+                    return [ meta, fa, md ]
+                }
+                .branch {
+                    infant: it[0].age < 0.5 || it[0].age > 18
+                        return [ it[0], it[2] ]
+                    child: true // Catch-all, unlikely that FA is there without MD.
+                        return [ it[0], it[1] ]
+                }
+            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
+
+            ch_metrics = FETCH_DERIVATIVES.out.metrics
+
+            ch_fodf = FETCH_DERIVATIVES.out.fodf
+
+            ch_trk = FETCH_DERIVATIVES.out.trk
+        } else {
+            ch_fa_md = RECONST_DTIMETRICS.out.fa
+                .join(RECONST_DTIMETRICS.out.md)
+                .branch {
+                    infant: it[0].age < 0.5 || it[0].age > 18
+                        return [ it[0], it[2] ]
+                    child: true // Catch all, should work also with infant, but not optimal.
+                        return [ it[0], it[1] ]
+                }
+            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
+
+            ch_metrics = RECONST_DTIMETRICS.out.fa
+                .join(RECONST_DTIMETRICS.out.md)
+                .join(RECONST_DTIMETRICS.out.ad)
+                .join(RECONST_DTIMETRICS.out.rd)
+                .join(RECONST_DTIMETRICS.out.mode)
+                .join(RECONST_FODF.out.afd_total)
+                .join(RECONST_FODF.out.nufo)
+                .map{ meta, fa, md, ad, rd, mode, afd_total, nufo ->
+                    tuple(meta, [ fa, md, ad, rd, mode, afd_total, nufo ])}
+
+            ch_fodf = RECONST_FODF.out.fodf
+        }
+
+        //
+        // SUBWORKFLOW: Run BUNDLE_SEG
+        //
+        BUNDLE_SEG(
+            ch_fa_md,
+            ch_trk
+        )
+        ch_versions = ch_versions.mix(BUNDLE_SEG.out.versions)
+
+        //
+        // SUBWORKFLOW: RUN TRACTOMETRY
+        //
+        TRACTOMETRY (
+            BUNDLE_SEG.out.bundles,
+            ch_metrics,
+            Channel.empty(),
+            ch_fodf
+        )
+
+    }
+
     if ( params.connectomics ) {
 
         if ( params.input_deriv ) {
@@ -837,6 +917,8 @@ workflow PEDIATRIC {
                     return [it[0], it[1]]
             }
         ch_anat_qc = ch_anat_qc.T1w.mix(ch_anat_qc.T2w)
+    } else if ( params.bundling ) {
+        ch_anat_qc = Channel.empty()
     } else {
         ch_anat_qc = ch_anat
     }

@@ -2,9 +2,7 @@ process PREPROC_TOPUP {
     tag "$meta.id"
     label 'process_medium'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
-        "scilus/scilus:latest"}"
+    container "scilus/scilus:2.1.0"
 
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec), path(b0), path(rev_dwi), path(rev_bval), path(rev_bvec), path(rev_b0)

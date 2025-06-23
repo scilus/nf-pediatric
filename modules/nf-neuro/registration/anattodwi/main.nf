@@ -2,7 +2,7 @@ process REGISTRATION_ANATTODWI {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:latest'
+    container 'scilus/scilus:2.1.0'
 
     input:
     tuple val(meta), path(t1), path(b0), path(metric)

@@ -4,7 +4,9 @@ Changes in component 'nf-core/multiqc'
 Changes in 'multiqc/main.nf':
 --- modules/nf-core/multiqc/main.nf
 +++ modules/nf-core/multiqc/main.nf
-@@ -2,12 +2,11 @@
+@@ -1,13 +1,13 @@
+ process MULTIQC {
++    tag "${meta.id}"
      label 'process_single'
  
      conda "${moduleDir}/environment.yml"
@@ -20,7 +22,7 @@ Changes in 'multiqc/main.nf':
      path(multiqc_config)
      path(extra_multiqc_config)
      path(multiqc_logo)
-@@ -15,7 +14,7 @@
+@@ -15,7 +15,7 @@
      path(sample_names)
  
      output:
@@ -29,7 +31,7 @@ Changes in 'multiqc/main.nf':
      path "*_data"              , emit: data
      path "*_plots"             , optional:true, emit: plots
      path "versions.yml"        , emit: versions
-@@ -25,18 +24,38 @@
+@@ -25,18 +25,38 @@
  
      script:
      def args = task.ext.args ?: ''
@@ -70,7 +72,7 @@ Changes in 'multiqc/main.nf':
          $extra_config \\
          $logo \\
          $replace \\
-@@ -50,10 +69,11 @@
+@@ -50,10 +70,11 @@
      """
  
      stub:

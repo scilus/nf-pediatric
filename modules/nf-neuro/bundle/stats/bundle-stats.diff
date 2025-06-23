@@ -1,0 +1,118 @@
+Changes in component 'nf-neuro/bundle/stats'
+'modules/nf-neuro/bundle/stats/environment.yml' is unchanged
+'modules/nf-neuro/bundle/stats/meta.yml' is unchanged
+Changes in 'bundle/stats/main.nf':
+--- modules/nf-neuro/bundle/stats/main.nf
++++ modules/nf-neuro/bundle/stats/main.nf
+@@ -47,11 +47,31 @@
+     """
+     bundles=( ${bundles.join(" ")} )
+     label_map=( ${labels_map.join(" ")} )
++    metrics=( ${metrics.join(" ")} )
+ 
+     for index in \${!bundles[@]};
+-    do\
+-    bname=\$(basename \${bundles[index]} .trk);
+-    b_metrics="$metrics";
++    do
++    ext=\${bundles[index]#*.}
++    pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
++    bname=\${bundles[index]:\$pos}
++    bname=\$(basename \${bname} .\${ext})
++    bname=\$(echo "\${bname}" | cut -d'_' -f1-3)
++
++    # Initialize arrays for filtered metrics
++    afd_fixel_metrics=()
++    other_metrics=()
++    
++    # Filter metrics into separate arrays
++    for metric in "\${metrics[@]}"; do
++        if [[ "\$metric" == *"\${bname}"* ]]; then
++            afd_fixel_metrics+=("\$metric")
++        elif [[ "\$metric" != *"afd_fixel"* ]]; then
++            other_metrics+=("\$metric")
++        fi
++    done
++    
++    # Combine filtered results
++    b_metrics=("\${afd_fixel_metrics[@]}" "\${other_metrics[@]}")
+ 
+     if [[ "$length_stats" ]];
+     then
+@@ -122,6 +142,7 @@
+     then
+         scil_json_merge_entries.py *_length.json ${prefix}_length_stats.json --add_parent_key ${prefix} \
+                 --keep_separate
++        rm *_length.json
+     fi
+ 
+     #Bundle_Endpoints_Map
+@@ -134,18 +155,21 @@
+ 
+         scil_json_merge_entries.py *_tail.json *_head.json ${prefix}_endpoints_metric_stats.json \
+             --no_list --add_parent_key ${prefix}
++        rm *_tail.json *_head.json *_endpoints_raw.json
+     fi
+ 
+     #Bundle_Mean_Std
+     if [[ "$mean_std" ]];
+     then
+         scil_json_merge_entries.py *_std.json ${prefix}_mean_std.json --no_list --add_parent_key ${prefix}
++        rm *_std.json
+     fi
+ 
+     #Bundle_Volume
+     if [[ "$volume" ]];
+     then
+         scil_json_merge_entries.py *_volume_stat.json ${prefix}_volume.json --no_list --add_parent_key ${prefix}
++        rm *_volume_stat.json
+ 
+         if [[ "$lesions_stats" ]];
+         then
+@@ -154,6 +178,8 @@
+                 --no_list --add_parent_key ${prefix}
+             scil_merge_json.py ${prefix}__lesion_stats.json ${prefix}__lesion_stats.json \
+                 --remove_parent_key --add_parent_key ${prefix} -f
++        
++            rm *_volume_lesions_stat.json *_streamline_count_lesions_stat.json
+         fi
+ 
+     #Bundle_Streamline_Count
+@@ -161,6 +187,7 @@
+     then
+         scil_json_merge_entries.py *_streamlines.json ${prefix}_streamline_count.json --no_list \
+             --add_parent_key ${prefix}
++        rm *_streamlines.json
+     fi
+ 
+     #Bundle_Volume_Per_Label
+@@ -168,11 +195,13 @@
+     then
+         scil_json_merge_entries.py *_volume_label.json ${prefix}_volume_per_label.json --no_list \
+             --add_parent_key ${prefix}
++        rm *_volume_label.json
+ 
+         if [[ "$lesions_stats" ]];
+         then
+             scil_json_merge_entries.py *_volume_per_label_lesions_stat.json ${prefix}_volume_per_label_lesions.json \
+                 --no_list --add_parent_key ${prefix}
++            rm *_volume_per_label_lesions_stat.json
+         fi
+     fi
+ 
+@@ -181,6 +210,7 @@
+     then
+         scil_json_merge_entries.py *_std_per_point.json ${prefix}_mean_std_per_point.json --no_list \
+             --add_parent_key ${prefix}
++        rm *_std_per_point.json
+     fi
+ 
+     cat <<-END_VERSIONS > versions.yml
+
+'modules/nf-neuro/bundle/stats/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/bundle/stats/tests/nextflow_light.config' is unchanged
+'modules/nf-neuro/bundle/stats/tests/tags.yml' is unchanged
+'modules/nf-neuro/bundle/stats/tests/nextflow_lesions.config' is unchanged
+'modules/nf-neuro/bundle/stats/tests/nextflow.config' is unchanged
+'modules/nf-neuro/bundle/stats/tests/main.nf.test' is unchanged
+************************************************************

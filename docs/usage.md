@@ -5,6 +5,7 @@
 `nf-pediatric` is a neuro-imaging pipeline to process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. Here is a list of the available profiles:
 
 - `tracking`: Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
+- `bundling`: Perform bundle extraction from the whole-brain tractogram according to a bundle atlas. For children under 6 months, the pipeline uses a neonate atlas. For other ages, pipeline will automatically pull the atlas from [Zenodo](https://zenodo.org/records/10103446) (if you don't have access to internet, you will need to download it prior to the pipeline run, and specify its location using `--atlas_directory`). Following bundle extraction, the pipeline will perform tractometry and output various metrics for each bundle.
 - `segmentation`: Run [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/), [Recon-all-clinical](https://surfer.nmr.mgh.harvard.edu/fswiki/recon-all-clinical), [FastSurfer](https://deep-mi.org/research/fastsurfer/), or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) for T1w/T2w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or the Desikan-Killiany atlas (for infant) is mapped to the subject space.
 - `connectomics`: Perform tractogram segmentation according to an atlas, tractogram filtering, and compute metrics. Final outputs are connectivity matrices.
 
@@ -183,6 +184,8 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile for ARM based computers. **Experimental, not all containers have their ARM equivalent and might reduce performance.**
 - `tracking`
   - Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
+- `bundling`
+  - Perform automatic bundle extraction using a bundle atlas. Then, each bundle is cleaned, and tractometry is performed to obtain various measures of WM microstructure along each bundle.
 - `segmentation`
   - Run Recon-all-clinical (default for participants >= 3 months), FreeSurfer, FastSurfer, or M-CRIB-S (participants < 3 months) for T1w/T2w surface reconstruction. Then, the [Brainnetome Child Atlas](https://academic.oup.com/cercor/article/33/9/5264/6762896) or Desikan-Killiany atlas is mapped to the subject space.
 - `connectomics`
