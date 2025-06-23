@@ -75,7 +75,7 @@ workflow TRACTOMETRY {
     lesion_stats                = BUNDLE_STATS.out.lesion_stats ?: Channel.empty()
     endpoints_head              = BUNDLE_STATS.out.endpoints_head ?: Channel.empty()
     endpoints_tail              = BUNDLE_STATS.out.endpoints_tail ?: Channel.empty()
-    lesion_map                  = BUNDLE_STATS.out.lesion_map ?: Channel.empty() 
+    lesion_map                  = BUNDLE_STATS.out.lesion_map ?: Channel.empty()
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }

@@ -60,7 +60,7 @@ process BUNDLE_STATS {
     # Initialize arrays for filtered metrics
     afd_fixel_metrics=()
     other_metrics=()
-    
+
     # Filter metrics into separate arrays
     for metric in "\${metrics[@]}"; do
         if [[ "\$metric" == *"\${bname}"* ]]; then
@@ -69,7 +69,7 @@ process BUNDLE_STATS {
             other_metrics+=("\$metric")
         fi
     done
-    
+
     # Combine filtered results
     b_metrics=("\${afd_fixel_metrics[@]}" "\${other_metrics[@]}")
 
@@ -178,7 +178,7 @@ process BUNDLE_STATS {
                 --no_list --add_parent_key ${prefix}
             scil_merge_json.py ${prefix}__lesion_stats.json ${prefix}__lesion_stats.json \
                 --remove_parent_key --add_parent_key ${prefix} -f
-        
+
             rm *_volume_lesions_stat.json *_streamline_count_lesions_stat.json
         fi
 

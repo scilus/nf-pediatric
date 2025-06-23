@@ -47,7 +47,7 @@ process BUNDLE_FIXELAFD {
         bname=\$(basename \$bname \${ext})
         touch ${prefix}__\${bname}_afd_fixel_metric.nii.gz
     done
-    
+
     scil_compute_mean_fixel_afd_from_bundles.py -h
 
     cat <<-END_VERSIONS > versions.yml
