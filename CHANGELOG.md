@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- Includes a new neonate atlas for bundleseg.
+- New processing profile for bundling and tractometry. This includes the bundle_seg and tractometry subworkflows.
 - More clear logging for missing or not properly formatted `participants.tsv` file and test cases.
 - Derivatives now also contain a `README.txt` file with additional informations regarding the pipeline run.
 - Derivatives now have sidecar Json files indicating source data, transform file, and specific characteristics.
