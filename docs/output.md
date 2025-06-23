@@ -167,6 +167,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/bundles/`
+
   - `*_desc-{bundleName}.trk`: Single `.trk` file for each of the recognized bundle. Those are cleaned, uniformized, and colored (only affect visualization).
 
 - `dwi/`
