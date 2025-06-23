@@ -161,6 +161,19 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 
 </details>
 
+### Bundling
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `dwi/bundles/`
+  - `*_desc-{bundleName}.trk`: Single `.trk` file for each of the recognized bundle. Those are cleaned, uniformized, and colored (only affect visualization).
+
+- `dwi/`
+  - `*_desc-{statsName}.trk`: Various `.json` file for each metric type containing values for each bundles for the current subject. Will be subject to change in the near future for `.tsv` files, which are easier to work with in subsequent statistical analysis.
+
+</details>
+
 ### Connectomics
 
 <details markdown="1">
