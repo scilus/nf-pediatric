@@ -20,6 +20,7 @@ process QC_TRACKING {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def session = meta.session ? "${meta.session}_" : ''
 
     def sh_basis = task.ext.sh_basis ? "--sh_basis ${task.ext.sh_basis}" : ''
     def sphere = task.ext.sphere ? "--sphere ${task.ext.sphere}" : ''
@@ -30,30 +31,30 @@ process QC_TRACKING {
     def n_steps = task.ext.n_steps ? "--n_steps ${task.ext.n_steps}" : ''
 
     """
-    scil_tractogram_count_streamlines.py $tractogram --print_count_alone > ${prefix}__sc.txt
+    scil_tractogram_count_streamlines.py $tractogram --print_count_alone > ${prefix}_${session}__sc.txt
 
     # Computing TODI.
     scil_tractogram_compute_TODI.py $tractogram \
-        --out_mask ${prefix}__tractogram_mask.nii.gz \
-        --out_tdi ${prefix}__TDI.nii.gz \
+        --out_mask ${prefix}_${session}__tractogram_mask.nii.gz \
+        --out_tdi ${prefix}_${session}__TDI.nii.gz \
         $sh_basis $sphere $sh_order $normalize_per_voxel \
         $smooth_todi $asymmetric $n_steps
 
     # Computing DICE score.
-    scil_volume_pairwise_comparison.py $wm ${prefix}__tractogram_mask.nii.gz \
+    scil_volume_pairwise_comparison.py $wm ${prefix}_${session}__tractogram_mask.nii.gz \
         ${prefix}__stats.json
 
     awk '
     in_block && /\\[/ { getline; gsub(/[[:space:]]/, "", \$0); print \$0; exit }
     /"dice_voxels"/ { in_block=1 }
-    ' "${prefix}__stats.json" > "${prefix}__dice.txt"
+    ' "${prefix}__stats.json" > "${prefix}_${session}__dice.txt"
 
     # Fetch middle axial slice.
-    size=\$(mrinfo ${prefix}__TDI.nii.gz -size)
+    size=\$(mrinfo ${prefix}_${session}__TDI.nii.gz -size)
     mid_slice=\$(echo \$size | awk '{print int((\$3 + 1) / 2)}')
 
     # Visual QC file.
-    scil_viz_volume_screenshot.py ${prefix}__TDI.nii.gz ${prefix}_ax.png \
+    scil_viz_volume_screenshot.py ${prefix}_${session}__TDI.nii.gz ${prefix}_ax.png \
         --volume_cmap pink \
         --overlays $gm \
         --overlays_opacity 0 \
@@ -100,13 +101,14 @@ process QC_TRACKING {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def session = meta.session ? "${meta.session}_" : ''
 
     """
-    touch ${prefix}__tractogram_mask.nii.gz
-    touch ${prefix}__TDI.nii.gz
-    touch ${prefix}__dice.txt
-    touch ${prefix}__sc.txt
-    touch ${prefix}__coverage_overlay_mqc.png
+    touch ${prefix}_${session}__tractogram_mask.nii.gz
+    touch ${prefix}_${session}__TDI.nii.gz
+    touch ${prefix}_${session}__dice.txt
+    touch ${prefix}_${session}__sc.txt
+    touch ${prefix}_${session}__coverage_overlay_mqc.png
 
     scil_tractogram_count_streamlines.py -h
     scil_tractogram_compute_TODI.py -h
