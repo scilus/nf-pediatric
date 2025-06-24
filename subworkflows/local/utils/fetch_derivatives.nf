@@ -1,15 +1,21 @@
 def readParticipantsTsv(file) {
-    def participantMap = [:]
+    def participantData = []
 
     file.splitCsv(sep: '\t', header: true).each { row ->
-        // Access columns by name regardless of position
-        if ( ! row.age ) {
+        if (!row.age) {
             error "ERROR: Age is not entered correctly in the participants.tsv file. Please validate."
         }
-        participantMap[row.participant_id] = row.age.toFloat()
+        
+        def sessionId = (row.session_id == null || row.session_id.toString().trim() == "") ? "" : row.session_id.toString()
+        
+        participantData.add([
+            participant_id: row.participant_id.toString(),
+            session_id: sessionId,
+            age: row.age.toFloat()
+        ])
     }
 
-    return participantMap
+    return participantData
 }
 
 workflow FETCH_DERIVATIVES {
@@ -29,12 +35,19 @@ workflow FETCH_DERIVATIVES {
     }
 
     participantsTsv = file("${input_deriv}/participants.tsv")
-    ageMap = readParticipantsTsv(participantsTsv)
+    participantData = readParticipantsTsv(participantsTsv)
     def participant_ids = params.participant_label ?: []
 
-    // Helper function to get age
-    def getAge = { id ->
-        return ageMap[id] ?: ""
+    // Helper function to get age with session support
+    def getAge = { participantId, sessionId = null ->
+        def searchParticipantId = participantId.toString()
+        def searchSessionId = (sessionId == null || sessionId.toString().trim() == "") ? "" : sessionId.toString()
+        
+        def match = participantData.find { row ->
+            return row.participant_id == searchParticipantId && row.session_id == searchSessionId
+        }
+        
+        return match ? match.age : 0.0  // Return 0.0 instead of empty string
     }
 
     // ** Segmentations ** //
@@ -44,7 +57,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id)
+            def age = getAge(id, session)
             def metadata = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [metadata, file]
@@ -64,7 +77,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id)
+            def age = getAge(id, session)
             def metadata = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
             def type = file.name.contains('T1w') ? 'T1w' : 'T2w'
 
@@ -86,7 +99,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id)
+            def age = getAge(id, session)
             def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
             def type = file.name.contains('warp') ? 'warp' : 'affine'
 
@@ -116,7 +129,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id)
+            def age = getAge(id, session)
             def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
@@ -129,7 +142,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id)
+            def age = getAge(id, session)
             def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
@@ -145,7 +158,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id)
+            def age = getAge(id, session)
             def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
@@ -177,7 +190,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id)
+            def age = getAge(id, session)
             def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
@@ -193,7 +206,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id)
+            def age = getAge(id, session)
             def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
