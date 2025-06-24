@@ -1,7 +1,7 @@
 {
     "Connectomics profile with derivatives and session - should run successfully": {
         "content": [
-            35,
+            44,
             {
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": 1.6
@@ -55,6 +55,24 @@
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_data",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_plots",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_report.html",
+                "sub-test1/ses-time1",
+                "sub-test1/ses-time1/anat",
+                "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-DWI_seg-BrainnetomeChild_dseg.json",
+                "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test1/ses-time1/dwi",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.npy",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fa.npy",
+                "sub-test1/ses-time1/figures",
+                "sub-test1/ses-time1/figures/sub-test1_gradients_mqc.png",
+                "sub-test1/ses-time1/figures/sub-test1_labels_mqc.png",
+                "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.png",
+                "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fa.png",
+                "sub-test1/ses-time1/multiqc",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_data",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_report.html",
                 "sub-test2",
                 "sub-test2/dwi",
                 "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
@@ -113,11 +131,11 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-05-30T16:57:52.091207"
+        "timestamp": "2025-06-23T22:07:34.205453"
     },
     "Connectomics profile with derivatives - should run successfully": {
         "content": [
-            35,
+            44,
             {
                 "CONNECTIVITY_AFDFIXEL": {
                     "scilpy": 1.6
@@ -171,6 +189,24 @@
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_data",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_plots",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_report.html",
+                "sub-test1/ses-time1",
+                "sub-test1/ses-time1/anat",
+                "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-DWI_seg-BrainnetomeChild_dseg.json",
+                "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test1/ses-time1/dwi",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.npy",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fa.npy",
+                "sub-test1/ses-time1/figures",
+                "sub-test1/ses-time1/figures/sub-test1_gradients_mqc.png",
+                "sub-test1/ses-time1/figures/sub-test1_labels_mqc.png",
+                "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.png",
+                "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fa.png",
+                "sub-test1/ses-time1/multiqc",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_data",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_report.html",
                 "sub-test2",
                 "sub-test2/dwi",
                 "sub-test2/dwi/sub-test2_seg-BrainnetomeChild_desc-filtered_tractogram.h5",
@@ -229,6 +265,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-05-30T16:55:26.220526"
+        "timestamp": "2025-06-23T22:06:10.325893"
     }
 }

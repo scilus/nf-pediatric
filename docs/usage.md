@@ -71,13 +71,14 @@ The most basic BIDS directory should have a similar structure (note that session
 - `dataset_description.json`: A JSON file describing the dataset.
 - `participants.tsv`: A TSV file listing the participants and their metadata. **`nf-pediatric` requires the participants' age to be supplied within this file, using `age` as the column name. If not available, the pipeline will return an error at runtime. Here is an example:**
 
-> [!IMPORTANT] The age can be specified using either post conceptual age (only recommended for infant data, users should indicate age in years as soon as possible) or years.
+> [!IMPORTANT] The age can be specified using either post conceptual age (only recommended for infant data, users should indicate age in years as soon as possible) or years. If multiple session are available for a single subject, each session needs to be entered in different rows. For example, see below:
 
-> | participant_id | age |
-> | -------------- | --- |
-> | sub-test1      | 44  |
-> | sub-test2      | 8   |
-> | ...            | ... |
+> | participant_id | session_id   | age |
+> | -------------- | ------------ | --- |
+> | sub-test1      | ses-baseline | 42  |
+> | sub-test1      | ses-time1    | 4   |
+> | sub-test2      |              | 8   |
+> | ...            | ...          | ... |
 
 Mandatory files per subject:
 

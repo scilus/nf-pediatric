@@ -19,7 +19,7 @@ Sensitive entities: PhaseEncodingDirection, TotalReadoutTime, direction
 Formerly: scil_validate_bids.py
 
 ** This is a modified version of scil_validate_bids.py from the **
-** scilpy package. It allows the fetching of custom BIDS filed  **
+** scilpy package. It allows the fetching of custom BIDS fields **
 ** required for nf-pediatric.                                   **
 """
 
@@ -345,7 +345,12 @@ def get_data(layout, nSub, dwis, t1s, t2s, fs, default_readout, clean):
             sep='\t')
 
         if 'age' in metadata.columns:
-            age = metadata[metadata['participant_id'] == f'sub-{nSub}']['age'].values[0]
+            if nSess != 0:
+                age = metadata[(metadata['participant_id'] == f'sub-{nSub}') &
+                            (metadata['session_id'] == f'ses-{nSess}')]['age'].values[0]
+            else:
+                age = metadata[metadata['participant_id'] == \
+                               f'sub-{nSub}']['age'].values[0]
         else:
             age = ""
 
