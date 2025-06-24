@@ -67,7 +67,7 @@ process QC_TRACKING {
     # Fetch middle coronal slice.
     mid_slice=\$(echo \$size | awk '{print int((\$2 + 1) / 2)}')
 
-    scil_viz_volume_screenshot.py ${prefix}__TDI.nii.gz ${prefix}_cor.png \
+    scil_viz_volume_screenshot.py ${prefix}_${session}__TDI.nii.gz ${prefix}_cor.png \
         --volume_cmap pink \
         --overlays $gm \
         --overlays_opacity 0 \
@@ -80,7 +80,7 @@ process QC_TRACKING {
     # Fetch middle sagittal slice.
     mid_slice=\$(echo \$size | awk '{print int(((\$1 + 1) / 2) + 10)}')
 
-    scil_viz_volume_screenshot.py ${prefix}__TDI.nii.gz ${prefix}_sag.png \
+    scil_viz_volume_screenshot.py ${prefix}_${session}__TDI.nii.gz ${prefix}_sag.png \
         --volume_cmap pink \
         --overlays $gm \
         --overlays_opacity 0 \
