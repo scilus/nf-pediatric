@@ -5,9 +5,9 @@ def readParticipantsTsv(file) {
         if (!row.age) {
             error "ERROR: Age is not entered correctly in the participants.tsv file. Please validate."
         }
-        
+
         def sessionId = (row.session_id == null || row.session_id.toString().trim() == "") ? "" : row.session_id.toString()
-        
+
         participantData.add([
             participant_id: row.participant_id.toString(),
             session_id: sessionId,
@@ -42,11 +42,11 @@ workflow FETCH_DERIVATIVES {
     def getAge = { participantId, sessionId = null ->
         def searchParticipantId = participantId.toString()
         def searchSessionId = (sessionId == null || sessionId.toString().trim() == "") ? "" : sessionId.toString()
-        
+
         def match = participantData.find { row ->
             return row.participant_id == searchParticipantId && row.session_id == searchSessionId
         }
-        
+
         return match ? match.age : 0.0  // Return 0.0 instead of empty string
     }
 

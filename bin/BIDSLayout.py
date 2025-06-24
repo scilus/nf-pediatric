@@ -346,7 +346,7 @@ def get_data(layout, nSub, dwis, t1s, t2s, fs, default_readout, clean):
 
         if 'age' in metadata.columns:
             if nSess != 0:
-                age = metadata[(metadata['participant_id'] == f'sub-{nSub}') & 
+                age = metadata[(metadata['participant_id'] == f'sub-{nSub}') &
                             (metadata['session_id'] == f'ses-{nSess}')]['age'].values[0]
             else:
                 age = metadata[metadata['participant_id'] == \
