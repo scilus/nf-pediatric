@@ -73,12 +73,12 @@ The most basic BIDS directory should have a similar structure (note that session
 
 > [!IMPORTANT] The age can be specified using either post conceptual age (only recommended for infant data, users should indicate age in years as soon as possible) or years. If multiple session are available for a single subject, each session needs to be entered in different rows. For example, see below:
 
-> | participant_id | session_id | age |
-> | -------------- | ---------- | --- |
-> | sub-test1      | ses-baseline | 42 |
-> | sub-test1      | ses-time1 | 4 |
-> | sub-test2      |           | 8 |
-> | ...            | ...       |...|
+> | participant_id | session_id   | age |
+> | -------------- | ------------ | --- |
+> | sub-test1      | ses-baseline | 42  |
+> | sub-test1      | ses-time1    | 4   |
+> | sub-test2      |              | 8   |
+> | ...            | ...          | ... |
 
 Mandatory files per subject:
 
