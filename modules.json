@@ -162,7 +162,7 @@
                     },
                     "preproc/n4": {
                         "branch": "main",
-                        "git_sha": "18273a2cef9ffdaf7088e305b9c4ebf4dd439079",
+                        "git_sha": "cdb60baa7d33bba56cde711c8c4c2efdc92c47cf",
                         "installed_by": ["preproc_dwi", "preproc_t1"],
                         "patch": "modules/nf-neuro/preproc/n4/preproc-n4.diff"
                     },
@@ -293,13 +293,13 @@
                     },
                     "preproc_dwi": {
                         "branch": "main",
-                        "git_sha": "78abc7f1c556b222829f3067e73ae2738162b4fc",
+                        "git_sha": "7fa716a34d765bd9b31b55fcaf8d379739d1e091",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/preproc_dwi/preproc_dwi.diff"
                     },
                     "preproc_t1": {
                         "branch": "main",
-                        "git_sha": "f47e7311a62f629fca459c87f4fd9bf01297b70e",
+                        "git_sha": "7fa716a34d765bd9b31b55fcaf8d379739d1e091",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/preproc_t1/preproc_t1.diff"
                     },
