@@ -186,8 +186,9 @@ workflow PREPROC_DWI {
         if (params.preproc_dwi_run_N4 && !params.skip_dwi_preprocessing) {
             // ** N4 DWI ** //
             ch_N4 = ch_dwi_preproc
-                .join(CROPB0.out.image)
-                .join(ch_mask)
+                .join(TOPUP_EDDY.out.bval)
+                .join(TOPUP_EDDY.out.bvec)
+                .join(BETCROP_FSLBETCROP.out.mask)
 
             N4_DWI ( ch_N4 )
             ch_versions = ch_versions.mix(N4_DWI.out.versions.first())
