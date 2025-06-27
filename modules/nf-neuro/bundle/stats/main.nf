@@ -57,21 +57,15 @@ process BUNDLE_STATS {
     bname=\$(basename \${bname} .\${ext})
     bname=\$(echo "\${bname}" | cut -d'_' -f1-3)
 
-    # Initialize arrays for filtered metrics
-    afd_fixel_metrics=()
-    other_metrics=()
+    # Initialize array for all relevant metrics
+    b_metrics=()
 
-    # Filter metrics into separate arrays
     for metric in "\${metrics[@]}"; do
-        if [[ "\$metric" == *"\${bname}"* ]]; then
-            afd_fixel_metrics+=("\$metric")
-        elif [[ "\$metric" != *"afd_fixel"* ]]; then
-            other_metrics+=("\$metric")
+        # Include if: matches bname OR is not an afd_fixel file
+        if [[ "\$metric" == *"\${bname}"* ]] || [[ "\$metric" != *"afd_fixel"* ]]; then
+            b_metrics+=("\$metric")
         fi
     done
-
-    # Combine filtered results
-    b_metrics=("\${afd_fixel_metrics[@]}" "\${other_metrics[@]}")
 
     if [[ "$length_stats" ]];
     then
