@@ -85,8 +85,8 @@
                     "freesurfer": "7.1.1"
                 },
                 "N4_DWI": {
-                    "scilpy": "2.0.2",
-                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                    "ants": null,
+                    "mrtrix": "3.0.5"
                 },
                 "NORMALIZE_DWI": {
                     "scilpy": "2.0.2",
@@ -733,7 +733,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-23T22:43:35.283149"
+        "timestamp": "2025-06-27T14:31:44.043023"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
@@ -791,8 +791,8 @@
                     "scilpy": "2.0.2"
                 },
                 "N4_DWI": {
-                    "scilpy": "2.0.2",
-                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                    "ants": null,
+                    "mrtrix": "3.0.5"
                 },
                 "NORMALIZE_DWI": {
                     "scilpy": "2.0.2",
@@ -1305,7 +1305,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-23T22:50:19.404623"
+        "timestamp": "2025-06-27T14:40:25.923209"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -1641,8 +1641,8 @@
                     "scilpy": "2.0.2"
                 },
                 "N4_DWI": {
-                    "scilpy": "2.0.2",
-                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                    "ants": null,
+                    "mrtrix": "3.0.5"
                 },
                 "NORMALIZE_DWI": {
                     "scilpy": "2.0.2",
@@ -2171,6 +2171,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-23T22:37:55.526034"
+        "timestamp": "2025-06-27T14:23:41.713786"
     }
 }
