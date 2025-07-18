@@ -109,7 +109,7 @@ workflow PIPELINE_INITIALISATION {
                         }
                     }
 
-                    if ( age == "nan" ) {
+                    if ( age == "nan" || age == "" ) {
                         error "ERROR: Age is not entered correctly in the participants.tsv file. Please validate."
                     }
 
