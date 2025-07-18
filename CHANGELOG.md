@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- Automatic assessment of iteration pyramid and b-spline parameter in N4 module.
 - Add support for age extraction in multisession subjects.
 - Includes a new neonate atlas for bundleseg.
 - New processing profile for bundling and tractometry. This includes the bundle_seg and tractometry subworkflows.
