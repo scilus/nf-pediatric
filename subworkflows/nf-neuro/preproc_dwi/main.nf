@@ -188,7 +188,7 @@ workflow PREPROC_DWI {
             ch_N4 = ch_dwi_preproc
                 .join(TOPUP_EDDY.out.bval)
                 .join(TOPUP_EDDY.out.bvec)
-                .join(BETCROP_FSLBETCROP.out.mask)
+                .join(ch_mask)
 
             N4_DWI ( ch_N4 )
             ch_versions = ch_versions.mix(N4_DWI.out.versions.first())
