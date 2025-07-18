@@ -47,8 +47,7 @@ nextflow run scilus/nf-pediatric -r main --help
 
 For complete usage instructions, please see the [documentation](/docs/usage.md). **nf-pediatric** aligns with the [BIDS](https://bids-specification.readthedocs.io/en/stable/) specification. To promote the use of standardized data formats and structures, **nf-pediatric** requires a BIDS-compliant folder as its input directories. We encourage users to validate their BIDS layout using the [bids-validator tool](https://hub.docker.com/r/bids/validator). The following example provides a BIDS structure containg an acquisition with a reverse phase-encoded B0 image.
 
-> [!IMPORTANT]
-> `nf-pediatric` requires that the `participants.tsv` file contains the participants' age in order to properly execute the appropriate steps. To view an example, please see the [input documentation](/docs/usage.md).
+> [!IMPORTANT] > `nf-pediatric` requires that the `participants.tsv` file contains the participants' age in order to properly execute the appropriate steps. To view an example, please see the [input documentation](/docs/usage.md).
 
 ```bash
 <bids_folder>
