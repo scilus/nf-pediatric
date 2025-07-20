@@ -157,7 +157,6 @@ workflow PEDIATRIC {
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
-            Channel.empty(),
             ch_synthstrip_weights
         )
         ch_versions = ch_versions.mix(PREPROC_T1W.out.versions.first())
@@ -166,7 +165,6 @@ workflow PEDIATRIC {
         // ** T2 Preprocessing ** //
         PREPROC_T2W (
             !params.tracking ? ch_infant_t2.infant : ch_t2.witht2,
-            Channel.empty(),
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),

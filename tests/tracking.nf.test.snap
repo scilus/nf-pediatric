@@ -52,8 +52,8 @@
                     "scilpy": "2.0.2"
                 },
                 "N4_DWI": {
-                    "scilpy": "2.0.2",
-                    "N4BiasFieldCorrection": "2.4.3-gcaa60eb"
+                    "ants": null,
+                    "mrtrix": "3.0.5"
                 },
                 "NORMALIZE_DWI": {
                     "scilpy": "2.0.2",
@@ -597,7 +597,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-23T22:56:44.321085"
+        "timestamp": "2025-06-27T14:48:28.851852"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [

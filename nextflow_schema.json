@@ -272,14 +272,14 @@
                     "type": "number",
                     "description": "Number of B-spline knots per voxel used in the T1 bias correction step.",
                     "fa_icon": "fas fa-brain",
-                    "default": 1,
+                    "default": 8,
                     "hidden": true
                 },
                 "t1_bias_shrink_factor": {
                     "type": "integer",
                     "description": "Shrink factor used in the T1 bias correction step.",
                     "fa_icon": "fas fa-brain",
-                    "default": 1,
+                    "default": 4,
                     "hidden": true
                 },
                 "t1_resample_voxel_size": {
