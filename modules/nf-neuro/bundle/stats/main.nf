@@ -60,10 +60,10 @@ process BUNDLE_STATS {
     # Initialize array for all relevant metrics
     b_metrics=()
 
-    for index in \${!metrics[@]}; do
+    for m in \${!metrics[@]}; do
         # Include if: matches bname OR is not an afd_fixel file
-        if [[ "\${metrics[\$index]}" == *"\${bname}"* ]] || [[ "\${metrics[\$index]}" != *"afd_fixel"* ]]; then
-            b_metrics+=("\${metrics[\$index]}")
+        if [[ "\${metrics[\$m]}" == *"\${bname}"* ]] || [[ "\${metrics[\$m]}" != *"afd_fixel"* ]]; then
+            b_metrics+=("\${metrics[\$m]}")
         fi
     done
 
