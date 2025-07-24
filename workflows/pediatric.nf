@@ -833,30 +833,38 @@ workflow PEDIATRIC {
     if ( params.template ) {
         ch_nifti_files_to_transform = ch_nifti_files_to_transform
             .groupTuple()
-            .map { meta, nii_list ->
-                def images = nii_list.flatten().findAll { it != null }
-                return tuple(meta, images)
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
             }
 
         ch_mask_files_to_transform = ch_mask_files_to_transform
             .groupTuple()
-            .map { meta, nii_list ->
-                def images = nii_list.flatten().findAll { it != null }
-                return tuple(meta, images)
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
             }
 
         ch_labels_files_to_transform = ch_labels_files_to_transform
             .groupTuple()
-            .map { meta, nii_list ->
-                def images = nii_list.flatten().findAll { it != null }
-                return tuple(meta, images)
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
             }
 
         ch_trk_files_to_transform = ch_trk_files_to_transform
             .groupTuple()
-            .map{ meta, trk_list ->
-                def trk = trk_list.flatten().findAll { it != null }
-                return tuple(meta, trk)
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
             }
 
         OUTPUT_TEMPLATE_SPACE(
