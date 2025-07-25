@@ -86,6 +86,10 @@ nextflow_pipeline {
                 params.participant_label = ["sub-test1", "sub-test2", "sub-test3"]
                 params.outdir = "$outputDir"
 
+                params.template = "MNIInfant"
+                params.templateflow_res = 1
+                params.templateflow_cohort = 1
+
                 params.connectomics = true
                 params.tracking = true
                 params.segmentation = true
