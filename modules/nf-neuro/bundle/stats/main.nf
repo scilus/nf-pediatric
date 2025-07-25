@@ -13,14 +13,14 @@ process BUNDLE_STATS {
     tuple val(meta), path("*_length_stats.json")                , emit: length, optional: true
     tuple val(meta), path("*_endpoints_map_raw.json")           , emit: endpoints_raw, optional: true
     tuple val(meta), path("*_endpoints_metric_stats.json")      , emit: endpoints_metric_stats, optional: true
-    tuple val(meta), path("*_mean_std.json")                    , emit: mean_std, optional: true
+    tuple val(meta), path("*_mean_std_stats.json")              , emit: mean_std, optional: true
     tuple val(meta), path("*_volume.json")                      , emit: volume, optional: true
     tuple val(meta), path("*_volume_lesions.json")              , emit: volume_lesions, optional: true
     tuple val(meta), path("*_streamline_count.json")            , emit: streamline_count, optional: true
     tuple val(meta), path("*_streamline_count_lesions.json")    , emit: streamline_count_lesions, optional: true
     tuple val(meta), path("*_volume_per_label.json")            , emit: volume_per_labels, optional: true
     tuple val(meta), path("*_volume_per_label_lesions.json")    , emit: volume_per_labels_lesions, optional: true
-    tuple val(meta), path("*_mean_std_per_point.json")          , emit: mean_std_per_point, optional: true
+    tuple val(meta), path("*_mean_std_per_point_stats.json")    , emit: mean_std_per_point, optional: true
     tuple val(meta), path("*__lesion_stats.json")               , emit: lesion_stats, optional: true
     tuple val(meta), path("*_endpoints_map_head.nii.gz")        , emit: endpoints_head, optional: true
     tuple val(meta), path("*_endpoints_map_tail.nii.gz")        , emit: endpoints_tail, optional: true
@@ -161,7 +161,7 @@ process BUNDLE_STATS {
     #Bundle_Mean_Std
     if [[ "$mean_std" ]];
     then
-        scil_json_merge_entries.py *_std.json ${prefix}_mean_std.json --no_list --add_parent_key ${prefix}
+        scil_json_merge_entries.py *_std.json ${prefix}_mean_std_stats.json --no_list --add_parent_key ${prefix}
         rm *_std.json
     fi
 
@@ -208,7 +208,7 @@ process BUNDLE_STATS {
     #Bundle_Mean_Std_Per_Point
     if [[ "$mean_std_per_point" ]];
     then
-        scil_json_merge_entries.py *_std_per_point.json ${prefix}_mean_std_per_point.json --no_list \
+        scil_json_merge_entries.py *_std_per_point.json ${prefix}_mean_std_per_point_stats.json --no_list \
             --add_parent_key ${prefix}
         rm *_std_per_point.json
     fi
@@ -236,11 +236,11 @@ process BUNDLE_STATS {
     touch ${prefix}__length_stats.json
     touch ${prefix}__endpoints_map_raw.json
     touch ${prefix}__endpoints_metric_stats.json
-    touch ${prefix}__mean_std.json
+    touch ${prefix}__mean_std_stats.json
     touch ${prefix}__volume.json
     touch ${prefix}__streamline_count.json
     touch ${prefix}__volume_per_label.json
-    touch ${prefix}__mean_std_per_point.json
+    touch ${prefix}__mean_std_per_point_stats.json
     touch ${prefix}_endpoints_map_head.nii.gz
     touch ${prefix}_endpoints_map_tail.nii.gz
 
