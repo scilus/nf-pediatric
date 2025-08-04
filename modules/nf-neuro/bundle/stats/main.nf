@@ -57,21 +57,15 @@ process BUNDLE_STATS {
     bname=\$(basename \${bname} .\${ext})
     bname=\$(echo "\${bname}" | cut -d'_' -f1-3)
 
-    # Initialize arrays for filtered metrics
-    afd_fixel_metrics=()
-    other_metrics=()
+    # Initialize array for all relevant metrics
+    b_metrics=()
 
-    # Filter metrics into separate arrays
-    for metric in "\${metrics[@]}"; do
-        if [[ "\$metric" == *"\${bname}"* ]]; then
-            afd_fixel_metrics+=("\$metric")
-        elif [[ "\$metric" != *"afd_fixel"* ]]; then
-            other_metrics+=("\$metric")
+    for m in \${!metrics[@]}; do
+        # Include if: matches bname OR is not an afd_fixel file
+        if [[ "\${metrics[\$m]}" == *"\${bname}"* ]] || [[ "\${metrics[\$m]}" != *"afd_fixel"* ]]; then
+            b_metrics+=("\${metrics[\$m]}")
         fi
     done
-
-    # Combine filtered results
-    b_metrics=("\${afd_fixel_metrics[@]}" "\${other_metrics[@]}")
 
     if [[ "$length_stats" ]];
     then
@@ -86,15 +80,15 @@ process BUNDLE_STATS {
             ${prefix}__\${bname}_endpoints_raw.json;
 
         scil_volume_stats_in_ROI.py ${prefix}__\${bname}_endpoints_map_head.nii.gz $normalize_weights\
-            --metrics \${b_metrics} > \${bname}_head.json
+            --metrics \${b_metrics[@]} > \${bname}_head.json
         scil_volume_stats_in_ROI.py ${prefix}__\${bname}_endpoints_map_tail.nii.gz $normalize_weights\
-            --metrics \${b_metrics} > \${bname}_tail.json;
+            --metrics \${b_metrics[@]} > \${bname}_tail.json;
 
     fi
 
     if [[ "$mean_std" ]];
     then
-        scil_bundle_mean_std.py $density_weighting \${bundles[index]} \${b_metrics} >\
+        scil_bundle_mean_std.py $density_weighting \${bundles[index]} \${b_metrics[@]} >\
             \${bname}_std.json
     fi
 
@@ -131,7 +125,7 @@ process BUNDLE_STATS {
 
     if [[ "$mean_std_per_point" ]];
     then
-        scil_bundle_mean_std.py \${bundles[index]} \${b_metrics}\
+        scil_bundle_mean_std.py \${bundles[index]} \${b_metrics[@]}\
             --per_point \${label_map[index]} --sort_keys $density_weighting > \${bname}_std_per_point.json
     fi;
 

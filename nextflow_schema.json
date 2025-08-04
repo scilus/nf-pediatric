@@ -1289,14 +1289,14 @@
                 },
                 "volume_per_labels": {
                     "type": "boolean",
-                    "description": "If set, will output volume values per labels per bundles.",
+                    "description": "If set, will output volume values per labels per bundle.",
                     "fa_icon": "fas fa-brain",
                     "default": true,
                     "hidden": false
                 },
                 "mean_std_per_point": {
                     "type": "boolean",
-                    "description": "If set, will output mean and std per points per metrics per bundles.",
+                    "description": "If set, will output mean and std per points per metrics per bundle.",
                     "fa_icon": "fas fa-brain",
                     "default": true,
                     "hidden": false
