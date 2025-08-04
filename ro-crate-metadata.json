@@ -87,6 +87,7 @@
                 }
             ],
             "isBasedOn": "https://github.com/scilus/nf-pediatric",
+            "isBasedOn": "https://github.com/scilus/nf-pediatric",
             "license": "MIT",
             "mainEntity": {
                 "@id": "main.nf"
@@ -96,6 +97,7 @@
                     "@id": "#fea51df6-0f16-45cc-a708-1de8a4c3c0e2"
                 }
             ],
+            "name": "scilus/nf-pediatric"
             "name": "scilus/nf-pediatric"
         },
         {
@@ -142,6 +144,7 @@
             ],
             "name": [
                 "scilus/nf-pediatric"
+                "scilus/nf-pediatric"
             ],
             "programmingLanguage": {
                 "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow"
@@ -153,7 +156,9 @@
                 "https://github.com/scilus/nf-pediatric",
                 "https://nf-co.re/scilus/nf-pediatric//"
             ],
-            "version": []
+            "version": [
+                "null"
+            ]
         },
         {
             "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow",
@@ -165,7 +170,7 @@
             "url": {
                 "@id": "https://www.nextflow.io/"
             },
-            "version": "!>=24.04.2"
+            "version": "!>=24.10.5"
         },
         {
             "@id": "#fea51df6-0f16-45cc-a708-1de8a4c3c0e2",
@@ -178,6 +183,7 @@
             "mainEntity": {
                 "@id": "main.nf"
             },
+            "name": "Test suite for scilus/nf-pediatric"
             "name": "Test suite for scilus/nf-pediatric"
         },
         {
