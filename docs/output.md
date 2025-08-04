@@ -1,4 +1,4 @@
-# nf-pediatric: Output
+# scilus/nf-pediatric: Output
 
 ## Introduction
 
@@ -167,7 +167,6 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/bundles/`
-
   - `*_desc-{bundleName}.trk`: Single `.trk` file for each of the recognized bundle. Those are cleaned, uniformized, and colored (only affect visualization).
 
 - `dwi/`
@@ -181,7 +180,6 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and data proces
 <summary>Output files</summary>
 
 - `dwi/`
-
   - `*_{space-template}_seg-{BrainnetomeChild,DKT}_desc-filtered_tracking.{trk,h5}`: Filtered whole-brain tractogram.
   - `*_{space-template}_seg-{BrainnetomeChild,DKT}_desc-preproc_tracking.h5`: Final preprocessed decomposed whole-brain tractogram.
   - `*.npy`: Connectivity matrices for all supplied metrics.

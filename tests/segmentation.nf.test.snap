@@ -33,7 +33,7 @@
                     "freesurfer": "8.0.0"
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
+                    "scilus/nf-pediatric": null
                 }
             },
             [
@@ -172,6 +172,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-23T20:55:49.43307"
+        "timestamp": "2025-08-04T16:44:45.861931"
     }
 }

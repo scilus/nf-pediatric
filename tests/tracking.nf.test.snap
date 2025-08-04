@@ -105,7 +105,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
+                    "scilus/nf-pediatric": null
                 }
             },
             [
@@ -597,7 +597,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-07-25T00:07:08.133431"
+        "timestamp": "2025-08-04T16:58:15.97051"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
@@ -679,7 +679,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v1.0dev"
+                    "scilus/nf-pediatric": null
                 }
             },
             [
@@ -1161,6 +1161,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-23T23:02:00.389839"
+        "timestamp": "2025-08-04T17:08:44.657992"
     }
 }

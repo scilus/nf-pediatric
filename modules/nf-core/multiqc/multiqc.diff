@@ -1,6 +1,129 @@
 Changes in component 'nf-core/multiqc'
 'modules/nf-core/multiqc/environment.yml' is unchanged
-'modules/nf-core/multiqc/meta.yml' is unchanged
+Changes in 'multiqc/meta.yml':
+--- modules/nf-core/multiqc/meta.yml
++++ modules/nf-core/multiqc/meta.yml
+@@ -15,57 +15,71 @@
+       licence: ["GPL-3.0-or-later"]
+       identifier: biotools:multiqc
+ input:
+-  - - multiqc_files:
++  - multiqc_files:
++      type: file
++      description: |
++        List of reports / files recognised by MultiQC, for example the html and zip output of FastQC
++      ontologies: []
++  - multiqc_config:
++      type: file
++      description: Optional config yml for MultiQC
++      pattern: "*.{yml,yaml}"
++      ontologies:
++        - edam: http://edamontology.org/format_3750 # YAML
++  - extra_multiqc_config:
++      type: file
++      description: Second optional config yml for MultiQC. Will override common sections
++        in multiqc_config.
++      pattern: "*.{yml,yaml}"
++      ontologies:
++        - edam: http://edamontology.org/format_3750 # YAML
++  - multiqc_logo:
++      type: file
++      description: Optional logo file for MultiQC
++      pattern: "*.{png}"
++      ontologies: []
++  - replace_names:
++      type: file
++      description: |
++        Optional two-column sample renaming file. First column a set of
++        patterns, second column a set of corresponding replacements. Passed via
++        MultiQC's `--replace-names` option.
++      pattern: "*.{tsv}"
++      ontologies:
++        - edam: http://edamontology.org/format_3475 # TSV
++  - sample_names:
++      type: file
++      description: |
++        Optional TSV file with headers, passed to the MultiQC --sample_names
++        argument.
++      pattern: "*.{tsv}"
++      ontologies:
++        - edam: http://edamontology.org/format_3475 # TSV
++output:
++  report:
++    - "*multiqc_report.html":
+         type: file
+-        description: |
+-          List of reports / files recognised by MultiQC, for example the html and zip output of FastQC
+-  - - multiqc_config:
++        description: MultiQC report file
++        pattern: "multiqc_report.html"
++        ontologies: []
++  data:
++    - "*_data":
++        type: directory
++        description: MultiQC data dir
++        pattern: "multiqc_data"
++  plots:
++    - "*_plots":
+         type: file
+-        description: Optional config yml for MultiQC
+-        pattern: "*.{yml,yaml}"
+-  - - extra_multiqc_config:
++        description: Plots created by MultiQC
++        pattern: "*_data"
++        ontologies: []
++  versions:
++    - versions.yml:
+         type: file
+-        description: Second optional config yml for MultiQC. Will override common sections
+-          in multiqc_config.
+-        pattern: "*.{yml,yaml}"
+-  - - multiqc_logo:
+-        type: file
+-        description: Optional logo file for MultiQC
+-        pattern: "*.{png}"
+-  - - replace_names:
+-        type: file
+-        description: |
+-          Optional two-column sample renaming file. First column a set of
+-          patterns, second column a set of corresponding replacements. Passed via
+-          MultiQC's `--replace-names` option.
+-        pattern: "*.{tsv}"
+-  - - sample_names:
+-        type: file
+-        description: |
+-          Optional TSV file with headers, passed to the MultiQC --sample_names
+-          argument.
+-        pattern: "*.{tsv}"
+-output:
+-  - report:
+-      - "*multiqc_report.html":
+-          type: file
+-          description: MultiQC report file
+-          pattern: "multiqc_report.html"
+-  - data:
+-      - "*_data":
+-          type: directory
+-          description: MultiQC data dir
+-          pattern: "multiqc_data"
+-  - plots:
+-      - "*_plots":
+-          type: file
+-          description: Plots created by MultiQC
+-          pattern: "*_data"
+-  - versions:
+-      - versions.yml:
+-          type: file
+-          description: File containing software versions
+-          pattern: "versions.yml"
++        description: File containing software versions
++        pattern: "versions.yml"
++        ontologies:
++          - edam: http://edamontology.org/format_3750 # YAML
+ authors:
+   - "@abhi18av"
+   - "@bunop"
+
 Changes in 'multiqc/main.nf':
 --- modules/nf-core/multiqc/main.nf
 +++ modules/nf-core/multiqc/main.nf
