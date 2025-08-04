@@ -80,15 +80,15 @@ process BUNDLE_STATS {
             ${prefix}__\${bname}_endpoints_raw.json;
 
         scil_volume_stats_in_ROI.py ${prefix}__\${bname}_endpoints_map_head.nii.gz $normalize_weights\
-            --metrics \${b_metrics} > \${bname}_head.json
+            --metrics \${b_metrics[@]} > \${bname}_head.json
         scil_volume_stats_in_ROI.py ${prefix}__\${bname}_endpoints_map_tail.nii.gz $normalize_weights\
-            --metrics \${b_metrics} > \${bname}_tail.json;
+            --metrics \${b_metrics[@]} > \${bname}_tail.json;
 
     fi
 
     if [[ "$mean_std" ]];
     then
-        scil_bundle_mean_std.py $density_weighting \${bundles[index]} \${b_metrics} >\
+        scil_bundle_mean_std.py $density_weighting \${bundles[index]} \${b_metrics[@]} >\
             \${bname}_std.json
     fi
 
@@ -125,7 +125,7 @@ process BUNDLE_STATS {
 
     if [[ "$mean_std_per_point" ]];
     then
-        scil_bundle_mean_std.py \${bundles[index]} \${b_metrics}\
+        scil_bundle_mean_std.py \${bundles[index]} \${b_metrics[@]}\
             --per_point \${label_map[index]} --sort_keys $density_weighting > \${bname}_std_per_point.json
     fi;
 
