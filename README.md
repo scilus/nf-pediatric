@@ -23,7 +23,7 @@
 
 **Processing profiles**:
 
-1. `-profile segmentation`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/), [Recon-all-clinical](https://surfer.nmr.mgh.harvard.edu/fswiki/recon-all-clinical), [FastSurfer](https://deep-mi.org/research/fastsurfer/) or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) will be used to process the T1w/T2w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) or Desikan-Killiany (for infant (< 3 months)) will be registered using surface-based methods in the native subject space. **A valid FreeSurfer license file is required for this profile. Specify the path to your license using `--fs_license`.**
+1. `-profile segmentation`: By selecting this profile, [FreeSurfer `recon-all`](https://surfer.nmr.mgh.harvard.edu/), [Recon-all-clinical](https://surfer.nmr.mgh.harvard.edu/fswiki/recon-all-clinical), [FastSurfer](https://deep-mi.org/research/fastsurfer/) or [M-CRIB-S/InfantFS](https://github.com/DevelopmentalImagingMCRI/MCRIBS) will be used to process the T1w/T2w images and the Brainnetome Child Atlas ([Li et al., 2022](https://doi.org/10.1093/cercor/bhac415)) or Desikan-Killiany (for infant (< 3 months)) will be registered using surface-based methods in the native subject space. **A valid FreeSurfer license file is required for this profile. Specify the path to your license using `--fs_license`.** If you don't have a valid license, you can register for one [here](https://surfer.nmr.mgh.harvard.edu/registration.html).
 1. `-profile tracking`: This is the core profile behind `nf-pediatric`. By selecting it, DWI data will be preprocessed (denoised, corrected for distortion, normalized, resampled, ...). In parallel, T1w will be preprocessed (if `-profile segmentation` is not selected), registered into diffusion space, and segmented to extract tissue masks/maps. Preprocessed DWI data will be used to fit both the DTI and fODF models. As the final step, whole-brain tractography will be performed using both local tracking/particle filter tracking (PFT) and concatenated into a single tractogram.
 1. `-profile bundling`: This profile enables automatic bundle extraction from the processed whole-brain tractogram. By selecting it, bundle recognition will be performed in each subject using either the neonate or adult bundle atlases. Extracted bundles will then be filtered, uniformized, colored (affect only visualization), and tractometry will be performed to extract WM microstructure measures for each bundle.
 1. `-profile connectomics`: By selecting this profile, labels will be registered in diffusion space and used to segment the tractogram into individual connections. The segmented tractogram will then be filtered, using [COMMIT](https://github.com/daducci/COMMIT) to remove false positive streamlines. Following filtering, connectivity matrices will be computed for a variety of metrics and outputted as numpy arrays usable for further statistical analysis.
@@ -71,11 +71,11 @@ For complete usage instructions, please see the [documentation](/docs/usage.md).
     <...>
 ```
 
-Once your input directory is validated with the [bids-validator tool](https://hub.docker.com/r/bids/validator), the pipeline has only two required parameters that need to be supplied at runtime: `--outdir`, `--input`. Now, you can run the pipeline using:
+Once your input directory is validated with the [bids-validator tool](https://hub.docker.com/r/bids/validator), the pipeline has only two required parameters that need to be supplied at runtime: `--outdir`, `--input`. Now, by also adding the desired profile, you can run the pipeline using:
 
 ```bash
 nextflow run scilus/nf-pediatric \
-    -r main \
+    -r v0.1.0-alpha \
     -profile <selected_profiles> \
     --input <BIDS_folder> \
     --outdir <your_outdir>
@@ -92,7 +92,7 @@ By default, `nf-pediatric` outputs only the final preprocessed files and leave o
 
 ## Using `nf-pediatric` on computer nodes without internet access.
 
-Some computing nodes does not have access to internet at runtime. Since the pipeline interacts with the containers repository and pull during execution, it won't work if the nodes do not have access to the internet. Fortunately, containers can be downloaded prior to the pipeline execution, and fetch locally during runtime. Using `nf-core` tools (for a detailed installation guide, see the [nf-core documentation](https://nf-co.re/docs/nf-core-tools/installation)), we can use the [`nf-core pipelines download`](https://nf-co.re/docs/nf-core-tools/pipelines/download#downloading-apptainer-containers) command. To view the options before the download, you can use `nf-core pipelines download -h`. To use the prompts, simply run `nf-core pipelines download` as follows (_downloading all containers takes ~15 minutes but requires a fair amount of local disk space_):
+Some computing nodes does not have access to internet at runtime. Since the pipeline interacts with the containers repository and pull during execution, it won't work if the nodes do not have access to the internet. Fortunately, containers can be downloaded prior to the pipeline execution, and fetch locally during runtime. Using `nf-core` tools (for a detailed installation guide, see the [nf-core documentation](https://nf-co.re/docs/nf-core-tools/installation)), we can use the [`nf-core pipelines download`](https://nf-co.re/docs/nf-core-tools/pipelines/download#downloading-apptainer-containers) command. To view the options before the download, you can use `nf-core pipelines download -h`. To use the prompts, simply run `nf-core pipelines download` as follows (_downloading all containers takes ~45 minutes but requires a fair amount of local disk space_):
 
 ```bash
 $ nf-core pipelines download -l docker.io
@@ -130,7 +130,7 @@ INFO     Saving 'scilus/nf-pediatric'
 INFO     Downloading workflow files from GitHub
 ```
 
-**Once all images are downloaded, you need to set `NXF_SINGULARITY_CACHEDIR` to the directory in which you downloaded the images. You can either include it in your `.bashrc` or export it prior to launching the pipeline.**
+**Once all images are downloaded, you need to set `NXF_SINGULARITY_CACHEDIR` to the directory in which you downloaded the images. You can either include it in your `.bashrc` or export it (`export NXF_SINGULARITY_CACHEDIR=...`) prior to launching the pipeline.**
 
 ## Credits
 

@@ -183,7 +183,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": null
+                    "scilus/nf-pediatric": "v0.1.0-alpha"
                 }
             },
             [
@@ -958,7 +958,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-08-04T16:19:53.195029"
+        "timestamp": "2025-08-06T12:37:05.22776"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
@@ -1074,7 +1074,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": null
+                    "scilus/nf-pediatric": "v0.1.0-alpha"
                 }
             },
             [
@@ -1518,7 +1518,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-08-04T16:36:02.04524"
+        "timestamp": "2025-08-06T12:54:15.631788"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -1574,7 +1574,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": null
+                    "scilus/nf-pediatric": "v0.1.0-alpha"
                 }
             },
             [
@@ -1784,7 +1784,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-08-04T15:56:47.351686"
+        "timestamp": "2025-08-06T12:14:34.195073"
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
@@ -1912,7 +1912,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": null
+                    "scilus/nf-pediatric": "v0.1.0-alpha"
                 }
             },
             [
@@ -2384,6 +2384,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-08-04T16:06:28.915105"
+        "timestamp": "2025-08-06T12:24:59.53661"
     }
 }
