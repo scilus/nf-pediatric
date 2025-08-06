@@ -21,16 +21,18 @@ process SEGMENTATION_FASTSURFER {
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
     def acq3T = task.ext.acq3T ? "--3T" : ""
-    def FASTSURFER_HOME = "/fastsurfer"
-    def SUBJECTS_DIR = "${prefix}__fastsurfer"
     def cerebnet = task.ext.cerebnet ? "" : "--no_cereb"
     def hypvinn = task.ext.hypvinn ? "" : "--no_hypothal"
+    def seg_only = task.ext.seg_only ? "--seg_only" : ""
+
+    def FASTSURFER_HOME = "/fastsurfer"
+    def SUBJECTS_DIR = "${prefix}__fastsurfer"
 
     // ** Adding a registration to .gca atlas to generate the talairach.m3z file (subcortical atlas segmentation ** //
     // ** wont work without it). A little time consuming but necessary. For FreeSurfer 7.3.2, RB_all_2020-01-02.gca ** //
     // ** is the default atlas. Update when bumping FreeSurfer version. ** //
     """
-    mkdir ${prefix}__fastsurfer/
+    mkdir ${prefix}_fastsurfer/
     export FS_LICENSE=\$(realpath $fs_license)
 
     $FASTSURFER_HOME/run_fastsurfer.sh  --allow_root \
@@ -38,10 +40,12 @@ process SEGMENTATION_FASTSURFER {
                                         --fs_license \$(realpath $fs_license) \
                                         --t1 \$(realpath ${anat}) \
                                         --sid ${prefix} \
-                                        --parallel \
                                         --threads $task.cpus \
                                         --py python3 \
-                                        ${acq3T} ${cerebnet} ${hypvinn}
+                                        $cerebnet \
+                                        $hypvinn \
+                                        $seg_only \
+                                        $acq3T
 
     mri_ca_register -align-after -nobigventricles -mask ${prefix}__fastsurfer/${prefix}/mri/brainmask.mgz \
         -T ${prefix}__fastsurfer/${prefix}/mri/transforms/talairach.lta -threads $task.cpus \
@@ -68,7 +72,6 @@ process SEGMENTATION_FASTSURFER {
         ${prefix}__fastsurfer/${prefix}/scripts/ \
         ${prefix}__fastsurfer/${prefix}/tmp/ \
         ${prefix}__fastsurfer/${prefix}/touch/
-
     touch ${prefix}__final_t1.nii.gz
 
     cat <<-END_VERSIONS > versions.yml

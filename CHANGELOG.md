@@ -1,7 +1,36 @@
-# nf-pediatric: Changelog
+# scilus/nf-pediatric: Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.1.0-alpha] - [2025-08-06]
+
+### `Added`
+
+- Automatic assessment of iteration pyramid and b-spline parameter in N4 module.
+- Add support for age extraction in multisession subjects.
+- Includes a new neonate atlas for bundleseg.
+- New processing profile for bundling and tractometry. This includes the bundle_seg and tractometry subworkflows.
+- More clear logging for missing or not properly formatted `participants.tsv` file and test cases.
+- Derivatives now also contain a `README.txt` file with additional informations regarding the pipeline run.
+- Derivatives now have sidecar Json files indicating source data, transform file, and specific characteristics.
+- Methods for cortical/subcortical segmentation are now selected from a list using `--methods` parameter.
+- Recon-all-clinical is now the default segmentation tool for participants over 3 months.
+- New Dockerfile for the freesurfer 8.0.0 arm/amd build.
+- New `--participant-label` parameter allowing to run the pipeline only for a subset or a single participant from the BIDS dataset.
+- Dynamic assessment of subject's age from the `participants.tsv` file in the BIDS input directory.
+- Output folder will now contain the `dataset_description.json` file for compliance with BIDS derivatives.
+- Add a copy of the `participants.tsv` file in the output directory.
+
+### `Changed`
+
+- Template used to generate probability tissue maps is now the UNC-BCP 4D atlas which contains the cerebellum. UNCInfant is no longer used.
+
+### `Removed`
+
+- Profile `no_symlink` is no longer available. By default, files are copied and not symlinked. Possible to change that behavior with `--publish-dir-mode` parameters.
+- Profile `infant` is no longer available. Dynamic assessment is used now.
+- M-CRIB-S is no longer used for tracking mask generation. Dropped in favor of pre-generated masks from templates.
 
 ## [Unreleased] - [2025-04-06]
 

@@ -109,7 +109,7 @@ workflow PREPROC_DWI {
         } // No else, we just use the input DWI
 
         // ** Eddy Topup ** //
-        TOPUP_EDDY ( ch_dwi, ch_b0, ch_rev_dwi, ch_rev_b0, ch_config_topup )
+        TOPUP_EDDY ( ch_dwi, ch_b0, ch_rev_dwi, ch_rev_b0, ch_config_topup.ifEmpty( "b02b0.cnf" ) )
         ch_versions = ch_versions.mix(TOPUP_EDDY.out.versions.first())
         ch_multiqc_files = ch_multiqc_files.mix(TOPUP_EDDY.out.mqc)
 
@@ -125,11 +125,13 @@ workflow PREPROC_DWI {
 
             ch_synthstrip = IMAGE_POWDERAVERAGE.out.pwd_avg
                 .combine(ch_weights)
-                .map { it ->
-                    def pwd_avg = it[0..1]
-                    def weights = it.size() > 2 ? it[2] : []
-                    pwd_avg + [weights]
+                .branch{
+                    infant: it[0].age < 2.5 || it[0].age > 18
+                        return [it[0], it[1], it[2]]
+                    child: it[0].age >= 2.5 && it[0].age <= 18
+                        return [it[0], it[1], []]
                 }
+            ch_synthstrip = ch_synthstrip.infant.mix(ch_synthstrip.child)
 
             BETCROP_SYNTHBET ( ch_synthstrip )
             ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions.first())
@@ -184,7 +186,8 @@ workflow PREPROC_DWI {
         if (params.preproc_dwi_run_N4 && !params.skip_dwi_preprocessing) {
             // ** N4 DWI ** //
             ch_N4 = ch_dwi_preproc
-                .join(CROPB0.out.image)
+                .join(TOPUP_EDDY.out.bval)
+                .join(TOPUP_EDDY.out.bvec)
                 .join(ch_mask)
 
             N4_DWI ( ch_N4 )

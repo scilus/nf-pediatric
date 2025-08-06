@@ -19,7 +19,7 @@ process CONNECTIVITY_METRICS {
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
     def ses = meta.session ? "${meta.session}_" : ""
-    def atlas = task.ext.atlas
+    def atlas = (meta.age < 2.5 || meta.age > 18) ? "DK" : "BrainnetomeChild"
 
     if ( metrics ) {
         metrics_list = metrics.join(", ").replace(',', '')
@@ -42,9 +42,9 @@ process CONNECTIVITY_METRICS {
 
         scil_connectivity_compute_matrices.py $h5 $labels \
             --processes $task.cpus \
-            --volume "${prefix}_seg-${atlas}_stat-vol.npy" \
-            --streamline_count "${prefix}_seg-${atlas}_stat-sc.npy" \
-            --length "${prefix}_seg-${atlas}_stat-len.npy" \
+            --volume "${prefix}_${ses}seg-${atlas}_stat-vol.npy" \
+            --streamline_count "${prefix}_${ses}seg-${atlas}_stat-sc.npy" \
+            --length "${prefix}_${ses}seg-${atlas}_stat-len.npy" \
             \$metrics_args \
             --density_weighting \
             --no_self_connection \
@@ -53,15 +53,15 @@ process CONNECTIVITY_METRICS {
 
         # Rename commit or afd_fixel files if they exist.
         if [ -f afd_fixel.npy ]; then
-            mv afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
+            mv afd_fixel.npy ${prefix}_${ses}seg-${atlas}_stat-afd_fixel.npy
         fi
 
         if [ -f commit*.npy ]; then
-            mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
+            mv commit*.npy ${prefix}_${ses}seg-${atlas}_stat-commit_weights.npy
         fi
 
         if [ -f tot_commit*.npy ]; then
-            mv tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
+            mv tot_commit*.npy ${prefix}_${ses}seg-${atlas}_stat-tot_commit_weights.npy
         fi
 
         cat <<-END_VERSIONS > versions.yml
@@ -73,9 +73,9 @@ process CONNECTIVITY_METRICS {
         """
         scil_connectivity_compute_matrices.py $h5 $labels \
             --processes $task.cpus \
-            --volume "${prefix}_seg-${atlas}_stat-vol.npy" \
-            --streamline_count "${prefix}_seg-${atlas}_stat-sc.npy" \
-            --length "${prefix}_seg-${atlas}_stat-len.npy" \
+            --volume "${prefix}_${ses}seg-${atlas}_stat-vol.npy" \
+            --streamline_count "${prefix}_${ses}seg-${atlas}_stat-sc.npy" \
+            --length "${prefix}_${ses}seg-${atlas}_stat-len.npy" \
             --density_weighting \
             --no_self_connection \
             --include_dps ./ \
@@ -83,15 +83,15 @@ process CONNECTIVITY_METRICS {
 
         # Rename commit or afd_fixel files if they exist.
         if [ -f afd_fixel.npy ]; then
-            mv afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
+            mv afd_fixel.npy ${prefix}_${ses}seg-${atlas}_stat-afd_fixel.npy
         fi
 
         if [ -f commit*.npy ]; then
-            mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
+            mv commit*.npy ${prefix}_${ses}seg-${atlas}_stat-commit_weights.npy
         fi
 
         if [ -f tot_commit*.npy ]; then
-            mv tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
+            mv tot_commit*.npy ${prefix}_${ses}seg-${atlas}_stat-tot_commit_weights.npy
         fi
 
         cat <<-END_VERSIONS > versions.yml
@@ -104,7 +104,7 @@ process CONNECTIVITY_METRICS {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     def ses = meta.session ? "${meta.session}_" : ""
-    def atlas = task.ext.atlas
+    def atlas = (meta.age < 2.5 || meta.age > 18) ? "DK" : "BrainnetomeChild"
 
     if ( metrics ) {
         metrics_list = metrics.join(", ").replace(',', '')
@@ -132,9 +132,9 @@ process CONNECTIVITY_METRICS {
         """
     } else {
         """
-        touch ${prefix}_seg-${atlas}_stat-vol.npy
-        touch ${prefix}_seg-${atlas}_stat-sc.npy
-        touch ${prefix}_seg-${atlas}_stat-len.npy
+        touch ${prefix}_${ses}seg-${atlas}_stat-vol.npy
+        touch ${prefix}_${ses}seg-${atlas}_stat-sc.npy
+        touch ${prefix}_${ses}seg-${atlas}_stat-len.npy
 
         scil_connectivity_compute_matrices.py -h
 

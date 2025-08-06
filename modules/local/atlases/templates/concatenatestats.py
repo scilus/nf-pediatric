@@ -29,11 +29,12 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
 
 
 for stat in ['volume', 'area', 'thickness', 'subcortical']:
+    group = "$meta.agegroup"
     if stat == 'subcortical':
         files = glob.glob("*subcortical*")
         df = pd.concat([pd.read_csv(f, sep='\\t') for f in files], ignore_index=True)
         df.rename(columns={df.columns[0]: "Sample"}, inplace=True)
-        df.to_csv(f"{stat}_volumes.tsv", sep='\\t', index=False)
+        df.to_csv(f"{group}_{stat}_volumes.tsv", sep='\\t', index=False)
     else:
         for hemi in ['lh', 'rh']:
             files = glob.glob(f"*{stat}_{hemi}*")
@@ -54,7 +55,7 @@ for stat in ['volume', 'area', 'thickness', 'subcortical']:
                 if "BrainSegVolNotVent" in df.columns:
                     df.drop(columns=["BrainSegVolNotVent", "eTIV", f"{hemi}_cluster94_{stat}"], inplace=True)
             df.columns = [col.replace(f"_{stat}", "") for col in df.columns]
-            df.to_csv(f"cortical_{stat}_{hemi}.tsv", sep='\\t', index=False)
+            df.to_csv(f"cortical_{group}_{stat}_{hemi}.tsv", sep='\\t', index=False)
 
 versions = {
     "${task.process}": {

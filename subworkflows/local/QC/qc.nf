@@ -57,7 +57,6 @@ workflow QC {
                 return [ it[0], it[1] ]
         }
 
-
     QC_LABELS ( ch_labels_qc.withlabels )
     ch_versions = ch_versions.mix(QC_LABELS.out.versions.first())
 
@@ -77,7 +76,7 @@ workflow QC {
     //
     ch_tracking_qc = ch_tracking
         .join(ch_maps)
-        .map{ it[0..2] }
+        .map{ it[0..3] }
 
     QC_TRACKING ( ch_tracking_qc )
     ch_versions = ch_versions.mix(QC_TRACKING.out.versions.first())
@@ -93,4 +92,3 @@ workflow QC {
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }
-

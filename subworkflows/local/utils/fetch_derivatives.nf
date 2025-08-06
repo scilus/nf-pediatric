@@ -1,3 +1,23 @@
+def readParticipantsTsv(file) {
+    def participantData = []
+
+    file.splitCsv(sep: '\t', header: true).each { row ->
+        if (!row.age) {
+            error "ERROR: Age is not entered correctly in the participants.tsv file. Please validate."
+        }
+
+        def sessionId = (row.session_id == null || row.session_id.toString().trim() == "") ? "" : row.session_id.toString()
+
+        participantData.add([
+            participant_id: row.participant_id.toString(),
+            session_id: sessionId,
+            age: row.age.toFloat()
+        ])
+    }
+
+    return participantData
+}
+
 workflow FETCH_DERIVATIVES {
 
     take:
@@ -7,6 +27,28 @@ workflow FETCH_DERIVATIVES {
     //
     // Create channels from a derivatives folder (params.input_deriv)
     //
+    if ( ! file("${input_deriv}/participants.tsv").exists() ) {
+        error "ERROR: Your bids dataset does not contain a participants.tsv file. " +
+        "Please provide a participants.tsv file with a column indicating the participants' " +
+        "age. For any questions, please refer to the documentation at " +
+        "https://github.com/scilus/nf-pediatric.git or open an issue!"
+    }
+
+    participantsTsv = file("${input_deriv}/participants.tsv")
+    participantData = readParticipantsTsv(participantsTsv)
+    def participant_ids = params.participant_label ?: []
+
+    // Helper function to get age with session support
+    def getAge = { participantId, sessionId = null ->
+        def searchParticipantId = participantId.toString()
+        def searchSessionId = (sessionId == null || sessionId.toString().trim() == "") ? "" : sessionId.toString()
+
+        def match = participantData.find { row ->
+            return row.participant_id == searchParticipantId && row.session_id == searchSessionId
+        }
+
+        return match ? match.age : 0.0  // Return 0.0 instead of empty string
+    }
 
     // ** Segmentations ** //
     ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
@@ -15,13 +57,17 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def metadata = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id, session)
+            def metadata = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [metadata, file]
         }
         .groupTuple(by: 0)
         .map{ meta, files ->
             return [meta] + files
+        }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
     // ** Anatomical file ** //
@@ -31,7 +77,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def metadata = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id, session)
+            def metadata = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
             def type = file.name.contains('T1w') ? 'T1w' : 'T2w'
 
             return [metadata, type, file]
@@ -41,6 +88,9 @@ workflow FETCH_DERIVATIVES {
             def sortedFiles = [types, files].transpose().sort { it[0] }.collect { it[1] }
             return [metadata] + sortedFiles
         }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
+        }
 
     // ** Transformation files ** //
     ch_transforms = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*from-{T1w,T2w}_to-dwi_{warp,affine}*",
@@ -49,7 +99,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id, session)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
             def type = file.name.contains('warp') ? 'warp' : 'affine'
 
             return [meta, type, file]
@@ -67,6 +118,9 @@ workflow FETCH_DERIVATIVES {
                 error "ERROR ~ Missing transformation files for ${meta.id}"
             }
         }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
+        }
 
     // ** Peaks file ** //
     ch_peaks = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-peaks*",
@@ -75,7 +129,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id, session)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
         }
@@ -87,9 +142,13 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id, session)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
+        }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
     // ** DWI files (dwi, bval, bvec) ** //
@@ -99,7 +158,8 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id, session)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
         }
@@ -120,16 +180,23 @@ workflow FETCH_DERIVATIVES {
                 error "ERROR ~ Missing dwi/bval/bvec files for ${meta.id}"
             }
         }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
+        }
 
     // ** Tractogram file ** //
-    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-*_tracking.trk", checkIfExists: true)
+    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-*_tractogram.trk", checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id, session)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
+        }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
     // ** Metrics files ** //
@@ -139,13 +206,17 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def meta = session ? [id: id, session: session, run: "", age: ""] : [id: id, session: "", run: "", age: ""]
+            def age = getAge(id, session)
+            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
 
             return [meta, file]
         }
         .groupTuple(by: 0)
         .map{ meta, files ->
             return [meta] + [files]
+        }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
     emit:
@@ -158,4 +229,3 @@ workflow FETCH_DERIVATIVES {
     trk             = ch_trk
     metrics         = ch_metrics
 }
-

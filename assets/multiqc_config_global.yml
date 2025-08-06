@@ -178,16 +178,16 @@ sp:
   dice_values:
     fn: "dice_values.csv"
   subcortical_volumes:
-    fn: "subcortical_volumes.tsv"
+    fn: "child_subcortical_volumes.tsv"
   cortical_volume_lh:
-    fn: "cortical_volume_lh.tsv"
+    fn: "child_cortical_volume_lh.tsv"
   cortical_volume_rh:
-    fn: "cortical_volume_rh.tsv"
+    fn: "child_cortical_volume_rh.tsv"
   cortical_thickness_lh:
-    fn: "cortical_thickness_lh.tsv"
+    fn: "child_cortical_thickness_lh.tsv"
   cortical_thickness_rh:
-    fn: "cortical_thickness_rh.tsv"
+    fn: "child_cortical_thickness_rh.tsv"
   cortical_surface_area_lh:
-    fn: "cortical_area_lh.tsv"
+    fn: "child_cortical_area_lh.tsv"
   cortical_surface_area_rh:
-    fn: "cortical_area_rh.tsv"
+    fn: "child_cortical_area_rh.tsv"

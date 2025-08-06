@@ -4,8 +4,8 @@ Changes in component 'nf-neuro/tracking/pfttracking'
 Changes in 'tracking/pfttracking/main.nf':
 --- modules/nf-neuro/tracking/pfttracking/main.nf
 +++ modules/nf-neuro/tracking/pfttracking/main.nf
-@@ -1,7 +1,6 @@
--
+@@ -1,7 +1,7 @@
+ 
  process TRACKING_PFTTRACKING {
      tag "$meta.id"
 -    label 'process_high_memory'
@@ -13,17 +13,6 @@ Changes in 'tracking/pfttracking/main.nf':
  
      container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
          'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
-@@ -14,8 +13,8 @@
- 
-         tuple val(meta), path("*__pft_tracking.trk")            , emit: trk
-         tuple val(meta), path("*__pft_tracking_config.json")    , emit: config
--        tuple val(meta), path("*__map_include.nii.gz")          , emit: include
--        tuple val(meta), path("*__map_exclude.nii.gz")          , emit: exclude
-+        tuple val(meta), path("*__map_include.nii.gz")          , emit: map_include
-+        tuple val(meta), path("*__map_exclude.nii.gz")          , emit: map_exclude
-         tuple val(meta), path("*__pft_seeding_mask.nii.gz")     , emit: seeding
-         path "versions.yml"                                     , emit: versions
- 
 
 'modules/nf-neuro/tracking/pfttracking/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/tracking/pfttracking/tests/nextflow_fa.config' is unchanged

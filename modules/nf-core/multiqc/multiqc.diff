@@ -1,0 +1,217 @@
+Changes in component 'nf-core/multiqc'
+'modules/nf-core/multiqc/environment.yml' is unchanged
+Changes in 'multiqc/meta.yml':
+--- modules/nf-core/multiqc/meta.yml
++++ modules/nf-core/multiqc/meta.yml
+@@ -15,57 +15,71 @@
+       licence: ["GPL-3.0-or-later"]
+       identifier: biotools:multiqc
+ input:
+-  - - multiqc_files:
++  - multiqc_files:
++      type: file
++      description: |
++        List of reports / files recognised by MultiQC, for example the html and zip output of FastQC
++      ontologies: []
++  - multiqc_config:
++      type: file
++      description: Optional config yml for MultiQC
++      pattern: "*.{yml,yaml}"
++      ontologies:
++        - edam: http://edamontology.org/format_3750 # YAML
++  - extra_multiqc_config:
++      type: file
++      description: Second optional config yml for MultiQC. Will override common sections
++        in multiqc_config.
++      pattern: "*.{yml,yaml}"
++      ontologies:
++        - edam: http://edamontology.org/format_3750 # YAML
++  - multiqc_logo:
++      type: file
++      description: Optional logo file for MultiQC
++      pattern: "*.{png}"
++      ontologies: []
++  - replace_names:
++      type: file
++      description: |
++        Optional two-column sample renaming file. First column a set of
++        patterns, second column a set of corresponding replacements. Passed via
++        MultiQC's `--replace-names` option.
++      pattern: "*.{tsv}"
++      ontologies:
++        - edam: http://edamontology.org/format_3475 # TSV
++  - sample_names:
++      type: file
++      description: |
++        Optional TSV file with headers, passed to the MultiQC --sample_names
++        argument.
++      pattern: "*.{tsv}"
++      ontologies:
++        - edam: http://edamontology.org/format_3475 # TSV
++output:
++  report:
++    - "*multiqc_report.html":
+         type: file
+-        description: |
+-          List of reports / files recognised by MultiQC, for example the html and zip output of FastQC
+-  - - multiqc_config:
++        description: MultiQC report file
++        pattern: "multiqc_report.html"
++        ontologies: []
++  data:
++    - "*_data":
++        type: directory
++        description: MultiQC data dir
++        pattern: "multiqc_data"
++  plots:
++    - "*_plots":
+         type: file
+-        description: Optional config yml for MultiQC
+-        pattern: "*.{yml,yaml}"
+-  - - extra_multiqc_config:
++        description: Plots created by MultiQC
++        pattern: "*_data"
++        ontologies: []
++  versions:
++    - versions.yml:
+         type: file
+-        description: Second optional config yml for MultiQC. Will override common sections
+-          in multiqc_config.
+-        pattern: "*.{yml,yaml}"
+-  - - multiqc_logo:
+-        type: file
+-        description: Optional logo file for MultiQC
+-        pattern: "*.{png}"
+-  - - replace_names:
+-        type: file
+-        description: |
+-          Optional two-column sample renaming file. First column a set of
+-          patterns, second column a set of corresponding replacements. Passed via
+-          MultiQC's `--replace-names` option.
+-        pattern: "*.{tsv}"
+-  - - sample_names:
+-        type: file
+-        description: |
+-          Optional TSV file with headers, passed to the MultiQC --sample_names
+-          argument.
+-        pattern: "*.{tsv}"
+-output:
+-  - report:
+-      - "*multiqc_report.html":
+-          type: file
+-          description: MultiQC report file
+-          pattern: "multiqc_report.html"
+-  - data:
+-      - "*_data":
+-          type: directory
+-          description: MultiQC data dir
+-          pattern: "multiqc_data"
+-  - plots:
+-      - "*_plots":
+-          type: file
+-          description: Plots created by MultiQC
+-          pattern: "*_data"
+-  - versions:
+-      - versions.yml:
+-          type: file
+-          description: File containing software versions
+-          pattern: "versions.yml"
++        description: File containing software versions
++        pattern: "versions.yml"
++        ontologies:
++          - edam: http://edamontology.org/format_3750 # YAML
+ authors:
+   - "@abhi18av"
+   - "@bunop"
+
+Changes in 'multiqc/main.nf':
+--- modules/nf-core/multiqc/main.nf
++++ modules/nf-core/multiqc/main.nf
+@@ -1,13 +1,13 @@
+ process MULTIQC {
++    tag "${meta.id}"
+     label 'process_single'
+ 
+     conda "${moduleDir}/environment.yml"
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://depot.galaxyproject.org/singularity/multiqc:1.29--pyhdfd78af_0' :
+-        'biocontainers/multiqc:1.29--pyhdfd78af_0' }"
++    container "multiqc/multiqc:v1.29"
+ 
+     input:
+-    path  multiqc_files, stageAs: "?/*"
++    tuple val(meta), path(qc_images)
++    path  multiqc_files
+     path(multiqc_config)
+     path(extra_multiqc_config)
+     path(multiqc_logo)
+@@ -15,7 +15,7 @@
+     path(sample_names)
+ 
+     output:
+-    path "*multiqc_report.html", emit: report
++    path "*.html"              , emit: report
+     path "*_data"              , emit: data
+     path "*_plots"             , optional:true, emit: plots
+     path "versions.yml"        , emit: versions
+@@ -25,18 +25,38 @@
+ 
+     script:
+     def args = task.ext.args ?: ''
+-    def prefix = task.ext.prefix ? "--filename ${task.ext.prefix}.html" : ''
++    def prefix = "${meta.id}"
+     def config = multiqc_config ? "--config $multiqc_config" : ''
+     def extra_config = extra_multiqc_config ? "--config $extra_multiqc_config" : ''
+     def logo = multiqc_logo ? "--cl-config 'custom_logo: \"${multiqc_logo}\"'" : ''
+     def replace = replace_names ? "--replace-names ${replace_names}" : ''
+     def samples = sample_names ? "--sample-names ${sample_names}" : ''
+     """
++    # Process SC txt files if they exist
++    if ls *__sc.txt 1> /dev/null 2>&1; then
++        echo -e "Sample Name,SC_Value" > sc_values.csv
++        for sc in *__sc.txt; do
++            sample_name=\$(basename \$sc __sc.txt)
++            sc_value=\$(cat \$sc)
++            echo -e "\${sample_name},\${sc_value}" >> sc_values.csv
++        done
++    fi
++
++    # Process Dice score txt files if they exist
++    if ls *__dice.txt 1> /dev/null 2>&1; then
++        echo -e "Sample Name,Dice_Score" > dice_values.csv
++        for dice in *__dice.txt; do
++            sample_name=\$(basename \$dice __dice.txt)
++            dice_value=\$(cat \$dice)
++            echo -e "\${sample_name},\${dice_value}" >> dice_values.csv
++        done
++    fi
++
+     multiqc \\
+         --force \\
+         $args \\
+         $config \\
+-        $prefix \\
++        --filename ${prefix}.html \\
+         $extra_config \\
+         $logo \\
+         $replace \\
+@@ -50,10 +70,11 @@
+     """
+ 
+     stub:
++    def prefix = "${meta.id}"
+     """
+-    mkdir multiqc_data
+-    mkdir multiqc_plots
+-    touch multiqc_report.html
++    mkdir ${prefix}_multiqc_data
++    mkdir ${prefix}_multiqc_plots
++    touch ${prefix}_multiqc_report.html
+ 
+     cat <<-END_VERSIONS > versions.yml
+     "${task.process}":
+
+'modules/nf-core/multiqc/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/multiqc/tests/nextflow.config' is unchanged
+'modules/nf-core/multiqc/tests/main.nf.test' is unchanged
+************************************************************

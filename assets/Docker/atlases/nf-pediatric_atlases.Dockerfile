@@ -1,4 +1,4 @@
-ARG FREESURFER_BUILD_IMAGE=ubuntu:22.04
+ARG FREESURFER_BUILD_IMAGE=vnmd/freesurfer:7.4.1
 ARG SCILPY_BASE_IMAGE=scilus/scilpy:1.6.0
 
 # Create a stage to build the freesurfer image (only essential scripts).
@@ -8,28 +8,22 @@ ENV LANG=C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install packages needed for build
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      ca-certificates \
-      file \
-      git \
-      upx \
-      wget && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-ARG PYTHON_VERSION=3.10
-
-# Fetch install script in docker.
-RUN mkdir /install
-COPY ./install_freesurfer.sh /install/
-RUN ["chmod", "+x", "/install/install_freesurfer.sh"]
-SHELL ["/bin/bash", "--login", "-c"]
-
-ARG FREESURFER_URL=default
-
-RUN /install/install_freesurfer.sh /opt --upx --url $FREESURFER_URL
-RUN rm /opt/freesurfer/bin/fspython
-RUN rm -R /install
+RUN rm -rf \
+    /opt/freesurfer-7.4.1/average \
+    /opt/freesurfer-7.4.1/docs \
+    /opt/freesurfer-7.4.1/etc \
+    /opt/freesurfer-7.4.1/models \
+    /opt/freesurfer-7.4.1/sessions \
+    /opt/freesurfer-7.4.1/matlab \
+    /opt/freesurfer-7.4.1/fsfast \
+    /opt/freesurfer-7.4.1/diffusion \
+    /opt/freesurfer-7.4.1/fsafd \
+    /opt/freesurfer-7.4.1/MCRv97 \
+    /opt/freesurfer-7.4.1/subjects \
+    /opt/freesurfer-7.4.1/trctrain \
+    /opt/freesurfer-7.4.1/python/lib/python3.8/site-packages/tensorflow* \
+    /opt/freesurfer-7.4.1/python/lib/python3.8/site-packages/torch* \
+    /opt/freesurfer-7.4.1/python/lib/python3.8/site-packages/nvidia*
 
 # Main stage from scilpy base image.
 FROM $SCILPY_BASE_IMAGE AS runtime
@@ -42,8 +36,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       bc \
       gawk \
       libgomp1 \
-      libquadmath0 \
       libglu1-mesa \
+      libjpeg62 \
+      libtiff5 \
+      libpng16-16 \
       libxt6 \
       libxmu6 \
       libgl1 \
@@ -53,6 +49,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       curl \
       time \
       tcsh && \
+      if [ "TARGETARCH" = "amd64" ]; then \
+      apt-get install -y libquadmath0; \
+      fi && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -77,4 +76,4 @@ ENV OS=Linux \
     MPLCONFIGDIR=/tmp/matplotlib-config \
     DO_NOT_SEARCH_FS_LICENSE_IN_FREESURFER_HOME="true"
 
-COPY --from=build_freesurfer /opt/freesurfer /opt/freesurfer
+COPY --from=build_freesurfer /opt/freesurfer-7.4.1/ /opt/freesurfer

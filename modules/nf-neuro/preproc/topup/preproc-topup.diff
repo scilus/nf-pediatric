@@ -1,73 +1,23 @@
 Changes in component 'nf-neuro/preproc/topup'
+'modules/nf-neuro/preproc/topup/environment.yml' is unchanged
 'modules/nf-neuro/preproc/topup/meta.yml' is unchanged
 Changes in 'preproc/topup/main.nf':
 --- modules/nf-neuro/preproc/topup/main.nf
 +++ modules/nf-neuro/preproc/topup/main.nf
-@@ -3,12 +3,12 @@
-     label 'process_single'
+@@ -2,9 +2,7 @@
+     tag "$meta.id"
+     label 'process_medium'
  
-     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        "https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif":
--        "scilus/scilus:2.0.2"}"
-+        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
-+        'scilus/scilus:2.0.2' }"
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
+-        "scilus/scilus:latest"}"
++    container "scilus/scilus:2.1.0"
  
      input:
          tuple val(meta), path(dwi), path(bval), path(bvec), path(b0), path(rev_dwi), path(rev_bval), path(rev_bvec), path(rev_b0)
--        val(config_topup)
-+        each config_topup
- 
-     output:
-         tuple val(meta), path("*__corrected_b0s.nii.gz"), emit: topup_corrected_b0s
-@@ -26,7 +26,7 @@
-     def prefix = task.ext.prefix ?: "${meta.id}"
- 
-     def prefix_topup = task.ext.prefix_topup ? task.ext.prefix_topup : ""
--    def config_topup = config_topup ?: task.ext.default_config_topup
-+    config_topup = config_topup ?: task.ext.default_config_topup
-     def encoding = task.ext.encoding ? task.ext.encoding : ""
-     def readout = task.ext.readout ? task.ext.readout : ""
-     def b0_thr_extract_b0 = task.ext.b0_thr_extract_b0 ? task.ext.b0_thr_extract_b0 : ""
-@@ -39,7 +39,7 @@
- 
-     if [[ -f "$b0" ]];
-     then
--        scil_volume_math.py concatenate $b0 $b0 ${prefix}__concatenated_b0.nii.gz --data_type float32
-+        scil_volume_math.py concatenate $b0 $b0 ${prefix}__concatenated_b0.nii.gz
-         scil_volume_math.py mean ${prefix}__concatenated_b0.nii.gz ${prefix}__b0_mean.nii.gz
-     else
-         scil_dwi_extract_b0.py $dwi $bval $bvec ${prefix}__b0_mean.nii.gz --mean --b0_threshold $b0_thr_extract_b0 --skip_b0_check
-@@ -47,7 +47,7 @@
- 
-     if [[ -f "$rev_b0" ]];
-     then
--        scil_volume_math.py concatenate $rev_b0 $rev_b0 ${prefix}__concatenated_rev_b0.nii.gz --data_type float32
-+        scil_volume_math.py concatenate $rev_b0 $rev_b0 ${prefix}__concatenated_rev_b0.nii.gz
-         scil_volume_math.py mean ${prefix}__concatenated_rev_b0.nii.gz ${prefix}__rev_b0_mean.nii.gz
-     else
-         scil_dwi_extract_b0.py $rev_dwi $rev_bval $rev_bvec ${prefix}__rev_b0_mean.nii.gz --mean --b0_threshold $b0_thr_extract_b0 --skip_b0_check
-@@ -66,7 +66,7 @@
-     cat <<-END_VERSIONS > versions.yml
-     "${task.process}":
-         scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
--        antsRegistration: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\+\\).*/\\1/')
-+        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/')
-         fsl: \$(flirt -version 2>&1 | sed -n 's/FLIRT version \\([0-9.]\\+\\)/\\1/p')
- 
-     END_VERSIONS
-@@ -87,7 +87,7 @@
-     cat <<-END_VERSIONS > versions.yml
-     "${task.process}":
-         scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
--        antsRegistration: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\+\\).*/\\1/')
-+        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/')
-         fsl: \$(flirt -version 2>&1 | sed -n 's/FLIRT version \\([0-9.]\\+\\)/\\1/p')
-     END_VERSIONS
- 
 
-'modules/nf-neuro/preproc/topup/environment.yml' is unchanged
-'modules/nf-neuro/preproc/topup/tests/main.nf.test' is unchanged
-'modules/nf-neuro/preproc/topup/tests/nextflow.config' is unchanged
-'modules/nf-neuro/preproc/topup/tests/tags.yml' is unchanged
 'modules/nf-neuro/preproc/topup/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/preproc/topup/tests/tags.yml' is unchanged
+'modules/nf-neuro/preproc/topup/tests/nextflow.config' is unchanged
+'modules/nf-neuro/preproc/topup/tests/main.nf.test' is unchanged
 ************************************************************

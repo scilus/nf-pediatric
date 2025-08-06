@@ -11,6 +11,10 @@ include { paramsSummaryMultiqc              } from '../subworkflows/nf-core/util
 include { softwareVersionsToYAML            } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
 include { FETCH_DERIVATIVES                 } from '../subworkflows/local/utils/fetch_derivatives.nf'
+include { generateDatasetJson               } from '../subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
+
+// ** Prepare templates ** //
+include { TEMPLATES                         } from '../subworkflows/local/templates/main.nf'
 
 // ** Anatomical reconstruction ** //
 include { SEGMENTATION                    } from '../subworkflows/local/segmentation/segmentation'
@@ -22,9 +26,6 @@ include { REGISTRATION_ANTS as COREG        } from '../modules/nf-neuro/registra
 
 // ** DWI Preprocessing ** //
 include { PREPROC_DWI                       } from '../subworkflows/nf-neuro/preproc_dwi/main'
-include { IMAGE_RESAMPLE as RESAMPLE_DWI    } from '../modules/nf-neuro/image/resample/main'
-include { BETCROP_CROPVOLUME as CROPDWI     } from '../modules/nf-neuro/betcrop/cropvolume/main'
-include { UTILS_EXTRACTB0 as EXTRACTB0      } from '../modules/nf-neuro/utils/extractb0/main'
 
 // ** DTI Metrics ** //
 include { RECONST_DTIMETRICS                } from '../modules/nf-neuro/reconst/dtimetrics/main'
@@ -38,18 +39,21 @@ include { RECONST_FODF                      } from '../modules/nf-neuro/reconst/
 
 // ** Registration ** //
 include { REGISTRATION_ANATTODWI as ANATTODWI } from '../modules/nf-neuro/registration/anattodwi/main'
-include { REGISTRATION_ANTSAPPLYTRANSFORMS as APPLYTRANSFORMS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
+include { REGISTRATION_TEMPLATETODWI as TEMPLATETODWI   } from '../modules/local/registration/templatetodwi/main'
+include { REGISTRATION_ANTSAPPLYTRANSFORMS as WARPPROBSEG     } from '../modules/nf-neuro/registration/antsapplytransforms/main'
 
 // ** Anatomical Segmentation ** //
 include { SEGMENTATION_FASTSEG as FASTSEG   } from '../modules/nf-neuro/segmentation/fastseg/main'
-include { SEGMENTATION_MCRIBS as TISSUESEG  } from '../modules/local/segmentation/mcribs.nf'
-include { SEGMENTATION_MASKS as MASKS       } from '../modules/local/segmentation/masks.nf'
-include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORMTISSUES } from '../modules/nf-neuro/registration/antsapplytransforms/main'
+include { SEGMENTATION_TRACKINGMASKS as TRACKINGMASKS } from '../modules/local/segmentation/trackingmasks/main'
 
 // ** Tracking ** //
 include { TRACKING_PFTTRACKING              } from '../modules/nf-neuro/tracking/pfttracking/main'
 include { TRACKING_LOCALTRACKING            } from '../modules/nf-neuro/tracking/localtracking/main'
 include { TRACTOGRAM_MATH                   } from '../modules/local/tractogram/math/main'
+
+// ** BundleSeg ** //
+include { BUNDLE_SEG } from '../subworkflows/nf-neuro/bundle_seg/main'
+include { TRACTOMETRY } from '../subworkflows/local/tractometry/main'
 
 // ** Connectomics ** //
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORM_LABELS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
@@ -83,7 +87,19 @@ workflow PEDIATRIC {
     ch_versions = Channel.empty()
     ch_multiqc_files_sub = Channel.empty()
     ch_nifti_files_to_transform = Channel.empty()
+    ch_mask_files_to_transform = Channel.empty()
+    ch_labels_files_to_transform = Channel.empty()
     ch_trk_files_to_transform = Channel.empty()
+
+    // ** BIDS dataset_description file. ** //
+    generateDatasetJson ()
+
+    //
+    // Fetching required templates
+    //
+    if ( params.tracking ) {
+        TEMPLATES ( )
+    }
 
     //
     // Decomposing the samplesheet into individual channels
@@ -103,6 +119,11 @@ workflow PEDIATRIC {
             witht1: it.size() > 1 && it[1] != []
                 return [ it[0], it[1] ]
         }
+    ch_infant_t1 = ch_t1.witht1
+        .branch {
+            infant: it[0].age < 0.25 || it[0].age > 18
+                return it
+        }
 
     // ** Check if T2 is provided ** //
     ch_t2 = ch_inputs.t2
@@ -110,85 +131,47 @@ workflow PEDIATRIC {
             witht2: it.size() > 1 && it[1] != []
                 return [ it[0], it[1] ]
         }
+    ch_infant_t2 = ch_t2.witht2
+        .branch {
+            infant: it[0].age < 0.25 || it[0].age > 18
+                return it
+        }
 
     // ** Loading synthstrip alternative weights if provided ** //
-    if ( params.t1_synthstrip_weights ) {
-        ch_t1_weights = Channel.fromPath(params.t1_synthstrip_weights, checkIfExists: false)
-    } else {
-        ch_t1_weights = Channel.empty()
-    }
-
-    if ( params.t2_synthstrip_weights ) {
-        ch_t2_weights = Channel.fromPath(params.t2_synthstrip_weights, checkIfExists: false)
-    } else {
-        ch_t2_weights = Channel.empty()
-    }
-
-    //
-    // SUBWORKFLOW: Run FastSurfer or FreeSurfer T1 reconstruction with BrainnetomeChild atlas
-    // Additionally, if infant data is provided, run MCRIBS segmentation.
-    //
-    if ( params.segmentation ) {
-
-        // ** Fetch license file ** //
-        ch_fs_license = params.fs_license
-            ? Channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
-            : Channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
-
-        // ** Fetch utils folder ** //
-        ch_utils_folder = Channel.fromPath(params.utils_folder, checkIfExists: true)
-
-        SEGMENTATION (
-            ch_t1.witht1,
-            ch_t2.witht2,
-            ch_fs_license,
-            ch_utils_folder,
-            ch_t1_weights,
-            ch_t2_weights
-        )
-
-        ch_versions = ch_versions.mix(SEGMENTATION.out.versions.first())
-        // ch_multiqc_files = ch_multiqc_files.mix(FASTSURFER.out.zip.collect{it[1]})
-
-    }
+    ch_synthstrip_weights = Channel.fromPath("$projectDir/assets/synthstrip.infant.1.pt",
+        checkIfExists: true)
 
     //
     // SUBWORKFLOW: Run preprocessing on anatomical images.
     //
-    if ( params.infant && params.tracking ) {
-        ch_fs_license = params.fs_license
-            ? Channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
-            : Channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
-        }
-
     reg_t1 = Channel.empty()
 
-    if ( params.tracking && !params.segmentation ) {
+    if ( params.tracking || params.segmentation ) {
 
         // ** Run T1 preprocessing ** //
-        ch_meta = ch_t1.witht1.map{ it[0] }
         PREPROC_T1W (
-            ch_t1.witht1,
+            !params.tracking ? ch_infant_t1.infant : ch_t1.witht1,
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
-            ch_meta.combine(ch_t1_weights)
+            Channel.empty(),
+            ch_synthstrip_weights
         )
         ch_versions = ch_versions.mix(PREPROC_T1W.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(PREPROC_T1.out.zip.collect{it[1]})
 
         // ** T2 Preprocessing ** //
-        ch_meta_t2 = ch_t2.witht2.map{ it[0] }
         PREPROC_T2W (
-            ch_t2.witht2,
+            !params.tracking ? ch_infant_t2.infant : ch_t2.witht2,
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
             Channel.empty(),
-            ch_meta_t2.combine(ch_t2_weights)
+            Channel.empty(),
+            ch_synthstrip_weights
         )
         ch_versions = ch_versions.mix(PREPROC_T2W.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(PREPROC_T2.out.zip.collect{it[1]})
@@ -197,8 +180,8 @@ workflow PEDIATRIC {
         ch_reg = PREPROC_T2W.out.t1_final
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch {
-                witht1: params.infant && it.size() > 2 && it[2] != null
-                witht2: !params.infant && it.size() > 2 && it[1] != null
+                witht1: (it[0].age < 2.5 || it[0].age > 18) && it.size() > 2 && it[2] != null
+                witht2: (it[0].age >= 2.5 && it[0].age <= 18) && it.size() > 2 && it[1] != null
                 other: true // Catch-all for any other cases
             }
 
@@ -211,15 +194,66 @@ workflow PEDIATRIC {
         ch_versions = ch_versions.mix(COREG.out.versions)
         // ch_multiqc_files = ch_multiqc_files.mix(COREG.out.zip.collect{it[1]})
         reg_t1 = COREG.out.image ?: Channel.empty()
+
+    }
+
+    //
+    // SUBWORKFLOW: Run FastSurfer, recon-all, or recon-all-clinical T1 reconstruction with BrainnetomeChild atlas
+    // Additionally, if infant data is provided, run MCRIBS segmentation.
+    //
+    if ( params.segmentation ) {
+
+        // ** Fetch license file ** //
+        ch_fs_license = params.fs_license
+            ? Channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
+            : Channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
+
+        // ** Fetch utils folder ** //
+        ch_utils_folder = Channel.fromPath(params.utils_folder, checkIfExists: true)
+
+        // ** Assemble T1w/T2w channels using derivatives for < 0.25 years, ** //
+        // ** otherwise, raw images.                                        ** //
+        ch_t1_seg = ch_t1.witht1
+            .branch {
+                fs: it[0].age >= 0.25 && it[0].age <= 18
+                    return it
+            }
+        ch_t1_seg_proc = PREPROC_T1W.out.t1_final
+            .branch {
+                mcribs: it[0].age < 0.25 || it[0].age > 18
+                    return it
+            }
+        ch_t1_seg = ch_t1_seg.fs.mix(ch_t1_seg_proc.mcribs)
+
+        ch_t2_seg = ch_t2.witht2
+            .branch {
+                fs: it[0].age >= 0.25 && it[0].age <= 18
+                    return it
+            }
+        ch_t2_seg_proc = PREPROC_T2W.out.t1_final
+            .branch {
+                mcribs: it[0].age < 0.25 || it[0].age > 18
+                    return it
+            }
+        ch_t2_seg = ch_t2_seg.fs.mix(ch_t2_seg_proc.mcribs)
+
+        SEGMENTATION (
+            ch_t1_seg,
+            ch_t2_seg,
+            reg_t1,
+            ch_fs_license,
+            ch_utils_folder
+        )
+
+        ch_versions = ch_versions.mix(SEGMENTATION.out.versions)
+        // ch_multiqc_files = ch_multiqc_files.mix(FASTSURFER.out.zip.collect{it[1]})
+
     }
 
     //
     // SUBWORKFLOW: Run PREPROC_DWI
     //
     if ( params.tracking ) {
-
-        if ( !params.dti_shells ) { error "Please provide the DTI shells using --dti_shells parameter" }
-        if ( !params.fodf_shells ) { error "Please provide the FODF shells using --fodf_shells parameter" }
 
         /* Load topup config if provided */
         if ( params.dwi_susceptibility_config_file ) {
@@ -231,12 +265,6 @@ workflow PEDIATRIC {
             }
         }
 
-        if ( params.dwi_synthstrip_weights ) {
-            ch_dwi_weights = Channel.fromPath(params.dwi_synthstrip_weights, checkIfExists: false)
-        } else {
-            ch_dwi_weights = Channel.value([])
-        }
-
         /* Run DWI preprocessing if the data isn't already preprocessed */
         /* else, just resample and crop the data                        */
         PREPROC_DWI(
@@ -245,25 +273,18 @@ workflow PEDIATRIC {
             Channel.empty(),
             ch_inputs.rev_b0,
             ch_topup_config,
-            ch_dwi_weights
+            ch_synthstrip_weights
         )
         ch_versions = ch_versions.mix(PREPROC_DWI.out.versions)
         ch_multiqc_files_sub = ch_multiqc_files_sub.mix(PREPROC_DWI.out.mqc)
 
-        // ** Setting outputs ** //
-        ch_processed_dwi = PREPROC_DWI.out.dwi
-        ch_processed_bval = PREPROC_DWI.out.bval
-        ch_processed_bvec = PREPROC_DWI.out.bvec
-        ch_processed_b0 = PREPROC_DWI.out.b0
-        ch_processed_b0_mask = PREPROC_DWI.out.b0_mask
-
         //
         // MODULE: Run DTI_METRICS
         //
-        ch_reconst_dti = ch_processed_dwi
-            .join(ch_processed_bval)
-            .join(ch_processed_bvec)
-            .join(ch_processed_b0_mask)
+        ch_reconst_dti = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+            .join(PREPROC_DWI.out.b0_mask)
 
         RECONST_DTIMETRICS ( ch_reconst_dti )
         ch_versions = ch_versions.mix(RECONST_DTIMETRICS.out.versions.first())
@@ -280,10 +301,10 @@ workflow PEDIATRIC {
         //
         // MODULE: Run FRF
         //
-        ch_reconst_frf = ch_processed_dwi
-            .join(ch_processed_bval)
-            .join(ch_processed_bvec)
-            .join(ch_processed_b0_mask)
+        ch_reconst_frf = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+            .join(PREPROC_DWI.out.b0_mask)
             .map{ it + [[], [], []] }
 
         RECONST_FRF ( ch_reconst_frf )
@@ -305,10 +326,10 @@ workflow PEDIATRIC {
         //
         // MODULE: Run MEANFRF
         //
-        ch_reconst_fodf = ch_processed_dwi
-            .join(ch_processed_bval)
-            .join(ch_processed_bvec)
-            .join(ch_processed_b0_mask)
+        ch_reconst_fodf = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+            .join(PREPROC_DWI.out.b0_mask)
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
             .join(ch_frf)
@@ -326,109 +347,197 @@ workflow PEDIATRIC {
         //
         // MODULE: Run REGISTRATION
         //
-        if ( params.infant && params.segmentation ) {
-            ch_anat_reg = SEGMENTATION.out.t2
-                .join(ch_processed_b0)
-                .join(RECONST_DTIMETRICS.out.md)
-        } else if ( !params.infant && params.segmentation ) {
-            ch_anat_reg = SEGMENTATION.out.t1
-                .join(ch_processed_b0)
-                .join(RECONST_DTIMETRICS.out.fa)
-        } else if ( params.infant ) {
-            ch_anat_reg = PREPROC_T2W.out.t1_final
-                .join(ch_processed_b0)
-                .join(RECONST_DTIMETRICS.out.md)
-        } else {
-            ch_anat_reg = PREPROC_T1W.out.t1_final
-                .join(ch_processed_b0)
-                .join(RECONST_DTIMETRICS.out.fa)
-        }
+        ch_for_reg = PREPROC_DWI.out.b0
+            .join(RECONST_DTIMETRICS.out.fa)
+            .join(RECONST_DTIMETRICS.out.md)
+            .join(PREPROC_T2W.out.t1_final, remainder: true)
+            .join(PREPROC_T1W.out.t1_final, remainder: true)
+            .branch{
+                infant_t2: it[0].age < 0.5 || it[0].age > 18 && it[4] != null
+                    return [it[0], it[4], it[1], it[3]]
+                infant_t1: it[0].age < 0.5 || it[0].age > 18 && it[5] != null
+                    return [it[0], it[5], it[1], it[2]]
+                child_t1: (it[0].age >= 0.5 && it[0].age <= 18) && it[5] != null
+                    return [it[0], it[5], it[1], it[2]]
+                child_t2: (it[0].age >= 0.5 && it[0].age <= 18) && it[4] != null
+                    return [it[0], it[4], it[1], it[3]]
+            }
+
+        ch_anat_reg = ch_for_reg.infant_t1
+            .mix(ch_for_reg.infant_t2)
+            .mix(ch_for_reg.child_t1)
+            .mix(ch_for_reg.child_t2)
 
         ANATTODWI( ch_anat_reg )
         ch_versions = ch_versions.mix(ANATTODWI.out.versions)
         ch_multiqc_files_sub = ch_multiqc_files_sub.mix(ANATTODWI.out.mqc)
 
         //
-        // SUBWORKFLOW: Run ANATOMICAL_SEGMENTATION
+        // ** For infant data (<2.5y), register the template in diff space using warped anat **
+        // ** Matching the available anat with the same modality in the template **
         //
-        if ( params.infant ) {
+        ch_tpl0 = TEMPLATES.out.UNCBCPInfant0.map{ it[1..3] }
+        ch_tpl3 = TEMPLATES.out.UNCBCPInfant3.map{ it[1..3] }
+        ch_tpl6 = TEMPLATES.out.UNCBCPInfant6.map{ it[1..3] }
+        ch_tpl12 = TEMPLATES.out.UNCBCPInfant12.map{ it[1..3] }
+        ch_tpl24 = TEMPLATES.out.UNCBCPInfant24.map{ it[1..3] }
 
-            // ** Apply transformation to the T1 image, if provided ** //
-            ch_antsapply = Channel.empty()
-            if ( reg_t1 || SEGMENTATION.out.t1 ) {
-                t1_to_apply = params.segmentation ? SEGMENTATION.out.t1 : reg_t1
-                ch_antsapply = t1_to_apply
-                    .join(ANATTODWI.out.t1_warped)
-                    .join(ANATTODWI.out.warp)
-                    .join(ANATTODWI.out.affine)
+        ch_reg_template = ANATTODWI.out.t1_warped
+            .join(RECONST_DTIMETRICS.out.fa)
+            .combine(ch_tpl0)
+            .combine(ch_tpl3)
+            .combine(ch_tpl6)
+            .combine(ch_tpl12)
+            .combine(ch_tpl24)
+            .branch{
+                cohort0: it[0].age < 0.125 || it[0].age > 18 // age < 1.5 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[3], it[5]]
+                    } else {
+                        return [it[0], it[1], it[2], it[4], it[5]]
+                    }
+                cohort3: it[0].age >= 0.125 && it[0].age < 0.375 // 1.5 months <= age < 4.5 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[6], it[8]]
+                    } else {
+                        return [it[0], it[1], it[2], it[7], it[8]]
+                    }
+                cohort6: it[0].age >= 0.375 && it[0].age < 0.75 // 4.5 months <= age < 9 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[9], it[11]]
+                    } else {
+                        return [it[0], it[1], it[2], it[10], it[11]]
+                    }
+                cohort12: it[0].age >= 0.75 && it[0].age < 1.5 // 9 months <= age < 18 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[12], it[14]]
+                    } else {
+                        return [it[0], it[1], it[2], it[13], it[14]]
+                    }
+                cohort24: it[0].age >= 1.5 && it[0].age < 2.5 // 18 months <= age < 30 months
+                    if (it[1].name.contains("T1w")) {
+                        return [it[0], it[1], it[2], it[15], it[17]]
+                    } else {
+                        return [it[0], it[1], it[2], it[16], it[17]]
+                    }
             }
 
-            APPLYTRANSFORMS ( ch_antsapply )
-            ch_versions = ch_versions.mix(APPLYTRANSFORMS.out.versions.first())
-            // ch_multiqc_files = ch_multiqc_files.mix(APPLYTRANSFORMS.out.zip.collect{it[1]})
+        ch_reg_template = ch_reg_template.cohort0
+            .mix(ch_reg_template.cohort3)
+            .mix(ch_reg_template.cohort6)
+            .mix(ch_reg_template.cohort12)
+            .mix(ch_reg_template.cohort24)
 
-            // ** Run MCRIBS segmentation ** //
-            ch_tissueseg_t2 = ANATTODWI.out.t1_warped
-                .combine(ch_fs_license)
-                .join(APPLYTRANSFORMS.out.warped_image, remainder: true)
-                .map{ it[0..2] + [ it[3] ?: [] ] }
+        TEMPLATETODWI ( ch_reg_template )
+        ch_versions = ch_versions.mix(TEMPLATETODWI.out.versions)
+        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(TEMPLATETODWI.out.mqc)
 
-            TISSUESEG ( !params.segmentation ? ch_tissueseg_t2 : Channel.empty() )
-            ch_versions = ch_versions.mix(TISSUESEG.out.versions.first())
+        //
+        // ** Then, transform the probseg maps for WM, GM, and CSF. **
+        //
+        ch_probseg0 = TEMPLATES.out.UNCBCPInfant0.map{ [it[3..5]] }
+        ch_probseg3 = TEMPLATES.out.UNCBCPInfant3.map{ [it[3..5]] }
+        ch_probseg6 = TEMPLATES.out.UNCBCPInfant6.map{ [it[3..5]] }
+        ch_probseg12 = TEMPLATES.out.UNCBCPInfant12.map{ [it[3..5]] }
+        ch_probseg24 = TEMPLATES.out.UNCBCPInfant24.map{ [it[3..5]] }
 
-            // ** Create WM, GM, and CSF masks from the MCRIBS segmentation   ** //
-            // ** If complete segmentation has been run, apply transformation ** //
-            // ** to the tissue segmentation masks.                           ** //
-            if ( params.segmentation ) {
-                // ** Apply transformation to the tissue segmentation ** //
-                ch_apply_transform = SEGMENTATION.out.tissues
-                    .join(ANATTODWI.out.t1_warped)
-                    .join(ANATTODWI.out.warp)
-                    .join(ANATTODWI.out.affine)
+        ch_warp_probseg = ANATTODWI.out.t1_warped
+            .join(TEMPLATETODWI.out.warp)
+            .join(TEMPLATETODWI.out.affine)
+            .combine(ch_probseg0)
+            .combine(ch_probseg3)
+            .combine(ch_probseg6)
+            .combine(ch_probseg12)
+            .combine(ch_probseg24)
+            .branch{
+                cohort0: it[0].age < 0.125 || it[0].age > 18 // age < 1.5 months
+                    return [it[0], it[4], it[1], it[2], it[3]]
+                cohort3: it[0].age >= 0.125 && it[0].age < 0.375 // 1.5 months <= age < 4.5 months
+                    return [it[0], it[5], it[1], it[2], it[3]]
+                cohort6: it[0].age >= 0.375 && it[0].age < 0.75 // 4.5 months <= age < 9 months
+                    return [it[0], it[6], it[1], it[2], it[3]]
+                cohort12: it[0].age >= 0.75 && it[0].age < 1.5 // 9 months <= age < 18 months
+                    return [it[0], it[7], it[1], it[2], it[3]]
+                cohort24: it[0].age >= 1.5 && it[0].age < 2.5 // 18 months <= age < 30 months
+                    return [it[0], it[8], it[1], it[2], it[3]]
+            }
+        ch_warp_probseg = ch_warp_probseg.cohort0
+            .mix(ch_warp_probseg.cohort3)
+            .mix(ch_warp_probseg.cohort6)
+            .mix(ch_warp_probseg.cohort12)
+            .mix(ch_warp_probseg.cohort24)
 
-                TRANSFORMTISSUES ( ch_apply_transform )
-                ch_versions = ch_versions.mix(TRANSFORMTISSUES.out.versions.first())
-                // ch_multiqc_files = ch_multiqc_files.mix(TRANSFORMTISSUES.out.zip.collect{it[1]})
+        // ** Transform atlas probability map into subject's space ** //
+        WARPPROBSEG ( ch_warp_probseg )
+        ch_versions = ch_versions.mix(WARPPROBSEG.out.versions)
+        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+            .mix(WARPPROBSEG.out.warped_image.map{ [it[0], it[1][2], it[1][1], it[1][0]] })
 
-                ch_masking = TRANSFORMTISSUES.out.warped_image
-                    .join(RECONST_DTIMETRICS.out.fa)
-            } else {
-                ch_masking = TISSUESEG.out.aseg_presurf
-                    .join(RECONST_DTIMETRICS.out.fa)
+        ch_tracking_masks = WARPPROBSEG.out.warped_image
+            .map{ [it[0], it[1][2], it[1][1], it[1][0]] }
+            .join(RECONST_DTIMETRICS.out.fa)
+            .join(RECONST_DTIMETRICS.out.md)
+            .join(PREPROC_DWI.out.b0_mask)
+
+        // ** Convert probability segmentation into binary mask ** //
+        TRACKINGMASKS ( ch_tracking_masks )
+        ch_versions = ch_versions.mix(TRACKINGMASKS.out.versions)
+        ch_mask_files_to_transform = ch_mask_files_to_transform
+            .mix(TRACKINGMASKS.out.wm)
+            .mix(TRACKINGMASKS.out.gm)
+            .mix(TRACKINGMASKS.out.csf)
+
+        // ** FAST segmentation for child data. ** //
+        ch_fastseg = ANATTODWI.out.t1_warped
+            .map { it + [[]] }
+            .branch {
+                child: it[0].age >= 2.5 && it[0].age <= 18
             }
 
-            // ** Generate WM, GM, and CSF masks ** //
-            MASKS ( ch_masking )
-            ch_versions = ch_versions.mix(MASKS.out.versions.first())
-            // ch_multiqc_files = ch_multiqc_files.mix(MASKS.out.zip.collect{it[1]})
+        FASTSEG ( ch_fastseg.child )
+        ch_versions = ch_versions.mix(FASTSEG.out.versions)
+        // ch_multiqc_files = ch_multiqc_files.mix(ANATOMICAL_SEGMENTATION.out.zip.collect{it[1]})
+        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+            .mix(FASTSEG.out.wm_map)
+            .mix(FASTSEG.out.gm_map)
+            .mix(FASTSEG.out.csf_map)
+        ch_mask_files_to_transform = ch_mask_files_to_transform
+            .mix(FASTSEG.out.wm_mask)
+            .mix(FASTSEG.out.gm_mask)
+            .mix(FASTSEG.out.csf_mask)
 
-            ch_wm_mask = MASKS.out.wm_mask
+        // ** Setting channel for tracking ** //
+        ch_pft_tracking = RECONST_FODF.out.fodf
+            .join(RECONST_DTIMETRICS.out.fa)
+            .join(FASTSEG.out.wm_map, remainder: true)
+            .join(FASTSEG.out.gm_map, remainder: true)
+            .join(FASTSEG.out.csf_map, remainder: true)
+            .join(WARPPROBSEG.out.warped_image, remainder: true)
+            .branch{
+                infant: it[0].age < 2.5 || it[0].age > 18
+                    return [it[0], it[6][2], it[6][1], it[6][0], it[1], it[2]]
+                child: it[0].age >= 2.5 && it[0].age <= 18
+                    return [it[0], it[3], it[4], it[5], it[1], it[2]]
+            }
+        ch_pft_tracking = ch_pft_tracking.infant.mix(ch_pft_tracking.child)
 
-        } else {
-
-            ch_fastseg = ANATTODWI.out.t1_warped
-                .map { it + [[]] }
-
-            FASTSEG ( ch_fastseg )
-            ch_versions = ch_versions.mix(FASTSEG.out.versions)
-            // ch_multiqc_files = ch_multiqc_files.mix(ANATOMICAL_SEGMENTATION.out.zip.collect{it[1]})
-
-            ch_wm_mask = FASTSEG.out.wm_mask
-        }
+        ch_local_tracking = RECONST_FODF.out.fodf
+            .join(RECONST_DTIMETRICS.out.fa)
+            .join(FASTSEG.out.wm_mask, remainder: true)
+            .join(TRACKINGMASKS.out.wm, remainder: true)
+            .branch{
+                infant: it[0].age < 2.5 || it[0].age > 18
+                    return [it[0], it[4], it[1], it[2]]
+                child: it[0].age >= 2.5 && it[0].age <= 18
+                    return [it[0], it[3], it[1], it[2]]
+            }
+        ch_local_tracking = ch_local_tracking.infant.mix(ch_local_tracking.child)
 
         //
         // MODULE: Run PFT_TRACKING
         //
         ch_trk_pft = Channel.empty()
         if ( params.run_pft_tracking ) {
-
-            params.infant ? error( "PFT tracking is not implemented for infant data as of now, please use local tracking instead." ) : null
-
-            ch_pft_tracking = FASTSEG.out.wm_map
-                .join(FASTSEG.out.gm_map)
-                .join(FASTSEG.out.csf_map)
-                .join(RECONST_FODF.out.fodf)
-                .join(RECONST_DTIMETRICS.out.fa)
 
             TRACKING_PFTTRACKING ( ch_pft_tracking )
             ch_versions = ch_versions.mix(TRACKING_PFTTRACKING.out.versions.first())
@@ -443,10 +552,6 @@ workflow PEDIATRIC {
         //
         ch_trk_local = Channel.empty()
         if ( params.run_local_tracking ) {
-
-            ch_local_tracking = ch_wm_mask
-                .join(RECONST_FODF.out.fodf)
-                .join(RECONST_DTIMETRICS.out.fa)
 
             TRACKING_LOCALTRACKING ( ch_local_tracking )
             ch_versions = ch_versions.mix(TRACKING_LOCALTRACKING.out.versions.first())
@@ -495,6 +600,82 @@ workflow PEDIATRIC {
             }
     }
 
+    if ( params.bundling ) {
+
+        // ** Fetch files from an input_deriv if tracking is not run ** //
+        if ( ! params.tracking ) {
+            FETCH_DERIVATIVES ( params.input_deriv )
+
+            ch_fa_md = FETCH_DERIVATIVES.out.metrics
+                .map { meta, files ->
+                    def fa = files.findAll { it.name.contains('desc-fa.nii.gz') }
+                    def md = files.findAll { it.name.contains('desc-md.nii.gz') }
+
+                    // ** Some logging if no files exists ** //
+                    if ( fa.size() == 0 && md.size() == 0 ) {
+                        error "No FA or MD files have been found in your derivatives folder. " +
+                        "Please validate your structure respects the BIDS specification."
+                    }
+                    return [ meta, fa, md ]
+                }
+                .branch {
+                    infant: it[0].age < 0.5 || it[0].age > 18
+                        return [ it[0], it[2] ]
+                    child: true // Catch-all, unlikely that FA is there without MD.
+                        return [ it[0], it[1] ]
+                }
+            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
+
+            ch_metrics = FETCH_DERIVATIVES.out.metrics
+
+            ch_fodf = FETCH_DERIVATIVES.out.fodf
+
+            ch_trk = FETCH_DERIVATIVES.out.trk
+        } else {
+            ch_fa_md = RECONST_DTIMETRICS.out.fa
+                .join(RECONST_DTIMETRICS.out.md)
+                .branch {
+                    infant: it[0].age < 0.5 || it[0].age > 18
+                        return [ it[0], it[2] ]
+                    child: true // Catch all, should work also with infant, but not optimal.
+                        return [ it[0], it[1] ]
+                }
+            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
+
+            ch_metrics = RECONST_DTIMETRICS.out.fa
+                .join(RECONST_DTIMETRICS.out.md)
+                .join(RECONST_DTIMETRICS.out.ad)
+                .join(RECONST_DTIMETRICS.out.rd)
+                .join(RECONST_DTIMETRICS.out.mode)
+                .join(RECONST_FODF.out.afd_total)
+                .join(RECONST_FODF.out.nufo)
+                .map{ meta, fa, md, ad, rd, mode, afd_total, nufo ->
+                    tuple(meta, [ fa, md, ad, rd, mode, afd_total, nufo ])}
+
+            ch_fodf = RECONST_FODF.out.fodf
+        }
+
+        //
+        // SUBWORKFLOW: Run BUNDLE_SEG
+        //
+        BUNDLE_SEG(
+            ch_fa_md,
+            ch_trk
+        )
+        ch_versions = ch_versions.mix(BUNDLE_SEG.out.versions)
+
+        //
+        // SUBWORKFLOW: RUN TRACTOMETRY
+        //
+        TRACTOMETRY (
+            BUNDLE_SEG.out.bundles,
+            ch_metrics,
+            Channel.empty(),
+            ch_fodf
+        )
+
+    }
+
     if ( params.connectomics ) {
 
         if ( params.input_deriv ) {
@@ -507,9 +688,9 @@ workflow PEDIATRIC {
                 .join(ANATTODWI.out.affine)
             ch_peaks = RECONST_FODF.out.peaks
             ch_fodf = RECONST_FODF.out.fodf
-            ch_dwi_bval_bvec = ch_processed_dwi
-                .join(ch_processed_bval)
-                .join(ch_processed_bvec)
+            ch_dwi_bval_bvec = PREPROC_DWI.out.dwi
+                .join(PREPROC_DWI.out.bval)
+                .join(PREPROC_DWI.out.bvec)
             ch_anat = ANATTODWI.out.t1_warped
             ch_metrics = RECONST_DTIMETRICS.out.fa
                 .join(RECONST_DTIMETRICS.out.md)
@@ -548,7 +729,7 @@ workflow PEDIATRIC {
         // MODULE : Run AntsApplyTransforms.
         //
         ch_labels = ch_labels.branch {
-            reg: it.size() > 2
+            reg: it.size() > 2 && !params.segmentation
                 return [it[0], it[2]]
             notreg: it.size() < 3
                 return [it[0], it[1]]
@@ -561,7 +742,7 @@ workflow PEDIATRIC {
         TRANSFORM_LABELS ( ch_antsapply )
         ch_versions = ch_versions.mix(TRANSFORM_LABELS.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(TRANSFORM_LABELS.out.zip.collect{it[1]})
-        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+        ch_labels_files_to_transform = ch_labels_files_to_transform
             .mix(TRANSFORM_LABELS.out.warped_image)
 
         //
@@ -652,21 +833,45 @@ workflow PEDIATRIC {
     if ( params.template ) {
         ch_nifti_files_to_transform = ch_nifti_files_to_transform
             .groupTuple()
-            .map { meta, nii_list ->
-                def images = nii_list.flatten().findAll { it != null }
-                return tuple(meta, images)
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
+            }
+
+        ch_mask_files_to_transform = ch_mask_files_to_transform
+            .groupTuple()
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
+            }
+
+        ch_labels_files_to_transform = ch_labels_files_to_transform
+            .groupTuple()
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
             }
 
         ch_trk_files_to_transform = ch_trk_files_to_transform
             .groupTuple()
-            .map{ meta, trk_list ->
-                def trk = trk_list.flatten().findAll { it != null }
-                return tuple(meta, trk)
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
             }
 
         OUTPUT_TEMPLATE_SPACE(
             ANATTODWI.out.t1_warped,
             ch_nifti_files_to_transform,
+            ch_mask_files_to_transform,
+            ch_labels_files_to_transform,
             ch_trk_files_to_transform
         )
         ch_versions = ch_versions.mix(OUTPUT_TEMPLATE_SPACE.out.versions)
@@ -675,24 +880,51 @@ workflow PEDIATRIC {
     //
     // SUBWORKFLOW: RUN QC
     //
-    if ( params.tracking && !params.infant ) {
-        ch_tissueseg = FASTSEG.out.wm_mask
-            .join(FASTSEG.out.gm_mask)
-            .join(FASTSEG.out.csf_mask)
-    } else if ( params.infant && params.tracking ) {
-        ch_tissueseg = MASKS.out.wm_mask
-            .join(MASKS.out.gm_mask)
-            .join(MASKS.out.csf_mask)
+    if ( params.tracking ) {
+    ch_tissueseg = Channel.empty()
+        .mix(FASTSEG.out.wm_mask)
+        .mix(FASTSEG.out.gm_mask)
+        .mix(FASTSEG.out.csf_mask)
+        .mix(TRACKINGMASKS.out.wm)
+        .mix(TRACKINGMASKS.out.gm)
+        .mix(TRACKINGMASKS.out.csf)
+        .groupTuple()
+        .map { meta, files ->
+            def sortedFiles = files.flatten().findAll { it != null }.sort { file ->
+                if (file.name.contains('wm')) return 0
+                else if (file.name.contains('gm')) return 1
+                else if (file.name.contains('csf')) return 2
+                else return 3
+            }
+            return [meta] + sortedFiles
+        }
     } else {
         ch_tissueseg = Channel.empty()
     }
 
     if ( params.tracking ) {
         ch_anat_qc = ANATTODWI.out.t1_warped
-    } else if ( params.infant && params.segmentation ) {
-        ch_anat_qc = SEGMENTATION.out.t2
-    } else if (!params.infant && params.segmentation ) {
-        ch_anat_qc = SEGMENTATION.out.t1
+    } else if ( params.segmentation ) {
+        // ** Fetching the T1w and T2w images for QC ** //
+        // ** If both are provided, use T1w, else, use T2w. ** //
+        ch_anat_qc = Channel.empty()
+            .mix(SEGMENTATION.out.t1)
+            .mix(SEGMENTATION.out.t2)
+            .groupTuple()
+            .map { meta, files ->
+                return [meta] + files.flatten().findAll { it != null }.sort { file ->
+                    if (file.name.contains("T2w")) return 0
+                    else return 1}
+            }
+            .branch{
+                T1w: it.size() > 3 && it[0].age >= 0.25 && it[0].age <= 18
+                    return [it[0], it[2]]
+                T2w: true // Catch-all for only T2w.
+                    return [it[0], it[1]]
+            }
+        ch_anat_qc = ch_anat_qc.T1w.mix(ch_anat_qc.T2w)
+    } else if ( params.bundling ) {
+        ch_anat_qc = Channel.empty()
     } else {
         ch_anat_qc = ch_anat
     }
@@ -800,8 +1032,9 @@ workflow PEDIATRIC {
         []
     )
 
-    emit:multiqc_report = MULTIQC_SUBJECT.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    emit:
+    multiqc_report = MULTIQC_SUBJECT.out.report.toList()    // channel: /path/to/multiqc_report.html
+    versions       = ch_versions                            // channel: [ path(versions.yml) ]
 
 }
 

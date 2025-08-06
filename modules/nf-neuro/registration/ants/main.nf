@@ -3,9 +3,7 @@ process REGISTRATION_ANTS {
     tag "$meta.id"
     label 'process_medium'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
-        "scilus/scilus:latest"}"
+    container 'scilus/scilus:2.1.0'
 
     input:
     tuple val(meta), path(fixedimage), path(movingimage), path(mask) //** optional, input = [] **//
@@ -25,7 +23,7 @@ process REGISTRATION_ANTS {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def suffix = task.ext.suffix ? "${task.ext.suffix}" : ""
+    def suffix = movingimage.name.contains("T1w") ? "T1w" : "T2w"
     def suffix_qc = task.ext.suffix_qc ? "${task.ext.suffix_qc}" : ""
     def ants = task.ext.quick ? "antsRegistrationSyNQuick.sh " :  "antsRegistrationSyN.sh "
     def dimension = task.ext.dimension ? "-d " + task.ext.dimension : "-d 3"
@@ -120,7 +118,7 @@ process REGISTRATION_ANTS {
     stub:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def suffix = task.ext.suffix ? "${task.ext.suffix}" : ""
+    def suffix = movingimage.name.contains("T1w") ? "T1w" : "T2w"
 
     """
     touch ${prefix}__${suffix}warped.nii.gz

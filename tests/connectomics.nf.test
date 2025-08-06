@@ -10,7 +10,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input_deriv = "$projectDir/tests/data/derivatives-noses/"
+                params.input_deriv = "$projectDir/tests/data/derivatives/"
                 params.outdir = "$outputDir"
 
                 params.connectomics = true
@@ -40,7 +40,7 @@ nextflow_pipeline {
         when {
             params {
 
-                params.input_deriv = "$projectDir/tests/data/derivatives-ses/"
+                params.input_deriv = "$projectDir/tests/data/derivatives/"
                 params.outdir = "$outputDir"
 
                 params.connectomics = true
@@ -65,34 +65,41 @@ nextflow_pipeline {
         }
     }
 
-    test("Connectomics + infant profile - should run successfully") {
+    test("Connectomics profile with no participants.tsv file - should fail") {
 
         when {
             params {
 
-                params.input_deriv = "$projectDir/tests/data/derivatives-ses/"
+                params.input_deriv = "$projectDir/tests/data/noparticipantfile/"
                 params.outdir = "$outputDir"
 
                 params.connectomics = true
-                params.infant = true
 
             }
         }
 
         then {
-            // stable name: All files + folders in ${params.outdir}/ with a stable name.
-            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
-            assertAll {
-                assert workflow.success
-                assert snapshot(
-                    // Number of successfully completed tasks
-                    workflow.trace.succeeded().size(),
-                    // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
-                    // All stable name.
-                    stable_name
-                ).match()
+            assert workflow.failed
+            assert workflow.stdout.contains("ERROR: Your bids dataset does not contain a participants.tsv file. Please provide a participants.tsv file with a column indicating the participants' age. For any questions, please refer to the documentation at https://github.com/scilus/nf-pediatric.git or open an issue!")
+        }
+    }
+
+    test("Connectomics profile with wrong participants.tsv file - should fail") {
+
+        when {
+            params {
+
+                params.input_deriv = "$projectDir/tests/data/wrongparticipantfile/"
+                params.outdir = "$outputDir"
+
+                params.connectomics = true
+
             }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("ERROR: Age is not entered correctly in the participants.tsv file. Please validate.")
         }
     }
 }

@@ -1,4 +1,4 @@
-# nf-pediatric: Citations
+# scilus/nf-pediatric: Citations
 
 ## [nf-core](https://pubmed.ncbi.nlm.nih.gov/32055031/)
 
@@ -31,6 +31,10 @@
 - [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/)
 
 > Fischl, B. (2012). FreeSurfer. NeuroImage, 62(2), 774–781. https://doi.org/10.1016/j.neuroimage.2012.01.021
+> K Gopinath, DN Greeve, S Das, S Arnold, C Magdamo, JE Iglesias: Cortical analysis of heterogeneous clinical brain MRI scans for large-scale neuroimaging studies, https://arxiv.org/abs/2305.01827
+> B Billot, DN Greve, O Puonti, A Thielscher, K Van Leemput, B Fischl, AV Dalca, JE Iglesias: SynthSeg: Segmentation of brain MRI scans of any contrast and resolution without retraining, Medical Image Analysis, 83, 102789 (2023)
+> B Billot, C Magdamo, SE Arnold, S Das, JE Iglesias: Robust machine learning segmentation for large-scale analysis of heterogeneous clinical brain MRI datasets, PNAS, 120(9), e2216399120 (2023)
+> SynthSR: a public AI tool to turn heterogeneous clinical brain scans into high-resolution T1-weighted images for 3D morphometry JE Iglesias, B Billot, Y Balbastre, C Magdamo, S Arnold, S Das, B Edlow, D Alexander, P Golland, B Fischl, Science Advances, 9(5), eadd3607 (2023)
 
 - [M-CRIB-S](https://github.com/DevelopmentalImagingMCRI/MCRIBS)
 

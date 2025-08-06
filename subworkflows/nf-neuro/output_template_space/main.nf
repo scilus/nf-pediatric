@@ -1,16 +1,22 @@
-include { UTILS_TEMPLATEFLOW                    } from '../../../modules/local/utils/templateflow/main.nf'
-include { BETCROP_FSLBETCROP as BET_T1W         } from '../../../modules/nf-neuro/betcrop/fslbetcrop/main.nf'
-include { BETCROP_FSLBETCROP as BET_T2W         } from '../../../modules/nf-neuro/betcrop/fslbetcrop/main.nf'
-include { REGISTRATION_ANTS                     } from '../../../modules/nf-neuro/registration/ants/main.nf'
-include { REGISTRATION_ANTSAPPLYTRANSFORMS      } from '../../../modules/nf-neuro/registration/antsapplytransforms/main.nf'
-include { REGISTRATION_TRACTOGRAM               } from '../../../modules/nf-neuro/registration/tractogram/main.nf'
+include { UTILS_TEMPLATEFLOW                            } from '../../../modules/nf-neuro/utils/templateflow/main.nf'
+include { IMAGE_APPLYMASK as MASK_T1W                   } from '../../../modules/nf-neuro/image/applymask/main.nf'
+include { IMAGE_APPLYMASK as MASK_T2W                   } from '../../../modules/nf-neuro/image/applymask/main.nf'
+include { BETCROP_FSLBETCROP as BET_T1W                 } from '../../../modules/nf-neuro/betcrop/fslbetcrop/main.nf'
+include { BETCROP_FSLBETCROP as BET_T2W                 } from '../../../modules/nf-neuro/betcrop/fslbetcrop/main.nf'
+include { REGISTRATION_ANTS                             } from '../../../modules/nf-neuro/registration/ants/main.nf'
+include { REGISTRATION_ANTSAPPLYTRANSFORMS as WARPIMAGES} from '../../../modules/nf-neuro/registration/antsapplytransforms/main.nf'
+include { REGISTRATION_ANTSAPPLYTRANSFORMS as WARPMASK  } from '../../../modules/nf-neuro/registration/antsapplytransforms/main.nf'
+include { REGISTRATION_ANTSAPPLYTRANSFORMS as WARPLABELS} from '../../../modules/nf-neuro/registration/antsapplytransforms/main.nf'
+include { REGISTRATION_TRACTOGRAM                       } from '../../../modules/nf-neuro/registration/tractogram/main.nf'
 
 workflow OUTPUT_TEMPLATE_SPACE {
 
     take:
-        ch_anat // channel: [ val(meta), [ anat ] ]
-        ch_nifti_files // channel: [ val(meta), [ nifti_files ] ]
-        ch_trk_files // channel: [ val(meta), [ trk_files ] ]
+        ch_anat                     // channel: [ val(meta), [ anat ] ]
+        ch_nifti_files              // channel: [ val(meta), [ nifti_files ] ]
+        ch_mask_files               // channel: [ val(meta), [ mask_files ] ]
+        ch_labels_files             // channel: [ val(meta), [ labels_files ] ]
+        ch_trk_files                // channel: [ val(meta), [ trk_files ] ]
 
     main:
 
@@ -40,7 +46,7 @@ workflow OUTPUT_TEMPLATE_SPACE {
         // ** Setting outputs ** //
         ch_t1w_tpl = UTILS_TEMPLATEFLOW.out.T1w
         ch_t2w_tpl = UTILS_TEMPLATEFLOW.out.T2w
-
+        ch_brain_mask = UTILS_TEMPLATEFLOW.out.brain_mask
     } else {
         // ** If the template exists, we will not download it again. ** //
         log.info("Template ${params.template} found in " +
@@ -57,6 +63,10 @@ workflow OUTPUT_TEMPLATE_SPACE {
                 "${path}/cohort-${params.templateflow_cohort}/*res-*${params.templateflow_res}_T2w.nii.gz",
                 checkIfExists: false
             )
+            ch_brain_mask = Channel.fromPath(
+                "${path}/cohort-${params.templateflow_cohort}/*res-*${params.templateflow_res}_desc-brain_mask.nii.gz",
+                checkIfExists: false
+            ) ?: Channel.empty()
         } else {
             ch_t1w_tpl = Channel.fromPath(
                 "${path}/*res-*${params.templateflow_res}_T1w.nii.gz",
@@ -66,28 +76,63 @@ workflow OUTPUT_TEMPLATE_SPACE {
                 "${path}/*res-*${params.templateflow_res}_T2w.nii.gz",
                 checkIfExists: false
             )
+            ch_brain_mask = Channel.fromPath(
+                "${path}/*res-*${params.templateflow_res}_desc-brain_mask.nii.gz",
+                checkIfExists: false
+            ) ?: Channel.empty()
         }
     }
 
-    // ** The template may not have a brain mask, so we will ** //
-    // ** run BET by default (bit painful, but necessary)    ** //
-    ch_bet_tpl_t1w = ch_t1w_tpl
-        | map{ t1w -> [ [id: "template"], t1w, [], [] ] }
+    ch_brain_mask = ch_brain_mask
+        | branch {
+            TRUE: it[0] != []
+            FALSE: false
+        }
 
-    BET_T1W ( ch_bet_tpl_t1w )
-    ch_versions = ch_versions.mix(BET_T1W.out.versions)
-    // ** Strip the template from the meta field so we can combine it ** //
-    ch_t1w_tpl = BET_T1W.out.image
-        | map{ meta, image -> image }
+    // ** If the template has a brain mask, we will use it ** //
+    if ( ! ch_brain_mask.FALSE ) {
+        ch_bet_tpl_t1w = ch_t1w_tpl
+            | combine(ch_brain_mask)
+            | map{ t1w, mask -> [ [id: "template"], t1w, mask ] }
 
-    ch_bet_tpl_t2w = ch_t2w_tpl
-        | map{ t2w -> [ [id: "template"], t2w, [], [] ] }
+        MASK_T1W ( ch_bet_tpl_t1w )
+        ch_versions = ch_versions.mix(MASK_T1W.out.versions)
 
-    BET_T2W ( ch_bet_tpl_t2w )
-    ch_versions = ch_versions.mix(BET_T2W.out.versions)
-    // ** Strip the template from the meta field so we can combine it ** //
-    ch_t2w_tpl = BET_T2W.out.image
-        | map{ meta, image -> image }
+        // ** Strip the template from the meta field so we can combine it ** //
+        ch_t1w_tpl = MASK_T1W.out.image
+            | map{ _meta, image -> image }
+
+        ch_bet_tpl_t2w = ch_t2w_tpl
+            | combine(ch_brain_mask)
+            | map{ t2w, mask -> [ [id: "template"], t2w, mask ] }
+
+        MASK_T2W ( ch_bet_tpl_t2w )
+        ch_versions = ch_versions.mix(MASK_T2W.out.versions)
+
+        // ** Strip the template from the meta field so we can combine it ** //
+        ch_t2w_tpl = MASK_T2W.out.image
+            | map{ _meta, image -> image }
+    } else {
+        // ** The template may not have a brain mask, so we will ** //
+        // ** run BET by default (bit painful, but necessary)    ** //
+        ch_bet_tpl_t1w = ch_t1w_tpl
+            | map{ t1w -> [ [id: "template"], t1w, [], [] ] }
+
+        BET_T1W ( ch_bet_tpl_t1w )
+        ch_versions = ch_versions.mix(BET_T1W.out.versions)
+        // ** Strip the template from the meta field so we can combine it ** //
+        ch_t1w_tpl = BET_T1W.out.image
+            | map{ _meta, image -> image }
+
+        ch_bet_tpl_t2w = ch_t2w_tpl
+            | map{ t2w -> [ [id: "template"], t2w, [], [] ] }
+
+        BET_T2W ( ch_bet_tpl_t2w )
+        ch_versions = ch_versions.mix(BET_T2W.out.versions)
+        // ** Strip the template from the meta field so we can combine it ** //
+        ch_t2w_tpl = BET_T2W.out.image
+            | map{ _meta, image -> image }
+    }
 
     // ** Register the subject to the template space ** //
     ch_registration = ch_anat
@@ -107,8 +152,24 @@ workflow OUTPUT_TEMPLATE_SPACE {
         | join(REGISTRATION_ANTS.out.warp)
         | join(REGISTRATION_ANTS.out.affine)
 
-    REGISTRATION_ANTSAPPLYTRANSFORMS ( ch_files_to_transform )
-    ch_versions = ch_versions.mix(REGISTRATION_ANTSAPPLYTRANSFORMS.out.versions)
+    WARPIMAGES ( ch_files_to_transform )
+    ch_versions = ch_versions.mix(WARPIMAGES.out.versions)
+
+    // ** Same process for the masks ** //
+    ch_masks_to_transform = ch_mask_files
+        | join(REGISTRATION_ANTS.out.image)
+        | join(REGISTRATION_ANTS.out.warp)
+        | join(REGISTRATION_ANTS.out.affine)
+    WARPMASK ( ch_masks_to_transform )
+    ch_versions = ch_versions.mix(WARPMASK.out.versions)
+
+    // ** Same process for the labels ** //
+    ch_labels_to_transform = ch_labels_files
+        | join(REGISTRATION_ANTS.out.image)
+        | join(REGISTRATION_ANTS.out.warp)
+        | join(REGISTRATION_ANTS.out.affine)
+    WARPLABELS ( ch_labels_to_transform )
+    ch_versions = ch_versions.mix(WARPLABELS.out.versions)
 
     // ** Apply the transformation to the tractograms ** //
     ch_tractograms_to_transform = ch_trk_files
@@ -123,6 +184,12 @@ workflow OUTPUT_TEMPLATE_SPACE {
     ch_versions = ch_versions.mix(REGISTRATION_TRACTOGRAM.out.versions)
 
     emit:
-        versions = ch_versions                     // channel: [ versions.yml ]
+        ch_t1w_tpl                  = ch_t1w_tpl                                        // channel: [ tpl-T1w ]
+        ch_t2w_tpl                  = ch_t2w_tpl                                        // channel: [ tpl-T2w ]
+        ch_registered_anat          = REGISTRATION_ANTS.out.image                       // channel: [ val(meta), [ image ] ]
+        ch_warped_nifti_files       = WARPIMAGES.out.warped_image                       // channel: [ val(meta), [ warped_image ] ]
+        ch_warped_mask_files        = WARPMASK.out.warped_image                         // channel: [ val(meta), [ warped_mask ] ]
+        ch_warped_labels_files      = WARPLABELS.out.warped_image                       // channel: [ val(meta), [ warped_labels ] ]
+        ch_warped_trk_files         = REGISTRATION_TRACTOGRAM.out.warped_tractogram     // channel: [ val(meta), [ warped_tractogram ] ]
+        versions                    = ch_versions                                       // channel: [ versions.yml ]
 }
-

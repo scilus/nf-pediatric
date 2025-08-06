@@ -1,0 +1,45 @@
+Changes in component 'nf-neuro/bundle/uniformize'
+'modules/nf-neuro/bundle/uniformize/environment.yml' is unchanged
+'modules/nf-neuro/bundle/uniformize/meta.yml' is unchanged
+Changes in 'bundle/uniformize/main.nf':
+--- modules/nf-neuro/bundle/uniformize/main.nf
++++ modules/nf-neuro/bundle/uniformize/main.nf
+@@ -30,7 +30,10 @@
+ 
+     for index in \${!bundles[@]};
+         do \
+-        bname=\$(basename \${bundles[index]} .trk)
++        ext=\${bundles[index]#*.}
++        pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
++        bname=\${bundles[index]:\$pos}
++        bname=\$(basename \${bname} .\${ext})
+         if [[ -f "$centroids" ]]; then
+             option="--centroid \${centroids[index]}"
+         else
+@@ -50,11 +53,16 @@
+     stub:
+     def prefix = task.ext.prefix ?: "${meta.id}"
+     """
++    bundles=(${bundles.join(" ")})
++
+     scil_bundle_uniformize_endpoints.py -h
+ 
+-    for bundles in ${bundles};
++    for index in \${!bundles[@]};
+         do \
+-        bname=\$(basename \${bundles} .trk)
++        ext=\${bundles[index]#*.}
++        pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
++        bname=\${bundles[index]:\$pos}
++        bname=\$(basename \${bname} .\${ext})
+         touch ${prefix}__\${bname}_uniformized.trk
+     done
+ 
+
+'modules/nf-neuro/bundle/uniformize/tests/nextflow_centroid.config' is unchanged
+'modules/nf-neuro/bundle/uniformize/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/bundle/uniformize/tests/tags.yml' is unchanged
+'modules/nf-neuro/bundle/uniformize/tests/nextflow_axis.config' is unchanged
+'modules/nf-neuro/bundle/uniformize/tests/nextflow.config' is unchanged
+'modules/nf-neuro/bundle/uniformize/tests/main.nf.test' is unchanged
+************************************************************

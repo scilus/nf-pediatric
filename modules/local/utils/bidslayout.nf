@@ -12,6 +12,7 @@ process UTILS_BIDSLAYOUT {
 
     output:
     path("layout.json")         , emit: layout
+    path("participants.tsv")    , emit: participants
     path "versions.yml"         , emit: versions
 
     when:
@@ -21,6 +22,8 @@ process UTILS_BIDSLAYOUT {
 
     """
     python $script $folder layout.json
+
+    cp $folder/participants.tsv ./participants.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -32,6 +35,8 @@ process UTILS_BIDSLAYOUT {
 
     """
     python $script $folder layout.json
+
+    cp $folder/participants.tsv ./participants.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

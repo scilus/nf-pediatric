@@ -2,10 +2,10 @@ process QC_TRACKING {
     tag "$meta.id"
     label 'process_single'
 
-    container 'gagnonanthony/nf-pediatric-qc:1.0.0'
+    container 'scilus/scilus:2.1.0'
 
     input:
-        tuple val(meta), path(tractogram), path(mask)
+        tuple val(meta), path(tractogram), path(wm), path(gm)
 
     output:
         tuple val(meta), path("*__tractogram_mask.nii.gz")   , emit: tractogram_mask
@@ -20,6 +20,7 @@ process QC_TRACKING {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def session = meta.session ? "${meta.session}_" : ''
 
     def sh_basis = task.ext.sh_basis ? "--sh_basis ${task.ext.sh_basis}" : ''
     def sphere = task.ext.sphere ? "--sphere ${task.ext.sphere}" : ''
@@ -30,29 +31,32 @@ process QC_TRACKING {
     def n_steps = task.ext.n_steps ? "--n_steps ${task.ext.n_steps}" : ''
 
     """
-    scil_tractogram_count_streamlines.py $tractogram --print_count_alone > ${prefix}__sc.txt
+    scil_tractogram_count_streamlines.py $tractogram --print_count_alone > ${prefix}_${session}__sc.txt
 
     # Computing TODI.
     scil_tractogram_compute_TODI.py $tractogram \
-        --out_mask ${prefix}__tractogram_mask.nii.gz \
-        --out_tdi ${prefix}__TDI.nii.gz \
+        --out_mask ${prefix}_${session}__tractogram_mask.nii.gz \
+        --out_tdi ${prefix}_${session}__TDI.nii.gz \
         $sh_basis $sphere $sh_order $normalize_per_voxel \
         $smooth_todi $asymmetric $n_steps
 
     # Computing DICE score.
-    scil_volume_pairwise_comparison.py $mask ${prefix}__tractogram_mask.nii.gz \
+    scil_volume_pairwise_comparison.py $wm ${prefix}_${session}__tractogram_mask.nii.gz \
         ${prefix}__stats.json
 
-    jq -r '.dice_voxels["1"][0]' ${prefix}__stats.json > ${prefix}__dice.txt
+    awk '
+    in_block && /\\[/ { getline; gsub(/[[:space:]]/, "", \$0); print \$0; exit }
+    /"dice_voxels"/ { in_block=1 }
+    ' "${prefix}__stats.json" > "${prefix}_${session}__dice.txt"
 
     # Fetch middle axial slice.
-    size=\$(mrinfo ${prefix}__TDI.nii.gz -size)
+    size=\$(mrinfo ${prefix}_${session}__TDI.nii.gz -size)
     mid_slice=\$(echo \$size | awk '{print int((\$3 + 1) / 2)}')
 
     # Visual QC file.
-    scil_viz_volume_screenshot.py ${prefix}__TDI.nii.gz ${prefix}_ax.png \
+    scil_viz_volume_screenshot.py ${prefix}_${session}__TDI.nii.gz ${prefix}_ax.png \
         --volume_cmap pink \
-        --overlays $mask \
+        --overlays $gm \
         --overlays_opacity 0 \
         --overlays_as_contours \
         --display_lr \
@@ -63,9 +67,9 @@ process QC_TRACKING {
     # Fetch middle coronal slice.
     mid_slice=\$(echo \$size | awk '{print int((\$2 + 1) / 2)}')
 
-    scil_viz_volume_screenshot.py ${prefix}__TDI.nii.gz ${prefix}_cor.png \
+    scil_viz_volume_screenshot.py ${prefix}_${session}__TDI.nii.gz ${prefix}_cor.png \
         --volume_cmap pink \
-        --overlays $mask \
+        --overlays $gm \
         --overlays_opacity 0 \
         --overlays_as_contours \
         --display_lr \
@@ -76,9 +80,9 @@ process QC_TRACKING {
     # Fetch middle sagittal slice.
     mid_slice=\$(echo \$size | awk '{print int(((\$1 + 1) / 2) + 10)}')
 
-    scil_viz_volume_screenshot.py ${prefix}__TDI.nii.gz ${prefix}_sag.png \
+    scil_viz_volume_screenshot.py ${prefix}_${session}__TDI.nii.gz ${prefix}_sag.png \
         --volume_cmap pink \
-        --overlays $mask \
+        --overlays $gm \
         --overlays_opacity 0 \
         --overlays_as_contours \
         --display_lr \
@@ -97,13 +101,14 @@ process QC_TRACKING {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def session = meta.session ? "${meta.session}_" : ''
 
     """
-    touch ${prefix}__tractogram_mask.nii.gz
-    touch ${prefix}__TDI.nii.gz
-    touch ${prefix}__dice.txt
-    touch ${prefix}__sc.txt
-    touch ${prefix}__coverage_overlay_mqc.png
+    touch ${prefix}_${session}__tractogram_mask.nii.gz
+    touch ${prefix}_${session}__TDI.nii.gz
+    touch ${prefix}_${session}__dice.txt
+    touch ${prefix}_${session}__sc.txt
+    touch ${prefix}_${session}__coverage_overlay_mqc.png
 
     scil_tractogram_count_streamlines.py -h
     scil_tractogram_compute_TODI.py -h

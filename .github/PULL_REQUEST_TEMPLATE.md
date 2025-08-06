@@ -1,7 +1,7 @@
 <!--
-# nf-pediatric pull request
+# scilus/nf-pediatric pull request
 
-Many thanks for contributing to nf-pediatric!
+Many thanks for contributing to scilus/nf-pediatric!
 
 Please fill in the appropriate checklist below (delete whatever is not relevant).
 These are the most common things requested on pull requests (PRs).
