@@ -183,7 +183,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0-alpha"
+                    "scilus/nf-pediatric": "v0.1.0-beta"
                 }
             },
             [
@@ -1074,7 +1074,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0-alpha"
+                    "scilus/nf-pediatric": "v0.1.0-beta"
                 }
             },
             [
@@ -1574,7 +1574,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0-alpha"
+                    "scilus/nf-pediatric": "v0.1.0-beta"
                 }
             },
             [
@@ -1912,7 +1912,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0-alpha"
+                    "scilus/nf-pediatric": "v0.1.0-beta"
                 }
             },
             [
