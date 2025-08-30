@@ -18,6 +18,7 @@ process PREPROC_NORMALIZE {
     task.ext.when == null || task.ext.when
 
     script:
+    def b0threshold = task.ext.b0threshold ?: ""
     def dwi_shell_tolerance = task.ext.dwi_shell_tolerance ? "--tolerance $task.ext.dwi_shell_tolerance" : ""
     def fa_mask_threshold = meta.age < 0.5 || meta.age > 18 ? "-abs 0.10" : "-abs 0.35"
     def max_dti_shell_value = task.ext.max_dti_shell_value ?: "1600"
@@ -29,8 +30,8 @@ process PREPROC_NORMALIZE {
     export OMP_NUM_THREADS=$task.cpus
     export OPENBLAS_NUM_THREADS=1
 
-    echo "BZeroThreshold: $task.ext.dwi_shell_tolerance" > ".mrtrix.conf"
-    export MRTRIX_CONFIGFILE="./.mrtrix.conf"
+    echo "BZeroThreshold: $b0threshold" > ".mrtrix.conf"
+    export MRTRIX_CONFIGFILE="\$PWD/.mrtrix.conf"
 
     scil_dwi_extract_shell.py $dwi $bval $bvec $dti_info dwi_dti.nii.gz \
         bval_dti bvec_dti $dwi_shell_tolerance
@@ -42,8 +43,7 @@ process PREPROC_NORMALIZE {
         -nthreads $task.cpus
 
     dwinormalise individual $dwi ${prefix}_fa_wm_mask.nii.gz \
-        ${prefix}__dwi_normalized.nii.gz -fslgrad $bvec $bval -nthreads $task.cpus \
-        -config BZeroThreshold $task.ext.dwi_shell_tolerance
+        ${prefix}__dwi_normalized.nii.gz -fslgrad $bvec $bval -nthreads $task.cpus
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
