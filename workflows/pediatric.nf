@@ -185,10 +185,14 @@ workflow PEDIATRIC {
                 other: true // Catch-all for any other cases
             }
 
-        ch_reg.witht1
+        ch_coreg_input = ch_reg.witht1
+            .filter { it.size() > 2 && it[1] != null && it[2] != null }
             .map { it -> [ it[0], it[1], it[2], [] ] }
-            .mix(ch_reg.witht2.map { it -> [ it[0], it[2], it[1], [] ] })
-            .set { ch_coreg_input }
+            .mix(
+                ch_reg.witht2
+                    .filter { it.size() > 2 && it[1] != null && it[2] != null }
+                    .map { it -> [ it[0], it[2], it[1], [] ] }
+            )
 
         COREG ( ch_coreg_input )
         ch_versions = ch_versions.mix(COREG.out.versions)
@@ -353,9 +357,9 @@ workflow PEDIATRIC {
             .join(PREPROC_T2W.out.t1_final, remainder: true)
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch{
-                infant_t2: it[0].age < 0.5 || it[0].age > 18 && it[4] != null
+                infant_t2: (it[0].age < 0.5 || it[0].age > 18) && it[4] != null
                     return [it[0], it[4], it[1], it[3]]
-                infant_t1: it[0].age < 0.5 || it[0].age > 18 && it[5] != null
+                infant_t1: (it[0].age < 0.5 || it[0].age > 18) && it[5] != null
                     return [it[0], it[5], it[1], it[2]]
                 child_t1: (it[0].age >= 0.5 && it[0].age <= 18) && it[5] != null
                     return [it[0], it[5], it[1], it[2]]
