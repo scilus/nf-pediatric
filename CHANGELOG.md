@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Add filtering step for anatomical coregistration in case of missing files.
+- Fix precedence issues in branching logic for anatomical to diffusion space registration ([#63](https://github.com/scilus/nf-pediatric/issues/63))
 - Handling of B0 threshold in `preproc/n4` and `preproc/normalize` ([[#58](https://github.com/scilus/nf-pediatric/issues/58)])
 
 ## [0.1.0-beta] - [2025-08-13]
