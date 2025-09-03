@@ -87,6 +87,7 @@ workflow PEDIATRIC {
     ch_versions = Channel.empty()
     ch_multiqc_files_sub = Channel.empty()
     ch_nifti_files_to_transform = Channel.empty()
+    ch_rgb_files_to_transform = Channel.empty()
     ch_mask_files_to_transform = Channel.empty()
     ch_labels_files_to_transform = Channel.empty()
     ch_trk_files_to_transform = Channel.empty()
@@ -300,6 +301,7 @@ workflow PEDIATRIC {
             .mix(RECONST_DTIMETRICS.out.rd)
             .mix(RECONST_DTIMETRICS.out.ga)
             .mix(RECONST_DTIMETRICS.out.mode)
+        ch_rgb_files_to_transform = ch_rgb_files_to_transform
             .mix(RECONST_DTIMETRICS.out.rgb)
 
         //
@@ -844,6 +846,15 @@ workflow PEDIATRIC {
                 return tuple(meta, all_files)
             }
 
+        ch_rgb_files_to_transform = ch_rgb_files_to_transform
+            .groupTuple()
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
+            }
+
         ch_mask_files_to_transform = ch_mask_files_to_transform
             .groupTuple()
             .map { tuple_elements ->
@@ -874,6 +885,7 @@ workflow PEDIATRIC {
         OUTPUT_TEMPLATE_SPACE(
             ANATTODWI.out.t1_warped,
             ch_nifti_files_to_transform,
+            ch_rgb_files_to_transform,
             ch_mask_files_to_transform,
             ch_labels_files_to_transform,
             ch_trk_files_to_transform
