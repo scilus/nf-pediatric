@@ -845,7 +845,7 @@ workflow PEDIATRIC {
                 def all_files = file_lists.flatten().findAll { it != null }
                 return tuple(meta, all_files)
             }
-        
+
         ch_rgb_files_to_transform = ch_rgb_files_to_transform
             .groupTuple()
             .map { tuple_elements ->
