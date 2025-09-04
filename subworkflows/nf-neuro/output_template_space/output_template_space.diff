@@ -19,14 +19,14 @@ Changes in 'output_template_space/main.nf':
          ch_mask_files               // channel: [ val(meta), [ mask_files ] ]
          ch_labels_files             // channel: [ val(meta), [ labels_files ] ]
          ch_trk_files                // channel: [ val(meta), [ trk_files ] ]
-@@ -151,9 +153,16 @@
+@@ -151,10 +153,17 @@
          | join(REGISTRATION_ANTS.out.image)
          | join(REGISTRATION_ANTS.out.warp)
          | join(REGISTRATION_ANTS.out.affine)
 -
      WARPIMAGES ( ch_files_to_transform )
      ch_versions = ch_versions.mix(WARPIMAGES.out.versions)
-+
+ 
 +    // ** Same process for the rgb files ** //
 +    ch_rgb_to_transform = ch_rgb_files
 +        | join(REGISTRATION_ANTS.out.image)
@@ -34,10 +34,26 @@ Changes in 'output_template_space/main.nf':
 +        | join(REGISTRATION_ANTS.out.affine)
 +    WARPRGB ( ch_rgb_to_transform )
 +    ch_versions = ch_versions.mix(WARPRGB.out.versions)
- 
++
      // ** Same process for the masks ** //
      ch_masks_to_transform = ch_mask_files
-@@ -188,9 +197,9 @@
+         | join(REGISTRATION_ANTS.out.image)
+@@ -177,7 +186,13 @@
+         | join(REGISTRATION_ANTS.out.inverse_warp)
+         | join(REGISTRATION_ANTS.out.affine)
+         | map{ meta, trk, image, warp, affine ->
+-            tuple(meta, image, affine, trk, [], warp)
++            // Calculate memory based on tractogram files size
++            def trk_files = [trk].flatten()
++            def total_size = trk_files.collect { it.size() }.sum()
++            def mem = ((4L * 1024 * 1024 * 1024) + total_size * 7.0)
++
++            // Return with memory in meta
++            tuple(meta + [mem: mem as long], image, affine, trk, [], warp)
+         }
+ 
+     REGISTRATION_TRACTOGRAM ( ch_tractograms_to_transform )
+@@ -188,9 +203,9 @@
          ch_t2w_tpl                  = ch_t2w_tpl                                        // channel: [ tpl-T2w ]
          ch_registered_anat          = REGISTRATION_ANTS.out.image                       // channel: [ val(meta), [ image ] ]
          ch_warped_nifti_files       = WARPIMAGES.out.warped_image                       // channel: [ val(meta), [ warped_image ] ]

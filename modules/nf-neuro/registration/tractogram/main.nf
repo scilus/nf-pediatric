@@ -1,6 +1,7 @@
 process REGISTRATION_TRACTOGRAM {
     tag "$meta.id"
     label 'process_dynamic'
+    memory { "${meta.mem} B" }
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':

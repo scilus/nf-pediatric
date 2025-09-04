@@ -186,7 +186,13 @@ workflow OUTPUT_TEMPLATE_SPACE {
         | join(REGISTRATION_ANTS.out.inverse_warp)
         | join(REGISTRATION_ANTS.out.affine)
         | map{ meta, trk, image, warp, affine ->
-            tuple(meta, image, affine, trk, [], warp)
+            // Calculate memory based on tractogram files size
+            def trk_files = [trk].flatten()
+            def total_size = trk_files.collect { it.size() }.sum()
+            def mem = ((4L * 1024 * 1024 * 1024) + total_size * 7.0)
+
+            // Return with memory in meta
+            tuple(meta + [mem: mem as long], image, affine, trk, [], warp)
         }
 
     REGISTRATION_TRACTOGRAM ( ch_tractograms_to_transform )
