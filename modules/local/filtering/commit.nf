@@ -12,16 +12,20 @@ process FILTERING_COMMIT {
     tuple val(meta), path("*commit*")       , emit: hdf5
     tuple val(meta), path("*essential*")    , emit: trk
 
-    path "versions.yml"           , emit: versions
+    path "versions.yml"                     , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
+    def para = String.format("%.2fE-3", meta.ad * 1000)
+    def perp = String.format("%.2fE-3", meta.rd * 1000)
+    def iso = String.format("%.2fE-3", meta.md * 1000)
+
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def para_diff = task.ext.para_diff ? "--para_diff " + task.ext.para_diff : ""
-    def iso_diff = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : ""
-    def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : ""
+    def para_diff = task.ext.para_diff ? "--para_diff " + task.ext.para_diff : "--para_diff ${para}"
+    def iso_diff = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : "--iso_diff ${iso}"
+    def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : "--perp_diff ${perp}"
     def ball_stick = task.ext.ball_stick ? "--ball_stick" : ""
     def commit2 = task.ext.commit2 ? "--commit2" : ""
     def commit2_lambda = task.ext.commit2_lambda ? "--lambda_commit_2 " + task.ext.commit2_lambda : ""
@@ -56,12 +60,21 @@ process FILTERING_COMMIT {
     """
 
     stub:
+    def para = String.format("%.2fE-3", meta.ad * 1000)
+    def perp = String.format("%.2fE-3", meta.rd * 1000)
+    def iso = String.format("%.2fE-3", meta.md * 1000)
+
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def para_diff = task.ext.para_diff ? "--para_diff " + task.ext.para_diff : "--para_diff ${para}"
+    def iso_diff = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : "--iso_diff ${iso}"
+    def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : "--perp_diff ${perp}"
 
     """
     touch ${prefix}__commit.h5
     touch ${prefix}__essential.trk
     mkdir ${prefix}__results_bzs
+
+    echo "Parameters used: para_diff: ${para_diff}, iso_diff: ${iso_diff}, perp_diff: ${perp_diff}"
 
     scil_run_commit.py -h
 
