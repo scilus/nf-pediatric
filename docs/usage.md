@@ -142,7 +142,7 @@ COMMIT. Previous pipelines (e.g., TractoFlow) used either a set FRF function or 
 happening during this development period. Differences between a one-year old and a four-year old children can appear
 rather drastic. Using a single FRF for both or averaging all of them together in a single mean FRF both represent
 suboptimal solution. With the rise of normative models, we leveraged six pediatric cohorts spanning the whole 0-18 years old range to derive normative curves of FA, RD, AD values in single fiber population as well as MD values in
-the ventricles (see figure below). 
+the ventricles (see figure below).
 
 ![curves](../assets/normative_curves_and_rawdata.png)
 
