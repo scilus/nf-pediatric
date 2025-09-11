@@ -113,8 +113,12 @@ workflow PIPELINE_INITIALISATION {
                         error "ERROR: Age is not entered correctly in the participants.tsv file. Please validate."
                     }
 
+                    // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
+                    def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+                    def priors = fetchPriors(tempAge)
+
                     return [
-                        [id: sid, session: session, run: run, age: age.toFloat()],
+                        [id: sid, session: session, run: run, age: age.toFloat(), fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md],
                         item.t1 ? file(item.t1) : [],
                         item.t2 ? file(item.t2) : [],
                         item.dwi ? file(item.dwi) : [],
@@ -130,6 +134,7 @@ workflow PIPELINE_INITIALISATION {
             .filter { meta, _t1, _t2, _dwi, _bval, _bvec, _rev_dwi, _rev_bval, _rev_bvec, _rev_topup ->
                 participant_ids.isEmpty() || meta.id in participant_ids
             }
+
     } else {
         ch_inputs = Channel.empty()
     }
@@ -199,38 +204,20 @@ workflow PIPELINE_COMPLETION {
 */
 
 //
-// Generate corresponding template for age groups.
+// Fetch priors based on age using the following equations:
+//    FA = 0.753922 * exp(-0.117753 * exp(-1.486159 * age))
+//    AD = 0.001820 * age^-0.047373
+//    RD = 0.000432 * age^-0.095184
+//    MD = 0.004116 * (1 - exp(-(3243541.309087 * age)^0.012118)) **This is in ventricles, not 1-fiber population**
 //
-def getTemplateAgeGroup(age) {
-    def ageGroups = [
-        "0-6 months": [0, 0.5],
-        "6-18 months": [0.5, 1.5],
-        "18-30 months": [1.5, 2.5],
-        "30-44 months": [2.5, 3.66666666666667],
-        "44-60 months": [3.6666666666666667, 5],
-        "5-8.5 years": [5, 8.5],
-        "8.5-11 years": [8.5, 11],
-        "11-14 years": [11, 14],
-        "14-18 years": [14, 18]
-    ]
+def fetchPriors(age) {
+    def fa = 0.753938 * Math.exp(-0.117902 * Math.exp(-1.491989 * age))
+    def ad = 0.001835 * Math.pow(age, -0.048725)
+    def rd = 0.000430 * Math.pow(age, -0.092705)
+    def md = 0.004116 * (1 - Math.exp(-Math.pow((3243541.309087 * age), 0.012118)))
 
-    def templates = [
-        "0-6 months": ["UNCInfant", 1],
-        "6-18 months": ["UNCInfant", 2],
-        "18-30 months": ["UNCInfant", 3],
-        "30-44 months": ["MNIInfant", 10],
-        "44-60 months": ["MNIInfant", 11],
-        "5-8.5 years": ["MNIPediatricAsym", 2],
-        "8.5-11 years": ["MNIPediatricAsym", 3],
-        "11-14 years": ["MNIPediatricAsym", 5],
-        "14-18 years": ["MNIPediatricAsym", 6]
-    ]
-
-    ageGroups.each { entry ->
-        if (age >= entry.value[0] && age < entry.value[1]) {
-            return entry.key
-        }
-    }
+    // Return values as a map and round them.
+    return [fa: fa.round(2), ad: ad.round(5), rd: rd.round(6), md: md.round(5)]
 }
 
 //
