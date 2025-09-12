@@ -12,29 +12,36 @@ process FILTERING_COMMIT {
     tuple val(meta), path("*commit*")       , emit: hdf5
     tuple val(meta), path("*essential*")    , emit: trk
 
-    path "versions.yml"           , emit: versions
+    path "versions.yml"                     , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
+    def para = String.format("%.2fE-3", meta.ad * 1000)
+    def perp = String.format("%.2fE-3", meta.rd * 1000)
+    def iso = String.format("%.2fE-3", meta.md * 1000)
+
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def para_diff = task.ext.para_diff ? "--para_diff " + task.ext.para_diff : ""
-    def iso_diff = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : ""
-    def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : ""
+    def para_diff = task.ext.para_diff ? "--para_diff " + task.ext.para_diff : "--para_diff ${para}"
+    def iso_diff = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : "--iso_diff ${iso}"
+    def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : "--perp_diff ${perp}"
     def ball_stick = task.ext.ball_stick ? "--ball_stick" : ""
     def commit2 = task.ext.commit2 ? "--commit2" : ""
     def commit2_lambda = task.ext.commit2_lambda ? "--lambda_commit_2 " + task.ext.commit2_lambda : ""
     def nbr_dir = task.ext.nbr_dir ? "--nbr_dir " + task.ext.nbr_dir : ""
     //def shell_tolerance = task.ext.shell_tolerance ? "--b0_thr " + task.ext.shell_tolerance : ""
 
+    def args_priors = task.ext.ball_stick || task.ext.commit2 ? "$para_diff $iso_diff" : "$para_diff $iso_diff $perp_diff"
     def peaks_arg = peaks ? "--in_peaks $peaks" : ""
 
     """
     export DIPY_HOME="./"
 
+    echo "Parameters used: ${args_priors}"
+
     scil_run_commit.py $hdf5 $dwi $bval $bvec "${prefix}__results_bzs/" \
-        --processes $task.cpus $para_diff $iso_diff $perp_diff $ball_stick \
+        --processes $task.cpus $args_priors $ball_stick \
         $commit2 $commit2_lambda $nbr_dir $peaks_arg
 
     if [ -f "${prefix}__results_bzs/commit_2/decompose_commit.h5" ]; then
@@ -56,12 +63,21 @@ process FILTERING_COMMIT {
     """
 
     stub:
+    def para = String.format("%.2fE-3", meta.ad * 1000)
+    def perp = String.format("%.2fE-3", meta.rd * 1000)
+    def iso = String.format("%.2fE-3", meta.md * 1000)
+
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def para_diff = task.ext.para_diff ? "--para_diff " + task.ext.para_diff : "--para_diff ${para}"
+    def iso_diff = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : "--iso_diff ${iso}"
+    def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : "--perp_diff ${perp}"
 
     """
     touch ${prefix}__commit.h5
     touch ${prefix}__essential.trk
     mkdir ${prefix}__results_bzs
+
+    echo "Parameters used: para_diff: ${para_diff}, iso_diff: ${iso_diff}, perp_diff: ${perp_diff}"
 
     scil_run_commit.py -h
 

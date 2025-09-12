@@ -22,6 +22,7 @@
     - [Directory Structure](#directory-structure)
     - [Required Files](#required-files)
   - [Running the pipeline](#running-the-pipeline)
+    - [How are the priors generated?](#how-are-the-priors-generated)
     - [Updating the pipeline](#updating-the-pipeline)
     - [Reproducibility](#reproducibility)
   - [Core Nextflow arguments](#core-nextflow-arguments)
@@ -133,6 +134,23 @@ outdir: './results/'
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
+
+### How are the priors generated?
+
+One innovative feature of `nf-pediatric` is how it generates the priors for the fiber response function (FRF) and
+COMMIT. Previous pipelines (e.g., TractoFlow) used either a set FRF function or computed the mean FRF across all study subjects. One crucial issue with both methods in pediatric samples lies in the rapid neurophysiological changes
+happening during this development period. Differences between a one-year old and a four-year old children can appear
+rather drastic. Using a single FRF for both or averaging all of them together in a single mean FRF both represent
+suboptimal solution. With the rise of normative models, we leveraged six pediatric cohorts spanning the whole 0-18 years old range to derive normative curves of FA, RD, AD values in single fiber population as well as MD values in
+the ventricles (see figure below).
+
+![curves](../assets/normative_curves_and_rawdata.png)
+
+> [!NOTE]
+> While only the FRF and COMMIT priors are currently supported using normative curves, we are working to extend this method to other processing aspects to ensure the most optimal age appropriate processing of diffusion MRI acquisitions.
+
+Each of those median normative curves were approximate using single equations, and implement into `nf-pediatric`.
+While this is the default option, users can still specify their own FRF using the parameter `--frf_manual_frf`. Similarly, COMMIT priors can be specified with `--commit_para_diff`, `--commit_perp_diff`, and `--commit_iso_diff`.
 
 ### Updating the pipeline
 

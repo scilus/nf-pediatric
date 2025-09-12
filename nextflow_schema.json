@@ -705,29 +705,14 @@
                     "description": "Method used to compute the FRF.",
                     "fa_icon": "fas fa-brain",
                     "default": "ssst",
-                    "enum": ["ssst", "msmt"],
-                    "errorMessage": "Invalid choice. Must be either 'ssst' or 'msmt'.",
-                    "hidden": false
-                },
-                "frf_set_frf": {
-                    "type": "boolean",
-                    "description": "Use a manually set FRF.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
+                    "enum": ["ssst"],
+                    "errorMessage": "Invalid choice. Must be 'ssst', 'msmt' will come in future releases.",
                     "hidden": false
                 },
                 "frf_manual_frf": {
                     "type": "string",
-                    "description": "Manual FRF values.",
+                    "description": "Manual FRF values.(e.g. '15,4,4')",
                     "fa_icon": "fas fa-brain",
-                    "default": "15,4,4",
-                    "hidden": false
-                },
-                "frf_mean_frf": {
-                    "type": "boolean",
-                    "description": "Use the mean FRF across subjects.",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
                     "hidden": false
                 }
             }
@@ -773,8 +758,8 @@
                     "description": "Method used to compute the FODF.",
                     "fa_icon": "fas fa-brain",
                     "default": "ssst",
-                    "enum": ["ssst", "msmt"],
-                    "errorMessage": "Invalid choice. Must be either 'ssst' or 'msmt'.",
+                    "enum": ["ssst"],
+                    "errorMessage": "Invalid choice. Must be 'ssst', 'msmt' will come in future releases.",
                     "hidden": false
                 },
                 "fodf_relative_threshold": {

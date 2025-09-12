@@ -1,7 +1,6 @@
 include { TRACTOGRAM_REMOVEINVALID    } from '../../../modules/nf-neuro/tractogram/removeinvalid/main'
 include { BUNDLE_FIXELAFD             } from '../../../modules/nf-neuro/bundle/fixelafd/main'
 include { BUNDLE_CENTROID             } from '../../../modules/nf-neuro/bundle/centroid/main'
-include { TRACTOGRAM_RESAMPLE         } from '../../../modules/nf-neuro/tractogram/resample/main'
 include { BUNDLE_LABELMAP             } from '../../../modules/nf-neuro/bundle/labelmap/main'
 include { BUNDLE_UNIFORMIZE           } from '../../../modules/nf-neuro/bundle/uniformize/main'
 include { BUNDLE_STATS                } from '../../../modules/nf-neuro/bundle/stats/main'

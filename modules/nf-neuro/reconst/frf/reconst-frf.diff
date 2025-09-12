@@ -15,6 +15,32 @@ Changes in 'reconst/frf/main.nf':
  
      input:
          tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(wm_mask), path(gm_mask), path(csf_mask)
+@@ -43,7 +41,9 @@
+     def md_thr_gm = task.ext.md_thr_gm ? "--md_thr_gm " + task.ext.md_thr_gm : ""
+     def md_thr_csf = task.ext.md_thr_csf ? "--md_thr_csf " + task.ext.md_thr_csf : ""
+ 
+-    def fix_frf = task.ext.manual_frf ? task.ext.manual_frf : ""
++    def axial = Math.round(meta.ad * 1E4) // To get integers.
++    def radial = Math.round(meta.rd * 1E4) // To get integers.
++    def fix_frf = task.ext.manual_frf ? task.ext.manual_frf : "${axial},${radial},${radial}"
+     def fix_wm_frf = task.ext.manual_wm_frf ? task.ext.manual_wm_frf : ""
+     def fix_gm_frf = task.ext.manual_gm_frf ? task.ext.manual_gm_frf : ""
+     def fix_csf_frf = task.ext.manual_csf_frf ? task.ext.manual_csf_frf : ""
+@@ -103,9 +103,14 @@
+     """
+ 
+     stub:
++    def axial = Math.round(meta.ad * 1E4) // To get integers.
++    def radial = Math.round(meta.rd * 1E4) // To get integers.
++    def fix_frf = task.ext.manual_frf ? task.ext.manual_frf : "${axial},${radial},${radial}"
+     def prefix = task.ext.prefix ?: "${meta.id}"
+ 
+     """
++    echo "FRF parameters used: ${fix_frf}"
++
+     scil_dwi_extract_shell.py -h
+     scil_frf_ssst.py -h
+     scil_frf_set_diffusivities.py -h
 
 'modules/nf-neuro/reconst/frf/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/reconst/frf/tests/nextflow_set_frf.config' is unchanged

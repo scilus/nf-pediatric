@@ -17,7 +17,7 @@ include { generateDatasetJson               } from '../subworkflows/local/utils_
 include { TEMPLATES                         } from '../subworkflows/local/templates/main.nf'
 
 // ** Anatomical reconstruction ** //
-include { SEGMENTATION                    } from '../subworkflows/local/segmentation/segmentation'
+include { SEGMENTATION                      } from '../subworkflows/local/segmentation/segmentation'
 
 // ** Anatomical Preprocessing ** //
 include { PREPROC_T1 as PREPROC_T1W         } from '../subworkflows/nf-neuro/preproc_t1/main'
@@ -317,18 +317,6 @@ workflow PEDIATRIC {
         ch_versions = ch_versions.mix(RECONST_FRF.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(RECONST_FRF.out.zip.collect{it[1]})
 
-        //** Run FRF averaging if selected **//
-        ch_frf = RECONST_FRF.out.frf
-        if ( params.frf_mean_frf ) {
-
-            RECONST_MEANFRF ( RECONST_FRF.out.frf.map{ it[1] }.flatten() )
-            ch_versions = ch_versions.mix(RECONST_MEANFRF.out.versions.first())
-            // ch_multiqc_files = ch_multiqc_files.mix(RECONST_MEANFRF.out.zip.collect{it[1]})
-
-            ch_frf = RECONST_FRF.out.map{ it[0] }
-                .combine( RECONST_MEANFRF.out.meanfrf )
-        }
-
         //
         // MODULE: Run MEANFRF
         //
@@ -338,7 +326,7 @@ workflow PEDIATRIC {
             .join(PREPROC_DWI.out.b0_mask)
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
-            .join(ch_frf)
+            .join(RECONST_FRF.out.frf)
             .map{ it + [[], []]}
 
         RECONST_FODF ( ch_reconst_fodf )
