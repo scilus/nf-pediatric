@@ -5,6 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - [Unreleased]
 
+### `Added`
+
+- Normative curves for prior determination in FRF and COMMIT modules.
+
+### `Removed`
+
+- Option to use the mean FRF across all subjects has been removed in favor of the normative curves.
+
 ### `Fixed`
 
 - Fix glob pattern for template to DWI registration QC file.
