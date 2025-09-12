@@ -209,7 +209,7 @@ sp:
   anattodwi_qc:
     fn: "*_registration_anattodwi_mqc.gif"
   templatetodwi_qc:
-    fn: "*template_registration_ants_mqc.gif"
+    fn: "*template__mqc.gif"
   tissue_segmentation_qc:
     fn: "*segmentation_mqc.png"
   metrics_qc:
