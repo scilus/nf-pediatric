@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Fix glob pattern for template to DWI registration QC file.
 - Add dynamic resource allocation for registering tractograms in output space ([#56](https://github.com/scilus/nf-pediatric/issues/56))
 - Fix RGB FA registration to template space.
 - Add filtering step removing null values for anatomical coregistration in case of missing files.
