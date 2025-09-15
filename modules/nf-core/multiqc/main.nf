@@ -52,6 +52,11 @@ process MULTIQC {
         done
     fi
 
+    # Remove second column in FD from eddy if it exists
+    if ls *__dwi_eddy_restricted_movement_rms.txt 1> /dev/null 2>&1; then
+        awk '{print NR "," \$2}' *__dwi_eddy_restricted_movement_rms.txt > ${prefix}_fd_mqc.csv
+    fi
+
     multiqc \\
         --force \\
         $args \\

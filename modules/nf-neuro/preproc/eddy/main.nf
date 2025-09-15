@@ -12,6 +12,7 @@ process PREPROC_EDDY {
         tuple val(meta), path("*__dwi_eddy_corrected.bval") , emit: bval_corrected
         tuple val(meta), path("*__dwi_eddy_corrected.bvec") , emit: bvec_corrected
         tuple val(meta), path("*__b0_bet_mask.nii.gz")      , emit: b0_mask
+        tuple val(meta), path("*__dwi_eddy_restricted_movement_rms.txt"), emit: eddy_fd
         tuple val(meta), path("*__dwi_eddy_mqc.gif")        , emit: dwi_eddy_mqc, optional:true
         tuple val(meta), path("*__rev_dwi_eddy_mqc.gif")    , emit: rev_dwi_eddy_mqc, optional:true
         path "versions.yml"                                 , emit: versions
@@ -103,6 +104,9 @@ process PREPROC_EDDY {
     else
         scil_gradients_validate_correct_eddy.py dwi_eddy_corrected.eddy_rotated_bvecs \${bval} \${number_rev_dwi} ${prefix}__dwi_eddy_corrected.bvec ${prefix}__dwi_eddy_corrected.bval
     fi
+
+    # Rename framewise displacement file to include subject id
+    mv dwi_eddy_corrected.eddy_restricted_movement_rms ${prefix}__dwi_eddy_restricted_movement_rms.txt
 
     if $run_qc;
     then
