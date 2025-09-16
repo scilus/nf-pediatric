@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- Framewise displacement metric in both multiqc reports ([#29](https://github.com/scilus/nf-pediatric/issues/29))
 - Age-matched BundleSeg WM bundle atlas for age-adaptable bundle extraction.
 - Normative curves for prior determination in FRF and COMMIT modules.
 
