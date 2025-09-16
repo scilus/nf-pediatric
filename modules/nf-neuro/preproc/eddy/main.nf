@@ -186,6 +186,7 @@ process PREPROC_EDDY {
     touch ${prefix}__dwi_eddy_corrected.bval
     touch ${prefix}__dwi_eddy_corrected.bvec
     touch ${prefix}__b0_bet_mask.nii.gz
+    touch ${prefix}__dwi_eddy_restricted_movement_rms.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

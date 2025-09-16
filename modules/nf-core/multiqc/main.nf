@@ -52,9 +52,22 @@ process MULTIQC {
         done
     fi
 
-    # Remove second column in FD from eddy if it exists
-    if ls *__dwi_eddy_restricted_movement_rms.txt 1> /dev/null 2>&1; then
-        awk '{print NR "," \$2}' *__dwi_eddy_restricted_movement_rms.txt > ${prefix}_fd_mqc.csv
+    shopt -s nullglob
+    files=( *__dwi_eddy_restricted_movement_rms.txt )
+    shopt -u nullglob
+
+    if [[ \${#files[@]} -gt 0 && "${meta.id}" != "global" ]]; then
+        # Subject case: add index + second column
+        awk '{print NR "," \$2}' "\${files[0]}" > "${prefix}_fd_mqc.csv"
+
+    elif [[ \${#files[@]} -gt 0 && "${meta.id}" == "global" ]]; then
+        # Global case: compute mean per subject
+        echo "Sample Name,Mean_FD" > "fd_values.csv"
+        for fd_file in "\${files[@]}"; do
+            subject_id=\$(basename "\$fd_file" __dwi_eddy_restricted_movement_rms.txt)
+            mean_fd=\$(awk '{ total += \$2; count++ } END { if (count > 0) print total / count; else print 0 }' "\$fd_file")
+            echo "\${subject_id},\${mean_fd}" >> "fd_values.csv"
+        done
     fi
 
     multiqc \\
