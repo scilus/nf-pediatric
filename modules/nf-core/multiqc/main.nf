@@ -65,8 +65,8 @@ process MULTIQC {
         echo "Sample Name,Mean_FD" > "fd_values.csv"
         for fd_file in "\${files[@]}"; do
             subject_id=\$(basename "\$fd_file" __dwi_eddy_restricted_movement_rms.txt)
-            mean_fd=\$(awk '{ total += \$2; count++ } END { if (count > 0) print total / count; else print 0 }' "\$fd_file")
-            echo "\${subject_id},\${mean_fd}" >> "fd_values.csv"
+            max_fd=\$(awk '{ if (\$2 > max || NR == 1) max = \$2 } END { print max }' "\$fd_file")
+            echo "\${subject_id},\${max_fd}" >> "fd_values.csv"
         done
     fi
 

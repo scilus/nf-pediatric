@@ -106,7 +106,7 @@ process PREPROC_EDDY {
     fi
 
     # Rename framewise displacement file to include subject id
-    mv dwi_eddy_corrected.eddy_restricted_movement_rms ${prefix}__dwi_eddy_restricted_movement_rms.txt
+    mv dwi_eddy_corrected.eddy_restricted_movement_rms ${prefix}-${meta.age}__dwi_eddy_restricted_movement_rms.txt
 
     if $run_qc;
     then
@@ -186,7 +186,7 @@ process PREPROC_EDDY {
     touch ${prefix}__dwi_eddy_corrected.bval
     touch ${prefix}__dwi_eddy_corrected.bvec
     touch ${prefix}__b0_bet_mask.nii.gz
-    touch ${prefix}__dwi_eddy_restricted_movement_rms.txt
+    touch ${prefix}-${meta.age}__dwi_eddy_restricted_movement_rms.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
