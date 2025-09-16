@@ -1026,6 +1026,14 @@ workflow PEDIATRIC {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.subcortical)
     }
 
+    // Collect the framewise displacement files from the ch_multiqc_files_sub channel
+    ch_fd_files = ch_multiqc_files_sub
+        .filter { _meta, files ->
+            files.any { it.name.contains("dwi_eddy_restricted_movement_rms") }
+        }
+        .map { it[1] }
+    ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_fd_files.flatten())
+
     MULTIQC_GLOBAL (
         Channel.of([meta:[id:"global"], qc_images:[]]),
         ch_multiqc_files_global.collect(),

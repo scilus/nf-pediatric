@@ -53,28 +53,32 @@ workflow FETCH_DERIVATIVES {
     }
 
     // ** Segmentations ** //
-    ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
-        checkIfExists: true)
-        .map{ file ->
-            def parts = file.toAbsolutePath().toString().split('/')
-            def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
-            def metadata = session ? \
-                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
-                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
+    if ( params.connectomics ) {
+        ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
+            checkIfExists: true)
+            .map{ file ->
+                def parts = file.toAbsolutePath().toString().split('/')
+                def id = parts.find { it.startsWith('sub-') }
+                def session = parts.find { it.startsWith('ses-') }
+                def age = getAge(id, session)
+                def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+                def priors = fetchPriors(tempAge)
+                def metadata = session ? \
+                    [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
+                    [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
 
-            return [metadata, file]
-        }
-        .groupTuple(by: 0)
-        .map{ meta, files ->
-            return [meta] + files
-        }
-        .filter {
-            participant_ids.isEmpty() || it[0].id in participant_ids
-        }
+                return [metadata, file]
+            }
+            .groupTuple(by: 0)
+            .map{ meta, files ->
+                return [meta] + files
+            }
+            .filter {
+                participant_ids.isEmpty() || it[0].id in participant_ids
+            }
+    } else {
+        ch_labels = Channel.empty()
+    }
 
     // ** Anatomical file ** //
     ch_anat = Channel.fromPath("${input_deriv}/sub-**/{ses-*/,}anat/*space-DWI_desc-preproc_{T1w,T2w}.nii.gz",
