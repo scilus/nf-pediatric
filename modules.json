@@ -145,7 +145,7 @@
                     },
                     "image/resample": {
                         "branch": "main",
-                        "git_sha": "36e010a236a0bd86334ab99b0cac4f7c4ff51532",
+                        "git_sha": "80751519b607890333a2305a3060eb97f0f10055",
                         "installed_by": ["preproc_dwi", "preproc_t1"]
                     },
                     "preproc/eddy": {
@@ -293,7 +293,7 @@
                     },
                     "preproc_dwi": {
                         "branch": "main",
-                        "git_sha": "7fa716a34d765bd9b31b55fcaf8d379739d1e091",
+                        "git_sha": "80751519b607890333a2305a3060eb97f0f10055",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/preproc_dwi/preproc_dwi.diff"
                     },
@@ -305,7 +305,7 @@
                     },
                     "topup_eddy": {
                         "branch": "main",
-                        "git_sha": "bf225e17c02cf2c20fc2ce0cb3be98daad8bcddb",
+                        "git_sha": "393ffa333e3df27d18eeeac46fac04da1ff5cca2",
                         "installed_by": ["preproc_dwi"],
                         "patch": "subworkflows/nf-neuro/topup_eddy/topup_eddy.diff"
                     }
