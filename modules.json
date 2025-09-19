@@ -146,7 +146,8 @@
                     "image/resample": {
                         "branch": "main",
                         "git_sha": "80751519b607890333a2305a3060eb97f0f10055",
-                        "installed_by": ["preproc_dwi", "preproc_t1"]
+                        "installed_by": ["preproc_dwi", "preproc_t1"],
+                        "patch": "modules/nf-neuro/image/resample/image-resample.diff"
                     },
                     "preproc/eddy": {
                         "branch": "main",
