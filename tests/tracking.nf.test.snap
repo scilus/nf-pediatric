@@ -77,10 +77,10 @@
                     "scilpy": "2.1.0"
                 },
                 "RESAMPLE_DWI": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "RESAMPLE_MASK": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "TEMPLATETODWI": {
                     "ants": "2.4.3",
@@ -647,10 +647,10 @@
                     "scilpy": "2.1.0"
                 },
                 "RESAMPLE_DWI": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "RESAMPLE_MASK": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "TEMPLATETODWI": {
                     "ants": "2.4.3",

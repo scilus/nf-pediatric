@@ -63,7 +63,7 @@ Changes in 'preproc_dwi/main.nf':
              ch_dwi_bvalbvec = ch_dwi
                  .multiMap { meta, dwi, bval, bvec ->
                      dwi:    [ meta, dwi ]
-@@ -105,27 +114,80 @@
+@@ -105,28 +114,81 @@
          ch_multiqc_files = ch_multiqc_files.mix(TOPUP_EDDY.out.mqc)
  
          // ** Bet-crop DWI ** //
@@ -152,14 +152,14 @@ Changes in 'preproc_dwi/main.nf':
 +        if (params.preproc_dwi_run_N4 && !params.skip_dwi_preprocessing) {
              // ** N4 DWI ** //
              ch_N4 = ch_dwi_preproc
--                .join(IMAGE_CROPVOLUME.out.image)
+                 .join(TOPUP_EDDY.out.bval)
+                 .join(TOPUP_EDDY.out.bvec)
 -                .join(BETCROP_FSLBETCROP.out.mask)
-+                .join(CROPB0.out.image)
 +                .join(ch_mask)
  
              N4_DWI ( ch_N4 )
              ch_versions = ch_versions.mix(N4_DWI.out.versions.first())
-@@ -138,7 +200,7 @@
+@@ -139,7 +201,7 @@
          ch_normalize = ch_dwi_preproc
              .join(TOPUP_EDDY.out.bval)
              .join(TOPUP_EDDY.out.bvec)
@@ -168,18 +168,16 @@ Changes in 'preproc_dwi/main.nf':
  
          NORMALIZE_DWI ( ch_normalize )
          ch_versions = ch_versions.mix(NORMALIZE_DWI.out.versions.first())
-@@ -164,9 +226,7 @@
+@@ -165,7 +227,7 @@
          ch_versions = ch_versions.mix(EXTRACTB0_RESAMPLE.out.versions.first())
  
          // ** Resample mask ** //
 -        ch_resample_mask = BETCROP_FSLBETCROP.out.mask
--            .map{ it + [[]] }
--
-+        ch_resample_mask = ch_mask.map{ it + [[]] }
-         RESAMPLE_MASK ( ch_resample_mask )
-         ch_versions = ch_versions.mix(RESAMPLE_MASK.out.versions.first())
++        ch_resample_mask = ch_mask
+             .join(EXTRACTB0_RESAMPLE.out.b0)
  
-@@ -174,9 +234,10 @@
+         RESAMPLE_MASK ( ch_resample_mask )
+@@ -175,9 +237,10 @@
          dwi                 = ch_dwi_preproc                // channel: [ val(meta), dwi-preproc ]
          bval                = TOPUP_EDDY.out.bval           // channel: [ val(meta), bval-corrected ]
          bvec                = TOPUP_EDDY.out.bvec           // channel: [ val(meta), bvec-corrected ]
@@ -192,8 +190,8 @@ Changes in 'preproc_dwi/main.nf':
          dwi_n4              = ch_dwi_n4                     // channel: [ val(meta), dwi-after-n4 ]
          mqc                 = ch_multiqc_files              // channel: [ val(meta), mqc ]
 
-'subworkflows/nf-neuro/preproc_dwi/tests/main.nf.test' is unchanged
-'subworkflows/nf-neuro/preproc_dwi/tests/nextflow.config' is unchanged
-'subworkflows/nf-neuro/preproc_dwi/tests/tags.yml' is unchanged
 'subworkflows/nf-neuro/preproc_dwi/tests/main.nf.test.snap' is unchanged
+'subworkflows/nf-neuro/preproc_dwi/tests/tags.yml' is unchanged
+'subworkflows/nf-neuro/preproc_dwi/tests/nextflow.config' is unchanged
+'subworkflows/nf-neuro/preproc_dwi/tests/main.nf.test' is unchanged
 ************************************************************

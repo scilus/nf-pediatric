@@ -227,7 +227,9 @@ workflow PREPROC_DWI {
         ch_versions = ch_versions.mix(EXTRACTB0_RESAMPLE.out.versions.first())
 
         // ** Resample mask ** //
-        ch_resample_mask = ch_mask.map{ it + [[]] }
+        ch_resample_mask = ch_mask
+            .join(EXTRACTB0_RESAMPLE.out.b0)
+
         RESAMPLE_MASK ( ch_resample_mask )
         ch_versions = ch_versions.mix(RESAMPLE_MASK.out.versions.first())
 
