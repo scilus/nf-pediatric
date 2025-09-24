@@ -15,6 +15,22 @@ Changes in 'registration/antsapplytransforms/main.nf':
  
      input:
      tuple val(meta), path(image), path(reference), path(warp), path(affine)
+@@ -66,11 +64,12 @@
+             # Iterate over images.
+             for image in reference \${bname}${suffix};
+             do
+-                scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_coronal.png \
++                mrconvert *\${image}.nii.gz *\${image}_viz.nii.gz -stride -1,2,3 -nthreads $task.cpus
++                scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_coronal.png \
+                     --slices \$coronal_dim --axis coronal \$viz_params
+-                scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_sagittal.png \
++                scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_sagittal.png \
+                     --slices \$sagittal_dim --axis sagittal \$viz_params
+-                scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_axial.png \
++                scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_axial.png \
+                     --slices \$axial_dim --axis axial \$viz_params
+                 if [ \$image != reference ];
+                 then
 
 'modules/nf-neuro/registration/antsapplytransforms/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/registration/antsapplytransforms/tests/tags.yml' is unchanged

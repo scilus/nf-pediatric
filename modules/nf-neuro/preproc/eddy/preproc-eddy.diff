@@ -33,7 +33,21 @@ Changes in 'preproc/eddy/main.nf':
      if $run_qc;
      then
          extract_dim=\$(mrinfo ${dwi} -size)
-@@ -184,6 +186,7 @@
+@@ -131,9 +133,10 @@
+ 
+         for image in dwi_corrected dwi \${rev_dwi}
+         do
+-            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm.nii.gz ${prefix}__\${image}_coronal.png \${viz_params} --slices \${coronal_dim} --axis coronal
+-            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm.nii.gz ${prefix}__\${image}_axial.png \${viz_params} --slices \${axial_dim} --axis axial
+-            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm.nii.gz ${prefix}__\${image}_sagittal.png \${viz_params} --slices \${sagittal_dim} --axis sagittal
++            mrconvert ${prefix}__\${image}_powder_average_norm.nii.gz ${prefix}__\${image}_powder_average_norm_viz.nii.gz -stride -1,2,3 -nthreads $task.cpus
++            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm_viz.nii.gz ${prefix}__\${image}_coronal.png \${viz_params} --slices \${coronal_dim} --axis coronal
++            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm_viz.nii.gz ${prefix}__\${image}_axial.png \${viz_params} --slices \${axial_dim} --axis axial
++            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm_viz.nii.gz ${prefix}__\${image}_sagittal.png \${viz_params} --slices \${sagittal_dim} --axis sagittal
+ 
+             if [ \$image == "dwi_corrected" ] || [ \$image == "rev_dwi" ]
+             then
+@@ -184,6 +187,7 @@
      touch ${prefix}__dwi_eddy_corrected.bval
      touch ${prefix}__dwi_eddy_corrected.bvec
      touch ${prefix}__b0_bet_mask.nii.gz
