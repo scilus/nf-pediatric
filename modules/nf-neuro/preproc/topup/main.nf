@@ -68,7 +68,7 @@ process PREPROC_TOPUP {
     if $run_qc;
     then
         extract_dim=\$(mrinfo ${prefix}__b0_mean.nii.gz -size)
-        read sagittal_dim axial_dim coronal_dim <<< "\${extract_dim}"
+        read sagittal_dim coronal_dim axial_dim <<< "\${extract_dim}"
         mrconvert ${prefix}__b0_mean.nii.gz ${prefix}__b0_mean_viz.nii.gz -stride -1,2,3
         mrconvert ${prefix}__rev_b0_mean.nii.gz ${prefix}__rev_b0_mean_viz.nii.gz -stride -1,2,3
         mrconvert ${prefix}__corrected_b0s.nii.gz ${prefix}__corrected_b0s_viz.nii.gz -stride -1,2,3
