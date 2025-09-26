@@ -17,7 +17,7 @@ process ATLASES_FORMATLABELS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def ses = meta.ses ? "_${meta.ses}" : ""
+    def ses = meta.session ? "_${meta.session}" : ""
 
     """
     # Exporting the FS license and setting up the environment
@@ -86,7 +86,7 @@ process ATLASES_FORMATLABELS {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def ses = meta.ses ? "_${meta.ses}" : ""
+    def ses = meta.session ? "_${meta.session}" : ""
     """
     export PYTHONPATH=/opt/freesurfer/python/packages:\$PYTHONPATH
 

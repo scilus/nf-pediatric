@@ -22,7 +22,7 @@ process ATLASES_BRAINNETOMECHILD {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def ses = meta.ses ? "_${meta.ses}" : ""
+    def ses = meta.session ? "_${meta.session}" : ""
 
     """
     # Exporting the FS license and setting up the environment
@@ -211,7 +211,7 @@ process ATLASES_BRAINNETOMECHILD {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def ses = meta.ses ? "_${meta.ses}" : ""
+    def ses = meta.session ? "_${meta.session}" : ""
 
     """
     touch ${prefix}__brainnetome_child_v1.nii.gz
