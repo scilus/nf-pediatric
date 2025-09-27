@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Fix name collision when multiple sessions in concatenate stats module.
 - Fix stride in QC sections to ensure all axis are plotted correctly ([#62](https://github.com/scilus/nf-pediatric/issues/62))
 - Fix mask resampling to force same dimension as b0 volume ([#59](https://github.com/scilus/nf-pediatric/issues/59))
 - Fix glob pattern for template to DWI registration QC file.

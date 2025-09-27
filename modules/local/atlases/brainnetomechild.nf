@@ -22,6 +22,7 @@ process ATLASES_BRAINNETOMECHILD {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def ses = meta.session ? "_${meta.session}" : ""
 
     """
     # Exporting the FS license and setting up the environment
@@ -94,12 +95,12 @@ process ATLASES_BRAINNETOMECHILD {
     mris_anatomical_stats -mgz -cortex \${FS_ID_FOLDER}/label/rh.cortex.label -f \${FS_ID_FOLDER}/stats/rh.BN_Child.stats -b -a \${FS_ID_FOLDER}/label/rh.BN_Child.annot -c BN_child_atlas/tmp/atlas_brainnetome_child_v1_LUT.txt \${SUBJID} rh white >> logfile.txt &>> logfile.txt
 
     # Extracting the stats into a tsv file.
-    aparcstats2table --subjects \${SUBJID} --hemi=lh -m volume -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__volume_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    aparcstats2table --subjects \${SUBJID} --hemi=rh -m volume -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__volume_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    aparcstats2table --subjects \${SUBJID} --hemi=lh -m thickness -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__thickness_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    aparcstats2table --subjects \${SUBJID} --hemi=rh -m thickness -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__thickness_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    aparcstats2table --subjects \${SUBJID} --hemi=lh -m area -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__area_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
-    aparcstats2table --subjects \${SUBJID} --hemi=rh -m area -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}__area_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=lh -m volume -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}${ses}__volume_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=rh -m volume -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}${ses}__volume_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=lh -m thickness -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}${ses}__thickness_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=rh -m thickness -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}${ses}__thickness_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=lh -m area -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}${ses}__area_lh.BN_Child.tsv >> logfile.txt &>> logfile.txt
+    aparcstats2table --subjects \${SUBJID} --hemi=rh -m area -p BN_Child --tablefile=\${OUT_DIR}/\${SUBJID}${ses}__area_rh.BN_Child.tsv >> logfile.txt &>> logfile.txt
 
     # ==================================================================================
     # Create the Brainnetomme subcortical parcellation from Freesurfer data
@@ -177,7 +178,7 @@ process ATLASES_BRAINNETOMECHILD {
         --o \${FS_ID_FOLDER}/stats/subcortical.BN_Child.stats --pv \${FS_ID_FOLDER}/mri/synthSR.norm.mgz \
         --id 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227
     asegstats2table --subjects \${SUBJID} --meas=volume \
-        --tablefile=\${OUT_DIR}/\${SUBJID}__volume_BN_Child_subcortical.tsv --all-segs --stats=subcortical.BN_Child.stats
+        --tablefile=\${OUT_DIR}/\${SUBJID}${ses}__volume_BN_Child_subcortical.tsv --all-segs --stats=subcortical.BN_Child.stats
 
     # Dilating the atlas
     mri_convert \${FS_ID_FOLDER}/mri/brainmask.mgz BN_child_atlas/brain_mask.nii.gz
@@ -210,19 +211,20 @@ process ATLASES_BRAINNETOMECHILD {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def ses = meta.session ? "_${meta.session}" : ""
 
     """
     touch ${prefix}__brainnetome_child_v1.nii.gz
     touch ${prefix}__brainnetome_child_v1_dilated.nii.gz
     touch ${prefix}__brainnetome_child_v1.txt
     touch ${prefix}__brainnetome_child_v1.json
-    touch ${prefix}__volume_BN_Child_subcortical.tsv
-    touch ${prefix}__volume_lh.BN_Child.tsv
-    touch ${prefix}__volume_rh.BN_Child.tsv
-    touch ${prefix}__area_lh.BN_Child.tsv
-    touch ${prefix}__area_rh.BN_Child.tsv
-    touch ${prefix}__thickness_lh.BN_Child.tsv
-    touch ${prefix}__thickness_rh.BN_Child.tsv
+    touch ${prefix}${ses}__volume_BN_Child_subcortical.tsv
+    touch ${prefix}${ses}__volume_lh.BN_Child.tsv
+    touch ${prefix}${ses}__volume_rh.BN_Child.tsv
+    touch ${prefix}${ses}__area_lh.BN_Child.tsv
+    touch ${prefix}${ses}__area_rh.BN_Child.tsv
+    touch ${prefix}${ses}__thickness_lh.BN_Child.tsv
+    touch ${prefix}${ses}__thickness_rh.BN_Child.tsv
     touch lh.BN_Child.annot
     touch rh.BN_Child.annot
     touch lh.BN_Child.stats
