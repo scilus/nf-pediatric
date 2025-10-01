@@ -105,7 +105,8 @@
                     "connectivity/decompose": {
                         "branch": "main",
                         "git_sha": "a885b539ff6237343613358ef5d24378b0f5f7b6",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/connectivity/decompose/connectivity-decompose.diff"
                     },
                     "connectivity/visualize": {
                         "branch": "main",
