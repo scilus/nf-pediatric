@@ -4,7 +4,18 @@ Changes in component 'nf-neuro/bundle/labelmap'
 Changes in 'bundle/labelmap/main.nf':
 --- modules/nf-neuro/bundle/labelmap/main.nf
 +++ modules/nf-neuro/bundle/labelmap/main.nf
-@@ -30,8 +30,11 @@
+@@ -2,9 +2,7 @@
+     tag "$meta.id"
+     label 'process_single'
+ 
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
+-        'scilus/scilus:2.0.2' }"
++    container 'scilus/scilus:2.0.2'
+ 
+     input:
+         tuple val(meta), path(bundles), path(centroids)
+@@ -30,8 +28,11 @@
      centroids=(${centroids.join(" ")})
  
      for index in \${!bundles[@]};
@@ -18,7 +29,7 @@ Changes in 'bundle/labelmap/main.nf':
  
          scil_bundle_label_map.py \${bundles[index]} \${centroids[index]} \
              tmp_out $nb_points $colormap $new_labelling -f
-@@ -53,9 +56,15 @@
+@@ -53,9 +54,15 @@
      """
      scil_bundle_label_map.py -h
  

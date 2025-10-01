@@ -3,9 +3,7 @@ process RECONST_FODF {
     tag "$meta.id"
     label 'process_high'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
-        'scilus/scilus:2.0.2' }"
+    container 'scilus/scilus:2.0.2'
 
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(fa), path(md), path(wm_frf), path(gm_frf), path(csf_frf)

@@ -32,7 +32,6 @@ include { RECONST_DTIMETRICS                } from '../modules/nf-neuro/reconst/
 
 // ** FRF ** //
 include { RECONST_FRF                       } from '../modules/nf-neuro/reconst/frf/main'
-include { RECONST_MEANFRF                   } from '../modules/nf-neuro/reconst/meanfrf/main'
 
 // ** FODF Metrics ** //
 include { RECONST_FODF                      } from '../modules/nf-neuro/reconst/fodf/main'
