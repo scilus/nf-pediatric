@@ -17,7 +17,7 @@
                     "format": "directory-path",
                     "exists": true,
                     "description": "Path to the BIDS directory location.",
-                    "help_text": "Path to the BIDS directory. This is where the pipeline will find the required raw data.",
+                    "help_text": "This is where the pipeline will find the required raw data.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "participant_label": {
