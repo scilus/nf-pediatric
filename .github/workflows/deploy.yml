@@ -2,9 +2,12 @@ name: Deploy documentation
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [dev, main]
+    branches:
+      - main
+  pull_request_target:
+    branches:
+      - main
+      - dev
 
 jobs:
   build-only:
