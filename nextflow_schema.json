@@ -1437,13 +1437,6 @@
             "description": "Pipeline profile options.",
             "help_text": "These options are used to configure the pipeline profile. You can use these options to customise the behaviour of the pipeline.",
             "properties": {
-                "infant": {
-                    "type": "boolean",
-                    "description": "Use infant pipeline profile.",
-                    "fa_icon": "fas fa-baby",
-                    "default": false,
-                    "hidden": true
-                },
                 "tracking": {
                     "type": "boolean",
                     "description": "Perform tracking pipeline.",
