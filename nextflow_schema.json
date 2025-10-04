@@ -38,7 +38,7 @@
                     "type": "string",
                     "format": "file-path",
                     "description": "Path to the BIDS script.",
-                    "help_text": "Path to the BIDS script. This is a script that will be used to generate the BIDS directory structure from the raw data.",
+                    "help_text": "This is a script that will be used to generate the BIDS directory structure from the raw data. Unless you know what you are doing, this should not be changed.",
                     "fa_icon": "fas fa-file-code",
                     "hidden": true
                 },
