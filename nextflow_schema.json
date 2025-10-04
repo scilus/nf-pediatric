@@ -23,7 +23,7 @@
                 "participant_label": {
                     "type": "array",
                     "description": "List of participant IDs or a single participant ID.",
-                    "help_text": "List of participant IDs or a single participant ID. This will be used to select the specific participants to process.",
+                    "help_text": "This will be used to select the specific participants to process. The best way to provide them is in a params.yml file, see the documentation for more information.",
                     "uniqueItems": true,
                     "fa_icon": "fas id-badge"
                 },
@@ -31,7 +31,7 @@
                     "type": "string",
                     "format": "directory-path",
                     "description": "Path to the derivatives directory.",
-                    "help_text": "Path to the derivatives directory. This is where the pipeline will find the preprocessed data.",
+                    "help_text": "This is where the pipeline will find the preprocessed data.",
                     "fa_icon": "fas fa-folder-open"
                 },
                 "bids_script": {
