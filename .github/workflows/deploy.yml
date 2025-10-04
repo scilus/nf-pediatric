@@ -1,0 +1,22 @@
+name: Deploy documentation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  build-only:
+    if: github.event_name == 'pull_request'
+    uses: scilus/nf-pediatric-documentation/.github/workflows/deploy.yml@main
+    with:
+      deploy: false
+    secrets: inherit
+
+  build-and-deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: scilus/nf-pediatric-documentation/.github/workflows/deploy.yml@main
+    with:
+      deploy: true
+    secrets: inherit
