@@ -87,7 +87,7 @@
                     "type": "string",
                     "description": "Path to FreeSurfer license file.",
                     "fa_icon": "fas fa-file-signature",
-                    "help_text": "Path to FreeSurfer license file. This is required to run FreeSurfer. You can obtain a FreeSurfer license from the FreeSurfer website.",
+                    "help_text": "This is required to run the segmentation profile. You can obtain a FreeSurfer license from the FreeSurfer website.",
                     "format": "file-path",
                     "exists": true
                 },
