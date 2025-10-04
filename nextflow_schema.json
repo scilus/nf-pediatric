@@ -71,7 +71,7 @@
             "title": "Segmentation Options",
             "type": "object",
             "fa_icon": "fas fa-brain",
-            "description": "Options for FreeSurfer and FastSurfer processing.",
+            "description": "Options for FreeSurfer, FastSurfer, and/or M-CRIB-S processing.",
             "help_text": "These options are used to configure the FreeSurfer and FastSurfer processing steps in the pipeline. You can use these options to customise the behaviour of the FreeSurfer and FastSurfer steps.",
             "properties": {
                 "method": {
