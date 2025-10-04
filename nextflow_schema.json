@@ -93,10 +93,9 @@
                 },
                 "cerebnet": {
                     "type": "boolean",
-                    "description": "Use CerebNet for cerebellum segmentation.",
+                    "description": "Use CerebNet for cerebellum segmentation in FastSurfer.",
                     "fa_icon": "fas fa-brain",
                     "default": false,
-                    "help_text": "Use CerebNet for cerebellum sub-segmentation in FastSurfer.",
                     "hidden": true
                 },
                 "hypvinn": {
