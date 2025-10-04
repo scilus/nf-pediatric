@@ -100,10 +100,9 @@
                 },
                 "hypvinn": {
                     "type": "boolean",
-                    "description": "Use HypVINN for hypothalamus sub-segmentation.",
+                    "description": "Use HypVINN for hypothalamus sub-segmentation in FastSurfer.",
                     "fa_icon": "fas fa-brain",
                     "default": false,
-                    "help_text": "Use HypVINN for hypothalamus sub-segmentation in FastSurfer.",
                     "hidden": true
                 },
                 "acq3T": {
@@ -117,7 +116,7 @@
                     "type": "string",
                     "description": "Path to FreeSurfer output directory.",
                     "fa_icon": "fas fa-folder-open",
-                    "help_text": "Path to FreeSurfer output directory. This is where FreeSurfer will save its output files.",
+                    "help_text": "This is where FreeSurfer will save its output files.",
                     "format": "directory-path",
                     "hidden": false
                 },
