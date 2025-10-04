@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-only:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request_target'
     uses: scilus/nf-pediatric-documentation/.github/workflows/deploy.yml@main
     with:
       deploy: false
