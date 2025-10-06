@@ -39,7 +39,23 @@ Changes in 'registration/ants/main.nf':
      mv output0GenericAffine.mat ${prefix}__output1GenericAffine.mat
  
      if [ $transform != "t" ] && [ $transform != "r" ] && [ $transform != "a" ];
-@@ -119,9 +118,10 @@
+@@ -81,11 +80,12 @@
+         # Iterate over images.
+         for image in fixedimage warped;
+         do
+-            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_coronal.png \
++            mrconvert *\${image}.nii.gz *\${image}_viz.nii.gz -stride -1,2,3 -nthreads $task.cpus
++            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_coronal.png \
+                 --slices \$coronal_dim --axis coronal \$viz_params
+-            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_sagittal.png \
++            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_sagittal.png \
+                 --slices \$sagittal_dim --axis sagittal \$viz_params
+-            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_axial.png \
++            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_axial.png \
+                 --slices \$axial_dim --axis axial \$viz_params
+             if [ \$image != fixedimage ];
+             then
+@@ -119,9 +119,10 @@
      stub:
      def args = task.ext.args ?: ''
      def prefix = task.ext.prefix ?: "${meta.id}"

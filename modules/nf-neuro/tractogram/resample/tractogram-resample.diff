@@ -1,0 +1,24 @@
+Changes in component 'nf-neuro/tractogram/resample'
+'modules/nf-neuro/tractogram/resample/environment.yml' is unchanged
+'modules/nf-neuro/tractogram/resample/meta.yml' is unchanged
+Changes in 'tractogram/resample/main.nf':
+--- modules/nf-neuro/tractogram/resample/main.nf
++++ modules/nf-neuro/tractogram/resample/main.nf
+@@ -2,9 +2,7 @@
+     tag "$meta.id"
+     label 'process_single'
+ 
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
+-        'scilus/scilus:2.0.2' }"
++    container 'scilus/scilus:2.0.2'
+ 
+     input:
+         tuple val(meta), path(tractograms)
+
+'modules/nf-neuro/tractogram/resample/tests/nextflow_centroid.config' is unchanged
+'modules/nf-neuro/tractogram/resample/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/tractogram/resample/tests/tags.yml' is unchanged
+'modules/nf-neuro/tractogram/resample/tests/nextflow_tractogram.config' is unchanged
+'modules/nf-neuro/tractogram/resample/tests/main.nf.test' is unchanged
+************************************************************

@@ -41,7 +41,9 @@ process RECONST_FRF {
     def md_thr_gm = task.ext.md_thr_gm ? "--md_thr_gm " + task.ext.md_thr_gm : ""
     def md_thr_csf = task.ext.md_thr_csf ? "--md_thr_csf " + task.ext.md_thr_csf : ""
 
-    def fix_frf = task.ext.manual_frf ? task.ext.manual_frf : ""
+    def axial = Math.round(meta.ad * 1E4) // To get integers.
+    def radial = Math.round(meta.rd * 1E4) // To get integers.
+    def fix_frf = task.ext.manual_frf ? task.ext.manual_frf : "${axial},${radial},${radial}"
     def fix_wm_frf = task.ext.manual_wm_frf ? task.ext.manual_wm_frf : ""
     def fix_gm_frf = task.ext.manual_gm_frf ? task.ext.manual_gm_frf : ""
     def fix_csf_frf = task.ext.manual_csf_frf ? task.ext.manual_csf_frf : ""
@@ -101,9 +103,14 @@ process RECONST_FRF {
     """
 
     stub:
+    def axial = Math.round(meta.ad * 1E4) // To get integers.
+    def radial = Math.round(meta.rd * 1E4) // To get integers.
+    def fix_frf = task.ext.manual_frf ? task.ext.manual_frf : "${axial},${radial},${radial}"
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
+    echo "FRF parameters used: ${fix_frf}"
+
     scil_dwi_extract_shell.py -h
     scil_frf_ssst.py -h
     scil_frf_set_diffusivities.py -h

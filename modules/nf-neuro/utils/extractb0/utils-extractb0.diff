@@ -4,7 +4,16 @@ Changes in component 'nf-neuro/utils/extractb0'
 Changes in 'utils/extractb0/main.nf':
 --- modules/nf-neuro/utils/extractb0/main.nf
 +++ modules/nf-neuro/utils/extractb0/main.nf
-@@ -10,8 +10,11 @@
+@@ -2,16 +2,17 @@
+     tag "$meta.id"
+     label 'process_single'
+ 
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
+-        'scilus/scilus:2.0.2' }"
++    container 'scilus/scilus:2.0.2'
+ 
+     input:
      tuple val(meta), path(dwi), path(bval), path(bvec)
  
      output:
@@ -18,7 +27,7 @@ Changes in 'utils/extractb0/main.nf':
  
      when:
      task.ext.when == null || task.ext.when
-@@ -29,24 +32,36 @@
+@@ -29,24 +30,36 @@
      scil_dwi_extract_b0.py $dwi $bval $bvec ${prefix}_b0.nii.gz \
          $output_series $extraction_strategy $b0_threshold --skip_b0_check
  

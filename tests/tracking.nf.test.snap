@@ -77,10 +77,10 @@
                     "scilpy": "2.1.0"
                 },
                 "RESAMPLE_DWI": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "RESAMPLE_MASK": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "TEMPLATETODWI": {
                     "ants": "2.4.3",
@@ -105,7 +105,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0-beta"
+                    "scilus/nf-pediatric": "v0.1.0"
                 }
             },
             [
@@ -647,10 +647,10 @@
                     "scilpy": "2.1.0"
                 },
                 "RESAMPLE_DWI": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "RESAMPLE_MASK": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "TEMPLATETODWI": {
                     "ants": "2.4.3",
@@ -679,7 +679,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0-beta"
+                    "scilus/nf-pediatric": "v0.1.0"
                 }
             },
             [

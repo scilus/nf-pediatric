@@ -4,11 +4,11 @@ def createCohortChannel(channel, cohort) {
     channel.map { folder ->
         def meta = [id: "UNCBCPInfant", cohort: cohort]
         def files = [
-            file("${folder}/${cohort}/*desc-brain_T1w.nii.gz"),
-            file("${folder}/${cohort}/*desc-brain_T2w.nii.gz"),
-            file("${folder}/${cohort}/*WM_probseg.nii.gz"),
-            file("${folder}/${cohort}/*GM_probseg.nii.gz"),
-            file("${folder}/${cohort}/*CSF_probseg.nii.gz")
+            file("${folder}/atlas-Infant${cohort}/*desc-brain_T1w.nii.gz"),
+            file("${folder}/atlas-Infant${cohort}/*desc-brain_T2w.nii.gz"),
+            file("${folder}/atlas-Infant${cohort}/*WM_probseg.nii.gz"),
+            file("${folder}/atlas-Infant${cohort}/*GM_probseg.nii.gz"),
+            file("${folder}/atlas-Infant${cohort}/*CSF_probseg.nii.gz")
         ]
         def flattenedFiles = files.flatten().findAll { it.exists() }
         [meta] + flattenedFiles
@@ -44,13 +44,13 @@ workflow TEMPLATES {
 
     // ** Until tpl-UNCBCP4DInfant is available on TemplateFlow, we use ** //
     // ** local folders (in assets/)                                    ** //
-    ch_template_folder = Channel.fromPath("${projectDir}/assets/templates")
+    ch_template_folder = Channel.fromPath("${projectDir}/assets/")
 
-    ch_cohort0 = createCohortChannel(ch_template_folder, "0M")
-    ch_cohort3 = createCohortChannel(ch_template_folder, "3M")
-    ch_cohort6 = createCohortChannel(ch_template_folder, "6M")
-    ch_cohort12 = createCohortChannel(ch_template_folder, "12M")
-    ch_cohort24 = createCohortChannel(ch_template_folder, "24M")
+    ch_cohort0 = createCohortChannel(ch_template_folder, "00")
+    ch_cohort3 = createCohortChannel(ch_template_folder, "03")
+    ch_cohort6 = createCohortChannel(ch_template_folder, "06")
+    ch_cohort12 = createCohortChannel(ch_template_folder, "12")
+    ch_cohort24 = createCohortChannel(ch_template_folder, "24")
 
 
     emit:

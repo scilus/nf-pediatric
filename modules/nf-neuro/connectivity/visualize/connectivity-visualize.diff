@@ -4,8 +4,14 @@ Changes in component 'nf-neuro/connectivity/visualize'
 Changes in 'connectivity/visualize/main.nf':
 --- modules/nf-neuro/connectivity/visualize/main.nf
 +++ modules/nf-neuro/connectivity/visualize/main.nf
-@@ -7,7 +7,7 @@
-         'scilus/scilus:2.0.2' }"
+@@ -2,12 +2,10 @@
+     tag "$meta.id"
+     label 'process_single'
+ 
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
+-        'scilus/scilus:2.0.2' }"
++    container 'scilus/scilus:2.0.2'
  
      input:
 -    tuple val(meta), path(matrices), path (atlas_labels), path(labels_list)
@@ -13,7 +19,7 @@ Changes in 'connectivity/visualize/main.nf':
  
      output:
      tuple val(meta), path("*.png"), emit: figure
-@@ -26,7 +26,6 @@
+@@ -26,7 +24,6 @@
      def axis_text_size = task.ext.axis_text_size ? "--axis_text_size $task.ext.axis_text_size $task.ext.axis_text_size" : "--axis_text_size 5 5"
      def args = ""
      if (atlas_labels) args += [" --lookup_table $atlas_labels "]
@@ -21,7 +27,7 @@ Changes in 'connectivity/visualize/main.nf':
  
      """
      for matrix in $matrices_list; do
-@@ -43,7 +42,7 @@
+@@ -43,7 +40,7 @@
      """
  
      stub:

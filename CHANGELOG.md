@@ -3,6 +3,31 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0] - [2025-10-06]
+
+### `Added`
+
+- [Documentation site](https://github.com/scilus/nf-pediatric-documentation) describing requirements, inputs, outputs, parameters, etc.
+- Framewise displacement metric in both multiqc reports ([#29](https://github.com/scilus/nf-pediatric/issues/29))
+- Age-matched BundleSeg WM bundle atlas for age-adaptable bundle extraction.
+- Normative curves for prior determination in FRF and COMMIT modules.
+
+### `Removed`
+
+- Option to use the mean FRF across all subjects has been removed in favor of the normative curves.
+
+### `Fixed`
+
+- Fix name collision when multiple sessions in concatenate stats module.
+- Fix stride in QC sections to ensure all axis are plotted correctly ([#62](https://github.com/scilus/nf-pediatric/issues/62))
+- Fix mask resampling to force same dimension as b0 volume ([#59](https://github.com/scilus/nf-pediatric/issues/59))
+- Fix glob pattern for template to DWI registration QC file.
+- Add dynamic resource allocation for registering tractograms in output space ([#56](https://github.com/scilus/nf-pediatric/issues/56))
+- Fix RGB FA registration to template space.
+- Add filtering step removing null values for anatomical coregistration in case of missing files.
+- Fix precedence issues in branching logic for anatomical to diffusion space registration ([#63](https://github.com/scilus/nf-pediatric/issues/63))
+- Handling of B0 threshold in `preproc/n4` and `preproc/normalize` ([[#58](https://github.com/scilus/nf-pediatric/issues/58)])
+
 ## [0.1.0-beta] - [2025-08-13]
 
 ### `Fixed`

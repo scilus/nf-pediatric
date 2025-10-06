@@ -25,6 +25,8 @@ report_section_order:
     order: -725
   "cortical_surface_area_rh":
     order: -730
+  "fd_values":
+    order: -735
   "sc_values":
     order: -750
   "dice_values":
@@ -50,6 +52,21 @@ custom_data:
       id: "sc_values_plot"
       title: "SC Values Distribution"
       ylab: "SC Value"
+
+  fd_values:
+    file_format: "csv"
+    section_name: "Maximum Framewise Displacement (FD)"
+    description: |
+      This section contains the maximum Framewise Displacement (FD) values for all subjects. The FD is a measure of head motion during the diffusion MRI acquisition and is computed during
+      the eddy current correction step. High FD values indicate significant head motion, which can negatively impact the quality of the diffusion data and subsequent analyses. It is
+      recommended to visually inspect subjects with high FD values to assess the impact of motion on the data quality. Refer to the individual subject reports for more details (found
+      in the subject's output directory).
+    plot_type: "violin"
+    data_format: "wide"
+    pconfig:
+      id: "fd_qc_plot"
+      title: "Maximum Framewise Displacement (FD) Distribution"
+      ylab: "Max FD (mm)"
 
   dice_values:
     file_format: "csv"
@@ -177,6 +194,8 @@ sp:
     fn: "sc_values.csv"
   dice_values:
     fn: "dice_values.csv"
+  fd_values:
+    fn: "fd_values.csv"
   subcortical_volumes:
     fn: "child_subcortical_volumes.tsv"
   cortical_volume_lh:

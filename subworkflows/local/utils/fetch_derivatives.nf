@@ -1,3 +1,5 @@
+include { fetchPriors } from '../utils_nfcore_nf-pediatric_pipeline/main.nf'
+
 def readParticipantsTsv(file) {
     def participantData = []
 
@@ -51,24 +53,32 @@ workflow FETCH_DERIVATIVES {
     }
 
     // ** Segmentations ** //
-    ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
-        checkIfExists: true)
-        .map{ file ->
-            def parts = file.toAbsolutePath().toString().split('/')
-            def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def metadata = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
+    if ( params.connectomics ) {
+        ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
+            checkIfExists: true)
+            .map{ file ->
+                def parts = file.toAbsolutePath().toString().split('/')
+                def id = parts.find { it.startsWith('sub-') }
+                def session = parts.find { it.startsWith('ses-') }
+                def age = getAge(id, session)
+                def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+                def priors = fetchPriors(tempAge)
+                def metadata = session ? \
+                    [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
+                    [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
 
-            return [metadata, file]
-        }
-        .groupTuple(by: 0)
-        .map{ meta, files ->
-            return [meta] + files
-        }
-        .filter {
-            participant_ids.isEmpty() || it[0].id in participant_ids
-        }
+                return [metadata, file]
+            }
+            .groupTuple(by: 0)
+            .map{ meta, files ->
+                return [meta] + files
+            }
+            .filter {
+                participant_ids.isEmpty() || it[0].id in participant_ids
+            }
+    } else {
+        ch_labels = Channel.empty()
+    }
 
     // ** Anatomical file ** //
     ch_anat = Channel.fromPath("${input_deriv}/sub-**/{ses-*/,}anat/*space-DWI_desc-preproc_{T1w,T2w}.nii.gz",
@@ -78,7 +88,11 @@ workflow FETCH_DERIVATIVES {
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
             def age = getAge(id, session)
-            def metadata = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
+            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            def priors = fetchPriors(tempAge)
+            def metadata = session ? \
+                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
+                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
             def type = file.name.contains('T1w') ? 'T1w' : 'T2w'
 
             return [metadata, type, file]
@@ -100,10 +114,14 @@ workflow FETCH_DERIVATIVES {
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
             def age = getAge(id, session)
-            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
+            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            def priors = fetchPriors(tempAge)
+            def metadata = session ? \
+                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
+                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
             def type = file.name.contains('warp') ? 'warp' : 'affine'
 
-            return [meta, type, file]
+            return [metadata, type, file]
         }
         .groupTuple(by: 0)
         .map { meta, types, files ->
@@ -130,9 +148,13 @@ workflow FETCH_DERIVATIVES {
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
             def age = getAge(id, session)
-            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
+            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            def priors = fetchPriors(tempAge)
+            def metadata = session ? \
+                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
+                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
 
-            return [meta, file]
+            return [metadata, file]
         }
 
     // ** fODF file ** //
@@ -143,9 +165,13 @@ workflow FETCH_DERIVATIVES {
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
             def age = getAge(id, session)
-            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
+            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            def priors = fetchPriors(tempAge)
+            def metadata = session ? \
+                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
+                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
 
-            return [meta, file]
+            return [metadata, file]
         }
         .filter {
             participant_ids.isEmpty() || it[0].id in participant_ids
@@ -159,9 +185,13 @@ workflow FETCH_DERIVATIVES {
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
             def age = getAge(id, session)
-            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
+            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            def priors = fetchPriors(tempAge)
+            def metadata = session ? \
+                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
+                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
 
-            return [meta, file]
+            return [metadata, file]
         }
         .groupTuple(by: 0)
         .map { meta, files ->
@@ -191,9 +221,13 @@ workflow FETCH_DERIVATIVES {
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
             def age = getAge(id, session)
-            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
+            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            def priors = fetchPriors(tempAge)
+            def metadata = session ? \
+                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
+                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
 
-            return [meta, file]
+            return [metadata, file]
         }
         .filter {
             participant_ids.isEmpty() || it[0].id in participant_ids
@@ -207,9 +241,13 @@ workflow FETCH_DERIVATIVES {
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
             def age = getAge(id, session)
-            def meta = session ? [id: id, session: session, run: "", age: age] : [id: id, session: "", run: "", age: age]
+            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            def priors = fetchPriors(tempAge)
+            def metadata = session ? \
+                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md] : \
+                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
 
-            return [meta, file]
+            return [metadata, file]
         }
         .groupTuple(by: 0)
         .map{ meta, files ->

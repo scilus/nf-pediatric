@@ -63,7 +63,7 @@ Changes in 'registration/anattodwi/main.nf':
          read sagittal_dim coronal_dim axial_dim <<< "\${dim}"
  
          # Get middle slices.
-@@ -70,8 +70,9 @@
+@@ -70,21 +70,23 @@
          # Set viz params.
          viz_params="--display_slice_number --display_lr --size 256 256"
  
@@ -72,10 +72,15 @@ Changes in 'registration/anattodwi/main.nf':
 -        for image in t1_warped b0;
 +        for image in ${suffix}_warped reference;
          do
-             scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_coronal.png \
+-            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_coronal.png \
++            mrconvert *\${image}.nii.gz *\${image}_viz.nii.gz -stride -1,2,3 -nthreads $task.cpus
++            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_coronal.png \
                  --slices \$coronal_mid --axis coronal \$viz_params
-@@ -80,11 +81,11 @@
-             scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_axial.png \
+-            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_sagittal.png \
++            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_sagittal.png \
+                 --slices \$sagittal_mid --axis sagittal \$viz_params
+-            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_axial.png \
++            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_axial.png \
                  --slices \$axial_mid --axis axial \$viz_params
  
 -            if [ \$image != b0 ];
@@ -89,7 +94,7 @@ Changes in 'registration/anattodwi/main.nf':
              fi
  
              convert +append \${image}_coronal*.png \${image}_axial*.png \
-@@ -98,11 +99,11 @@
+@@ -98,11 +100,11 @@
  
          # Create GIF.
          convert -delay 10 -loop 0 -morph 10 \
@@ -104,7 +109,7 @@ Changes in 'registration/anattodwi/main.nf':
      fi
  
      cat <<-END_VERSIONS > versions.yml
-@@ -115,15 +116,17 @@
+@@ -115,15 +117,17 @@
  
      stub:
      def prefix = task.ext.prefix ?: "${meta.id}"

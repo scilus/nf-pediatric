@@ -15,7 +15,6 @@ jobs:
     uses: scilus/nf-pediatric-documentation/.github/workflows/deploy.yml@main
     with:
       deploy: false
-      pr_number: ${{ github.event.pull_request.number }}
     secrets: inherit
 
   build-and-deploy:

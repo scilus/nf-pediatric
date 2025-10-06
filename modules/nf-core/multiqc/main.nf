@@ -52,6 +52,24 @@ process MULTIQC {
         done
     fi
 
+    shopt -s nullglob
+    files=( *__dwi_eddy_restricted_movement_rms.txt )
+    shopt -u nullglob
+
+    if [[ \${#files[@]} -gt 0 && "${meta.id}" != "global" ]]; then
+        # Subject case: add index + second column
+        awk '{print NR "," \$2}' "\${files[0]}" > "${prefix}_fd_mqc.csv"
+
+    elif [[ \${#files[@]} -gt 0 && "${meta.id}" == "global" ]]; then
+        # Global case: compute mean per subject
+        echo "Sample Name,Mean_FD" > "fd_values.csv"
+        for fd_file in "\${files[@]}"; do
+            subject_id=\$(basename "\$fd_file" __dwi_eddy_restricted_movement_rms.txt)
+            max_fd=\$(awk '{ if (\$2 > max || NR == 1) max = \$2 } END { print max }' "\$fd_file")
+            echo "\${subject_id},\${max_fd}" >> "fd_values.csv"
+        done
+    fi
+
     multiqc \\
         --force \\
         $args \\

@@ -12,6 +12,7 @@ process PREPROC_EDDY {
         tuple val(meta), path("*__dwi_eddy_corrected.bval") , emit: bval_corrected
         tuple val(meta), path("*__dwi_eddy_corrected.bvec") , emit: bvec_corrected
         tuple val(meta), path("*__b0_bet_mask.nii.gz")      , emit: b0_mask
+        tuple val(meta), path("*__dwi_eddy_restricted_movement_rms.txt"), emit: eddy_fd
         tuple val(meta), path("*__dwi_eddy_mqc.gif")        , emit: dwi_eddy_mqc, optional:true
         tuple val(meta), path("*__rev_dwi_eddy_mqc.gif")    , emit: rev_dwi_eddy_mqc, optional:true
         path "versions.yml"                                 , emit: versions
@@ -104,6 +105,9 @@ process PREPROC_EDDY {
         scil_gradients_validate_correct_eddy.py dwi_eddy_corrected.eddy_rotated_bvecs \${bval} \${number_rev_dwi} ${prefix}__dwi_eddy_corrected.bvec ${prefix}__dwi_eddy_corrected.bval
     fi
 
+    # Rename framewise displacement file to include subject id
+    mv dwi_eddy_corrected.eddy_restricted_movement_rms ${prefix}-${meta.age}__dwi_eddy_restricted_movement_rms.txt
+
     if $run_qc;
     then
         extract_dim=\$(mrinfo ${dwi} -size)
@@ -129,9 +133,10 @@ process PREPROC_EDDY {
 
         for image in dwi_corrected dwi \${rev_dwi}
         do
-            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm.nii.gz ${prefix}__\${image}_coronal.png \${viz_params} --slices \${coronal_dim} --axis coronal
-            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm.nii.gz ${prefix}__\${image}_axial.png \${viz_params} --slices \${axial_dim} --axis axial
-            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm.nii.gz ${prefix}__\${image}_sagittal.png \${viz_params} --slices \${sagittal_dim} --axis sagittal
+            mrconvert ${prefix}__\${image}_powder_average_norm.nii.gz ${prefix}__\${image}_powder_average_norm_viz.nii.gz -stride -1,2,3 -nthreads $task.cpus
+            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm_viz.nii.gz ${prefix}__\${image}_coronal.png \${viz_params} --slices \${coronal_dim} --axis coronal
+            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm_viz.nii.gz ${prefix}__\${image}_axial.png \${viz_params} --slices \${axial_dim} --axis axial
+            scil_viz_volume_screenshot.py ${prefix}__\${image}_powder_average_norm_viz.nii.gz ${prefix}__\${image}_sagittal.png \${viz_params} --slices \${sagittal_dim} --axis sagittal
 
             if [ \$image == "dwi_corrected" ] || [ \$image == "rev_dwi" ]
             then
@@ -182,6 +187,7 @@ process PREPROC_EDDY {
     touch ${prefix}__dwi_eddy_corrected.bval
     touch ${prefix}__dwi_eddy_corrected.bvec
     touch ${prefix}__b0_bet_mask.nii.gz
+    touch ${prefix}-${meta.age}__dwi_eddy_restricted_movement_rms.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

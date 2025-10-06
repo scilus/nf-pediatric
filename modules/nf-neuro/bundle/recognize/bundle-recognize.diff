@@ -4,16 +4,18 @@ Changes in component 'nf-neuro/bundle/recognize'
 Changes in 'bundle/recognize/main.nf':
 --- modules/nf-neuro/bundle/recognize/main.nf
 +++ modules/nf-neuro/bundle/recognize/main.nf
-@@ -4,7 +4,7 @@
+@@ -2,9 +2,7 @@
+     tag "$meta.id"
+     label 'process_high'
  
-     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-         'https://scil.usherbrooke.ca/containers/scilus_latest.sif':
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://scil.usherbrooke.ca/containers/scilus_latest.sif':
 -        'scilus/scilus:latest' }"
-+        'scilus/scilus:2.1.0' }"
++    container 'scilus/scilus:2.1.0'
  
      input:
          tuple val(meta), path(tractograms), path(transform), path(config), path(directory)
-@@ -49,6 +49,7 @@
+@@ -49,6 +47,7 @@
  
      # dummy output for single bundle
      touch ${prefix}__AF_L_cleaned.trk

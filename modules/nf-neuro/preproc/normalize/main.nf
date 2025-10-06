@@ -2,9 +2,7 @@ process PREPROC_NORMALIZE {
     tag "$meta.id"
     label 'process_single'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
-        'scilus/scilus:2.0.2' }"
+    container 'scilus/scilus:2.0.2'
 
     input:
     tuple val(meta), path(dwi), path(bval), path(bvec), path(mask)
@@ -18,6 +16,7 @@ process PREPROC_NORMALIZE {
     task.ext.when == null || task.ext.when
 
     script:
+    def b0threshold = task.ext.b0threshold ?: ""
     def dwi_shell_tolerance = task.ext.dwi_shell_tolerance ? "--tolerance $task.ext.dwi_shell_tolerance" : ""
     def fa_mask_threshold = meta.age < 0.5 || meta.age > 18 ? "-abs 0.10" : "-abs 0.35"
     def max_dti_shell_value = task.ext.max_dti_shell_value ?: "1600"
@@ -29,8 +28,8 @@ process PREPROC_NORMALIZE {
     export OMP_NUM_THREADS=$task.cpus
     export OPENBLAS_NUM_THREADS=1
 
-    echo "BZeroThreshold: $task.ext.dwi_shell_tolerance" > ".mrtrix.conf"
-    export MRTRIX_CONFIGFILE="./.mrtrix.conf"
+    echo "BZeroThreshold: $b0threshold" > ".mrtrix.conf"
+    export MRTRIX_CONFIGFILE="\$PWD/.mrtrix.conf"
 
     scil_dwi_extract_shell.py $dwi $bval $bvec $dti_info dwi_dti.nii.gz \
         bval_dti bvec_dti $dwi_shell_tolerance
@@ -42,8 +41,7 @@ process PREPROC_NORMALIZE {
         -nthreads $task.cpus
 
     dwinormalise individual $dwi ${prefix}_fa_wm_mask.nii.gz \
-        ${prefix}__dwi_normalized.nii.gz -fslgrad $bvec $bval -nthreads $task.cpus \
-        -config BZeroThreshold $task.ext.dwi_shell_tolerance
+        ${prefix}__dwi_normalized.nii.gz -fslgrad $bvec $bval -nthreads $task.cpus
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

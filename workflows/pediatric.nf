@@ -17,7 +17,7 @@ include { generateDatasetJson               } from '../subworkflows/local/utils_
 include { TEMPLATES                         } from '../subworkflows/local/templates/main.nf'
 
 // ** Anatomical reconstruction ** //
-include { SEGMENTATION                    } from '../subworkflows/local/segmentation/segmentation'
+include { SEGMENTATION                      } from '../subworkflows/local/segmentation/segmentation'
 
 // ** Anatomical Preprocessing ** //
 include { PREPROC_T1 as PREPROC_T1W         } from '../subworkflows/nf-neuro/preproc_t1/main'
@@ -32,7 +32,6 @@ include { RECONST_DTIMETRICS                } from '../modules/nf-neuro/reconst/
 
 // ** FRF ** //
 include { RECONST_FRF                       } from '../modules/nf-neuro/reconst/frf/main'
-include { RECONST_MEANFRF                   } from '../modules/nf-neuro/reconst/meanfrf/main'
 
 // ** FODF Metrics ** //
 include { RECONST_FODF                      } from '../modules/nf-neuro/reconst/fodf/main'
@@ -87,6 +86,7 @@ workflow PEDIATRIC {
     ch_versions = Channel.empty()
     ch_multiqc_files_sub = Channel.empty()
     ch_nifti_files_to_transform = Channel.empty()
+    ch_rgb_files_to_transform = Channel.empty()
     ch_mask_files_to_transform = Channel.empty()
     ch_labels_files_to_transform = Channel.empty()
     ch_trk_files_to_transform = Channel.empty()
@@ -185,10 +185,14 @@ workflow PEDIATRIC {
                 other: true // Catch-all for any other cases
             }
 
-        ch_reg.witht1
+        ch_coreg_input = ch_reg.witht1
+            .filter { it.size() > 2 && it[1] != null && it[2] != null }
             .map { it -> [ it[0], it[1], it[2], [] ] }
-            .mix(ch_reg.witht2.map { it -> [ it[0], it[2], it[1], [] ] })
-            .set { ch_coreg_input }
+            .mix(
+                ch_reg.witht2
+                    .filter { it.size() > 2 && it[1] != null && it[2] != null }
+                    .map { it -> [ it[0], it[2], it[1], [] ] }
+            )
 
         COREG ( ch_coreg_input )
         ch_versions = ch_versions.mix(COREG.out.versions)
@@ -296,6 +300,7 @@ workflow PEDIATRIC {
             .mix(RECONST_DTIMETRICS.out.rd)
             .mix(RECONST_DTIMETRICS.out.ga)
             .mix(RECONST_DTIMETRICS.out.mode)
+        ch_rgb_files_to_transform = ch_rgb_files_to_transform
             .mix(RECONST_DTIMETRICS.out.rgb)
 
         //
@@ -311,18 +316,6 @@ workflow PEDIATRIC {
         ch_versions = ch_versions.mix(RECONST_FRF.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(RECONST_FRF.out.zip.collect{it[1]})
 
-        //** Run FRF averaging if selected **//
-        ch_frf = RECONST_FRF.out.frf
-        if ( params.frf_mean_frf ) {
-
-            RECONST_MEANFRF ( RECONST_FRF.out.frf.map{ it[1] }.flatten() )
-            ch_versions = ch_versions.mix(RECONST_MEANFRF.out.versions.first())
-            // ch_multiqc_files = ch_multiqc_files.mix(RECONST_MEANFRF.out.zip.collect{it[1]})
-
-            ch_frf = RECONST_FRF.out.map{ it[0] }
-                .combine( RECONST_MEANFRF.out.meanfrf )
-        }
-
         //
         // MODULE: Run MEANFRF
         //
@@ -332,7 +325,7 @@ workflow PEDIATRIC {
             .join(PREPROC_DWI.out.b0_mask)
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
-            .join(ch_frf)
+            .join(RECONST_FRF.out.frf)
             .map{ it + [[], []]}
 
         RECONST_FODF ( ch_reconst_fodf )
@@ -353,9 +346,9 @@ workflow PEDIATRIC {
             .join(PREPROC_T2W.out.t1_final, remainder: true)
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch{
-                infant_t2: it[0].age < 0.5 || it[0].age > 18 && it[4] != null
+                infant_t2: (it[0].age < 0.5 || it[0].age > 18) && it[4] != null
                     return [it[0], it[4], it[1], it[3]]
-                infant_t1: it[0].age < 0.5 || it[0].age > 18 && it[5] != null
+                infant_t1: (it[0].age < 0.5 || it[0].age > 18) && it[5] != null
                     return [it[0], it[5], it[1], it[2]]
                 child_t1: (it[0].age >= 0.5 && it[0].age <= 18) && it[5] != null
                     return [it[0], it[5], it[1], it[2]]
@@ -840,6 +833,15 @@ workflow PEDIATRIC {
                 return tuple(meta, all_files)
             }
 
+        ch_rgb_files_to_transform = ch_rgb_files_to_transform
+            .groupTuple()
+            .map { tuple_elements ->
+                def meta = tuple_elements[0]
+                def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
+                def all_files = file_lists.flatten().findAll { it != null }
+                return tuple(meta, all_files)
+            }
+
         ch_mask_files_to_transform = ch_mask_files_to_transform
             .groupTuple()
             .map { tuple_elements ->
@@ -870,6 +872,7 @@ workflow PEDIATRIC {
         OUTPUT_TEMPLATE_SPACE(
             ANATTODWI.out.t1_warped,
             ch_nifti_files_to_transform,
+            ch_rgb_files_to_transform,
             ch_mask_files_to_transform,
             ch_labels_files_to_transform,
             ch_trk_files_to_transform
@@ -1021,6 +1024,14 @@ workflow PEDIATRIC {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_rh)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.subcortical)
     }
+
+    // Collect the framewise displacement files from the ch_multiqc_files_sub channel
+    ch_fd_files = ch_multiqc_files_sub
+        .filter { _meta, files ->
+            files.any { it.name.contains("dwi_eddy_restricted_movement_rms") }
+        }
+        .map { it[1] }
+    ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_fd_files.flatten())
 
     MULTIQC_GLOBAL (
         Channel.of([meta:[id:"global"], qc_images:[]]),

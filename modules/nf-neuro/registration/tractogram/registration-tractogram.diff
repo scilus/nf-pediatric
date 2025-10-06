@@ -4,7 +4,19 @@ Changes in component 'nf-neuro/registration/tractogram'
 Changes in 'registration/tractogram/main.nf':
 --- modules/nf-neuro/registration/tractogram/main.nf
 +++ modules/nf-neuro/registration/tractogram/main.nf
-@@ -10,7 +10,7 @@
+@@ -1,16 +1,15 @@
+ process REGISTRATION_TRACTOGRAM {
+     tag "$meta.id"
+-    label 'process_single'
++    label 'process_dynamic'
++    memory { "${meta.mem} B" }
+ 
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
+-        'scilus/scilus:2.0.2' }"
++    container 'scilus/scilus:2.0.2'
+ 
+     input:
      tuple val(meta), path(anat), path(transfo), path(tractogram), path(ref) /* optional, value = [] */, path(deformation) /* optional, value = [] */
  
      output:
@@ -13,16 +25,17 @@ Changes in 'registration/tractogram/main.nf':
      path "versions.yml"           , emit: versions
  
      when:
-@@ -38,23 +38,31 @@
+@@ -38,23 +37,33 @@
          ext=\${tractogram#*.}
          bname=\$(basename \${tractogram} .\${ext})
  
 -        scil_tractogram_apply_transform.py \$tractogram $anat $transfo tmp.trk\
-+        if [[ \$ext -eq "h5" ]]; then
++        if [[ \$ext == "h5" ]]; then
 +            scil_tractogram_apply_transform_to_hdf5.py \$tractogram $anat $transfo \
 +                        ${prefix}__\${bname}${suffix}.\${ext} \
                          $in_deformation\
                          $inverse\
++                        $cut_invalid\
                          $reverse_operation\
                          $force\
                          $reference
@@ -30,6 +43,7 @@ Changes in 'registration/tractogram/main.nf':
 +            scil_tractogram_apply_transform.py \$tractogram $anat $transfo tmp.trk\
 +                            $in_deformation\
 +                            $inverse\
++                            $cut_invalid\
 +                            $reverse_operation\
 +                            $force\
 +                            $reference

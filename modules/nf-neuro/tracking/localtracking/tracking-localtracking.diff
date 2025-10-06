@@ -1,21 +1,26 @@
 Changes in component 'nf-neuro/tracking/localtracking'
+'modules/nf-neuro/tracking/localtracking/environment.yml' is unchanged
 'modules/nf-neuro/tracking/localtracking/meta.yml' is unchanged
 Changes in 'tracking/localtracking/main.nf':
 --- modules/nf-neuro/tracking/localtracking/main.nf
 +++ modules/nf-neuro/tracking/localtracking/main.nf
-@@ -1,6 +1,6 @@
+@@ -1,10 +1,8 @@
  process TRACKING_LOCALTRACKING {
      tag "$meta.id"
 -    label 'process_high_memory'
 +    label 'process_tracking'
  
-     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-         'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
+-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+-        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
+-        'scilus/scilus:2.0.2' }"
++    container 'scilus/scilus:2.0.2'
+ 
+     input:
+     tuple val(meta), path(wm), path(fodf), path(fa)
 
-'modules/nf-neuro/tracking/localtracking/environment.yml' is unchanged
-'modules/nf-neuro/tracking/localtracking/tests/nextflow_fa.config' is unchanged
-'modules/nf-neuro/tracking/localtracking/tests/main.nf.test' is unchanged
-'modules/nf-neuro/tracking/localtracking/tests/tags.yml' is unchanged
 'modules/nf-neuro/tracking/localtracking/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/tracking/localtracking/tests/nextflow_fa.config' is unchanged
+'modules/nf-neuro/tracking/localtracking/tests/tags.yml' is unchanged
 'modules/nf-neuro/tracking/localtracking/tests/nextflow_wm.config' is unchanged
+'modules/nf-neuro/tracking/localtracking/tests/main.nf.test' is unchanged
 ************************************************************
