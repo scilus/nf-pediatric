@@ -3,10 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - [Unreleased]
+## [0.1.0] - [2025-10-06]
 
 ### `Added`
 
+- [Documentation site](https://github.com/scilus/nf-pediatric-documentation) describing requirements, inputs, outputs, parameters, etc.
 - Framewise displacement metric in both multiqc reports ([#29](https://github.com/scilus/nf-pediatric/issues/29))
 - Age-matched BundleSeg WM bundle atlas for age-adaptable bundle extraction.
 - Normative curves for prior determination in FRF and COMMIT modules.
