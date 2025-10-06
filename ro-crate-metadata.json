@@ -22,7 +22,7 @@
             "@id": "./",
             "@type": "Dataset",
             "creativeWorkStatus": "Stable",
-            "datePublished": "2025-08-13T17:07:36+00:00",
+            "datePublished": "2025-10-06T17:49:17+00:00",
             "description": "# nf-pediatric\n\n[![GitHub Actions CI Status](https://github.com/scilus/nf-pediatric/actions/workflows/nf-test.yml/badge.svg?branch=main)](https://github.com/scilus/nf-pediatric/actions/workflows/nf-test.yml)\n[![GitHub Actions Linting Status](https://github.com/scilus/nf-pediatric/actions/workflows/linting.yml/badge.svg?branch=main)](https://github.com/scilus/nf-pediatric/actions/workflows/linting.yml)\n[![Deploy documentation](https://github.com/scilus/nf-pediatric/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/scilus/nf-pediatric/actions/workflows/deploy.yml)\n[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)\n[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)\n[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.5-23aa62.svg)](https://www.nextflow.io/)\n[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)\n[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)\n\n## Introduction\n\n**nf-pediatric** is an end-to-end connectomics pipeline for pediatric (0-18y) dMRI and sMRI brain scans. It performs preprocessing, tractography, t1 reconstruction, cortical and subcortical segmentation, and connectomics.\n\n![nf-pediatric-schema](/assets/nf-pediatric-schema.png)\n\n## Documentation\n\nIf you want to use `nf-pediatric`, head over to our documentation: https://scilus.github.io/nf-pediatric/ !\n\nYou will find detailed instructions on how to organize your inputs, launch the pipeline, and analyze your processed results.\n\n**If you encounter bugs or issues, feel free to open an issue!**\n\n## Credits\n\nnf-pediatric was originally written by Anthony Gagnon.\n\nWe thank the following people for their extensive assistance in the development of this pipeline:\n\n## Contributions and Support\n\nIf you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).\n\n## Citations\n\nAn extensive list of references for the tools used by the pipeline can be found in the [documentation](https://scilus.github.io/nf-pediatric/reference/citation/).\n\nThis pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT license](https://github.com/nf-core/tools/blob/main/LICENSE).\n\n> **The nf-core framework for community-curated bioinformatics pipelines.**\n>\n> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.\n>\n> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).\n",
             "hasPart": [
                 {
@@ -99,7 +99,7 @@
             },
             "mentions": [
                 {
-                    "@id": "#22c39175-bb20-4dc9-9de1-71c334f176c4"
+                    "@id": "#fabe6c49-64ad-4240-ab33-2891232ca145"
                 }
             ],
             "name": "scilus/nf-pediatric"
@@ -128,11 +128,11 @@
             ],
             "creator": [
                 {
-                    "@id": "#Anthony.Gagnon7@usherbrooke.ca"
+                    "@id": "#anthony.gagnon7@usherbrooke.ca"
                 }
             ],
             "dateCreated": "",
-            "dateModified": "2025-08-13T17:07:36Z",
+            "dateModified": "2025-10-06T17:49:17Z",
             "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
             "keywords": [
                 "nf-core",
@@ -143,7 +143,7 @@
             ],
             "maintainer": [
                 {
-                    "@id": "#Anthony.Gagnon7@usherbrooke.ca"
+                    "@id": "#anthony.gagnon7@usherbrooke.ca"
                 }
             ],
             "name": [
@@ -157,10 +157,10 @@
             },
             "url": [
                 "https://github.com/scilus/nf-pediatric",
-                "https://nf-co.re/scilus/nf-pediatric/0.1.0-beta/"
+                "https://nf-co.re/scilus/nf-pediatric/0.1.0/"
             ],
             "version": [
-                "0.1.0-beta"
+                "0.1.0"
             ]
         },
         {
@@ -176,11 +176,11 @@
             "version": "!>=24.10.5"
         },
         {
-            "@id": "#22c39175-bb20-4dc9-9de1-71c334f176c4",
+            "@id": "#fabe6c49-64ad-4240-ab33-2891232ca145",
             "@type": "TestSuite",
             "instance": [
                 {
-                    "@id": "#8ff3854d-421b-4f70-b8f1-b38591af45e5"
+                    "@id": "#a6061c28-0798-4ad2-9311-07f73aa5ec75"
                 }
             ],
             "mainEntity": {
@@ -189,7 +189,7 @@
             "name": "Test suite for scilus/nf-pediatric"
         },
         {
-            "@id": "#8ff3854d-421b-4f70-b8f1-b38591af45e5",
+            "@id": "#a6061c28-0798-4ad2-9311-07f73aa5ec75",
             "@type": "TestInstance",
             "name": "GitHub Actions workflow for testing scilus/nf-pediatric",
             "resource": "repos/scilus/nf-pediatric/actions/workflows/nf-test.yml",
@@ -318,9 +318,9 @@
             "url": "https://nf-co.re/"
         },
         {
-            "@id": "#Anthony.Gagnon7@usherbrooke.ca",
+            "@id": "#anthony.gagnon7@usherbrooke.ca",
             "@type": "Person",
-            "email": "Anthony.Gagnon7@usherbrooke.ca",
+            "email": "anthony.gagnon7@usherbrooke.ca",
             "name": "Anthony Gagnon"
         }
     ]
