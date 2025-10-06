@@ -1580,9 +1580,6 @@
             "$ref": "#/$defs/fodf_options"
         },
         {
-            "$ref": "#/$defs/registration_options"
-        },
-        {
             "$ref": "#/$defs/pft_tracking_options"
         },
         {
