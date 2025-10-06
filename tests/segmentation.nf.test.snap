@@ -33,7 +33,7 @@
                     "freesurfer": "8.0.0"
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0-beta"
+                    "scilus/nf-pediatric": "v0.1.0"
                 }
             },
             [

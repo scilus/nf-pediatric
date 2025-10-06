@@ -105,7 +105,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0-beta"
+                    "scilus/nf-pediatric": "v0.1.0"
                 }
             },
             [
@@ -679,7 +679,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0-beta"
+                    "scilus/nf-pediatric": "v0.1.0"
                 }
             },
             [
