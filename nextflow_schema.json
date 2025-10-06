@@ -675,7 +675,7 @@
                 },
                 "frf_manual_frf": {
                     "type": "string",
-                    "description": "Manual FRF values.(e.g. '15,4,4'). This is set from the normative curves. Use this option only to apply a single FRF to every participants.",
+                    "description": "Manual FRF values.(e.g. '15,4,4'). This is set from the normative curves. Use this option only to apply a single FRF to every participants. For more information, please see [the documentation](https://scilus.github.io/nf-pediatric/guides/priors/).",
                     "fa_icon": "fas fa-brain",
                     "hidden": false
                 }
