@@ -19,7 +19,7 @@
 
 If you want to use `nf-pediatric`, head over to our documentation: https://scilus.github.io/nf-pediatric/ !
 
-You will find detailed instructions on how to organize your inputs, launch the pipeline, and analyze your processed results. 
+You will find detailed instructions on how to organize your inputs, launch the pipeline, and analyze your processed results.
 
 **If you encounter bugs or issues, feel free to open an issue!**
 
