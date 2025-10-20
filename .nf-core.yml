@@ -27,8 +27,8 @@ lint:
     - .gitignore
   multiqc_config: false
   nextflow_config:
-  - manifest.name
-  - manifest.homePage
+    - manifest.name
+    - manifest.homePage
   template_strings: false
 nf_core_version: 3.4.1
 repository_type: pipeline
