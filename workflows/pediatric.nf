@@ -599,25 +599,17 @@ workflow PEDIATRIC {
         if ( ! params.tracking ) {
             FETCH_DERIVATIVES ( params.input_deriv )
 
-            ch_fa_md = FETCH_DERIVATIVES.out.metrics
+            ch_fa = FETCH_DERIVATIVES.out.metrics
                 .map { meta, files ->
                     def fa = files.findAll { it.name.contains('desc-fa.nii.gz') }
-                    def md = files.findAll { it.name.contains('desc-md.nii.gz') }
 
                     // ** Some logging if no files exists ** //
-                    if ( fa.size() == 0 && md.size() == 0 ) {
-                        error "No FA or MD files have been found in your derivatives folder. " +
+                    if ( fa.size() == 0 ) {
+                        error "No FA file have been found in your derivatives folder. " +
                         "Please validate your structure respects the BIDS specification."
                     }
-                    return [ meta, fa, md ]
+                    return [ meta, fa ]
                 }
-                .branch {
-                    infant: it[0].age < 0.5 || it[0].age > 18
-                        return [ it[0], it[2] ]
-                    child: true // Catch-all, unlikely that FA is there without MD.
-                        return [ it[0], it[1] ]
-                }
-            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
 
             ch_metrics = FETCH_DERIVATIVES.out.metrics
 
@@ -625,15 +617,7 @@ workflow PEDIATRIC {
 
             ch_trk = FETCH_DERIVATIVES.out.trk
         } else {
-            ch_fa_md = RECONST_DTIMETRICS.out.fa
-                .join(RECONST_DTIMETRICS.out.md)
-                .branch {
-                    infant: it[0].age < 0.5 || it[0].age > 18
-                        return [ it[0], it[2] ]
-                    child: true // Catch all, should work also with infant, but not optimal.
-                        return [ it[0], it[1] ]
-                }
-            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
+            ch_fa = RECONST_DTIMETRICS.out.fa
 
             ch_metrics = RECONST_DTIMETRICS.out.fa
                 .join(RECONST_DTIMETRICS.out.md)
@@ -652,7 +636,7 @@ workflow PEDIATRIC {
         // SUBWORKFLOW: Run BUNDLE_SEG
         //
         BUNDLE_SEG(
-            ch_fa_md,
+            ch_fa,
             ch_trk
         )
         ch_versions = ch_versions.mix(BUNDLE_SEG.out.versions)
@@ -663,6 +647,7 @@ workflow PEDIATRIC {
         TRACTOMETRY (
             BUNDLE_SEG.out.bundles,
             ch_metrics,
+            BUNDLE_SEG.out.centroids,
             Channel.empty(),
             ch_fodf
         )

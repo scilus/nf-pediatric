@@ -1,6 +1,5 @@
 include { TRACTOGRAM_REMOVEINVALID    } from '../../../modules/nf-neuro/tractogram/removeinvalid/main'
 include { BUNDLE_FIXELAFD             } from '../../../modules/nf-neuro/bundle/fixelafd/main'
-include { BUNDLE_CENTROID             } from '../../../modules/nf-neuro/bundle/centroid/main'
 include { BUNDLE_LABELMAP             } from '../../../modules/nf-neuro/bundle/labelmap/main'
 include { BUNDLE_UNIFORMIZE           } from '../../../modules/nf-neuro/bundle/uniformize/main'
 include { BUNDLE_STATS                } from '../../../modules/nf-neuro/bundle/stats/main'
@@ -10,6 +9,7 @@ workflow TRACTOMETRY {
     take:
         ch_bundles          // channel: [ val(meta), [ bundles ] ]
         ch_metrics          // channel: [ val(meta), [ metrics ] ]
+        ch_centroids        // channel: [ val(meta), [ centroids ] ]
         ch_lesion_mask      // channel: [ val(meta), lesions ]
         ch_fodf             // channel: [ val(meta), fodf ]
 
@@ -32,19 +32,15 @@ workflow TRACTOMETRY {
         .groupTuple(by: 0) // [ meta, [ metrics ] ]
         .map{ meta, metrics -> [ meta, metrics.flatten() ]}
 
-    // ** Compute the centroids ** //
-    BUNDLE_CENTROID( TRACTOGRAM_REMOVEINVALID.out.tractograms )
-    ch_versions = ch_versions.mix(BUNDLE_CENTROID.out.versions)
-
     // ** Compute label maps and uniformize the bundles ** //
     ch_label_map = TRACTOGRAM_REMOVEINVALID.out.tractograms
-        .join( BUNDLE_CENTROID.out.centroids )
+        .join( ch_centroids )
 
     BUNDLE_LABELMAP ( ch_label_map )
     ch_versions = ch_versions.mix(BUNDLE_LABELMAP.out.versions)
 
     ch_label_trk = BUNDLE_LABELMAP.out.labels_trk
-        .join( BUNDLE_CENTROID.out.centroids )
+        .join( ch_centroids )
 
     BUNDLE_UNIFORMIZE ( ch_label_trk )
     ch_versions = ch_versions.mix(BUNDLE_UNIFORMIZE.out.versions)
