@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Robustify tractometry steps by using centroids from the WM atlas rather than subject-specific centroids.
 - Handle cases where cortical segmentation failed without throwing an error.
 - Age validation step in M-CRIB-S module.
 - Support custom WM bundle atlas using `--atlas_directory`.
