@@ -63,7 +63,7 @@
                     "bundle/centroid": {
                         "branch": "main",
                         "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
-                        "installed_by": ["modules"],
+                        "installed_by": ["modules", "bundle_seg"],
                         "patch": "modules/nf-neuro/bundle/centroid/bundle-centroid.diff"
                     },
                     "bundle/fixelafd": {
@@ -225,7 +225,7 @@
                     "registration/tractogram": {
                         "branch": "main",
                         "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["modules", "output_template_space"],
+                        "installed_by": ["modules", "output_template_space", "bundle_seg"],
                         "patch": "modules/nf-neuro/registration/tractogram/registration-tractogram.diff"
                     },
                     "segmentation/fastseg": {
