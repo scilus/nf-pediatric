@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Support custom WM bundle atlas using `--atlas_directory`.
 - Fix eddy process when run without topup results ([[#78](https://github.com/scilus/nf-pediatric/issues/78)])
 
 ## [0.1.0] - [2025-10-06]
