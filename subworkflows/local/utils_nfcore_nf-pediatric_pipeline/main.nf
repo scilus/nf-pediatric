@@ -11,6 +11,7 @@
 include { UTILS_NFSCHEMA_PLUGIN     } from '../../nf-core/utils_nfschema_plugin'
 include { paramsSummaryMap          } from 'plugin/nf-schema'
 include { samplesheetToList         } from 'plugin/nf-schema'
+include { paramsHelp                } from 'plugin/nf-schema'
 include { completionEmail           } from '../../nf-core/utils_nfcore_pipeline'
 include { completionSummary         } from '../../nf-core/utils_nfcore_pipeline'
 include { imNotification            } from '../../nf-core/utils_nfcore_pipeline'
@@ -34,6 +35,9 @@ workflow PIPELINE_INITIALISATION {
     outdir            //  string: The output directory where the results will be saved
     input_bids        //  string: Path to input samplesheet
     bids_script       //  string: Path to BIDS layout script
+    help              // boolean: Show help message and exit
+    help_full         // boolean: Show full help message and exit
+    show_hidden       // boolean: Show hidden parameters in help message
 
     main:
 
@@ -52,10 +56,18 @@ workflow PIPELINE_INITIALISATION {
     //
     // Validate parameters and generate parameter summary to stdout
     //
+    command = "nextflow run ${workflow.manifest.name} -profile <tracking,docker,...> --input <BIDS_folder> --outdir <OUTDIR>"
+
     UTILS_NFSCHEMA_PLUGIN (
         workflow,
         validate_params,
-        null
+        null,
+        help,
+        help_full,
+        show_hidden,
+        "",
+        "",
+        command
     )
 
     //

@@ -30,14 +30,22 @@ lint:
     - manifest.name
     - manifest.homePage
   template_strings: false
-nf_core_version: 3.3.2
+nf_core_version: 3.4.1
 repository_type: pipeline
 template:
   author: Anthony Gagnon
-  description: nf-pediatric is a neuroimaging pipeline to process pediatric MRI data
-    (dMRI, and sMRI) ranging from 0-18 years old.
+  description: nf-pediatric is a neuroimaging pipeline to process pediatric MRI
+    data (dMRI, and sMRI) ranging from 0-18 years old.
   force: false
   is_nfcore: false
   name: nf-pediatric
   org: scilus
   outdir: .
+  skip_features:
+    - igenomes
+    - fastqc
+    - changelog
+    - license
+    - test_config
+    - seqera_platform
+  version: 0.1.0
