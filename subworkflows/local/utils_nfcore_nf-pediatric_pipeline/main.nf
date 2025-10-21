@@ -35,6 +35,9 @@ workflow PIPELINE_INITIALISATION {
     outdir            //  string: The output directory where the results will be saved
     input_bids        //  string: Path to input samplesheet
     bids_script       //  string: Path to BIDS layout script
+    help              // boolean: Show help message and exit
+    help_full         // boolean: Show full help message and exit
+    show_hidden       // boolean: Show hidden parameters in help message
 
     main:
 
