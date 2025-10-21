@@ -1033,6 +1033,14 @@
             "description": "Options for BundleSeg",
             "help_text": "These options are used to configure how BundleSeg will recognize and extract bundles from the whole-brain tractogram.",
             "properties": {
+                "atlas_directory": {
+                    "type": "string",
+                    "description": "Path to the WM bundles atlas directory.",
+                    "help_text": "This allows you to specify a custom atlas for bundle segmentation. If not provided, the default atlas included with the pipeline will be used. NOTE: The provided atlas will be used with all participants without accounting for age.",
+                    "fa_icon": "fas fa-brain",
+                    "default": null,
+                    "hidden": false
+                },
                 "minimal_vote_ratio": {
                     "type": "number",
                     "description": "Ratio of vote across models to consider a streamline for saving. If you have 5 input models and a ratio of 0.5, you will need at least 3 votes.",
