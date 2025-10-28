@@ -175,10 +175,9 @@ workflow BUNDLE_SEG {
         if ( params.atlas_directory ) {
             ch_transform_centroids = ch_fa
                 .join( REGISTRATION_ANTS.out.affine )
-                .join( REGISTRATION_ANTS.out.inverse_warp )
-                .combine ( BUNDLE_CENTROID.out.centroids.map { it[1] } )
-                .map { meta, fa, affine, inv_warp, centroid_data ->
-                    [ meta, fa, affine, centroid_data, inv_warp ]
+                .combine ( BUNDLE_CENTROID.out.centroids.map { [ it[1] ] } )
+                .map { meta, fa, affine, centroid_data ->
+                    [ meta, fa, affine, centroid_data, [], [] ]
                 }
         } else {
             // ** Should match the cohort used during recognition ** //
@@ -203,7 +202,6 @@ workflow BUNDLE_SEG {
 
             ch_transform_centroids = ch_fa
                 .join( REGISTRATION_ANTS.out.affine )
-                .join( REGISTRATION_ANTS.out.inverse_warp )
                 .combine( infant00 )
                 .combine( infant03 )
                 .combine( infant06 )
@@ -212,17 +210,17 @@ workflow BUNDLE_SEG {
                 .combine( children )
                 .branch { it ->
                     infant00: it[0].age < 0.125 || it[0].age > 18
-                        return [ it[0], it[1], it[2], it[4], [], it[3] ]
+                        return [ it[0], it[1], it[2], it[3], [], [] ]
                     infant03: (it[0].age >= 0.125 && it[0].age < 0.375)
-                        return [ it[0], it[1], it[2], it[5], [], it[3] ]
+                        return [ it[0], it[1], it[2], it[4], [], [] ]
                     infant06: (it[0].age >= 0.375 && it[0].age < 0.75)
-                        return [ it[0], it[1], it[2], it[6], [], it[3] ]
+                        return [ it[0], it[1], it[2], it[5], [], [] ]
                     infant12: (it[0].age >= 0.75 && it[0].age < 1.5)
-                        return [ it[0], it[1], it[2], it[7], [], it[3] ]
+                        return [ it[0], it[1], it[2], it[6], [], [] ]
                     infant24: (it[0].age >= 1.5 && it[0].age < 3)
-                        return [ it[0], it[1], it[2], it[8], [], it[3] ]
+                        return [ it[0], it[1], it[2], it[7], [], [] ]
                     child: true
-                        return [ it[0], it[1], it[2], it[9], [], it[3] ]
+                        return [ it[0], it[1], it[2], it[8], [], [] ]
                 }
             ch_transform_centroids = ch_transform_centroids.infant00
                 .mix(ch_transform_centroids.infant03)
@@ -230,7 +228,6 @@ workflow BUNDLE_SEG {
                 .mix(ch_transform_centroids.infant12)
                 .mix(ch_transform_centroids.infant24)
                 .mix(ch_transform_centroids.child)
-                .view()
         }
 
         // ** Apply the transform to the centroids ** //
