@@ -141,7 +141,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Peaks file ** //
-    ch_peaks = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-peaks*",
+    ch_peaks = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-peaks*.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
@@ -158,7 +158,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** fODF file ** //
-    ch_fodf = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-fodf*",
+    ch_fodf = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-fodf*.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
