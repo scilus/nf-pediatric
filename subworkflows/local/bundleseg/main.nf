@@ -6,12 +6,13 @@ include { REGISTRATION_TRACTOGRAM as TRANSFORM_CENTROIDS    } from '../../../mod
 def fetchAtlases(channel, cohort) {
     channel.map { folder ->
         def meta = [id: "BundleSegAtlas", cohort: cohort]
-        def files = [
+        def f = [
             file("${folder}/atlas-${cohort}/*T1w.nii.gz"),
             file("${folder}/atlas-${cohort}/config.json"),
-            file("${folder}/atlas-${cohort}/atlas/")
+            file("${folder}/atlas-${cohort}/atlas/"),
+            file("${folder}/atlas-${cohort}/centroids/")
         ]
-        def flattenedFiles = files.flatten().findAll { it.exists() }
+        def flattenedFiles = f.flatten().findAll { it.exists() }
         [meta] + flattenedFiles
     }
 }
@@ -77,7 +78,7 @@ workflow BUNDLE_SEG {
         }
 
         REGISTRATION_ANTS ( ch_register )
-        ch_versions = ch_versions.mix(REGISTRATION_ANTS.out.versions.first())
+        ch_versions = ch_versions.mix(REGISTRATION_ANTS.out.versions)
 
         // ** Perform bundle recognition and segmentation ** //
         // ** If an external atlas directory is provided, use that. Otherwise, ** //
@@ -125,89 +126,67 @@ workflow BUNDLE_SEG {
         }
 
         BUNDLE_RECOGNIZE ( ch_recognize_bundle )
-        ch_versions = ch_versions.mix(BUNDLE_RECOGNIZE.out.versions.first())
+        ch_versions = ch_versions.mix(BUNDLE_RECOGNIZE.out.versions)
 
-        // ** Compute the centroid of the pop-average bundles ** //
+        // ** Transform the centroid of the pop-average bundles ** //
         if ( params.atlas_directory ) {
             ch_compute_centroids = atlas_average
                 .map { folder ->
                     def meta = [id: "CustomAtlas"]
-                    def files = file("${folder}/*.trk")
+                    def files = file("${folder}/centroids/*.trk")
                     [meta, files]
                 }
-        } else {
-            ch_compute_centroids = ch_atlas_infant00.map { _meta, _anat, _conf, folder ->
-                def meta = [id: "Infant00"]
-                def files = file("${folder}/pop_average/*.trk")
-                [meta, files]
-                }
-                .mix(ch_atlas_infant03.map { _meta, _anat, _conf, folder ->
-                    def meta = [id: "Infant03"]
-                    def files = file("${folder}/pop_average/*.trk")
-                    [meta, files]
-                    })
-                .mix(ch_atlas_infant06.map { _meta, _anat, _conf, folder ->
-                    def meta = [id: "Infant06"]
-                    def files = file("${folder}/pop_average/*.trk")
-                    [meta, files]
-                })
-                .mix(ch_atlas_infant12.map { _meta, _anat, _conf, folder ->
-                    def meta = [id: "Infant12"]
-                    def files = file("${folder}/pop_average/*.trk")
-                    [meta, files]
-                })
-                .mix(ch_atlas_infant24.map { _meta, _anat, _conf, folder ->
-                    def meta = [id: "Infant24"]
-                    def files = file("${folder}/pop_average/*.trk")
-                    [meta, files]
-                })
-                .mix(ch_atlas_children.map { _meta, _anat, _conf, folder ->
-                    def meta = [id: "Children"]
-                    def files = file("${folder}/pop_average/*.trk")
-                    [meta, files]
-                })
-        }
-
-        BUNDLE_CENTROID ( ch_compute_centroids )
-        ch_versions = ch_versions.mix(BUNDLE_CENTROID.out.versions.first())
-
-        // ** Now we need to transform those centroids to subject space ** //
-        if ( params.atlas_directory ) {
             ch_transform_centroids = ch_fa
                 .join( REGISTRATION_ANTS.out.affine )
-                .combine ( BUNDLE_CENTROID.out.centroids.map { [ it[1] ] } )
+                .combine ( ch_compute_centroids.map { [ it[1] ] } )
                 .map { meta, fa, affine, centroid_data ->
                     [ meta, fa, affine, centroid_data, [], [] ]
                 }
         } else {
-            // ** Should match the cohort used during recognition ** //
-            def infant00 = BUNDLE_CENTROID.out.centroids
-                .filter { it[0].id == "Infant00" }
-                .map { [ it[1] ] }
-            def infant03 = BUNDLE_CENTROID.out.centroids
-                .filter { it[0].id == "Infant03" }
-                .map { [ it[1] ] }
-            def infant06 = BUNDLE_CENTROID.out.centroids
-                .filter { it[0].id == "Infant06" }
-                .map { [ it[1] ] }
-            def infant12 = BUNDLE_CENTROID.out.centroids
-                .filter { it[0].id == "Infant12" }
-                .map { [ it[1] ] }
-            def infant24 = BUNDLE_CENTROID.out.centroids
-                .filter { it[0].id == "Infant24" }
-                .map { [ it[1] ] }
-            def children = BUNDLE_CENTROID.out.centroids
-                .filter { it[0].id == "Children" }
-                .map { [ it[1] ] }
-
+            /* Using included centroids */
+            ch_centroids_infant00 = ch_atlas_infant00.map { _meta, _anat, _conf, _folder, centroids ->
+                def meta = [id: "Infant00"]
+                def files = file("${centroids}/*.trk")
+                [meta, files]
+            }
+            ch_centroids_infant03 = ch_atlas_infant03.map { _meta, _anat, _conf, _folder, centroids ->
+                def meta = [id: "Infant03"]
+                def files = file("${centroids}/*.trk")
+                [meta, files]
+            }
+            ch_centroids_infant06 = ch_atlas_infant06.map { _meta, _anat, _conf, _folder, centroids ->
+                def meta = [id: "Infant06"]
+                def files = file("${centroids}/*.trk")
+                [meta, files]
+            }
+            ch_centroids_infant12 = ch_atlas_infant12.map { _meta, _anat, _conf, _folder, centroids ->
+                def meta = [id: "Infant12"]
+                def files = file("${centroids}/*.trk")
+                [meta, files]
+            }
+            ch_centroids_infant24 = ch_atlas_infant24.map { _meta, _anat, _conf, _folder, centroids ->
+                def meta = [id: "Infant24"]
+                def files = file("${centroids}/*.trk")
+                [meta, files]
+            }
+            ch_centroids_infant24 = ch_atlas_infant24.map { _meta, _anat, _conf, _folder, centroids ->
+                def meta = [id: "Infant24"]
+                def files = file("${centroids}/*.trk")
+                [meta, files]
+            }
+            ch_centroids_children = ch_atlas_children.map { _meta, _anat, _conf, _folder, centroids ->
+                    def meta = [id: "Children"]
+                    def files = file("${centroids}/*.trk")
+                    [meta, files]
+            }
             ch_transform_centroids = ch_fa
                 .join( REGISTRATION_ANTS.out.affine )
-                .combine( infant00 )
-                .combine( infant03 )
-                .combine( infant06 )
-                .combine( infant12 )
-                .combine( infant24 )
-                .combine( children )
+                .combine( ch_centroids_infant00.map{ [ it[1] ] } )
+                .combine( ch_centroids_infant03.map{ [ it[1] ] } )
+                .combine( ch_centroids_infant06.map{ [ it[1] ] } )
+                .combine( ch_centroids_infant12.map{ [ it[1] ] } )
+                .combine( ch_centroids_infant24.map{ [ it[1] ] } )
+                .combine( ch_centroids_children.map{ [ it[1] ] } )
                 .branch { it ->
                     infant00: it[0].age < 0.125 || it[0].age > 18
                         return [ it[0], it[1], it[2], it[3], [], [] ]
@@ -232,7 +211,7 @@ workflow BUNDLE_SEG {
 
         // ** Apply the transform to the centroids ** //
         TRANSFORM_CENTROIDS ( ch_transform_centroids )
-        ch_versions = ch_versions.mix(TRANSFORM_CENTROIDS.out.versions.first())
+        ch_versions = ch_versions.mix(TRANSFORM_CENTROIDS.out.versions)
 
     emit:
         bundles = BUNDLE_RECOGNIZE.out.bundles                  // channel: [ val(meta), [ bundles ] ]

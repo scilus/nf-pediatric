@@ -4,21 +4,10 @@ Changes in component 'nf-neuro/bundle/recognize'
 Changes in 'bundle/recognize/main.nf':
 --- modules/nf-neuro/bundle/recognize/main.nf
 +++ modules/nf-neuro/bundle/recognize/main.nf
-@@ -2,9 +2,7 @@
-     tag "$meta.id"
-     label 'process_high'
- 
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_latest.sif':
--        'scilus/scilus:latest' }"
-+    container 'scilus/scilus:2.1.0'
- 
-     input:
-         tuple val(meta), path(tractograms), path(transform), path(config), path(directory)
-@@ -49,6 +47,7 @@
+@@ -53,6 +53,7 @@
  
      # dummy output for single bundle
-     touch ${prefix}__AF_L_cleaned.trk
+     touch ${prefix}_AF_L_cleaned.trk
 +    touch ${prefix}__AF_R_cleaned.trk
  
      cat <<-END_VERSIONS > versions.yml
