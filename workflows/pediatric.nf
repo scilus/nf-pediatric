@@ -51,8 +51,8 @@ include { TRACKING_LOCALTRACKING            } from '../modules/nf-neuro/tracking
 include { TRACTOGRAM_MATH                   } from '../modules/local/tractogram/math/main'
 
 // ** BundleSeg ** //
-include { BUNDLE_SEG } from '../subworkflows/nf-neuro/bundle_seg/main'
-include { TRACTOMETRY } from '../subworkflows/local/tractometry/main'
+include { BUNDLE_SEG } from '../subworkflows/local/bundleseg/main'
+include { TRACTOMETRY } from '../subworkflows/nf-neuro/tractometry/main'
 
 // ** Connectomics ** //
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORM_LABELS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
@@ -646,11 +646,13 @@ workflow PEDIATRIC {
         //
         TRACTOMETRY (
             BUNDLE_SEG.out.bundles,
-            ch_metrics,
             BUNDLE_SEG.out.centroids,
+            ch_metrics,
             Channel.empty(),
             ch_fodf
         )
+        ch_versions = ch_versions.mix(TRACTOMETRY.out.versions)
+        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(TRACTOMETRY.out.mean_std_tsv)
 
     }
 
