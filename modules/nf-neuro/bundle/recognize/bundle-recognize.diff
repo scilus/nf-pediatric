@@ -4,10 +4,21 @@ Changes in component 'nf-neuro/bundle/recognize'
 Changes in 'bundle/recognize/main.nf':
 --- modules/nf-neuro/bundle/recognize/main.nf
 +++ modules/nf-neuro/bundle/recognize/main.nf
-@@ -53,6 +53,7 @@
+@@ -35,7 +35,7 @@
+ 
+     for bundle_file in recobundles/*.trk; do
+         bname=\$(basename \${bundle_file} .trk | sed 's/${prefix}_\\+//')
+-        out_cleaned=${prefix}_\${bname}_cleaned.trk
++        out_cleaned=${prefix}__\${bname}_cleaned.trk
+         scil_bundle_reject_outliers \${bundle_file} "\${out_cleaned}" ${outlier_alpha}
+     done
+ 
+@@ -52,7 +52,8 @@
+     scil_bundle_reject_outliers -h
  
      # dummy output for single bundle
-     touch ${prefix}_AF_L_cleaned.trk
+-    touch ${prefix}_AF_L_cleaned.trk
++    touch ${prefix}__AF_L_cleaned.trk
 +    touch ${prefix}__AF_R_cleaned.trk
  
      cat <<-END_VERSIONS > versions.yml

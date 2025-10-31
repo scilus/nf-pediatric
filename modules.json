@@ -260,7 +260,7 @@
                     },
                     "tractogram/removeinvalid": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "d3bb6fab899d07f7d325eaacba2d6801a7f49b96",
                         "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/tractogram/removeinvalid/tractogram-removeinvalid.diff"
                     },
