@@ -751,6 +751,7 @@ workflow PEDIATRIC {
                 def label = reg_label ?: warped_label
                 [id, trk, label]
             }
+            .filter { it[2] != null }
 
         CONNECTIVITY_DECOMPOSE ( ch_decompose )
         ch_versions = ch_versions.mix(CONNECTIVITY_DECOMPOSE.out.versions.first())
