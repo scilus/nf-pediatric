@@ -4,18 +4,16 @@ Changes in component 'nf-neuro/tractogram/removeinvalid'
 Changes in 'tractogram/removeinvalid/main.nf':
 --- modules/nf-neuro/tractogram/removeinvalid/main.nf
 +++ modules/nf-neuro/tractogram/removeinvalid/main.nf
-@@ -2,9 +2,7 @@
+@@ -2,7 +2,7 @@
      tag "$meta.id"
      label 'process_single'
  
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
--        'scilus/scilus:2.0.2' }"
-+    container 'scilus/scilus:2.0.2'
+-    container "scilus/scilpy:2.2.0_cpu"
++    container "scilus/scilpy:2.2.1_cpu"
  
      input:
          tuple val(meta), path(tractogram)
-@@ -31,7 +29,9 @@
+@@ -28,7 +28,9 @@
      for tractogram in ${tractogram};
          do \
          ext=\${tractogram#*.}
@@ -24,9 +22,9 @@ Changes in 'tractogram/removeinvalid/main.nf':
 +        bname=\${tractogram:\$pos}
 +        bname=\$(basename \$bname \${ext})
  
-         scil_tractogram_remove_invalid.py \$tractogram ${prefix}__\${bname}${suffix}.\${ext}\
+         scil_tractogram_remove_invalid \$tractogram ${prefix}__\${bname}${suffix}.\${ext}\
                          $cut_invalid\
-@@ -59,7 +59,9 @@
+@@ -54,7 +56,9 @@
      for tractogram in ${tractogram};
          do \
          ext=\${tractogram#*.}
