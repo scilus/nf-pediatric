@@ -53,6 +53,7 @@ include { TRACTOGRAM_MATH                   } from '../modules/local/tractogram/
 // ** BundleSeg ** //
 include { BUNDLE_SEG } from '../subworkflows/local/bundleseg/main'
 include { TRACTOMETRY } from '../subworkflows/nf-neuro/tractometry/main'
+include { MERGE_TSV } from '../modules/local/utils/mergetsv.nf'
 
 // ** Connectomics ** //
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORM_LABELS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
@@ -652,7 +653,17 @@ workflow PEDIATRIC {
             ch_fodf
         )
         ch_versions = ch_versions.mix(TRACTOMETRY.out.versions)
-        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(TRACTOMETRY.out.mean_std_tsv)
+
+        //
+        // MODULE: MERGE_TSV
+        //
+        ch_merge_tsv = TRACTOMETRY.out.mean_std_tsv
+            .join(TRACTOMETRY.out.mean_std_per_point_tsv)
+            .collect()
+            .map { it -> [[id: "global"], [it[1], it[2]]] }
+
+        MERGE_TSV( ch_merge_tsv )
+        ch_versions = ch_versions.mix(MERGE_TSV.out.versions)
 
     }
 
@@ -1011,6 +1022,10 @@ workflow PEDIATRIC {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_lh)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_rh)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.subcortical)
+    }
+    if ( params.bundling ) {
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(MERGE_TSV.out.bundle_mean_stats)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(MERGE_TSV.out.bundle_point_stats)
     }
 
     // Collect the framewise displacement files from the ch_multiqc_files_sub channel

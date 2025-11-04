@@ -88,7 +88,7 @@ main:
     endpoints_head                  = BUNDLE_STATS.out.endpoints_head ?: Channel.empty()
     endpoints_tail                  = BUNDLE_STATS.out.endpoints_tail ?: Channel.empty()
     lesion_map                      = BUNDLE_STATS.out.lesion_map ?: Channel.empty()
-    mean_std_tsv                    = BUNDLE_STATS.out.mean_std_tsv ?: Channel.empty()
-    mean_std_per_point_tsv          = BUNDLE_STATS.out.mean_std_per_point_tsv ?: Channel.empty()
+    mean_std_tsv                    = BUNDLE_STATS.out.mean_tsv ?: Channel.empty()
+    mean_std_per_point_tsv          = BUNDLE_STATS.out.mean_per_point_tsv ?: Channel.empty()
     versions = ch_versions
 }
