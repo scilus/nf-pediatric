@@ -266,7 +266,7 @@
                     },
                     "tractogram/resample": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "5435f43bcda7f9a32d101137af36a9272d54f58e",
                         "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/tractogram/resample/tractogram-resample.diff"
                     },
