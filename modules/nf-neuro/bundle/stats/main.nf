@@ -23,8 +23,8 @@ process BUNDLE_STATS {
     tuple val(meta), path("*_endpoints_map_head.nii.gz")        , emit: endpoints_head, optional: true
     tuple val(meta), path("*_endpoints_map_tail.nii.gz")        , emit: endpoints_tail, optional: true
     tuple val(meta), path("*_lesion_map.nii.gz")                , emit: lesion_map, optional: true
-    tuple val(meta), path("*__mean_std_stats.tsv")              , emit: mean_std_tsv, optional: true
-    tuple val(meta), path("*__mean_std_per_point_stats.tsv")    , emit: mean_std_per_point_tsv, optional: true
+    tuple val(meta), path("*_desc-mean_stats.tsv")              , emit: mean_tsv, optional: true
+    tuple val(meta), path("*_desc-point_stats.tsv")             , emit: mean_per_point_tsv, optional: true
     path "versions.yml"                                         , emit: versions
 
     when:
@@ -162,7 +162,8 @@ process BUNDLE_STATS {
     if [[ "$volume" ]];
     then
         echo "Merging Bundle_Volume"
-        scil_json_merge_entries *_volume_stat.json ${prefix}__volume.json --no_list --add_parent_key ${prefix}
+        scil_json_merge_entries *_volume_stat.json ${prefix}__volume.json --no_list --add_parent_key ${prefix} \
+            --keep_separate
         #rm *_volume_stat.json
 
         if [[ "$lesions_stats" ]];
@@ -285,6 +286,86 @@ process BUNDLE_STATS {
         )
     ' "\$f" > "\$out"
 
+    f="${prefix}__volume.json"
+    out="${prefix}__volume.tsv"
+    jq -r --arg sid "${prefix}" '
+    .[\$sid] as \$s
+    # collect bundles that are objects
+    | ( \$s | to_entries | map(select(.value | type == "object")) ) as \$bundles
+    # union of keys under each bundle object
+    | ( \$bundles | map(.value | keys) | add // [] | unique | sort ) as \$metrics
+    # header
+    | ( ["sample","bundle"] + \$metrics ) | @tsv,
+        # rows
+        ( \$bundles[]
+        | . as \$b
+        | (\$b.value) as \$vals
+        | ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized)\$"; "") ) ] + (\$metrics | map( (\$vals[.] // "") )) )
+        | @tsv
+        )
+    ' "\$f" > "\$out"
+
+    f="${prefix}__length_stats.json"
+    out="${prefix}__length.tsv"
+    jq -r --arg sid "${prefix}" '
+    .[\$sid] as \$s
+    | ( \$s | to_entries | map(select(.value | type == "object")) ) as \$bundles
+    | ( \$bundles | map(.value | keys - ["data_per_point_keys","data_per_streamline_keys"]) | add // [] | unique | sort ) as \$metrics
+    | ( ["sample","bundle"] + \$metrics ) | @tsv,
+        ( \$bundles[]
+        | . as \$b
+        | (\$b.value) as \$vals
+    | ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ) ] + (\$metrics | map( (\$vals[.] // "") )) )
+        | @tsv
+        )
+    ' "\$f" > "\$out"
+
+    f="${prefix}__volume_per_label.json"
+    out="${prefix}__volume_per_label.tsv"
+    jq -r --arg sid "${prefix}" '
+    .[\$sid] as \$s
+    | ( \$s | to_entries | map(select(.value | type == "object")) ) as \$bundles
+    | ( \$bundles | map(.value | keys - ["data_per_point_keys","data_per_streamline_keys"]) | add // [] | unique | sort ) as \$metrics
+    | ( ["sample","bundle","points"] + \$metrics ) | @tsv,
+        ( \$bundles[]
+        | . as \$b
+        | (\$b.value) as \$vals
+        | ( \$b.value
+            | to_entries
+            | map(select(.value | type == "object") | .value | keys)
+            | add // []
+            | unique
+            | sort
+            ) as \$bpoints
+        | ( (\$bpoints | length) as \$n
+            | if \$n == 0 then
+                ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ), "" ] + (\$metrics | map( (\$vals[.] // "") )) )
+                else
+                ( \$bpoints[]
+                    | . as \$pt
+                    | ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ), \$pt ] + (\$metrics | map( if ( \$vals[.] | type ) == "object" then ( \$vals[.][\$pt] // "" ) else ( \$vals[.] // "" ) end )) )
+                )
+                end
+            )
+        | @tsv
+        )
+    ' "\$f" > "\$out"
+    rm *.json
+
+    # Now, let's merge some of the TSVs together.
+    f1=${prefix}__mean_std_stats.tsv; f2=${prefix}__volume.tsv; out=tmp.tsv
+    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
+    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-2)" "\$(echo "\$h1" | cut -f3-)" "\$(echo "\$h2" | cut -f3-)" > "\$out" \
+        && paste <(tail -n +2 "\$f1" | cut -f1-2) <(tail -n +2 "\$f1" | cut -f3-) <(tail -n +2 "\$f2" | cut -f3-) >> "\$out"
+    f1=tmp.tsv; f2=${prefix}__length.tsv; out=${prefix}_desc-mean_stats.tsv
+    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
+    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-2)" "\$(echo "\$h1" | cut -f3-)" "\$(echo "\$h2" | cut -f3-)" > "\$out" \
+        && paste <(tail -n +2 "\$f1" | cut -f1-2) <(tail -n +2 "\$f1" | cut -f3-) <(tail -n +2 "\$f2" | cut -f3-) >> "\$out"
+    f1=${prefix}__mean_std_per_point_stats.tsv; f2=${prefix}__volume_per_label.tsv; out=${prefix}_desc-point_stats.tsv
+    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
+    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-3)" "\$(echo "\$h1" | cut -f4-)" "\$(echo "\$h2" | cut -f4-)" > "\$out" \
+        && paste <(tail -n +2 "\$f1" | cut -f1-3) <(tail -n +2 "\$f1" | cut -f4-) <(tail -n +2 "\$f2" | cut -f4-) >> "\$out"
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
@@ -305,23 +386,11 @@ process BUNDLE_STATS {
     scil_bundle_mean_std -h
     scil_json_merge_entries -h
 
-    touch ${prefix}__length_stats.json
-    touch ${prefix}__endpoints_map_raw.json
-    touch ${prefix}__endpoints_metric_stats.json
-    touch ${prefix}__mean_std_stats.json
-    touch ${prefix}__volume.json
-    touch ${prefix}__volume_lesions.json
-    touch ${prefix}__streamline_count.json
-    touch ${prefix}__streamline_count_lesions.json
-    touch ${prefix}__volume_per_label.json
-    touch ${prefix}__volume_per_label_lesions.json
-    touch ${prefix}__mean_std_per_point_stats.json
     touch ${prefix}_endpoints_map_head.nii.gz
     touch ${prefix}_endpoints_map_tail.nii.gz
-    touch ${prefix}__lesion_stats.json
     touch ${prefix}_lesion_map.nii.gz
-    touch ${prefix}__mean_std_stats.tsv
-    touch ${prefix}__mean_std_per_point_stats.tsv
+    touch ${prefix}_desc-mean_stats.tsv
+    touch ${prefix}_desc-point_stats.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
