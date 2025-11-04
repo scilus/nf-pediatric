@@ -92,7 +92,7 @@
                     },
                     "bundle/uniformize": {
                         "branch": "main",
-                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
+                        "git_sha": "1f0d9c4423eef56edd81ffa571206f32e3b2d11a",
                         "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/bundle/uniformize/bundle-uniformize.diff"
                     },
