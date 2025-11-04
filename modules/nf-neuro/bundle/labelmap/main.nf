@@ -2,7 +2,7 @@ process BUNDLE_LABELMAP {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container "scilus/scilpy:2.2.1_cpu"
 
     input:
         tuple val(meta), path(bundles), path(centroids)
@@ -21,21 +21,19 @@ process BUNDLE_LABELMAP {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def nb_points = task.ext.nb_points ? "--nb_pts ${task.ext.nb_points} ": ""
     def colormap = task.ext.colormap ? "--colormap ${task.ext.colormap} ": ""
-    def new_labelling = task.ext.new_labelling ? "--new_labelling ": ""
 
     """
     bundles=(${bundles.join(" ")})
     centroids=(${centroids.join(" ")})
 
     for index in \${!bundles[@]};
-        do
-        ext=\${bundles[index]#*.}
+        do ext=\${bundles[index]#*.}
         pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
         bname=\${bundles[index]:\$pos}
         bname=\$(basename \${bname} .\${ext})
 
-        scil_bundle_label_map.py \${bundles[index]} \${centroids[index]} \
-            tmp_out $nb_points $colormap $new_labelling -f
+        scil_bundle_label_map \${bundles[index]} \${centroids[index]} \
+            tmp_out $nb_points $colormap -f
 
         mv tmp_out/labels_map.nii.gz ${prefix}__\${bname}_labels.nii.gz
         mv tmp_out/distance_map.nii.gz ${prefix}__\${bname}_distances.nii.gz
@@ -45,21 +43,20 @@ process BUNDLE_LABELMAP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    scil_bundle_label_map.py -h
+    scil_bundle_label_map -h
 
     bundles=(${bundles.join(" ")})
     centroids=(${centroids.join(" ")})
 
     for index in \${!bundles[@]};
-        do
-        ext=\${bundles[index]#*.}
+        do ext=\${bundles[index]#*.}
         pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
         bname=\${bundles[index]:\$pos}
         bname=\$(basename \${bname} .\${ext})
@@ -72,7 +69,7 @@ process BUNDLE_LABELMAP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }
