@@ -975,7 +975,7 @@
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
-            200,
+            199,
             {
                 "ANATTODWI": {
                     "ants": "2.4.3",
@@ -988,11 +988,20 @@
                 "BET_DWI": {
                     "mrtrix": "3.0.5"
                 },
-                "BUNDLE_CENTROID": {
+                "BUNDLE_FIXELAFD": {
+                    "scilpy": "2.0.2"
+                },
+                "BUNDLE_LABELMAP": {
                     "scilpy": "2.0.2"
                 },
                 "BUNDLE_RECOGNIZE": {
-                    "scilpy": "2.1.0"
+                    "scilpy": "2.2.1"
+                },
+                "BUNDLE_STATS": {
+                    "scilpy": "2.2.1"
+                },
+                "BUNDLE_UNIFORMIZE": {
+                    "scilpy": "2.0.2"
                 },
                 "CONVERT": {
                     "mrconvert": "3.0.5"
@@ -1030,6 +1039,10 @@
                 },
                 "IMAGE_POWDERAVERAGE": {
                     "scilpy": "2.0.2"
+                },
+                "MERGE_TSV": {
+                    "python": "3.10.12",
+                    "pandas": "2.2.3"
                 },
                 "N4_DWI": {
                     "ants": null,
@@ -1084,6 +1097,12 @@
                 "TRACTOGRAM_MATH": {
                     "scilpy": "2.1.0"
                 },
+                "TRACTOGRAM_REMOVEINVALID": {
+                    "scilpy": "2.2.1"
+                },
+                "TRACTOGRAM_RESAMPLE": {
+                    "scilpy": "2.0.2"
+                },
                 "TRANSFORM_CENTROIDS": {
                     "scilpy": "2.0.2"
                 },
@@ -1098,6 +1117,8 @@
             },
             [
                 "README.txt",
+                "bundles_mean_stats.tsv",
+                "bundles_point_stats.tsv",
                 "dataset_description.json",
                 "multiqc",
                 "multiqc/global_multiqc_data",
@@ -1154,8 +1175,6 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-concatenated_tractogram.trk",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-csf_fodf.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-csf_fodf.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-endpoints_map_raw_stats.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-endpoints_metric_stats.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-fa.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-fa.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-fodf.json",
@@ -1164,12 +1183,11 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-ga.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-gm_fodf.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-gm_fodf.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-length_stats.json",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-lesions_map.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-local_tractogram.trk",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-md.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-md.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-mean_std_per_point.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-mean_std_stats.json",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-mean_stats.tsv",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-mode.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-mode.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-nufo.json",
@@ -1177,6 +1195,7 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-peaks.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-peaks.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-pft_tractogram.trk",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-point_stats.tsv",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-preproc_b0.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-preproc_b0.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-preproc_dwi.bval",
@@ -1189,11 +1208,8 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-rd.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-rgb.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-rgb.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-streamline_count.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-tensor.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-tensor.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-volume_per_label.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-volume_stats.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-wm_fodf.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-wm_fodf.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_frf.txt",
@@ -1263,8 +1279,6 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-concatenated_tractogram.trk",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-csf_fodf.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-csf_fodf.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-endpoints_map_raw_stats.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-endpoints_metric_stats.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-fa.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-fa.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-fodf.json",
@@ -1273,12 +1287,11 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-ga.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-gm_fodf.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-gm_fodf.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-length_stats.json",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-lesions_map.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-local_tractogram.trk",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-md.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-md.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-mean_std_per_point.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-mean_std_stats.json",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-mean_stats.tsv",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-mode.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-mode.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-nufo.json",
@@ -1286,6 +1299,7 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-peaks.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-peaks.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-pft_tractogram.trk",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-point_stats.tsv",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-preproc_b0.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-preproc_b0.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-preproc_dwi.bval",
@@ -1298,11 +1312,8 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-rd.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-rgb.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-rgb.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-streamline_count.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-tensor.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-tensor.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-volume_per_label.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-volume_stats.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-wm_fodf.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-wm_fodf.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_frf.txt",
@@ -1366,8 +1377,6 @@
                 "sub-test2/dwi/sub-test2_desc-concatenated_tractogram.trk",
                 "sub-test2/dwi/sub-test2_desc-csf_fodf.json",
                 "sub-test2/dwi/sub-test2_desc-csf_fodf.nii.gz",
-                "sub-test2/dwi/sub-test2_desc-endpoints_map_raw_stats.json",
-                "sub-test2/dwi/sub-test2_desc-endpoints_metric_stats.json",
                 "sub-test2/dwi/sub-test2_desc-fa.json",
                 "sub-test2/dwi/sub-test2_desc-fa.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-fodf.json",
@@ -1376,12 +1385,11 @@
                 "sub-test2/dwi/sub-test2_desc-ga.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-gm_fodf.json",
                 "sub-test2/dwi/sub-test2_desc-gm_fodf.nii.gz",
-                "sub-test2/dwi/sub-test2_desc-length_stats.json",
+                "sub-test2/dwi/sub-test2_desc-lesions_map.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-local_tractogram.trk",
                 "sub-test2/dwi/sub-test2_desc-md.json",
                 "sub-test2/dwi/sub-test2_desc-md.nii.gz",
-                "sub-test2/dwi/sub-test2_desc-mean_std_per_point.json",
-                "sub-test2/dwi/sub-test2_desc-mean_std_stats.json",
+                "sub-test2/dwi/sub-test2_desc-mean_stats.tsv",
                 "sub-test2/dwi/sub-test2_desc-mode.json",
                 "sub-test2/dwi/sub-test2_desc-mode.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-nufo.json",
@@ -1389,6 +1397,7 @@
                 "sub-test2/dwi/sub-test2_desc-peaks.json",
                 "sub-test2/dwi/sub-test2_desc-peaks.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-pft_tractogram.trk",
+                "sub-test2/dwi/sub-test2_desc-point_stats.tsv",
                 "sub-test2/dwi/sub-test2_desc-preproc_b0.json",
                 "sub-test2/dwi/sub-test2_desc-preproc_b0.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-preproc_dwi.bval",
@@ -1401,11 +1410,8 @@
                 "sub-test2/dwi/sub-test2_desc-rd.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-rgb.json",
                 "sub-test2/dwi/sub-test2_desc-rgb.nii.gz",
-                "sub-test2/dwi/sub-test2_desc-streamline_count.json",
                 "sub-test2/dwi/sub-test2_desc-tensor.json",
                 "sub-test2/dwi/sub-test2_desc-tensor.nii.gz",
-                "sub-test2/dwi/sub-test2_desc-volume_per_label.json",
-                "sub-test2/dwi/sub-test2_desc-volume_stats.json",
                 "sub-test2/dwi/sub-test2_desc-wm_fodf.json",
                 "sub-test2/dwi/sub-test2_desc-wm_fodf.nii.gz",
                 "sub-test2/dwi/sub-test2_frf.txt",
@@ -1469,8 +1475,6 @@
                 "sub-test4/dwi/sub-test4_desc-concatenated_tractogram.trk",
                 "sub-test4/dwi/sub-test4_desc-csf_fodf.json",
                 "sub-test4/dwi/sub-test4_desc-csf_fodf.nii.gz",
-                "sub-test4/dwi/sub-test4_desc-endpoints_map_raw_stats.json",
-                "sub-test4/dwi/sub-test4_desc-endpoints_metric_stats.json",
                 "sub-test4/dwi/sub-test4_desc-fa.json",
                 "sub-test4/dwi/sub-test4_desc-fa.nii.gz",
                 "sub-test4/dwi/sub-test4_desc-fodf.json",
@@ -1479,12 +1483,11 @@
                 "sub-test4/dwi/sub-test4_desc-ga.nii.gz",
                 "sub-test4/dwi/sub-test4_desc-gm_fodf.json",
                 "sub-test4/dwi/sub-test4_desc-gm_fodf.nii.gz",
-                "sub-test4/dwi/sub-test4_desc-length_stats.json",
+                "sub-test4/dwi/sub-test4_desc-lesions_map.nii.gz",
                 "sub-test4/dwi/sub-test4_desc-local_tractogram.trk",
                 "sub-test4/dwi/sub-test4_desc-md.json",
                 "sub-test4/dwi/sub-test4_desc-md.nii.gz",
-                "sub-test4/dwi/sub-test4_desc-mean_std_per_point.json",
-                "sub-test4/dwi/sub-test4_desc-mean_std_stats.json",
+                "sub-test4/dwi/sub-test4_desc-mean_stats.tsv",
                 "sub-test4/dwi/sub-test4_desc-mode.json",
                 "sub-test4/dwi/sub-test4_desc-mode.nii.gz",
                 "sub-test4/dwi/sub-test4_desc-nufo.json",
@@ -1492,6 +1495,7 @@
                 "sub-test4/dwi/sub-test4_desc-peaks.json",
                 "sub-test4/dwi/sub-test4_desc-peaks.nii.gz",
                 "sub-test4/dwi/sub-test4_desc-pft_tractogram.trk",
+                "sub-test4/dwi/sub-test4_desc-point_stats.tsv",
                 "sub-test4/dwi/sub-test4_desc-preproc_b0.json",
                 "sub-test4/dwi/sub-test4_desc-preproc_b0.nii.gz",
                 "sub-test4/dwi/sub-test4_desc-preproc_dwi.bval",
@@ -1504,11 +1508,8 @@
                 "sub-test4/dwi/sub-test4_desc-rd.nii.gz",
                 "sub-test4/dwi/sub-test4_desc-rgb.json",
                 "sub-test4/dwi/sub-test4_desc-rgb.nii.gz",
-                "sub-test4/dwi/sub-test4_desc-streamline_count.json",
                 "sub-test4/dwi/sub-test4_desc-tensor.json",
                 "sub-test4/dwi/sub-test4_desc-tensor.nii.gz",
-                "sub-test4/dwi/sub-test4_desc-volume_per_label.json",
-                "sub-test4/dwi/sub-test4_desc-volume_stats.json",
                 "sub-test4/dwi/sub-test4_desc-wm_fodf.json",
                 "sub-test4/dwi/sub-test4_desc-wm_fodf.nii.gz",
                 "sub-test4/dwi/sub-test4_frf.txt",
@@ -1537,7 +1538,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-10-21T16:00:06.795656"
+        "timestamp": "2025-11-03T21:10:44.489792"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
