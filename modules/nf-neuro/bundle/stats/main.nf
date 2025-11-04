@@ -2,7 +2,7 @@ process BUNDLE_STATS {
     tag "$meta.id"
     label 'process_single'
 
-    container "scilus/scilus:2.2.1"
+    container "scilus/scilpy:2.2.1_cpu"
 
     input:
     tuple val(meta), path(bundles), path(labels_map), path(metrics), path(lesions)
