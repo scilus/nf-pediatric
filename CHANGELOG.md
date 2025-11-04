@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Handle cases where cortical segmentation failed without throwing an error.
+- Age validation step in M-CRIB-S module.
 - Support custom WM bundle atlas using `--atlas_directory`.
 - Fix eddy process when run without topup results ([[#78](https://github.com/scilus/nf-pediatric/issues/78)])
 
