@@ -2,7 +2,7 @@ process BUNDLE_FIXELAFD {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container "scilus/scilpy:2.2.1_cpu"
 
     input:
         tuple val(meta), path(bundles), path(fodf)
@@ -18,18 +18,17 @@ process BUNDLE_FIXELAFD {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    for bundle in ${bundles};
-        do \
-        ext=\${bundle#*.}
+    for bundle in $bundles;
+        do\
         pos=\$((\$(echo \$bundle | grep -b -o __ | cut -d: -f1)+2))
         bname=\${bundle:\$pos}
         bname=\$(basename \$bname \${ext})
-        scil_compute_mean_fixel_afd_from_bundles.py \$bundle $fodf ${prefix}__\${bname}_afd_fixel_metric.nii.gz
+        scil_bundle_mean_fixel_afd \$bundle $fodf ${prefix}__\${bname}_afd_fixel_metric.nii.gz
     done
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
@@ -37,6 +36,8 @@ process BUNDLE_FIXELAFD {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
+    scil_bundle_mean_fixel_afd -h
+
     for bundle in ${bundles};
         do
         ext=\${bundle#*.}
@@ -46,11 +47,9 @@ process BUNDLE_FIXELAFD {
         touch ${prefix}__\${bname}_afd_fixel_metric.nii.gz
     done
 
-    scil_compute_mean_fixel_afd_from_bundles.py -h
-
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }
