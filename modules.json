@@ -74,7 +74,7 @@
                     },
                     "bundle/labelmap": {
                         "branch": "main",
-                        "git_sha": "f9ca7936903f1f231dba1cdc7223b758c7748bfc",
+                        "git_sha": "4be831dfd161675151ede8cff851c58929a98a55",
                         "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/bundle/labelmap/bundle-labelmap.diff"
                     },
@@ -260,7 +260,7 @@
                     },
                     "tractogram/removeinvalid": {
                         "branch": "main",
-                        "git_sha": "d3bb6fab899d07f7d325eaacba2d6801a7f49b96",
+                        "git_sha": "4be831dfd161675151ede8cff851c58929a98a55",
                         "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/tractogram/removeinvalid/tractogram-removeinvalid.diff"
                     },
