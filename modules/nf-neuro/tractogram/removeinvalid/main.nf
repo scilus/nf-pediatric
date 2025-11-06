@@ -23,14 +23,19 @@ process TRACTOGRAM_REMOVEINVALID {
     def remove_overlapping_points = task.ext.remove_overlapping_points ? "--remove_overlapping_points" : ""
     def threshold = task.ext.threshold ? "--threshold " + task.ext.threshold : ""
     def no_empty = task.ext.no_empty ? "--no_empty" : ""
+    def min_streamline_count = task.ext.min_streamline_count ?: 3
 
     """
     for tractogram in ${tractogram};
         do \
         ext=\${tractogram#*.}
-        pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
-        bname=\${tractogram:\$pos}
-        bname=\$(basename \$bname \${ext})
+        if [[ \$tractogram == *"__"* ]]; then
+            pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
+            bname=\${tractogram:\$pos}
+            bname=\$(basename \${bname} .\${ext})
+        else
+            bname=\$(basename \${tractogram} .\${ext} | sed 's/${prefix}_\\+//')
+        fi
 
         scil_tractogram_remove_invalid \$tractogram ${prefix}__\${bname}${suffix}.\${ext}\
                         $cut_invalid\
@@ -38,6 +43,13 @@ process TRACTOGRAM_REMOVEINVALID {
                         $remove_overlapping_points\
                         $threshold\
                         $no_empty -f
+
+        nb_streamlines=\$(scil_tractogram_count_streamlines ${prefix}__\${bname}${suffix}.\${ext} --print_count_alone)
+
+        if [[ \$nb_streamlines -lt $min_streamline_count ]]; then
+            echo "Warning: ${prefix}__\${bname}${suffix}.\${ext} contains only \$nb_streamlines streamlines, which is less than the minimum required ($min_streamline_count). Deleting the file."
+            rm ${prefix}__\${bname}${suffix}.\${ext}
+        fi
     done
 
     cat <<-END_VERSIONS > versions.yml
@@ -56,9 +68,13 @@ process TRACTOGRAM_REMOVEINVALID {
     for tractogram in ${tractogram};
         do \
         ext=\${tractogram#*.}
-        pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
-        bname=\${tractogram:\$pos}
-        bname=\$(basename \$bname \${ext})
+        if [[ \$tractogram == *"__"* ]]; then
+            pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
+            bname=\$tractogram:\$pos
+            bname=\$(basename \${bname} .\${ext})
+        else
+            bname=\$(basename \${tractogram} .\${ext} | sed 's/${prefix}_\\+//')
+        fi
 
         touch ${prefix}__\${bname}${suffix}.\${ext}
     done
