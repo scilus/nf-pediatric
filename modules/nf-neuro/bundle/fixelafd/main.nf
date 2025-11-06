@@ -20,9 +20,10 @@ process BUNDLE_FIXELAFD {
     """
     for bundle in $bundles;
         do\
+        ext=\${bundle#*.}
         pos=\$((\$(echo \$bundle | grep -b -o __ | cut -d: -f1)+2))
         bname=\${bundle:\$pos}
-        bname=\$(basename \$bname \${ext})
+        bname=\$(basename \$bname .\${ext})
         scil_bundle_mean_fixel_afd \$bundle $fodf ${prefix}__\${bname}_afd_fixel_metric.nii.gz
     done
 
