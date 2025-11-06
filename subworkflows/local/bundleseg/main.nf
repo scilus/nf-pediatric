@@ -215,6 +215,6 @@ workflow BUNDLE_SEG {
 
     emit:
         bundles = BUNDLE_RECOGNIZE.out.bundles                  // channel: [ val(meta), [ bundles ] ]
-        centroids = TRANSFORM_CENTROIDS.out.warped_tractogram   // channel: [ val(meta), [ centroids ] ]
+        centroids = TRANSFORM_CENTROIDS.out.tractogram          // channel: [ val(meta), [ centroids ] ]
         versions = ch_versions                                  // channel: [ versions.yml ]
 }
