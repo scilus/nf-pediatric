@@ -4,10 +4,10 @@
             38,
             {
                 "BUNDLE_FIXELAFD": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.1"
                 },
                 "BUNDLE_LABELMAP": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.1"
                 },
                 "BUNDLE_RECOGNIZE": {
                     "scilpy": "2.2.1"
@@ -16,7 +16,7 @@
                     "scilpy": "2.2.1"
                 },
                 "BUNDLE_UNIFORMIZE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.1"
                 },
                 "MERGE_TSV": {
                     "python": "3.10.12",
@@ -31,10 +31,11 @@
                     "scilpy": "2.2.1"
                 },
                 "TRACTOGRAM_RESAMPLE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.1"
                 },
                 "TRANSFORM_CENTROIDS": {
-                    "scilpy": "2.0.2"
+                    "ants": null,
+                    "scilpy": "2.2.1"
                 },
                 "Workflow": {
                     "scilus/nf-pediatric": "v0.1.0"
@@ -90,6 +91,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-03T19:32:12.841603"
+        "timestamp": "2025-11-06T17:00:06.706197"
     }
 }
