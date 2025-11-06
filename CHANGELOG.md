@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `Added`
 
-- Bundle metrics are not exported in clean `.tsv` files for easier handling.
+- Bundle metrics are now exported in clean `.tsv` files for easier handling.
 
 ### `Fixed`
 
