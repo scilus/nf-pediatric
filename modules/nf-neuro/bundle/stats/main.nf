@@ -2,27 +2,29 @@ process BUNDLE_STATS {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container "scilus/scilpy:2.2.1_cpu"
 
     input:
     tuple val(meta), path(bundles), path(labels_map), path(metrics), path(lesions)
 
     output:
-    tuple val(meta), path("*_length_stats.json")                , emit: length, optional: true
-    tuple val(meta), path("*_endpoints_map_raw.json")           , emit: endpoints_raw, optional: true
-    tuple val(meta), path("*_endpoints_metric_stats.json")      , emit: endpoints_metric_stats, optional: true
-    tuple val(meta), path("*_mean_std_stats.json")              , emit: mean_std, optional: true
-    tuple val(meta), path("*_volume.json")                      , emit: volume, optional: true
-    tuple val(meta), path("*_volume_lesions.json")              , emit: volume_lesions, optional: true
-    tuple val(meta), path("*_streamline_count.json")            , emit: streamline_count, optional: true
-    tuple val(meta), path("*_streamline_count_lesions.json")    , emit: streamline_count_lesions, optional: true
-    tuple val(meta), path("*_volume_per_label.json")            , emit: volume_per_labels, optional: true
-    tuple val(meta), path("*_volume_per_label_lesions.json")    , emit: volume_per_labels_lesions, optional: true
-    tuple val(meta), path("*_mean_std_per_point_stats.json")    , emit: mean_std_per_point, optional: true
+    tuple val(meta), path("*__length_stats.json")               , emit: length, optional: true
+    tuple val(meta), path("*__endpoints_map_raw.json")          , emit: endpoints_raw, optional: true
+    tuple val(meta), path("*__endpoints_metric_stats.json")     , emit: endpoints_metric_stats, optional: true
+    tuple val(meta), path("*__mean_std.json")                   , emit: mean_std, optional: true
+    tuple val(meta), path("*__volume.json")                     , emit: volume, optional: true
+    tuple val(meta), path("*__volume_lesions.json")             , emit: volume_lesions, optional: true
+    tuple val(meta), path("*__streamline_count.json")           , emit: streamline_count, optional: true
+    tuple val(meta), path("*__streamline_count_lesions.json")   , emit: streamline_count_lesions, optional: true
+    tuple val(meta), path("*__volume_per_label.json")           , emit: volume_per_labels, optional: true
+    tuple val(meta), path("*__volume_per_label_lesions.json")   , emit: volume_per_labels_lesions, optional: true
+    tuple val(meta), path("*__mean_std_per_point.json")         , emit: mean_std_per_point, optional: true
     tuple val(meta), path("*__lesion_stats.json")               , emit: lesion_stats, optional: true
     tuple val(meta), path("*_endpoints_map_head.nii.gz")        , emit: endpoints_head, optional: true
     tuple val(meta), path("*_endpoints_map_tail.nii.gz")        , emit: endpoints_tail, optional: true
     tuple val(meta), path("*_lesion_map.nii.gz")                , emit: lesion_map, optional: true
+    tuple val(meta), path("*_desc-mean_stats.tsv")              , emit: mean_tsv, optional: true
+    tuple val(meta), path("*_desc-point_stats.tsv")             , emit: mean_per_point_tsv, optional: true
     path "versions.yml"                                         , emit: versions
 
     when:
@@ -48,166 +50,325 @@ process BUNDLE_STATS {
     metrics=( ${metrics.join(" ")} )
 
     for index in \${!bundles[@]};
-    do
-    ext=\${bundles[index]#*.}
-    pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
-    bname=\${bundles[index]:\$pos}
-    bname=\$(basename \${bname} .\${ext})
-    bname=\$(echo "\${bname}" | cut -d'_' -f1-3)
+    do\
+        bname=\${bundles[index]#*__}
+        bname=\${bname%%_labels_*}
+        echo "Bundle name: \${bname}"
 
-    # Initialize array for all relevant metrics
-    b_metrics=()
+        # Initialize array for all relevant metrics
+        b_metrics=()
 
-    for m in \${!metrics[@]}; do
-        # Include if: matches bname OR is not an afd_fixel file
-        if [[ "\${metrics[\$m]}" == *"\${bname}"* ]] || [[ "\${metrics[\$m]}" != *"afd_fixel"* ]]; then
-            b_metrics+=("\${metrics[\$m]}")
-        fi
-    done
+        for m in \${!metrics[@]}; do
+            # Include if: matches bname OR is not an afd_fixel file
+            if [[ "\${metrics[\$m]}" == *"\${bname}"* ]] || [[ "\${metrics[\$m]}" != *"afd_fixel"* ]]; then
+                b_metrics+=("\${metrics[\$m]}")
+            fi
+        done
 
-    if [[ "$length_stats" ]];
-    then
-        scil_tractogram_print_info.py \${bundles[index]} > \${bname}_length.json
-    fi
-
-    if [[ "$endpoints" ]];
-    then
-        scil_bundle_compute_endpoints_map.py \${bundles[index]} \
-            ${prefix}__\${bname}_endpoints_map_head.nii.gz \
-            ${prefix}__\${bname}_endpoints_map_tail.nii.gz >\
-            ${prefix}__\${bname}_endpoints_raw.json;
-
-        scil_volume_stats_in_ROI.py ${prefix}__\${bname}_endpoints_map_head.nii.gz $normalize_weights\
-            --metrics \${b_metrics[@]} > \${bname}_head.json
-        scil_volume_stats_in_ROI.py ${prefix}__\${bname}_endpoints_map_tail.nii.gz $normalize_weights\
-            --metrics \${b_metrics[@]} > \${bname}_tail.json;
-
-    fi
-
-    if [[ "$mean_std" ]];
-    then
-        scil_bundle_mean_std.py $density_weighting \${bundles[index]} \${b_metrics[@]} >\
-            \${bname}_std.json
-    fi
-
-    if [[ "$volume" ]];
-    then
-        scil_bundle_shape_measures.py \${bundles[index]} > \${bname}_volume_stat.json
-
-        if [[ "$lesions_stats" ]];
+        if [[ "$length_stats" ]];
         then
-            scil_lesions_info.py $lesions \${bname}_volume_lesions_stat.json \
-                --bundle \${bundles[index]} --out_lesion_stats ${prefix}__lesion_stats.json \
-                --out_streamlines_stats \${bname}_streamline_count_lesions_stat.json \
-                --min_lesion_vol $min_lesion_vol -f
+            scil_tractogram_print_info \${bundles[index]} > \${bname}_length.json
         fi
 
-    elif [[ "$streamline_count" ]];
-    then
-        scil_tractogram_count_streamlines.py \${bundles[index]} > \${bname}_streamlines.json
-    fi
-
-    if [[ "$volume_per_labels" ]];
-    then
-        scil_bundle_volume_per_label.py \${label_map[index]} \$bname --sort_keys >\
-            \${bname}_volume_label.json
-
-        if [[ "$lesions_stats" ]];
+        if [[ "$endpoints" ]];
         then
-            scil_analyse_lesions_load.py $lesions \${bname}_volume_per_label_lesions_stat.json \
-                --bundle_labels_map \${label_map[index]} \
-                --out_lesion_atlas "${prefix}__\${bname}_lesion_map.nii.gz" \
-                --min_lesion_vol $min_lesion_vol
+            scil_bundle_compute_endpoints_map \${bundles[index]} \
+                ${prefix}__\${bname}_endpoints_map_head.nii.gz \
+                ${prefix}__\${bname}_endpoints_map_tail.nii.gz --out_json \
+                ${prefix}__\${bname}_endpoints_raw.json;
+
+            scil_volume_stats_in_ROI ${prefix}__\${bname}_endpoints_map_head.nii.gz $normalize_weights\
+                --metrics \${b_metrics[@]} > \${bname}_head.json
+            scil_volume_stats_in_ROI ${prefix}__\${bname}_endpoints_map_tail.nii.gz $normalize_weights\
+                --metrics \${b_metrics[@]} > \${bname}_tail.json;
+            fi
+
+        if [[ "$mean_std" ]];
+        then
+            scil_bundle_mean_std $density_weighting \${bundles[index]} \${b_metrics[@]} >\
+                \${bname}__std.json
         fi
-    fi
 
-    if [[ "$mean_std_per_point" ]];
-    then
-        scil_bundle_mean_std.py \${bundles[index]} \${b_metrics[@]}\
-            --per_point \${label_map[index]} --sort_keys $density_weighting > \${bname}_std_per_point.json
-    fi;
+        if [[ "$volume" ]];
+        then
+            scil_bundle_shape_measures \${bundles[index]} > \${bname}_volume_stat.json
 
+            if [[ "$lesions_stats" ]];
+            then
+                scil_lesions_info $lesions \${bname}_volume_lesions_stat.json \
+                    --bundle \${bundles[index]} --out_lesion_stats ${prefix}__lesion_stats.json \
+                    --out_streamlines_stats \${bname}__streamline_count_lesions_stat.json \
+                    --min_lesion_vol $min_lesion_vol -f
+            fi
+        fi
+
+        if [[ "$streamline_count" ]];
+        then
+            scil_tractogram_count_streamlines \${bundles[index]} > \${bname}_streamlines.json
+        fi
+
+        if [[ "$volume_per_labels" ]];
+        then
+            scil_bundle_volume_per_label \${label_map[index]} \$bname --sort_keys >\
+                \${bname}_volume_label.json
+
+            if [[ "$lesions_stats" ]];
+            then
+                scil_lesions_info $lesions \${bname}_volume_per_label_lesions_stat.json \
+                    --bundle_labels_map \${label_map[index]} \
+                    --out_lesion_atlas "${prefix}__\${bname}_lesion_map.nii.gz" \
+                    --min_lesion_vol $min_lesion_vol
+            fi
+        fi
+
+        if [[ "$mean_std_per_point" ]];
+        then
+            scil_bundle_mean_std \${bundles[index]} \${b_metrics[@]}\
+                --per_point \${label_map[index]} --sort_keys $density_weighting > \${bname}_std_per_point.json
+        fi
     done
 
     #Bundle_Length_Stats
     if [[ "$length_stats" ]];
     then
-        scil_json_merge_entries.py *_length.json ${prefix}_length_stats.json --add_parent_key ${prefix} \
+        echo "Merging Bundle_Length_Stats"
+        scil_json_merge_entries *_length.json ${prefix}__length_stats.json --add_parent_key ${prefix} \
                 --keep_separate
-        rm *_length.json
+        #rm *_length.json
     fi
 
     #Bundle_Endpoints_Map
     if [[ "$endpoints" ]];
     then
-        scil_json_merge_entries.py *_endpoints_raw.json ${prefix}_endpoints_map_raw.json \
+        echo "Merging Bundle_Endpoints_Map"
+        scil_json_merge_entries *_endpoints_raw.json ${prefix}__endpoints_map_raw.json \
             --no_list --add_parent_key ${prefix}
 
-    #Bundle_Metrics_Stats_In_Endpoints
-
-        scil_json_merge_entries.py *_tail.json *_head.json ${prefix}_endpoints_metric_stats.json \
+        #Bundle_Metrics_Stats_In_Endpoints
+        scil_json_merge_entries *_tail.json *_head.json ${prefix}__endpoints_metric_stats.json \
             --no_list --add_parent_key ${prefix}
-        rm *_tail.json *_head.json *_endpoints_raw.json
+        #rm *_tail.json *_head.json *_endpoints_raw.json
     fi
 
     #Bundle_Mean_Std
     if [[ "$mean_std" ]];
     then
-        scil_json_merge_entries.py *_std.json ${prefix}_mean_std_stats.json --no_list --add_parent_key ${prefix}
-        rm *_std.json
+        echo "Merging Bundle_Mean_Std"
+        scil_json_merge_entries *_std.json ${prefix}__mean_std_stats.json --no_list --add_parent_key ${prefix}
+        #rm *_std.json
     fi
 
     #Bundle_Volume
     if [[ "$volume" ]];
     then
-        scil_json_merge_entries.py *_volume_stat.json ${prefix}_volume.json --no_list --add_parent_key ${prefix}
-        rm *_volume_stat.json
+        echo "Merging Bundle_Volume"
+        scil_json_merge_entries *_volume_stat.json ${prefix}__volume.json --no_list --add_parent_key ${prefix} \
+            --keep_separate
+        #rm *_volume_stat.json
 
         if [[ "$lesions_stats" ]];
         then
-            scil_json_merge_entries.py *_volume_lesions_stat.json ${prefix}_volume_lesions.json --no_list --add_parent_key ${prefix}
-            scil_json_merge_entries.py *_streamline_count_lesions_stat.json ${prefix}_streamline_count_lesions.json \
+            echo "Merging Lesions Stats"
+            scil_json_merge_entries *_volume_lesions_stat.json ${prefix}__volume_lesions.json --no_list --add_parent_key ${prefix}
+            scil_json_merge_entries *_streamline_count_lesions_stat.json ${prefix}__streamline_count_lesions.json \
                 --no_list --add_parent_key ${prefix}
-            scil_merge_json.py ${prefix}__lesion_stats.json ${prefix}__lesion_stats.json \
+            scil_json_merge_entries ${prefix}__lesion_stats.json ${prefix}__lesion_stats.json \
                 --remove_parent_key --add_parent_key ${prefix} -f
-
-            rm *_volume_lesions_stat.json *_streamline_count_lesions_stat.json
+            #rm *_volume_lesions_stat.json *_streamline_count_lesions_stat.json
         fi
+    fi
 
     #Bundle_Streamline_Count
-    elif [[ "$streamline_count" ]];
+    if [[ "$streamline_count" ]];
     then
-        scil_json_merge_entries.py *_streamlines.json ${prefix}_streamline_count.json --no_list \
+        echo "Merging Bundle_Streamline_Count"
+        scil_json_merge_entries *_streamlines.json ${prefix}__streamline_count.json --no_list \
             --add_parent_key ${prefix}
-        rm *_streamlines.json
+        #rm *_streamlines.json
     fi
 
     #Bundle_Volume_Per_Label
     if [[ "$volume_per_labels" ]];
     then
-        scil_json_merge_entries.py *_volume_label.json ${prefix}_volume_per_label.json --no_list \
+        echo "Merging Bundle_Volume_Per_Label"
+        scil_json_merge_entries *_volume_label.json ${prefix}__volume_per_label.json --no_list \
             --add_parent_key ${prefix}
-        rm *_volume_label.json
+        #rm *_volume_label.json
 
         if [[ "$lesions_stats" ]];
         then
-            scil_json_merge_entries.py *_volume_per_label_lesions_stat.json ${prefix}_volume_per_label_lesions.json \
+            echo "Merging Bundle_Volume_Per_Label in Lesions"
+            scil_json_merge_entries *_volume_per_label_lesions_stat.json ${prefix}__volume_per_label_lesions.json \
                 --no_list --add_parent_key ${prefix}
-            rm *_volume_per_label_lesions_stat.json
+            #rm *_volume_per_label_lesions_stat.json
         fi
     fi
 
     #Bundle_Mean_Std_Per_Point
     if [[ "$mean_std_per_point" ]];
     then
-        scil_json_merge_entries.py *_std_per_point.json ${prefix}_mean_std_per_point_stats.json --no_list \
+        echo "Merging Bundle_Mean_Std_Per_Point"
+        scil_json_merge_entries *_std_per_point.json ${prefix}__mean_std_per_point_stats.json --no_list \
             --add_parent_key ${prefix}
-        rm *_std_per_point.json
+        #rm *_std_per_point.json
     fi
+
+    # Conversion to tsv files.
+    f="${prefix}__mean_std_stats.json"
+    out="${prefix}__mean_std_stats.tsv"
+    jq -r --arg sid "${prefix}" '
+    .[\$sid] as \$s
+    | ( [ \$s|to_entries[]|select(.value|type=="object")|(.value|to_entries
+        |map(select(.value|type=="object" and has("mean"))
+            |(.key|if test("desc-") then capture("desc-(?<m>[^:]+)\$").m elif test("_afd_fixel_metric\$") then "afd_fixel" else . end)))
+        ] ) as \$ms
+    | (\$ms|add//[]|unique|sort) as \$metrics
+    | (["sample","bundle"]+\$metrics)|@tsv,
+        (\$s|to_entries[]|select(.value|type=="object")|
+        ( . as \$b |
+            (\$b.value|to_entries
+            |map(select(.value|type=="object" and has("mean"))
+                |{( (.key|if test("desc-") then capture("desc-(?<m>[^:]+)\$").m elif test("_afd_fixel_metric\$") then "afd_fixel" else . end) ): .value.mean})
+            |add//{}) as \$mm |
+            [\$sid, (\$b.key|sub("^"+\$sid+"__";"")|sub("_labels_uniformized\$";"")|gsub("_cleaned";""))] + (\$metrics|map(\$mm[.]//""))
+        )|@tsv
+        )
+    ' "\$f" > "\$out"
+
+    f="${prefix}__mean_std_per_point_stats.json"
+    out="${prefix}__mean_std_per_point_stats.tsv"
+    jq -r --arg sid "${prefix}" '
+    .[\$sid] as \$s
+    | ( [ \$s
+        | to_entries[]
+        | select(.value | type == "object")
+        | (.value | to_entries
+            | map(
+                if .value | has("mean") then
+                    (.key
+                    | if test("desc-") then capture("desc-(?<metric>[^:]+)\$").metric
+                        elif test("_afd_fixel_metric\$") then "afd_fixel"
+                        else . end)
+                elif (.value | type == "object") then
+                    (.key
+                    | if test("desc-") then capture("desc-(?<metric>[^:]+)\$").metric
+                        elif test("_afd_fixel_metric\$") then "afd_fixel"
+                        else . end)
+                else empty end
+                )
+            )
+        ] ) as \$metric_lists
+    | (\$metric_lists | add // [] | unique | sort) as \$metrics
+    | (["sample","bundle","points"] + \$metrics) | @tsv,
+        (\$s | to_entries[] as \$b
+        | select(\$b.value | type == "object")
+        | (\$b.value | to_entries) as \$me
+        | (\$me
+        | map(
+            if .value | has("mean") then []
+            elif (.value | type == "object") then (.value | keys)
+            elif (.value | type == "array") then ( [ range(1; (.value|length)+1) | (if .<10 then ("00"+tostring) elif .<100 then ("0"+tostring) else tostring end) ] )
+            else [] end)
+        | add // []
+        | unique | sort) as \$points
+        | (\$me
+            | map({ key: ( .key | if test("desc-") then capture("desc-(?<metric>[^:]+)\$").metric
+                                elif test("_afd_fixel_metric\$") then "afd_fixel"
+                                else . end), value: .value })
+            ) as \$mes
+        | (\$points[]? // [""][]) as \$pt
+        | ( \$mes
+        | map( if (.value | has("mean")) then { (.key): .value.mean }
+                else { (.key): ( ( .value[\$pt] // ( if (.value|type=="array") then (.value[((\$pt|tonumber)-1)] // null) else null end ) ) // {} | .mean // "" ) } end
+            ) | add ) as \$rowmap
+        | [\$sid, (\$b.key | sub("^" + \$sid + "__"; "") | sub("_labels_uniformized\$"; "") | gsub("_cleaned"; "")), (\$pt // "")] + (\$metrics | map(\$rowmap[.] // ""))
+        | @tsv
+        )
+    ' "\$f" > "\$out"
+
+    f="${prefix}__volume.json"
+    out="${prefix}__volume.tsv"
+    jq -r --arg sid "${prefix}" '
+    .[\$sid] as \$s
+    # collect bundles that are objects
+    | ( \$s | to_entries | map(select(.value | type == "object")) ) as \$bundles
+    # union of keys under each bundle object
+    | ( \$bundles | map(.value | keys) | add // [] | unique | sort ) as \$metrics
+    # header
+    | ( ["sample","bundle"] + \$metrics ) | @tsv,
+        # rows
+        ( \$bundles[]
+        | . as \$b
+        | (\$b.value) as \$vals
+        | ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized)\$"; "") ) ] + (\$metrics | map( (\$vals[.] // "") )) )
+        | @tsv
+        )
+    ' "\$f" > "\$out"
+
+    f="${prefix}__length_stats.json"
+    out="${prefix}__length.tsv"
+    jq -r --arg sid "${prefix}" '
+    .[\$sid] as \$s
+    | ( \$s | to_entries | map(select(.value | type == "object")) ) as \$bundles
+    | ( \$bundles | map(.value | keys - ["data_per_point_keys","data_per_streamline_keys"]) | add // [] | unique | sort ) as \$metrics
+    | ( ["sample","bundle"] + \$metrics ) | @tsv,
+        ( \$bundles[]
+        | . as \$b
+        | (\$b.value) as \$vals
+    | ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ) ] + (\$metrics | map( (\$vals[.] // "") )) )
+        | @tsv
+        )
+    ' "\$f" > "\$out"
+
+    f="${prefix}__volume_per_label.json"
+    out="${prefix}__volume_per_label.tsv"
+    jq -r --arg sid "${prefix}" '
+    .[\$sid] as \$s
+    | ( \$s | to_entries | map(select(.value | type == "object")) ) as \$bundles
+    | ( \$bundles | map(.value | keys - ["data_per_point_keys","data_per_streamline_keys"]) | add // [] | unique | sort ) as \$metrics
+    | ( ["sample","bundle","points"] + \$metrics ) | @tsv,
+        ( \$bundles[]
+        | . as \$b
+        | (\$b.value) as \$vals
+        | ( \$b.value
+            | to_entries
+            | map(select(.value | type == "object") | .value | keys)
+            | add // []
+            | unique
+            | sort
+            ) as \$bpoints
+        | ( (\$bpoints | length) as \$n
+            | if \$n == 0 then
+                ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ), "" ] + (\$metrics | map( (\$vals[.] // "") )) )
+                else
+                ( \$bpoints[]
+                    | . as \$pt
+                    | ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ), \$pt ] + (\$metrics | map( if ( \$vals[.] | type ) == "object" then ( \$vals[.][\$pt] // "" ) else ( \$vals[.] // "" ) end )) )
+                )
+                end
+            )
+        | @tsv
+        )
+    ' "\$f" > "\$out"
+    rm *.json
+
+    # Now, let's merge some of the TSVs together.
+    f1=${prefix}__mean_std_stats.tsv; f2=${prefix}__volume.tsv; out=tmp.tsv
+    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
+    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-2)" "\$(echo "\$h1" | cut -f3-)" "\$(echo "\$h2" | cut -f3-)" > "\$out" \
+        && paste <(tail -n +2 "\$f1" | cut -f1-2) <(tail -n +2 "\$f1" | cut -f3-) <(tail -n +2 "\$f2" | cut -f3-) >> "\$out"
+    f1=tmp.tsv; f2=${prefix}__length.tsv; out=${prefix}_desc-mean_stats.tsv
+    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
+    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-2)" "\$(echo "\$h1" | cut -f3-)" "\$(echo "\$h2" | cut -f3-)" > "\$out" \
+        && paste <(tail -n +2 "\$f1" | cut -f1-2) <(tail -n +2 "\$f1" | cut -f3-) <(tail -n +2 "\$f2" | cut -f3-) >> "\$out"
+    f1=${prefix}__mean_std_per_point_stats.tsv; f2=${prefix}__volume_per_label.tsv; out=${prefix}_desc-point_stats.tsv
+    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
+    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-3)" "\$(echo "\$h1" | cut -f4-)" "\$(echo "\$h2" | cut -f4-)" > "\$out" \
+        && paste <(tail -n +2 "\$f1" | cut -f1-3) <(tail -n +2 "\$f1" | cut -f4-) <(tail -n +2 "\$f2" | cut -f4-) >> "\$out"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
@@ -215,30 +376,25 @@ process BUNDLE_STATS {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    scil_tractogram_print_info.py -h
-    scil_bundle_compute_endpoints_map.py -h
-    scil_volume_stats_in_ROI.py -h
-    scil_bundle_mean_std.py -h
-    scil_bundle_shape_measures.py -h
-    scil_tractogram_count_streamlines.py -h
-    scil_bundle_volume_per_label.py -h
-    scil_bundle_mean_std.py -h
-    scil_json_merge_entries.py -h
+    scil_tractogram_print_info -h
+    scil_bundle_compute_endpoints_map -h
+    scil_volume_stats_in_ROI -h
+    scil_bundle_mean_std -h
+    scil_bundle_shape_measures -h
+    scil_tractogram_count_streamlines -h
+    scil_bundle_volume_per_label -h
+    scil_bundle_mean_std -h
+    scil_json_merge_entries -h
 
-    touch ${prefix}__length_stats.json
-    touch ${prefix}__endpoints_map_raw.json
-    touch ${prefix}__endpoints_metric_stats.json
-    touch ${prefix}__mean_std_stats.json
-    touch ${prefix}__volume.json
-    touch ${prefix}__streamline_count.json
-    touch ${prefix}__volume_per_label.json
-    touch ${prefix}__mean_std_per_point_stats.json
     touch ${prefix}_endpoints_map_head.nii.gz
     touch ${prefix}_endpoints_map_tail.nii.gz
+    touch ${prefix}_lesion_map.nii.gz
+    touch ${prefix}_desc-mean_stats.tsv
+    touch ${prefix}_desc-point_stats.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }

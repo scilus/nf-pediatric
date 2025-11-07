@@ -1069,6 +1069,20 @@
                     "default": "jet",
                     "hidden": false
                 },
+                "use_hyperplane": {
+                    "type": "boolean",
+                    "description": "If set, will use hyperplane to segment bundles (still experimental), otherwise, will use the euclidean distance.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "use_manhattan": {
+                    "type": "boolean",
+                    "description": "If set, will use manhattan distance to segment bundles, otherwise, will use the euclidean distance.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
                 "density_weighting": {
                     "type": "boolean",
                     "description": "If set, weight statistics based on the number of voxel going through the voxel.",

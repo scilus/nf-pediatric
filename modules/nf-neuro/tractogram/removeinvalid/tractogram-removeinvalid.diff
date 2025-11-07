@@ -4,39 +4,15 @@ Changes in component 'nf-neuro/tractogram/removeinvalid'
 Changes in 'tractogram/removeinvalid/main.nf':
 --- modules/nf-neuro/tractogram/removeinvalid/main.nf
 +++ modules/nf-neuro/tractogram/removeinvalid/main.nf
-@@ -2,9 +2,7 @@
-     tag "$meta.id"
-     label 'process_single'
- 
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
--        'scilus/scilus:2.0.2' }"
-+    container 'scilus/scilus:2.0.2'
- 
-     input:
-         tuple val(meta), path(tractogram)
-@@ -31,7 +29,9 @@
-     for tractogram in ${tractogram};
-         do \
+@@ -31,7 +31,7 @@
          ext=\${tractogram#*.}
--        bname=\$(basename \${tractogram} .\${ext})
-+        pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
-+        bname=\${tractogram:\$pos}
-+        bname=\$(basename \$bname \${ext})
- 
-         scil_tractogram_remove_invalid.py \$tractogram ${prefix}__\${bname}${suffix}.\${ext}\
-                         $cut_invalid\
-@@ -59,7 +59,9 @@
-     for tractogram in ${tractogram};
-         do \
-         ext=\${tractogram#*.}
--        bname=\$(basename \${tractogram} .\${ext})
-+        pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
-+        bname=\${tractogram:\$pos}
-+        bname=\$(basename \$bname \${ext})
- 
-         touch ${prefix}__\${bname}${suffix}.\${ext}
-     done
+         if [[ \$tractogram == *"__"* ]]; then
+             pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
+-            bname=\$tractogram:\$pos
++            bname=\${tractogram:\$pos}
+             bname=\$(basename \${bname} .\${ext})
+         else
+             bname=\$(basename \${tractogram} .\${ext} | sed 's/${prefix}_\\+//')
 
 'modules/nf-neuro/tractogram/removeinvalid/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/tractogram/removeinvalid/tests/tags.yml' is unchanged
