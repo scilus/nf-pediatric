@@ -13,6 +13,15 @@ Changes in 'tractogram/removeinvalid/main.nf':
              bname=\$(basename \${bname} .\${ext})
          else
              bname=\$(basename \${tractogram} .\${ext} | sed 's/${prefix}_\\+//')
+@@ -70,7 +70,7 @@
+         ext=\${tractogram#*.}
+         if [[ \$tractogram == *"__"* ]]; then
+             pos=\$((\$(echo \$tractogram | grep -b -o __ | cut -d: -f1)+2))
+-            bname=\$tractogram:\$pos
++            bname=\${tractogram:\$pos}
+             bname=\$(basename \${bname} .\${ext})
+         else
+             bname=\$(basename \${tractogram} .\${ext} | sed 's/${prefix}_\\+//')
 
 'modules/nf-neuro/tractogram/removeinvalid/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/tractogram/removeinvalid/tests/tags.yml' is unchanged
