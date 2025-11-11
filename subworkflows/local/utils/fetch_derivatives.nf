@@ -71,6 +71,14 @@ workflow FETCH_DERIVATIVES {
             }
             .groupTuple(by: 0)
             .map{ meta, files ->
+                if (files.size() == 2) {
+                    def sortedFiles = files.sort { a, b -> // sort so that space-DWI comes second
+                        if (a.name.contains('space-DWI')) return 1
+                        if (b.name.contains('space-DWI')) return -1
+                        return 0
+                    }
+                    return [meta] + sortedFiles
+                }
                 return [meta] + files
             }
             .filter {
