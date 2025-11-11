@@ -785,10 +785,12 @@ workflow PEDIATRIC {
         //
         ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
             .join(ch_labels.reg, remainder: true)
+            .filter { _id, trk, _labels -> trk != null }
             .map { id, trk, reg_label ->
                 reg_label ? [id, trk, reg_label] : [id, trk, null]
             }
             .join(TRANSFORM_LABELS.out.warped_image.map { id, warped -> [id, warped] }, remainder: true)
+            .filter { _id, trk, _reg_label, _warped_label -> trk != null }
             .map { id, trk, reg_label, warped_label ->
                 def label = reg_label ?: warped_label
                 [id, trk, label]
