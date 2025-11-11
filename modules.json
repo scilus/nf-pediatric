@@ -33,7 +33,7 @@
                 }
             }
         },
-        "https://github.com/scilus/nf-neuro.git": {
+        "https://github.com/nf-neuro/modules.git": {
             "modules": {
                 "nf-neuro": {
                     "betcrop/antsbet": {
