@@ -53,7 +53,7 @@ workflow FETCH_DERIVATIVES {
     }
 
     // ** Segmentations ** //
-    if ( params.connectomics ) {
+    if ( params.connectomics && !params.segmentation ) {
         ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
             checkIfExists: true)
             .map{ file ->
