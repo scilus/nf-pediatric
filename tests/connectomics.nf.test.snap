@@ -16,7 +16,7 @@
                     "scilpy": "2.0.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.0"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3",
@@ -128,10 +128,10 @@
             ]
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.2"
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
         },
-        "timestamp": "2025-08-06T13:01:23.678137"
+        "timestamp": "2025-11-12T09:39:05.223888"
     },
     "Connectomics profile with derivatives - should run successfully": {
         "content": [
@@ -150,7 +150,7 @@
                     "scilpy": "2.0.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.0"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3",
@@ -262,9 +262,9 @@
             ]
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.2"
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
         },
-        "timestamp": "2025-08-06T12:57:41.745065"
+        "timestamp": "2025-11-12T09:37:41.585698"
     }
 }
