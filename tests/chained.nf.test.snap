@@ -79,7 +79,7 @@
                     "fsl": 6.0
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "1.6.0"
+                    "scilpy": 1.6
                 },
                 "FORMATLABELS": {
                     "scilpy": 1.6,
@@ -1575,7 +1575,7 @@
                     "scilpy": "2.0.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "1.6.0"
+                    "scilpy": 1.6
                 },
                 "FORMATLABELS": {
                     "scilpy": 1.6,
@@ -1870,7 +1870,7 @@
                     "fsl": 6.0
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "1.6.0"
+                    "scilpy": 1.6
                 },
                 "IMAGE_POWDERAVERAGE": {
                     "scilpy": "2.0.2"

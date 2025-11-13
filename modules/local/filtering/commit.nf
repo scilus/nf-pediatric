@@ -42,7 +42,7 @@ process FILTERING_COMMIT {
 
     scil_run_commit.py $hdf5 $dwi $bval $bvec "${prefix}__results_bzs/" \
         --processes $task.cpus $args_priors $ball_stick \
-        $commit2 $commit2_lambda $nbr_dir $peaks_arg -v DEBUG
+        $commit2 $commit2_lambda $nbr_dir $peaks_arg
 
     if [ -f "${prefix}__results_bzs/commit_2/decompose_commit.h5" ]; then
         mv "${prefix}__results_bzs/commit_2/decompose_commit.h5" "./${prefix}__decompose_commit.h5"

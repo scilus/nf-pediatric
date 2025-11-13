@@ -16,7 +16,7 @@
                     "scilpy": "2.0.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "1.6.0"
+                    "scilpy": 1.6
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3",
@@ -150,7 +150,7 @@
                     "scilpy": "2.0.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "1.6.0"
+                    "scilpy": 1.6
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.4.3",
