@@ -658,9 +658,10 @@ workflow PEDIATRIC {
         // MODULE: MERGE_TSV
         //
         ch_merge_tsv = TRACTOMETRY.out.mean_std_tsv
-            .join(TRACTOMETRY.out.mean_std_per_point_tsv)
+            .map { it -> [it[1]] }
+            .mix(TRACTOMETRY.out.mean_std_per_point_tsv.map { it -> [it[1]] })
             .collect()
-            .map { it -> [[id: "global"], [it[1], it[2]]] }
+            .map{ it -> [[id: 'global'], it.flatten()] }
 
         MERGE_TSV( ch_merge_tsv )
         ch_versions = ch_versions.mix(MERGE_TSV.out.versions)
