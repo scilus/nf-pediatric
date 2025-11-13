@@ -2,7 +2,7 @@ process FILTERING_COMMIT {
     tag "$meta.id"
     label 'process_medium'
 
-    container "${ 'scilus/scilpy:2.2.0_cpu' }"
+    container "${ 'scilus/scilpy:1.6.0' }"
 
     input:
     tuple val(meta), path(hdf5), path(dwi), path(bval), path(bvec), path(peaks)
@@ -40,8 +40,8 @@ process FILTERING_COMMIT {
 
     echo "Parameters used: ${args_priors}"
 
-    scil_tractogram_commit $hdf5 $dwi $bval $bvec "${prefix}__results_bzs/" \
-        --processes 2 $args_priors $ball_stick \
+    scil_run_commit.py $hdf5 $dwi $bval $bvec "${prefix}__results_bzs/" \
+        --processes $task.cpus $args_priors $ball_stick \
         $commit2 $commit2_lambda $nbr_dir $peaks_arg -v DEBUG
 
     if [ -f "${prefix}__results_bzs/commit_2/decompose_commit.h5" ]; then
@@ -58,7 +58,7 @@ process FILTERING_COMMIT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
@@ -79,11 +79,11 @@ process FILTERING_COMMIT {
 
     echo "Parameters used: para_diff: ${para_diff}, iso_diff: ${iso_diff}, perp_diff: ${perp_diff}"
 
-    scil_tractogram_commit -h
+    scil_run_commit.py -h
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }

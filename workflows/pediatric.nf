@@ -783,21 +783,18 @@ workflow PEDIATRIC {
         //
         // MODULE: Run CONNECTIVITY_METRICS
         //
-        ch_metrics_conn = ch_metrics
+        ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
             .join(ch_labels.reg, remainder: true)
-            .map { id, met, reg_label ->
-                reg_label ? [id, met, reg_label] : [id, met, null]
+            .map { id, trk, reg_label ->
+                reg_label ? [id, trk, reg_label] : [id, trk, null]
             }
             .join(TRANSFORM_LABELS.out.warped_image.map { id, warped -> [id, warped] }, remainder: true)
-            .map { id, met, reg_label, warped_label ->
+            .map { id, trk, reg_label, warped_label ->
                 def label = reg_label ?: warped_label
-                [id, met, label]
+                [id, trk, label]
             }
             .join(CONNECTIVITY_DECOMPOSE.out.labels_list)
-            .join(CONNECTIVITY_AFDFIXEL.out.hdf5, remainder: true)
-            .map { id, met, label, labels_list, hdf5 ->
-                [id, hdf5 ?: [], label, labels_list, met] }
-            .filter { it[1] }
+            .join(ch_metrics)
 
         CONNECTIVITY_METRICS ( ch_metrics_conn )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())
