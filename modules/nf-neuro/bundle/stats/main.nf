@@ -358,11 +358,11 @@ process BUNDLE_STATS {
     h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
     printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-3)" "\$(echo "\$h1" | cut -f4-)" "\$(echo "\$h2" | cut -f4-)" > "\$out" \
         && paste <(tail -n +2 "\$f1" | cut -f1-3) <(tail -n +2 "\$f1" | cut -f4-) <(tail -n +2 "\$f2" | cut -f4-) >> "\$out"
-    f1=tmp.tsv; f2=${prefix}__length.tsv; out=${prefix}_desc-mean_stats.tsv
+    f1=tmp.tsv; f2=${prefix}__length.tsv; out=${prefix}_${ses}_desc-mean_stats.tsv
     h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
     printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-3)" "\$(echo "\$h1" | cut -f4-)" "\$(echo "\$h2" | cut -f4-)" > "\$out" \
         && paste <(tail -n +2 "\$f1" | cut -f1-3) <(tail -n +2 "\$f1" | cut -f4-) <(tail -n +2 "\$f2" | cut -f4-) >> "\$out"
-    f1=${prefix}__mean_std_per_point_stats.tsv; f2=${prefix}__volume_per_label.tsv; out=${prefix}_desc-point_stats.tsv
+    f1=${prefix}__mean_std_per_point_stats.tsv; f2=${prefix}__volume_per_label.tsv; out=${prefix}_${ses}_desc-point_stats.tsv
     h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
     printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-4)" "\$(echo "\$h1" | cut -f5-)" "\$(echo "\$h2" | cut -f5-)" > "\$out" \
         && paste <(tail -n +2 "\$f1" | cut -f1-4) <(tail -n +2 "\$f1" | cut -f5-) <(tail -n +2 "\$f2" | cut -f5-) >> "\$out"
@@ -375,6 +375,7 @@ process BUNDLE_STATS {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def ses = meta.session ?: ""
 
     """
     scil_tractogram_print_info -h
@@ -387,11 +388,11 @@ process BUNDLE_STATS {
     scil_bundle_mean_std -h
     scil_json_merge_entries -h
 
-    touch ${prefix}_endpoints_map_head.nii.gz
-    touch ${prefix}_endpoints_map_tail.nii.gz
-    touch ${prefix}_lesion_map.nii.gz
-    touch ${prefix}_desc-mean_stats.tsv
-    touch ${prefix}_desc-point_stats.tsv
+    touch ${prefix}_${ses}_endpoints_map_head.nii.gz
+    touch ${prefix}_${ses}_endpoints_map_tail.nii.gz
+    touch ${prefix}_${ses}_lesion_map.nii.gz
+    touch ${prefix}_${ses}_desc-mean_stats.tsv
+    touch ${prefix}_${ses}_desc-point_stats.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

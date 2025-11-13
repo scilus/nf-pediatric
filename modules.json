@@ -33,7 +33,7 @@
                 }
             }
         },
-        "https://github.com/scilus/nf-neuro.git": {
+        "https://github.com/nf-neuro/modules.git": {
             "modules": {
                 "nf-neuro": {
                     "betcrop/antsbet": {
@@ -260,9 +260,8 @@
                     },
                     "tractogram/removeinvalid": {
                         "branch": "main",
-                        "git_sha": "4be831dfd161675151ede8cff851c58929a98a55",
-                        "installed_by": ["modules", "tractometry"],
-                        "patch": "modules/nf-neuro/tractogram/removeinvalid/tractogram-removeinvalid.diff"
+                        "git_sha": "d719b9b13ccad7709e749b0f113e906a9d0757d3",
+                        "installed_by": ["modules", "tractometry"]
                     },
                     "tractogram/resample": {
                         "branch": "main",

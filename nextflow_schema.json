@@ -1073,7 +1073,7 @@
                     "type": "boolean",
                     "description": "If set, will use hyperplane to segment bundles (still experimental), otherwise, will use the euclidean distance.",
                     "fa_icon": "fas fa-brain",
-                    "default": true,
+                    "default": false,
                     "hidden": false
                 },
                 "use_manhattan": {

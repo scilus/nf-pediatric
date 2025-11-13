@@ -9,7 +9,7 @@ Changes in 'bundle/stats/main.nf':
      label 'process_single'
  
 -    container "scilus/scilpy:2.2.0_cpu"
-+    container "scilus/scilus:2.2.1"
++    container "scilus/scilpy:2.2.1_cpu"
  
      input:
      tuple val(meta), path(bundles), path(labels_map), path(metrics), path(lesions)
@@ -22,7 +22,15 @@ Changes in 'bundle/stats/main.nf':
      path "versions.yml"                                         , emit: versions
  
      when:
-@@ -45,11 +47,23 @@
+@@ -30,6 +32,7 @@
+ 
+     script:
+     def prefix = task.ext.prefix ?: "${meta.id}"
++    def ses = meta.session ?: ""
+     def density_weighting = task.ext.density_weighting ? "--density_weighting" : ""
+     def normalize_weights = task.ext.normalize_weights ? "--normalize_weights" : "--bin"
+     def length_stats = task.ext.length_stats ?: ""
+@@ -45,11 +48,23 @@
      """
      bundles=( ${bundles.join(" ")} )
      label_map=( ${labels_map.join(" ")} )
@@ -48,7 +56,7 @@ Changes in 'bundle/stats/main.nf':
  
          if [[ "$length_stats" ]];
          then
-@@ -64,14 +78,14 @@
+@@ -64,14 +79,14 @@
                  ${prefix}__\${bname}_endpoints_raw.json;
  
              scil_volume_stats_in_ROI ${prefix}__\${bname}_endpoints_map_head.nii.gz $normalize_weights\
@@ -66,7 +74,7 @@ Changes in 'bundle/stats/main.nf':
                  \${bname}__std.json
          fi
  
-@@ -109,7 +123,7 @@
+@@ -109,7 +124,7 @@
  
          if [[ "$mean_std_per_point" ]];
          then
@@ -75,7 +83,7 @@ Changes in 'bundle/stats/main.nf':
                  --per_point \${label_map[index]} --sort_keys $density_weighting > \${bname}_std_per_point.json
          fi
      done
-@@ -120,6 +134,7 @@
+@@ -120,6 +135,7 @@
          echo "Merging Bundle_Length_Stats"
          scil_json_merge_entries *_length.json ${prefix}__length_stats.json --add_parent_key ${prefix} \
                  --keep_separate
@@ -83,7 +91,7 @@ Changes in 'bundle/stats/main.nf':
      fi
  
      #Bundle_Endpoints_Map
-@@ -132,20 +147,24 @@
+@@ -132,20 +148,24 @@
          #Bundle_Metrics_Stats_In_Endpoints
          scil_json_merge_entries *_tail.json *_head.json ${prefix}__endpoints_metric_stats.json \
              --no_list --add_parent_key ${prefix}
@@ -110,7 +118,7 @@ Changes in 'bundle/stats/main.nf':
  
          if [[ "$lesions_stats" ]];
          then
-@@ -155,6 +174,7 @@
+@@ -155,6 +175,7 @@
                  --no_list --add_parent_key ${prefix}
              scil_json_merge_entries ${prefix}__lesion_stats.json ${prefix}__lesion_stats.json \
                  --remove_parent_key --add_parent_key ${prefix} -f
@@ -118,7 +126,7 @@ Changes in 'bundle/stats/main.nf':
          fi
      fi
  
-@@ -164,6 +184,7 @@
+@@ -164,6 +185,7 @@
          echo "Merging Bundle_Streamline_Count"
          scil_json_merge_entries *_streamlines.json ${prefix}__streamline_count.json --no_list \
              --add_parent_key ${prefix}
@@ -126,7 +134,7 @@ Changes in 'bundle/stats/main.nf':
      fi
  
      #Bundle_Volume_Per_Label
-@@ -172,12 +193,14 @@
+@@ -172,12 +194,14 @@
          echo "Merging Bundle_Volume_Per_Label"
          scil_json_merge_entries *_volume_label.json ${prefix}__volume_per_label.json --no_list \
              --add_parent_key ${prefix}
@@ -141,7 +149,7 @@ Changes in 'bundle/stats/main.nf':
          fi
      fi
  
-@@ -185,9 +208,163 @@
+@@ -185,9 +209,163 @@
      if [[ "$mean_std_per_point" ]];
      then
          echo "Merging Bundle_Mean_Std_Per_Point"
@@ -155,28 +163,28 @@ Changes in 'bundle/stats/main.nf':
 +    # Conversion to tsv files.
 +    f="${prefix}__mean_std_stats.json"
 +    out="${prefix}__mean_std_stats.tsv"
-+    jq -r --arg sid "${prefix}" '
++    jq -r --arg sid "${prefix}" --arg ses "${ses}" '
 +    .[\$sid] as \$s
 +    | ( [ \$s|to_entries[]|select(.value|type=="object")|(.value|to_entries
 +        |map(select(.value|type=="object" and has("mean"))
 +            |(.key|if test("desc-") then capture("desc-(?<m>[^:]+)\$").m elif test("_afd_fixel_metric\$") then "afd_fixel" else . end)))
 +        ] ) as \$ms
 +    | (\$ms|add//[]|unique|sort) as \$metrics
-+    | (["sample","bundle"]+\$metrics)|@tsv,
++    | (["sample","session","bundle"]+\$metrics)|@tsv,
 +        (\$s|to_entries[]|select(.value|type=="object")|
 +        ( . as \$b |
 +            (\$b.value|to_entries
 +            |map(select(.value|type=="object" and has("mean"))
 +                |{( (.key|if test("desc-") then capture("desc-(?<m>[^:]+)\$").m elif test("_afd_fixel_metric\$") then "afd_fixel" else . end) ): .value.mean})
 +            |add//{}) as \$mm |
-+            [\$sid, (\$b.key|sub("^"+\$sid+"__";"")|sub("_labels_uniformized\$";"")|gsub("_cleaned";""))] + (\$metrics|map(\$mm[.]//""))
++            [\$sid, \$ses, (\$b.key|sub("^"+\$sid+"__";"")|sub("_labels_uniformized\$";"")|gsub("_cleaned";""))] + (\$metrics|map(\$mm[.]//""))
 +        )|@tsv
 +        )
 +    ' "\$f" > "\$out"
 +
 +    f="${prefix}__mean_std_per_point_stats.json"
 +    out="${prefix}__mean_std_per_point_stats.tsv"
-+    jq -r --arg sid "${prefix}" '
++    jq -r --arg sid "${prefix}" --arg ses "${ses}" '
 +    .[\$sid] as \$s
 +    | ( [ \$s
 +        | to_entries[]
@@ -198,7 +206,7 @@ Changes in 'bundle/stats/main.nf':
 +            )
 +        ] ) as \$metric_lists
 +    | (\$metric_lists | add // [] | unique | sort) as \$metrics
-+    | (["sample","bundle","points"] + \$metrics) | @tsv,
++    | (["sample","session","bundle","points"] + \$metrics) | @tsv,
 +        (\$s | to_entries[] as \$b
 +        | select(\$b.value | type == "object")
 +        | (\$b.value | to_entries) as \$me
@@ -220,52 +228,52 @@ Changes in 'bundle/stats/main.nf':
 +        | map( if (.value | has("mean")) then { (.key): .value.mean }
 +                else { (.key): ( ( .value[\$pt] // ( if (.value|type=="array") then (.value[((\$pt|tonumber)-1)] // null) else null end ) ) // {} | .mean // "" ) } end
 +            ) | add ) as \$rowmap
-+        | [\$sid, (\$b.key | sub("^" + \$sid + "__"; "") | sub("_labels_uniformized\$"; "") | gsub("_cleaned"; "")), (\$pt // "")] + (\$metrics | map(\$rowmap[.] // ""))
++        | [\$sid, \$ses, (\$b.key | sub("^" + \$sid + "__"; "") | sub("_labels_uniformized\$"; "") | gsub("_cleaned"; "")), (\$pt // "")] + (\$metrics | map(\$rowmap[.] // ""))
 +        | @tsv
 +        )
 +    ' "\$f" > "\$out"
 +
 +    f="${prefix}__volume.json"
 +    out="${prefix}__volume.tsv"
-+    jq -r --arg sid "${prefix}" '
++    jq -r --arg sid "${prefix}" --arg ses "${ses}" '
 +    .[\$sid] as \$s
 +    # collect bundles that are objects
 +    | ( \$s | to_entries | map(select(.value | type == "object")) ) as \$bundles
 +    # union of keys under each bundle object
 +    | ( \$bundles | map(.value | keys) | add // [] | unique | sort ) as \$metrics
 +    # header
-+    | ( ["sample","bundle"] + \$metrics ) | @tsv,
++    | ( ["sample","session","bundle"] + \$metrics ) | @tsv,
 +        # rows
 +        ( \$bundles[]
 +        | . as \$b
 +        | (\$b.value) as \$vals
-+        | ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized)\$"; "") ) ] + (\$metrics | map( (\$vals[.] // "") )) )
++        | ( [ \$sid, \$ses, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized)\$"; "") ) ] + (\$metrics | map( (\$vals[.] // "") )) )
 +        | @tsv
 +        )
 +    ' "\$f" > "\$out"
 +
 +    f="${prefix}__length_stats.json"
 +    out="${prefix}__length.tsv"
-+    jq -r --arg sid "${prefix}" '
++    jq -r --arg sid "${prefix}" --arg ses "${ses}" '
 +    .[\$sid] as \$s
 +    | ( \$s | to_entries | map(select(.value | type == "object")) ) as \$bundles
 +    | ( \$bundles | map(.value | keys - ["data_per_point_keys","data_per_streamline_keys"]) | add // [] | unique | sort ) as \$metrics
-+    | ( ["sample","bundle"] + \$metrics ) | @tsv,
++    | ( ["sample","session","bundle"] + \$metrics ) | @tsv,
 +        ( \$bundles[]
 +        | . as \$b
 +        | (\$b.value) as \$vals
-+    | ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ) ] + (\$metrics | map( (\$vals[.] // "") )) )
++    | ( [ \$sid, \$ses, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ) ] + (\$metrics | map( (\$vals[.] // "") )) )
 +        | @tsv
 +        )
 +    ' "\$f" > "\$out"
 +
 +    f="${prefix}__volume_per_label.json"
 +    out="${prefix}__volume_per_label.tsv"
-+    jq -r --arg sid "${prefix}" '
++    jq -r --arg sid "${prefix}" --arg ses "${ses}" '
 +    .[\$sid] as \$s
 +    | ( \$s | to_entries | map(select(.value | type == "object")) ) as \$bundles
 +    | ( \$bundles | map(.value | keys - ["data_per_point_keys","data_per_streamline_keys"]) | add // [] | unique | sort ) as \$metrics
-+    | ( ["sample","bundle","points"] + \$metrics ) | @tsv,
++    | ( ["sample","session","bundle","points"] + \$metrics ) | @tsv,
 +        ( \$bundles[]
 +        | . as \$b
 +        | (\$b.value) as \$vals
@@ -278,11 +286,11 @@ Changes in 'bundle/stats/main.nf':
 +            ) as \$bpoints
 +        | ( (\$bpoints | length) as \$n
 +            | if \$n == 0 then
-+                ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ), "" ] + (\$metrics | map( (\$vals[.] // "") )) )
++                ( [ \$sid, \$ses, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ), "" ] + (\$metrics | map( (\$vals[.] // "") )) )
 +                else
 +                ( \$bpoints[]
 +                    | . as \$pt
-+                    | ( [ \$sid, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ), \$pt ] + (\$metrics | map( if ( \$vals[.] | type ) == "object" then ( \$vals[.][\$pt] // "" ) else ( \$vals[.] // "" ) end )) )
++                    | ( [ \$sid, \$ses, (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "") | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "") ), \$pt ] + (\$metrics | map( if ( \$vals[.] | type ) == "object" then ( \$vals[.][\$pt] // "" ) else ( \$vals[.] // "" ) end )) )
 +                )
 +                end
 +            )
@@ -294,20 +302,28 @@ Changes in 'bundle/stats/main.nf':
 +    # Now, let's merge some of the TSVs together.
 +    f1=${prefix}__mean_std_stats.tsv; f2=${prefix}__volume.tsv; out=tmp.tsv
 +    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
-+    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-2)" "\$(echo "\$h1" | cut -f3-)" "\$(echo "\$h2" | cut -f3-)" > "\$out" \
-+        && paste <(tail -n +2 "\$f1" | cut -f1-2) <(tail -n +2 "\$f1" | cut -f3-) <(tail -n +2 "\$f2" | cut -f3-) >> "\$out"
-+    f1=tmp.tsv; f2=${prefix}__length.tsv; out=${prefix}_desc-mean_stats.tsv
-+    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
-+    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-2)" "\$(echo "\$h1" | cut -f3-)" "\$(echo "\$h2" | cut -f3-)" > "\$out" \
-+        && paste <(tail -n +2 "\$f1" | cut -f1-2) <(tail -n +2 "\$f1" | cut -f3-) <(tail -n +2 "\$f2" | cut -f3-) >> "\$out"
-+    f1=${prefix}__mean_std_per_point_stats.tsv; f2=${prefix}__volume_per_label.tsv; out=${prefix}_desc-point_stats.tsv
++    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-3)" "\$(echo "\$h1" | cut -f4-)" "\$(echo "\$h2" | cut -f4-)" > "\$out" \
++        && paste <(tail -n +2 "\$f1" | cut -f1-3) <(tail -n +2 "\$f1" | cut -f4-) <(tail -n +2 "\$f2" | cut -f4-) >> "\$out"
++    f1=tmp.tsv; f2=${prefix}__length.tsv; out=${prefix}_${ses}_desc-mean_stats.tsv
 +    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
 +    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-3)" "\$(echo "\$h1" | cut -f4-)" "\$(echo "\$h2" | cut -f4-)" > "\$out" \
 +        && paste <(tail -n +2 "\$f1" | cut -f1-3) <(tail -n +2 "\$f1" | cut -f4-) <(tail -n +2 "\$f2" | cut -f4-) >> "\$out"
++    f1=${prefix}__mean_std_per_point_stats.tsv; f2=${prefix}__volume_per_label.tsv; out=${prefix}_${ses}_desc-point_stats.tsv
++    h1=\$(head -n1 "\$f1"); h2=\$(head -n1 "\$f2")
++    printf '%s\\t%s\\t%s\\n' "\$(echo "\$h1" | cut -f1-4)" "\$(echo "\$h1" | cut -f5-)" "\$(echo "\$h2" | cut -f5-)" > "\$out" \
++        && paste <(tail -n +2 "\$f1" | cut -f1-4) <(tail -n +2 "\$f1" | cut -f5-) <(tail -n +2 "\$f2" | cut -f5-) >> "\$out"
  
      cat <<-END_VERSIONS > versions.yml
      "${task.process}":
-@@ -209,21 +386,11 @@
+@@ -197,6 +375,7 @@
+ 
+     stub:
+     def prefix = task.ext.prefix ?: "${meta.id}"
++    def ses = meta.session ?: ""
+ 
+     """
+     scil_tractogram_print_info -h
+@@ -209,21 +388,11 @@
      scil_bundle_mean_std -h
      scil_json_merge_entries -h
  
@@ -322,12 +338,15 @@ Changes in 'bundle/stats/main.nf':
 -    touch ${prefix}__volume_per_label.json
 -    touch ${prefix}__volume_per_label_lesions.json
 -    touch ${prefix}__mean_std_per_point.json
-     touch ${prefix}_endpoints_map_head.nii.gz
-     touch ${prefix}_endpoints_map_tail.nii.gz
+-    touch ${prefix}_endpoints_map_head.nii.gz
+-    touch ${prefix}_endpoints_map_tail.nii.gz
 -    touch ${prefix}__lesion_stats.json
-     touch ${prefix}_lesion_map.nii.gz
-+    touch ${prefix}_desc-mean_stats.tsv
-+    touch ${prefix}_desc-point_stats.tsv
+-    touch ${prefix}_lesion_map.nii.gz
++    touch ${prefix}_${ses}_endpoints_map_head.nii.gz
++    touch ${prefix}_${ses}_endpoints_map_tail.nii.gz
++    touch ${prefix}_${ses}_lesion_map.nii.gz
++    touch ${prefix}_${ses}_desc-mean_stats.tsv
++    touch ${prefix}_${ses}_desc-point_stats.tsv
  
      cat <<-END_VERSIONS > versions.yml
      "${task.process}":
