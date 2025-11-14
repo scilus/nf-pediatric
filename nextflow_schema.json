@@ -751,7 +751,7 @@
                     "type": "number",
                     "description": "Minimum MD threshold used in the FODF processing step.",
                     "fa_icon": "fas fa-brain",
-                    "default": 0.003,
+                    "default": 0.002,
                     "hidden": true
                 }
             }
