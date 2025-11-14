@@ -48,7 +48,7 @@ include { SEGMENTATION_TRACKINGMASKS as TRACKINGMASKS } from '../modules/local/s
 // ** Tracking ** //
 include { TRACKING_PFTTRACKING              } from '../modules/nf-neuro/tracking/pfttracking/main'
 include { TRACKING_LOCALTRACKING            } from '../modules/nf-neuro/tracking/localtracking/main'
-include { TRACTOGRAM_MATH                   } from '../modules/local/tractogram/math/main'
+include { TRACTOGRAM_MATH                   } from '../modules/nf-neuro/tractogram/math/main'
 
 // ** BundleSeg ** //
 include { BUNDLE_SEG } from '../subworkflows/local/bundleseg/main'

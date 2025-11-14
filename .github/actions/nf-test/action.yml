@@ -64,8 +64,15 @@ runs:
       env:
         NFT_WORKDIR: ${{ env.NFT_WORKDIR }}
       run: |
+        # use "docker_self_hosted" if it runs on self-hosted runner and inputs.profile=docker
+        if [ "${{ inputs.profile }}" == "docker" ]; then
+            PROFILE="docker_self_hosted"
+        else
+          PROFILE=${{ inputs.profile }}
+        fi
+
         nf-test test \
-          --profile=+${{ inputs.profile }} \
+          --profile=${PROFILE},test \
           $(if [ -n "${{ inputs.tags }}" ]; then echo "--tag ${{ inputs.tags }}"; fi) \
           --ci \
           --changed-since HEAD^ \

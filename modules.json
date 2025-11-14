@@ -194,9 +194,8 @@
                     },
                     "reconst/fodf": {
                         "branch": "main",
-                        "git_sha": "452075a707a9769b0509fc33a1051e8ba80799bf",
-                        "installed_by": ["modules"],
-                        "patch": "modules/nf-neuro/reconst/fodf/reconst-fodf.diff"
+                        "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
+                        "installed_by": ["modules"]
                     },
                     "reconst/frf": {
                         "branch": "main",
@@ -257,6 +256,11 @@
                         "git_sha": "98bb319320eccd276f009fe53db70b493e1b22d6",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/tracking/pfttracking/tracking-pfttracking.diff"
+                    },
+                    "tractogram/math": {
+                        "branch": "main",
+                        "git_sha": "5435f43bcda7f9a32d101137af36a9272d54f58e",
+                        "installed_by": ["modules"]
                     },
                     "tractogram/removeinvalid": {
                         "branch": "main",
