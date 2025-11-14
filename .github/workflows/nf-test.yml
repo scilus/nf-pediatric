@@ -49,7 +49,7 @@ jobs:
         env:
           NFT_VER: ${{ env.NFT_VER }}
         with:
-          max_shards: 2
+          max_shards: 4
 
       - name: debug
         run: |

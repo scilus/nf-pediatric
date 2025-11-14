@@ -71,6 +71,7 @@ process RECONST_FODF {
     export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=1
     export OMP_NUM_THREADS=1
     export OPENBLAS_NUM_THREADS=1
+    export OPENBLAS_CORETYPE=Haswell
 
     scil_dwi_extract_shell.py $dwi $bval $bvec $fodf_shells \
         dwi_fodf_shells.nii.gz bval_fodf_shells bvec_fodf_shells \
