@@ -15,6 +15,14 @@ Changes in 'reconst/fodf/main.nf':
  
      input:
          tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(fa), path(md), path(wm_frf), path(gm_frf), path(csf_frf)
+@@ -73,6 +71,7 @@
+     export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=1
+     export OMP_NUM_THREADS=1
+     export OPENBLAS_NUM_THREADS=1
++    export OPENBLAS_CORETYPE=Haswell
+ 
+     scil_dwi_extract_shell.py $dwi $bval $bvec $fodf_shells \
+         dwi_fodf_shells.nii.gz bval_fodf_shells bvec_fodf_shells \
 
 'modules/nf-neuro/reconst/fodf/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/reconst/fodf/tests/nextflow_msmt.config' is unchanged
