@@ -71,7 +71,7 @@
                     "mrtrix": "3.0.4"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "RECONST_FRF": {
                     "scilpy": "2.1.0"
@@ -597,7 +597,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-14T09:41:34.557701"
+        "timestamp": "2025-11-14T17:08:53.703401"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
@@ -641,7 +641,7 @@
                     "mrtrix": "3.0.4"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "RECONST_FRF": {
                     "scilpy": "2.1.0"
@@ -1161,6 +1161,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-14T09:47:29.306845"
+        "timestamp": "2025-11-14T17:14:41.374233"
     }
 }

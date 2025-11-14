@@ -117,7 +117,7 @@
                     "mrtrix": "3.0.4"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "RECONST_FRF": {
                     "scilpy": "2.1.0"
@@ -972,7 +972,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-14T10:11:12.580364"
+        "timestamp": "2025-11-14T16:53:51.97166"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
@@ -1065,7 +1065,7 @@
                     "mrtrix": "3.0.4"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "RECONST_FRF": {
                     "scilpy": "2.1.0"
@@ -1540,7 +1540,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-14T10:19:50.899505"
+        "timestamp": "2025-11-14T17:01:00.806854"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -1895,7 +1895,7 @@
                     "mrtrix": "3.0.4"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.0"
                 },
                 "RECONST_FRF": {
                     "scilpy": "2.1.0"
@@ -2406,6 +2406,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-11-14T10:04:13.924402"
+        "timestamp": "2025-11-14T16:47:51.304311"
     }
 }
