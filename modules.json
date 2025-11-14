@@ -194,9 +194,8 @@
                     },
                     "reconst/fodf": {
                         "branch": "main",
-                        "git_sha": "452075a707a9769b0509fc33a1051e8ba80799bf",
-                        "installed_by": ["modules"],
-                        "patch": "modules/nf-neuro/reconst/fodf/reconst-fodf.diff"
+                        "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
+                        "installed_by": ["modules"]
                     },
                     "reconst/frf": {
                         "branch": "main",
