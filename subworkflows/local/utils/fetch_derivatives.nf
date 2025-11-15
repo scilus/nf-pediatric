@@ -223,7 +223,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Tractogram file ** //
-    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-*_tractogram.trk", checkIfExists: true)
+    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-{concatenated,local,pft}_tractogram.trk", checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
@@ -236,6 +236,16 @@ workflow FETCH_DERIVATIVES {
                 [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md]
 
             return [metadata, file]
+        }
+        .groupTuple(by: 0)
+        .map{ meta, files ->
+            // Return the concatenated tractogram if it exists, else return the first available
+            def concatFile = files.find { it.name.contains('concatenated') }
+            if (concatFile) {
+                return [meta, concatFile]
+            } else {
+                return [meta, files[0]]
+            }
         }
         .filter {
             participant_ids.isEmpty() || it[0].id in participant_ids
