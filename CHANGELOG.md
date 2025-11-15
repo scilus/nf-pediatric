@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Filter tractograms to ensure the concatenated one is used when running on derivatives.
 - Robustify tractometry steps by using centroids from the WM atlas rather than subject-specific centroids.
 - Handle cases where cortical segmentation failed without throwing an error.
 - Age validation step in M-CRIB-S module.
