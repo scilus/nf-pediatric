@@ -682,7 +682,7 @@ def buildMethodsDescription() {
             parts << """<h5>Diffusion Tensor Imaging (DTI)</h5>"""
             parts << "Diffusion tensor imaging (DTI) models were fitted on the processed volume using the scilpy toolbox (Renauld et al., 2025); fractional anisotropy (FA), axial diffusivity (AD), radial diffusivity (RD), mean diffusivity (MD), mode of anisotropy, and color-coded FA maps were generated."
             if ( enabled('dti_shells') ) {
-                parts << "DTI fitting used the following shells: ${params.dti_shells.join(', ')}."
+                parts << "DTI fitting used the following shells: ${params.dti_shells.tokenize().join(', ')}."
             } else {
                 parts << "DTI fitting used all available shells under the maximum b-value of ${params.dti_max_shell_value} s/mm²."
             }
@@ -693,7 +693,7 @@ def buildMethodsDescription() {
             if ( !enabled('tracking') ) return ""
             def parts = []
             parts << """<h5>Fiber Orientation Distribution Function (fODF)</h5>"""
-            parts << "Fiber orientation distribution functions (fODF) were computed using the scilpy toolbox (Renauld et al., 2025) using the ${params.fodf_set_method ? "single-shell single-tissue method" : "multi-shell multi-tissue method"} on the ${params.fodf_shells ? "following shells: " + params.fodf_shells.join(', ') : "all available shells over the minimum b-value of " + params.fodf_min_fodf_shell_value + " s/mm²"}."
+            parts << "Fiber orientation distribution functions (fODF) were computed using the scilpy toolbox (Renauld et al., 2025) using the ${params.fodf_set_method ? "single-shell single-tissue method" : "multi-shell multi-tissue method"} on the ${params.fodf_shells ? "following shells: " + params.fodf_shells.tokenize().join(', ') : "all available shells over the minimum b-value of " + params.fodf_min_fodf_shell_value + " s/mm²"}."
             parts << "fODF were computed using a maximum spherical harmonic order of ${params.fodf_sh_order} in basis ${params.fodf_sh_basis}."
             parts << "Fiber response functions were estimated based on normative curves of the brain's diffusivities through the developmental age-range as described in Gagnon et al. 2025."
 
