@@ -626,8 +626,8 @@ def buildMethodsDescription() {
         dwi_preproc: { ->
             if ( !enabled('tracking') ) return ""
             def parts = []
-            parts << """<h5>DWI preprocessing</h5>
-Diffusion weighting imaging (DWI) files were extracted from the input BIDS folder and associated with their corresponding reverse phase-encoded images when available."""
+            parts << """<h5>DWI preprocessing</h5>"""
+            parts << "Diffusion weighting imaging (DWI) files were extracted from the input BIDS folder and associated with their corresponding reverse phase-encoded images when available."
             if ( enabled('preproc_dwi_run_denoising') && !enabled('skip_dwi_preprocessing') ) {
                 parts << "DWI volumes were denoised using the MP-PCA algorithm (Veraart et al., 2016) implemented in the MRtrix3 toolbox (Tournier et al., 2019)."
             }
