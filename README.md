@@ -11,7 +11,7 @@
 
 ## Introduction
 
-**nf-pediatric** is an end-to-end connectomics pipeline for pediatric (0-18y) dMRI and sMRI brain scans. It performs preprocessing, tractography, t1 reconstruction, cortical and subcortical segmentation, and connectomics.
+**nf-pediatric** is an end-to-end age-adaptable pipeline for pediatric (0-18 years old) diffusion MRI. It leverages normative models of the brain diffusivities to perform connectomics analysis, WM bundles extraction and tractometry. Each pipeline run is wrapped in an interactive quality control reports for easy QC of the processed data.
 
 ![nf-pediatric-schema](/assets/nf-pediatric-schema.png)
 
