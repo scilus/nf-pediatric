@@ -916,8 +916,8 @@
                     "description": "Seeding mask type used in the local tracking step.",
                     "fa_icon": "fas fa-brain",
                     "default": "wm",
-                    "enum": ["wm", "fa", "interface"],
-                    "errorMessage": "Invalid choice. Must be either 'wm', 'fa', or 'interface'.",
+                    "enum": ["wm", "fa"],
+                    "errorMessage": "Invalid choice. Must be either 'wm' or 'fa'.",
                     "hidden": false
                 },
                 "local_fa_tracking_mask_threshold": {
@@ -939,8 +939,8 @@
                     "description": "Tracking mask type used in the local tracking step. Choices: wm, fa, or interface.",
                     "fa_icon": "fas fa-brain",
                     "default": "wm",
-                    "enum": ["wm", "fa", "interface"],
-                    "errorMessage": "Invalid choice. Must be either 'wm', 'fa' or 'interface'.",
+                    "enum": ["wm", "fa"],
+                    "errorMessage": "Invalid choice. Must be either 'wm' or 'fa'.",
                     "hidden": false
                 },
                 "local_random_seed": {
