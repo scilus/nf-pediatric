@@ -1,8 +1,8 @@
-# License for Pediatric Brain Atlases
+## License for Pediatric Brain Atlases
 
 This directory contains pediatric white matter bundle atlases used for bundle segmentation and tractometry analysis across different developmental stages. It also include brain templates used for tissue segmentation.
 
-## Atlas Collections
+### Atlas Collections
 
 The following atlas collections are included:
 
@@ -63,33 +63,9 @@ The UNC-UMN Baby Connectome Project (BCP) 4D Infant Brain Volumetric Atlas (Vers
 **Template Terms of Use:**
 The UNC-BCP 4D Infant Brain Volumetric Atlas is distributed under the GNU General Public License (GPL). The atlas is freely available to the public for academic research purposes. The ownership, copyright, and all rights are retained by UNC-Chapel Hill.
 
-## Terms of Use
-
-### White Matter Bundle Atlases
-
-The white matter bundle atlases in this directory are distributed under the **CC BY 4.0 license** (see above). You are free to use, share, and adapt these atlases with proper attribution.
-
-### UNC-BCP Template
-
-The UNC-BCP 4D Infant Brain Volumetric Atlas is distributed under the GNU General Public License (GPL). If you use these templates, you should be aware that they are owned by UNC-Chapel Hill. As a GPL-licensed work, you must comply with the terms of the GPL when using or redistributing these templates or derivative works.
-
-### Attribution Requirements
-
-When publishing research using these atlases, you must:
-
-1. **Cite the white matter bundle atlases**:
-    - Rheault, F. (2023). Population average atlas for BundleSeg (3.1). Zenodo. https://doi.org/10.5281/zenodo.10103446
-    - St-Onge, E., Schilling, K., & Rheault, F. (2023). BundleSeg: A versatile, reliable and reproducible approach to white matter bundle segmentation. arXiv:2308.10958.
-2. **Cite the UNC-BCP 4D Atlas**:
-    - Chen, L., Wu, Z., Hu, D., Wang, Y., Zhao, F., Zhong, T., Lin, W., Wang, L., & Li, G. (2022). A 4D infant brain volumetric atlas based on the UNC/UMN baby connectome project (BCP) cohort. NeuroImage, 253, 119097. https://doi.org/10.1016/j.neuroimage.2022.119097
-
 ### Disclaimer
 
 THESE ATLASES/TEMPLATES ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS, CONTRIBUTORS, OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THESE ATLASES. PLEASE REFER TO THE ORIGINAL LICENSES FOR MORE INFORMATION.
-
-## References
-
-Please refer to CITATIONS.md in the root directory for complete references to the tools and resources used in conjunction with these atlases.
 
 ---
 
